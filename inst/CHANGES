@@ -315,5 +315,9 @@ Version 0.9-15
     o  Added various cluster-analysis facilities, courtesy of Dan Putler.
 
     o  Small bug fixes.
+    
+Version 0.9-16
+
+   o  Fixed a problem in the new output facility, where a test for S4 objects sometimes failed.
 
     

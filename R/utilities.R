@@ -1,4 +1,4 @@
-# last modified 5 Dec 04 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 10 Dec 04 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
 
 # utility functions
 
@@ -1308,5 +1308,9 @@ checkClass <- defmacro(object, class, message=NULL,
 
 # the following function is from John Chambers
 
-isS4object <- function(object) length(attr(object, "class"))==1 && class(object) != "by" && 
- !is.null(getClass(class(object)))
+#isS4object <- function(object) length(attr(object, "class"))==1 && class(object) != "by" && 
+# !is.null(getClass(class(object)))
+
+isS4object <- function(object) {
+    !(length(object) == 1 && class(object) == "character") &&  length(slotNames(object)) != 0
+    }
