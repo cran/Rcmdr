@@ -1,4 +1,4 @@
-# last modified 24 May 2003 by J. Fox
+# last modified 29 May 2003 by J. Fox
 
 # utility functions
 
@@ -32,7 +32,7 @@ activeDataSet <- function(dsname){
             sep=""), icon="error", type="ok")
         return()
         }
-    if (!is.null(.activeDataSet)) {
+    if (!is.null(.activeDataSet) && (tclvalue(.attachDataSet) == "1")) {
         detach(pos = match(.activeDataSet, search()))
         logger(paste("detach(", .activeDataSet, ")", sep=""))
         }
@@ -43,10 +43,13 @@ activeDataSet <- function(dsname){
     assign(".twoLevelFactors", listTwoLevelFactors(), envir=.GlobalEnv)
     tclvalue(.dataSetName) <- paste(.activeDataSet, " ")
     tkconfigure(.dataSetLabel, fg="blue")
-    attach(eval(parse(text=dsname)), name=dsname)
-    logger(paste("attach(", dsname, ")", sep=""))
+    if (tclvalue(.attachDataSet) == "1"){
+        attach(eval(parse(text=dsname)), name=dsname)
+        logger(paste("attach(", dsname, ")", sep=""))
+        }
     dsname
     }
+
 
 activeModel <- function(model){
     if (missing(model)) {
@@ -114,14 +117,14 @@ levene.test <- function(y, group) {
     table[,c(1,4,5)]
     } 
 
-# the following function from Fox, An R and S-PLUS Companion to Applied Regression
+# the following function adapted from Fox, An R and S-PLUS Companion to Applied Regression
 
 influence.plot <- function(model, scale=10, col=c(1,2),
     labels=names(rstud), ...){
     hatval <- hatvalues(model)
     rstud <- rstudent(model)
     cook <- sqrt(cookd(model))
-    scale <- scale/max(cook)
+    scale <- scale/max(cook, na.rm=TRUE)
     p <- length(coef(model))
     n <- length(rstud)
     cutoff <- sqrt(4/(n - p))
@@ -129,11 +132,12 @@ influence.plot <- function(model, scale=10, col=c(1,2),
         ylab='Studentized Residuals', type='n', ...)
     abline(v=c(2, 3)*p/n, lty=2)
     abline(h=c(-2, 0, 2), lty=2)
-    for (i in 1:n) 
-        points(hatval[i], rstud[i], cex=scale*cook[i], 
-            col=if (cook[i] > cutoff) col[2] else col[1])
+    points(hatval, rstud, cex=scale*cook, 
+            col=ifelse(cook > cutoff, col[2], col[1]))
     if (labels[1] != FALSE) identify(hatval, rstud, labels)
     }
+
+
 
 reliability <- function(S){
     reliab <- function(S, R){
@@ -163,11 +167,11 @@ reliability <- function(S){
         var <- b %*% S %*% b
         rel[i, 3] <- cov/(sqrt(var * S[i,i]))
         }
-    rownames(rel) <- as.character(1:k)
+    rownames(rel) <- rownames(S)
     colnames(rel) <- c("Alpha", "Std.Alpha", "r(item, total)")
     round(rel, 4)
     }
-        
+    
 partial.cor <- function(X, ...){
     R <- cor(X, ...)
     RI <- solve(R)
@@ -177,3 +181,37 @@ partial.cor <- function(X, ...){
     rownames(R) <- colnames(R) <- colnames(X)
     R
     }
+
+
+    # Pager
+
+# this is slightly modified from tkpager to use the Rcmdr monospaced font
+#   and a white background
+    
+RcmdrPager <- function (file, header, title, delete.file) 
+{
+    for (i in seq(along = file)) {
+        zfile <- file[[i]]
+        tt <- tktoplevel()
+        tkwm.title(tt, if (length(title)) 
+            title[(i - 1)%%length(title) + 1]
+        else "")
+        txt <- tktext(tt, bg = "white", font = .logFont)
+        scr <- tkscrollbar(tt, repeatinterval = 5, command = function(...) tkyview(txt, 
+            ...))
+        tkconfigure(txt, yscrollcommand = function(...) tkset(scr, 
+            ...))
+        tkpack(txt, side = "left", fill = "both", expand = TRUE)
+        tkpack(scr, side = "right", fill = "y")
+        chn <- tkcmd("open", zfile)
+        tkinsert(txt, "end", header[[i]])
+        tkinsert(txt, "end", gsub("_\b", "", tclvalue(tkcmd("read", 
+            chn))))
+        tkcmd("close", chn)
+        tkconfigure(txt, state = "disabled")
+        tkmark.set(txt, "insert", "0.0")
+        tkfocus(txt)
+        if (delete.file) 
+            tkcmd("file", "delete", zfile)
+    }
+}

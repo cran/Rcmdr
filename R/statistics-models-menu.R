@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 23 May 03 by J. Fox
+# last modified 11 June 03 by J. Fox
 
     # Models menu
     
@@ -15,25 +15,25 @@ linearRegressionModel <- function(){
     variablesFrame <- tkframe(top)
     xFrame <- tkframe(variablesFrame)
     yFrame <- tkframe(variablesFrame)
-    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
-    yScroll <- tkscrollbar(yFrame, repeatinterval=5, command=function(...) tkyview(yBox, ...))    
     xBox <- tklistbox(xFrame, height=min(4, length(.numeric)),
-        selectmode="multiple", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(xScroll, ...))
+        selectmode="multiple", background="white", exportselection="FALSE")
+    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
+    tkconfigure(xBox, yscrollcommand=function(...) tkset(xScroll, ...))
     for (x in .numeric) tkinsert(xBox, "end", x)
     yBox <- tklistbox(yFrame, height=min(4, length(.numeric)),
-        selectmode="single", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(yScroll, ...))
+        selectmode="single", background="white", exportselection="FALSE")
+    yScroll <- tkscrollbar(yFrame, repeatinterval=5, command=function(...) tkyview(yBox, ...))    
+    tkconfigure(yBox, yscrollcommand=function(...) tkset(yScroll, ...))
     for (y in .numeric) tkinsert(yBox, "end", y)
     modelName <- tclVar("RegModel")
     modelFrame <- tkframe(top)
     model <- tkentry(modelFrame, width="20", textvariable=modelName)
     subsetVariable <- tclVar("<all valid cases>")
     subsetFrame <- tkframe(top)
-    subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable,
-        xscrollcommand=function(...) tkset(subsetScroll, ...))
+    subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable)
     subsetScroll <- tkscrollbar(subsetFrame, orient="horizontal",
         repeatinterval=5, command=function(...) tkyview(subsetEntry, ...))
+    tkconfigure(subsetEntry, xscrollcommand=function(...) tkset(subsetScroll, ...))
     onOK <- function(){
         x <- .numeric[as.numeric(tkcurselection(xBox)) + 1]
         y <- as.character(tkget(yBox, "active"))
@@ -97,7 +97,7 @@ linearRegressionModel <- function(){
     tkgrid(tklabel(modelFrame, text="Enter name for model:"), model, sticky="w")
     tkgrid(modelFrame, sticky="w")
     tkgrid(tklabel(variablesFrame, text="Response variable (pick one)"), 
-    tklabel(variablesFrame, text="    "),
+        tklabel(variablesFrame, text="    "),
         tklabel(variablesFrame, text="Explanatory variables (pick one or more)"), sticky="w")
     tkgrid(yBox, yScroll, sticky="nw")
     tkgrid(xBox, xScroll, sticky="nw")
@@ -113,10 +113,16 @@ linearRegressionModel <- function(){
     tkgrid.configure(helpButton, sticky="e")
     tkgrid.configure(xScroll, sticky="ns")
     tkgrid.configure(yScroll, sticky="ns")
+    for (row in 0:3) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
     tkselection.set(yBox, 0)
     tkbind(top, "<Return>", onOK)
+    tkwm.deiconify(top)
+    tkgrab.set(top)
     tkfocus(top)
-    tkgrab(top)
+    tkwait.window(top)
     }
 
 linearModel <- function(){
@@ -130,31 +136,31 @@ linearModel <- function(){
     variables <- paste(.variables, ifelse(sapply(eval(parse(text=.activeDataSet)), is.factor), 
         "[factor]", ""))
     xFrame <- tkframe(top)
-    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
     xBox <- tklistbox(xFrame, height=min(4, length(.variables)),
-        selectmode="browse", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(xScroll, ...))
+        selectmode="browse", background="white", exportselection="FALSE")
+    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
+    tkconfigure(xBox, yscrollcommand=function(...) tkset(xScroll, ...))
     for (x in variables) tkinsert(xBox, "end", x)
     lhsVariable <- tclVar("")
     rhsVariable <- tclVar("")
     formulaFrame <- tkframe(top)
-    rhsScroll <- tkscrollbar(formulaFrame, repeatinterval=5, 
-        orient="horizontal", command=function(...) tkyview(rhsEntry, ...))
-    rhsEntry <- tkentry(formulaFrame, width="50", textvariable=rhsVariable,
-        xscrollcommand=function(...) tkset(rhsScroll, ...))
+    lhsEntry <- tkentry(formulaFrame, width="10", textvariable=lhsVariable)
     lhsScroll <- tkscrollbar(formulaFrame, repeatinterval=5, 
         orient="horizontal", command=function(...) tkyview(lhsEntry, ...))
-    lhsEntry <- tkentry(formulaFrame, width="10", textvariable=lhsVariable,
-        xscrollcommand=function(...) tkset(lhsScroll, ...))
+    tkconfigure(lhsEntry, xscrollcommand=function(...) tkset(lhsScroll, ...))
+    rhsEntry <- tkentry(formulaFrame, width="50", textvariable=rhsVariable)
+    rhsScroll <- tkscrollbar(formulaFrame, repeatinterval=5, 
+        orient="horizontal", command=function(...) tkyview(rhsEntry, ...))
+    tkconfigure(rhsEntry, xscrollcommand=function(...) tkset(rhsScroll, ...))
     modelName <- tclVar("LinearModel")
     modelFrame <- tkframe(top)
     model <- tkentry(modelFrame, width="20", textvariable=modelName)
     subsetVariable <- tclVar("<all valid cases>")
     subsetFrame <- tkframe(top)
-    subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable,
-        xscrollcommand=function(...) tkset(subsetScroll, ...))
+    subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable)
     subsetScroll <- tkscrollbar(subsetFrame, orient="horizontal",
         repeatinterval=5, command=function(...) tkyview(subsetEntry, ...))
+    tkconfigure(subsetEntry, xscrollcommand=function(...) tkset(subsetScroll, ...))
     onOK <- function(){
         tkgrab.release(top)
         tkdestroy(top)
@@ -236,9 +242,15 @@ linearModel <- function(){
     tkgrid.configure(xScroll, sticky="ns")
     tkgrid.configure(lhsScroll, sticky="ew")
     tkgrid.configure(rhsScroll, sticky="ew")
+    for (row in 0:6) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
-    tkfocus(top)
-    tkgrab(top)
+    tkwm.deiconify(top)
+    tkgrab.set(top)
+    tkfocus(lhsEntry)
+    tkwait.window(top)
     }
 
 generalizedLinearModel <- function(){
@@ -252,50 +264,50 @@ generalizedLinearModel <- function(){
     variables <- paste(.variables, ifelse(sapply(eval(parse(text=.activeDataSet)), is.factor), 
         "[factor]", ""))
     xFrame <- tkframe(top)
-    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
     xBox <- tklistbox(xFrame, height=min(4, length(.variables)),
-        selectmode="browse", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(xScroll, ...))
+        selectmode="browse", background="white", exportselection="FALSE")
+    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
+    tkconfigure(xBox, yscrollcommand=function(...) tkset(xScroll, ...))
     for (x in variables) tkinsert(xBox, "end", x)
     lhsVariable <- tclVar("")
     rhsVariable <- tclVar("")
     formulaFrame <- tkframe(top)
-    rhsScroll <- tkscrollbar(formulaFrame, repeatinterval=5, 
-        orient="horizontal", command=function(...) tkyview(rhsEntry, ...))
-    rhsEntry <- tkentry(formulaFrame, width="50", textvariable=rhsVariable,
-        xscrollcommand=function(...) tkset(rhsScroll, ...))
+    lhsEntry <- tkentry(formulaFrame, width="10", textvariable=lhsVariable)
     lhsScroll <- tkscrollbar(formulaFrame, repeatinterval=5, 
         orient="horizontal", command=function(...) tkyview(lhsEntry, ...))
-    lhsEntry <- tkentry(formulaFrame, width="10", textvariable=lhsVariable,
-        xscrollcommand=function(...) tkset(lhsScroll, ...))
+    tkconfigure(lhsEntry, xscrollcommand=function(...) tkset(lhsScroll, ...))
+    rhsEntry <- tkentry(formulaFrame, width="50", textvariable=rhsVariable)
+    rhsScroll <- tkscrollbar(formulaFrame, repeatinterval=5, 
+        orient="horizontal", command=function(...) tkyview(rhsEntry, ...))
+    tkconfigure(rhsEntry, xscrollcommand=function(...) tkset(rhsScroll, ...))
     modelName <- tclVar("GLM")
     modelFrame <- tkframe(top)
     model <- tkentry(modelFrame, width="20", textvariable=modelName)
     linkFamilyFrame <- tkframe(top)
     familyFrame <- tkframe(linkFamilyFrame)
+    familyBox <- tklistbox(familyFrame, height="4", exportselection="FALSE",
+        selectmode="single", background="white")
     familyScroll <- tkscrollbar(familyFrame, repeatinterval=5, 
         command=function(...) tkyview(familyBox, ...))
-    familyBox <- tklistbox(familyFrame, height="4", exportselection="FALSE",
-        selectmode="single", background="white",
-        yscrollcommand=function(...) tkset(familyScroll, ...))
+    tkconfigure(familyBox, yscrollcommand=function(...) tkset(familyScroll, ...))
     families <- c("gaussian", "binomial", "poisson", "Gamma", "inverse.gaussian", 
         "quasibinomial", "quasipoisson")
     for (fam in families) tkinsert(familyBox, "end", fam)
     linkFrame <- tkframe(linkFamilyFrame)
+    linkBox <- tklistbox(linkFrame, height="4", exportselection="FALSE",
+        selectmode="single", background="white")
     linkScroll <- tkscrollbar(linkFrame, repeatinterval=5, 
         command=function(...) tkyview(linkBox, ...))
-    linkBox <- tklistbox(linkFrame, height="4", exportselection="FALSE",
-        selectmode="single", background="white",
-        yscrollcommand=function(...) tkset(linkScroll, ...))
+    tkconfigure(linkBox, yscrollcommand=function(...) tkset(linkScroll, ...))
     links <- c("Canonical", "identity", "inverse", "log", "logit", "probit", 
         "cloglog", "sqrt", "1/mu^2")
     for (lnk in links) tkinsert(linkBox, "end", lnk)
     subsetVariable <- tclVar("<all valid cases>")
     subsetFrame <- tkframe(top)
-    subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable,
-        xscrollcommand=function(...) tkset(subsetScroll, ...))
+    subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable)
     subsetScroll <- tkscrollbar(subsetFrame, orient="horizontal",
         repeatinterval=5, command=function(...) tkyview(subsetEntry, ...))
+    tkconfigure(subsetEntry, xscrollcommand=function(...) tkset(subsetScroll, ...))
     onOK <- function(){
         check.empty <- gsub(" ", "", tclvalue(lhsVariable))
         if ("" == check.empty) {
@@ -386,11 +398,17 @@ generalizedLinearModel <- function(){
     tkgrid.configure(xScroll, sticky="ns")
     tkgrid.configure(rhsScroll, sticky="ew")
     tkgrid.configure(lhsScroll, sticky="ew")
-    tkselection.set(familyBox, 1)
-    tkselection.set(linkBox, 0)
     tkgrid.configure(familyScroll, sticky="ns")
     tkgrid.configure(linkScroll, sticky="ns")
+    for (row in 0:6) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
+    tkselection.set(familyBox, 1)
+    tkselection.set(linkBox, 0)
     tkbind(top, "<Return>", onOK)
-    tkfocus(top)
-    tkgrab(top)
+    tkwm.deiconify(top)
+    tkgrab.set(top)
+    tkfocus(lhsEntry)
+    tkwait.window(top)
     }

@@ -19,22 +19,42 @@ The behaviour of the package may be modified by editing the file \code{Rcmdr} in
 
 Alternatively, you can edit the source package and recompile it.
 
-In addition, a couple of features are controlled by run-time options, set via the \code{options()}
+In addition, several features are controlled by run-time options, set via the \code{options("Rcmdr")}
 command. These options should be set before the package is loaded. If the options are unset, which is
-the usual situation, defaults are used:
+the usual situation, defaults are used. Specify options as a list of \emph{name=value} pairs. You can
+set none, one, several, or all options. The available options are as follows:
 
 \describe{
-    \item{\code{Rcmdr.fontsize}}{This is the font size, in points, to be used in the log/script window,
-    in recode dialogs, and in compute expressions. The default is 10. Adjust if the default font is too large
-    or too small.}
+    \item{\code{log.font.size}}{The font size, in points, to be used in the log/script window,
+    in recode dialogs, and in compute expressions --- that is, where a monospaced font is used. 
+    The default is 10.}
     
-    \item{\code{Rcmdr.tkwait}}{Set to \code{TRUE} to force the R session to wait for the Commander window 
-    to exit before proceeding. This apparently prevents the session from hanging on some systems. It should
-    not be necessary in Windows. Try running without setting the option first. A disadvantage of setting
-    \code{options(Rcmdr.tkwait=TRUE)} is that R commands cannot be entered directly at the R prompt when the
-    Commander is running. You should be able to enter commands in the log/script window, however.}    
+    \item{\code{log.width}}{The width of the log window, in characters. The default is 70.}
+    
+    \item{\code{log.height}}{The height of the log window, in lines. The default is 15.}
+    
+    \item{\code{contrasts}}{Serves the same function as the general \code{contrasts} option; the default is 
+    \code{c("contr.Treatment", "contr.poly")}. When the \code{Commander} exits, the \code{contrasts}
+    option is returned to its pre-existing value. Note that \code{contr.Treatment} is from the \code{car} package.}
+    
+    \item{\code{scale.factor}}{A scaling factor to be applied to all Tk elements, such as fonts. This works well
+    only in Windows. The default is \code{NULL}.}
+    
+    \item{\code{default.font.size}}{The size, in points, of the default font. The default is 10. Unless otherwise 
+    specified (see the next item), the default font is \code{"*helvetica-medium-r-normal-*-xx*"}, where \code{xx}
+    is the default font size. This option is only for non-Windows systems.}
+    
+    \item{\code{default.font}}{The default font, as an X11 font specification, given in a character string. 
+    If specified, this value takes precedence
+    over the default font size (above). This option is only for non-Windows systems.}
+    
+    \item{\code{tkwait}}{This option addresses a problem that, to my knowledge, is peculiar to Debian Linux. Set to
+    \code{TRUE} for Debian Linux and to \code{FALSE} or ignore for other systems. An undesirable side effect of setting
+    the \code{tkwait} option to \code{TRUE} is that the R session command prompt is suppressed until the Commander exits.
+    One can still enter commands via the log/script window, however. In particular, there is no reason to use this option
+    under Windows, and it should not be used with the Windows R GUI with buffered output.}
     }
-
+    
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}}

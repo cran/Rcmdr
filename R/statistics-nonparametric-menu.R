@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 20 May 03 by J. Fox
+# last modified 11 June 03 by J. Fox
 
     # Nonparametric tests menu
     
@@ -10,17 +10,17 @@ twoSampleWilcoxonTest <- function(){
     tkwm.title(top, "Two-Sample Wilcoxon Test")
     groupFrame <- tkframe(top)
     responseFrame <- tkframe(top)
+    groupBox <- tklistbox(groupFrame, height=min(4, length(.twoLevelFactors)),
+        selectmode="single", background="white", exportselection="FALSE")
     groupScroll <- tkscrollbar(groupFrame, repeatinterval=5, 
         command=function(...) tkyview(groupBox, ...))
-    responseScroll <- tkscrollbar(responseFrame, repeatinterval=5, 
-        command=function(...) tkyview(responseBox, ...))    
-    groupBox <- tklistbox(groupFrame, height=min(4, length(.twoLevelFactors)),
-        selectmode="single", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(groupScroll, ...))
+    tkconfigure(groupBox, yscrollcommand=function(...) tkset(groupScroll, ...))
     for (group in .twoLevelFactors) tkinsert(groupBox, "end", group)
     responseBox <- tklistbox(responseFrame, height=min(4, length(.numeric)),
-        selectmode="single", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(responseScroll, ...))
+        selectmode="single", background="white", exportselection="FALSE")
+    responseScroll <- tkscrollbar(responseFrame, repeatinterval=5, 
+        command=function(...) tkyview(responseBox, ...))    
+    tkconfigure(responseBox, yscrollcommand=function(...) tkset(responseScroll, ...))
     for (response in .numeric) tkinsert(responseBox, "end", response)
     onOK <- function(){
         group <- as.character(tkget(groupBox, "active"))
@@ -68,8 +68,6 @@ twoSampleWilcoxonTest <- function(){
         tklabel(top, text="Response Variable (pick one)"), sticky="w")
     tkgrid(groupBox, groupScroll, sticky="nw")
     tkgrid(responseBox, responseScroll, sticky="nw")
-    tkgrid.configure(groupScroll, sticky="ns")
-    tkgrid.configure(responseScroll, sticky="ns")
     tkgrid(groupFrame, responseFrame, sticky="nw")
     tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis"), columnspan=2, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Two-sided"), twosidedButton, sticky="w")
@@ -79,17 +77,25 @@ twoSampleWilcoxonTest <- function(){
     tkgrid(tklabel(testFrame, text="Default"), defaultButton, sticky="w")
     tkgrid(tklabel(testFrame, text="Exact"), exactButton, sticky="w")
     tkgrid(tklabel(testFrame, text="Normal approximation"), normalButton, sticky="w")
-    tkgrid(tklabel(testFrame, text="Normal approximation with\ncontinuity correction"), 
+    tkgrid(tklabel(testFrame, text="Normal approximation with\ncontinuity correction", justify="left"), 
         correctButton, sticky="w")
     tkgrid(alternativeFrame, testFrame, sticky="nw")
     tkgrid(OKbutton, cancelButton, sticky="w")
     tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid.configure(groupScroll, sticky="ns")
+    tkgrid.configure(responseScroll, sticky="ns")
     tkgrid.configure(helpButton, sticky="e")
+    for (row in 0:3) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
     tkselection.set(groupBox, 0)
     tkselection.set(responseBox, 0)
     tkbind(top, "<Return>", onOK)
+    tkwm.deiconify(top)
+    tkgrab.set(top)
     tkfocus(top)
-    tkgrab(top)
+    tkwait.window(top)
     }    
 
 pairedWilcoxonTest <- function(){
@@ -98,15 +104,15 @@ pairedWilcoxonTest <- function(){
     tkwm.title(top, "Paired Wilcoxon Test")
     xFrame <- tkframe(top)
     yFrame <- tkframe(top)
-    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
-    yScroll <- tkscrollbar(yFrame, repeatinterval=5, command=function(...) tkyview(yBox, ...))    
     xBox <- tklistbox(xFrame, height=min(4, length(.numeric)),
-        selectmode="single", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(xScroll, ...))
+        selectmode="single", background="white", exportselection="FALSE")
+    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
+    tkconfigure(xBox, yscrollcommand=function(...) tkset(xScroll, ...))
     for (x in .numeric) tkinsert(xBox, "end", x)
     yBox <- tklistbox(yFrame, height=min(4, length(.numeric)),
-        selectmode="single", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(yScroll, ...))
+        selectmode="single", background="white", exportselection="FALSE")
+    yScroll <- tkscrollbar(yFrame, repeatinterval=5, command=function(...) tkyview(yBox, ...))    
+    tkconfigure(yBox, yscrollcommand=function(...) tkset(yScroll, ...))
     for (y in .numeric) tkinsert(yBox, "end", y)
     onOK <- function(){
         x <- as.character(tkget(xBox, "active"))
@@ -172,8 +178,6 @@ pairedWilcoxonTest <- function(){
         tklabel(top, text="Second variable (pick one)"), sticky="w")
     tkgrid(xBox, xScroll, sticky="nw")
     tkgrid(yBox, yScroll, sticky="nw")
-    tkgrid.configure(xScroll, sticky="ns")
-    tkgrid.configure(yScroll, sticky="ns")    
     tkgrid(xFrame, yFrame, sticky="nw")    
     tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis"), columnspan=2, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Two-sided"), twosidedButton, sticky="w")
@@ -183,17 +187,25 @@ pairedWilcoxonTest <- function(){
     tkgrid(tklabel(testFrame, text="Default"), defaultButton, sticky="w")
     tkgrid(tklabel(testFrame, text="Exact"), exactButton, sticky="w")
     tkgrid(tklabel(testFrame, text="Normal approximation"), normalButton, sticky="w")
-    tkgrid(tklabel(testFrame, text="Normal approximation with\ncontinuity correction"), 
+    tkgrid(tklabel(testFrame, text="Normal approximation with\ncontinuity correction", justify="left"), 
         correctButton, sticky="w")    
     tkgrid(alternativeFrame, testFrame, sticky="n")
     tkgrid(OKbutton, cancelButton, sticky="w")
     tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid.configure(xScroll, sticky="ns")
+    tkgrid.configure(yScroll, sticky="ns")    
     tkgrid.configure(helpButton, sticky="e")
+    for (row in 0:3) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
     tkselection.set(xBox, 0)
     tkselection.set(yBox, 0)
     tkbind(top, "<Return>", onOK)
+    tkwm.deiconify(top)
+    tkgrab.set(top)
     tkfocus(top)
-    tkgrab(top)
+    tkwait.window(top)
     }
     
 KruskalWallisTest <- function(){
@@ -202,17 +214,17 @@ KruskalWallisTest <- function(){
     tkwm.title(top, "Kruskal-Wallis Rank Sum Test")
     groupFrame <- tkframe(top)
     responseFrame <- tkframe(top)
+    groupBox <- tklistbox(groupFrame, height=min(4, length(.factors)),
+        selectmode="single", background="white", exportselection="FALSE")
     groupScroll <- tkscrollbar(groupFrame, repeatinterval=5, 
         command=function(...) tkyview(groupBox, ...))
-    responseScroll <- tkscrollbar(responseFrame, repeatinterval=5, 
-        command=function(...) tkyview(responseBox, ...))    
-    groupBox <- tklistbox(groupFrame, height=min(4, length(.factors)),
-        selectmode="single", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(groupScroll, ...))
+    tkconfigure(groupBox, yscrollcommand=function(...) tkset(groupScroll, ...))
     for (group in .factors) tkinsert(groupBox, "end", group)
     responseBox <- tklistbox(responseFrame, height=min(4, length(.numeric)),
-        selectmode="single", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(responseScroll, ...))
+        selectmode="single", background="white", exportselection="FALSE")
+    responseScroll <- tkscrollbar(responseFrame, repeatinterval=5, 
+        command=function(...) tkyview(responseBox, ...))    
+    tkconfigure(responseBox, yscrollcommand=function(...) tkset(responseScroll, ...))
     for (response in .numeric) tkinsert(responseBox, "end", response)
     onOK <- function(){
         group <- as.character(tkget(groupBox, "active"))
@@ -243,14 +255,20 @@ KruskalWallisTest <- function(){
     tkgrid(groupBox, groupScroll, sticky="nw")
     tkgrid(responseBox, responseScroll, sticky="nw")
     tkgrid(groupFrame, responseFrame, sticky="nw")
-    tkgrid.configure(responseScroll, sticky="ns")
-    tkgrid.configure(groupScroll, sticky="ns")
     tkgrid(OKbutton, cancelButton, sticky="w")
     tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid.configure(responseScroll, sticky="ns")
+    tkgrid.configure(groupScroll, sticky="ns")
     tkgrid.configure(helpButton, sticky="e")
+    for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
     tkselection.set(groupBox, 0)
     tkselection.set(responseBox, 0)
     tkbind(top, "<Return>", onOK)
+    tkwm.deiconify(top)
+    tkgrab.set(top)
     tkfocus(top)
-    tkgrab(top)
+    tkwait.window(top)
     }

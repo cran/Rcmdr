@@ -1,18 +1,42 @@
 # The R Commander and command logger
 
-# last modified 23 May 03 by J. Fox
+# last modified 12 June 03 by J. Fox
 
 Commander <- function(){
-    if (.Platform$OS.type != "windows") assign(".oldPager", options(pager=tkpager), envir=.GlobalEnv)
-    assign(".saveOptions", options(warn=1, contrasts=c("contr.Treatment", "contr.poly"), 
+    images <- paste(.path.package(package="Rcmdr")[1], "/", "bitmaps", "/", sep="")
+    menus <- paste(.path.package(package="Rcmdr")[1], "/", "menus", "/", sep="")
+    assign(".activeDataSet", NULL, envir=.GlobalEnv)
+    assign(".activeModel", NULL, envir=.GlobalEnv)
+    assign(".logFileName", NULL, envir=.GlobalEnv)
+    log.font.size <- options("Rcmdr")[[1]]$log.font.size
+    log.font.size <- if (is.null(log.font.size)) 10 else log.font.size
+    assign(".logFont", tkfont.create(family="courier", size=log.font.size), envir=.GlobalEnv)
+    scale.factor <- options("Rcmdr")[[1]]$scale.factor
+    if (!is.null(scale.factor)) .Tcl(paste("tk scaling ", scale.factor, sep=""))
+    contrasts <- options("Rcmdr")[[1]]$contrasts
+    contrasts <- if (is.null(contrasts)) c("contr.Treatment", "contr.poly") else contrasts
+    assign(".saveOptions", options(warn=1, contrasts=contrasts, 
         na.action="na.exclude"), envir=.GlobalEnv)
-    options()
+    log.height <- options("Rcmdr")[[1]]$log.height
+    log.height <- if (is.null(log.height)) "15" else as.character(log.height)
+    log.width <- options("Rcmdr")[[1]]$log.width
+    log.width <- if (is.null(log.width)) "70" else as.character(log.width)    
+    if (.Platform$OS.type != "windows") {
+        assign(".oldPager", options(pager=RcmdrPager), envir=.GlobalEnv)
+        default.font.size <- options("Rcmdr")[[1]]$default.font.size
+        default.font.size <- if (is.null(default.font.size)) "10" else as.character(default.font.size)
+        default.font <- options("Rcmdr")[[1]]$default.font
+        default.font <- if (is.null(default.font)) paste("*helvetica-medium-r-normal-*-",
+            default.font.size, "*", sep="") else default.font
+        .Tcl(paste("option add *font ", default.font, sep=""))
+        } 
     assign(".commander", tktoplevel(), envir=.GlobalEnv)
     tkwm.title(.commander, "R Commander")
     tkwm.protocol(.commander, "WM_DELETE_WINDOW", closeCommander)
     topMenu <- tkmenu(.commander)
     tkconfigure(.commander, menu=topMenu)
-    Menus <- read.table(paste(.menus, "Rcmdr-menus.txt", sep=""), as.is=TRUE)
+    .commander.done <<- tclVar("0") # to address problem in Debian Linux
+    Menus <- read.table(paste(menus, "Rcmdr-menus.txt", sep=""), as.is=TRUE)
     for (m in 1:nrow(Menus)){
         if (Menus[m, 1] == "menu") assign(Menus[m, 2], tkmenu(eval(parse(text=Menus[m, 3])), tearoff=FALSE)) 
         else if (Menus[m, 1] == "item") {
@@ -48,7 +72,9 @@ Commander <- function(){
                 var.value <- strsplit(line, "<-")[[1]]
                 var <- gsub(" ", "", var.value[1])
                 value <- var.value[2]
-                assign(var, justDoIt(value), envir=.GlobalEnv)
+                if ( (length(grep("\\$", var)) > 0) || (length(grep("\\[", var)) > 0) ) 
+                    justDoIt(paste(var, "<<-", value))
+                else assign(var, justDoIt(value), envir=.GlobalEnv)
                 }
             else if (length(grep("^remove\\(", line)) > 0){
                 line <- sub(")", ", envir=.GlobalEnv)", line)
@@ -81,42 +107,50 @@ Commander <- function(){
     controlsFrame <- tkframe(.commander)
     editButton <- tkbutton(controlsFrame, text="Edit data set", command=onEdit)
     viewButton <- tkbutton(controlsFrame, text="View data set", command=onView)
-    submitButton <- tkbutton(.commander, bitmap=paste("@", .images, "submit.xbm", sep=""), 
+    submitButton <- tkbutton(.commander, bitmap=paste("@", images, "submit.xbm", sep=""), 
         borderwidth="2", command=onSubmit)
     assign(".logCommands", tclVar("1"), envir=.GlobalEnv)
     logCheckBox <- tkcheckbutton(controlsFrame, variable=.logCommands)
+    assign(".attachDataSet", tclVar("1"), envir=.GlobalEnv)
+    attachCheckBox <- tkcheckbutton(controlsFrame, variable=.attachDataSet)
     assign(".dataSetName", tclVar("<No active dataset>  "), envir=.GlobalEnv)
     assign(".dataSetLabel", tklabel(controlsFrame, textvariable=.dataSetName, fg="red"),
         envir=.GlobalEnv)
-    tkgrid(tklabel(controlsFrame, bitmap=paste("@", .images, "Rcmdr.xbm", sep=""), fg="red"), 
-        tklabel(controlsFrame, text="Data set:"), .dataSetLabel, editButton, viewButton, 
-        tklabel(controlsFrame, text="  Log commands:"), logCheckBox, sticky="w")
-    tkgrid(controlsFrame, sticky="w", columnspan="2")
     logFrame <- tkframe(.commander)
+    assign(".log", tktext(logFrame, bg="white", font=.logFont, 
+        height=log.height, width=log.width, wrap="none"),  envir=.GlobalEnv)
     logXscroll <- tkscrollbar(logFrame, repeatinterval=5, orient="horizontal",
         command=function(...) tkxview(.log, ...))
     logYscroll <- tkscrollbar(logFrame, repeatinterval=5,
         command=function(...) tkyview(.log, ...))
-    assign(".log", tktext(logFrame, bg="white", font=.logFont, 
-        height="10", width="50",
-        xscrollcommand=function(...) tkset(logXscroll, ...),
-        yscrollcommand=function(...) tkset(logYscroll, ...),
-        wrap="none"),  envir=.GlobalEnv)
-    tkgrid(.log, logYscroll)
-    tkgrid(logXscroll)
-    tkgrid.configure(logYscroll, sticky="ns")
-    tkgrid.configure(logXscroll, sticky="ew")
-    tkgrid(logFrame, columnspan="2")
+    tkconfigure(.log, xscrollcommand=function(...) tkset(logXscroll, ...))
+    tkconfigure(.log, yscrollcommand=function(...) tkset(logYscroll, ...))
     assign(".modelName", tclVar("<No active model>"), envir=.GlobalEnv)
     bottomLeftFrame <- tkframe(.commander)
     assign(".modelLabel", tklabel(bottomLeftFrame, textvariable=.modelName, fg="red"), envir=.GlobalEnv)
+    tkgrid(tklabel(controlsFrame, bitmap=paste("@", images, "Rcmdr.xbm", sep=""), fg="red"), 
+        tklabel(controlsFrame, text="Data set:"), .dataSetLabel, editButton, viewButton, 
+        tklabel(controlsFrame, text="  Log commands:"), logCheckBox, 
+        tklabel(controlsFrame, text="  Attach active data set:"), attachCheckBox, sticky="w")
+    tkgrid(controlsFrame, sticky="w", columnspan="2")
+    tkgrid(.log, logYscroll)
+    tkgrid(logXscroll)
+    tkgrid(logFrame, columnspan="2")
     tkgrid(tklabel(bottomLeftFrame, text="Model: "), .modelLabel)
     tkgrid(bottomLeftFrame, submitButton)
+    tkgrid.configure(logYscroll, sticky="ns")
+    tkgrid.configure(logXscroll, sticky="ew")
     tkgrid.configure(submitButton, sticky="e")
     tkgrid.configure(bottomLeftFrame, sticky="w")
+    for (row in 0:3) tkgrid.rowconfigure(.commander, row, weight=0)
+    for (col in 0:1) tkgrid.columnconfigure(.commander, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(.commander, 0, 0)
+    tkwm.deiconify(.commander)
     tkfocus(.commander)
+    tkwait <- options("Rcmdr")[[1]]$tkwait  # to address problem in Debian Linux
+    if ((!is.null(tkwait)) && tkwait) tkwait.variable(.commander.done)
     }
-
 
 logger <- function(command){
     if (tclvalue(.logCommands) == "1") {

@@ -1,2 +1,2 @@
-export(Commander, colPercents, rowPercents, levene.test, influence.plot, reliability, partial.cor)
+export(Commander, colPercents, rowPercents, levene.test, influence.plot, reliability, partial.cor, RcmdrPager)
 

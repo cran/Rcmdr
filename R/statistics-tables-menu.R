@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 20 May 03 by J. Fox
+# last modified 11 June 03 by J. Fox
 
     # Tables menu
     
@@ -10,24 +10,24 @@ twoWayTable <- function(){
     tkwm.title(top, "Two-Way Table")
     rowFrame <- tkframe(top)
     columnFrame <- tkframe(top)
+    rowBox <- tklistbox(rowFrame, height=min(4, length(.factors)),
+        selectmode="single", background="white", exportselection="FALSE")
     rowScroll <- tkscrollbar(rowFrame, repeatinterval=5, 
         command=function(...) tkyview(rowBox, ...))
-    columnScroll <- tkscrollbar(columnFrame, repeatinterval=5, 
-        command=function(...) tkyview(columnBox, ...))    
-    rowBox <- tklistbox(rowFrame, height=min(4, length(.factors)),
-        selectmode="single", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(rowScroll, ...))
+    tkconfigure(rowBox, yscrollcommand=function(...) tkset(rowScroll, ...))
     for (var in .factors) tkinsert(rowBox, "end", var)
     columnBox <- tklistbox(columnFrame, height=min(4, length(.factors)),
-        selectmode="single", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(columnScroll, ...))
+        selectmode="single", background="white", exportselection="FALSE")
+    columnScroll <- tkscrollbar(columnFrame, repeatinterval=5, 
+        command=function(...) tkyview(columnBox, ...))    
+    tkconfigure(columnBox, yscrollcommand=function(...) tkset(columnScroll, ...))
     for (var in .factors) tkinsert(columnBox, "end", var)
     subsetVariable <- tclVar("<all valid cases>")
     subsetFrame <- tkframe(top)
-    subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable,
-        xscrollcommand=function(...) tkset(subsetScroll, ...))
+    subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable)
     subsetScroll <- tkscrollbar(subsetFrame, orient="horizontal",
         repeatinterval=5, command=function(...) tkyview(subsetEntry, ...))
+    tkconfigure(subsetEntry, xscrollcommand=function(...) tkset(subsetScroll, ...))
     onOK <- function(){
         row <- as.character(tkget(rowBox, "active"))
         column <- as.character(tkget(columnBox, "active"))
@@ -46,7 +46,6 @@ twoWayTable <- function(){
             twoWayTable()
             return()
             }
-
         tkgrab.release(top)
         tkdestroy(top)
         command <- paste("xtabs(~", row, "+", column, ", data=", .activeDataSet, 
@@ -118,8 +117,6 @@ twoWayTable <- function(){
     tkgrid(tklabel(testsFrame, text="Chisquare test of independence"), chisqCheckBox, sticky="e")
     tkgrid(tklabel(testsFrame, text="Print expected frequencies"), expFreqCheckBox, sticky="e")
     tkgrid(tklabel(testsFrame, text="Fisher's exact test"), fisherCheckBox, sticky="e")
-    tkgrid.configure(chisqCheckBox, sticky="w")
-    tkgrid.configure(fisherCheckBox, sticky="w")
     tkgrid(testsFrame)
     tkgrid(tklabel(subsetFrame, text="Subset expression"), sticky="w")
     tkgrid(subsetEntry, sticky="w")
@@ -127,14 +124,22 @@ twoWayTable <- function(){
     tkgrid(subsetFrame, sticky="w")
     tkgrid(OKbutton, cancelButton, sticky="w")
     tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid.configure(chisqCheckBox, sticky="w")
+    tkgrid.configure(fisherCheckBox, sticky="w")
     tkgrid.configure(helpButton, sticky="e")
-    tkselection.set(rowBox, 0)
-    tkselection.set(columnBox, 0)
     tkgrid.configure(rowScroll, sticky="ns")
     tkgrid.configure(columnScroll, sticky="ns")
+    for (row in 0:6) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
+    tkselection.set(rowBox, 0)
+    tkselection.set(columnBox, 0)
     tkbind(top, "<Return>", onOK)
+    tkwm.deiconify(top)
+    tkgrab.set(top)
     tkfocus(top)
-    tkgrab(top)
+    tkwait.window(top)
     }
 
 multiWayTable <- function(){
@@ -144,30 +149,30 @@ multiWayTable <- function(){
     rowFrame <- tkframe(top)
     columnFrame <- tkframe(top)
     controlFrame <- tkframe(top)
+    rowBox <- tklistbox(rowFrame, height=min(4, length(.factors)),
+        selectmode="single", background="white", exportselection="FALSE")
     rowScroll <- tkscrollbar(rowFrame, repeatinterval=5, 
         command=function(...) tkyview(rowBox, ...))
-    columnScroll <- tkscrollbar(columnFrame, repeatinterval=5, 
-        command=function(...) tkyview(columnBox, ...))   
-    controlScroll <- tkscrollbar(controlFrame, repeatinterval=5, 
-        command=function(...) tkyview(controlBox, ...))    
-    rowBox <- tklistbox(rowFrame, height=min(4, length(.factors)),
-        selectmode="single", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(rowScroll, ...))
+    tkconfigure(rowBox, yscrollcommand=function(...) tkset(rowScroll, ...))
     for (var in .factors) tkinsert(rowBox, "end", var)
     columnBox <- tklistbox(columnFrame, height=min(4, length(.factors)),
-        selectmode="single", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(columnScroll, ...))
+        selectmode="single", background="white", exportselection="FALSE")
+    columnScroll <- tkscrollbar(columnFrame, repeatinterval=5, 
+        command=function(...) tkyview(columnBox, ...))   
+    tkconfigure(columnBox, yscrollcommand=function(...) tkset(columnScroll, ...))
     for (var in .factors) tkinsert(columnBox, "end", var)
     controlBox <- tklistbox(controlFrame, height=min(4, length(.factors)),
-        selectmode="multiple", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(controlScroll, ...))
+        selectmode="multiple", background="white", exportselection="FALSE")
+    controlScroll <- tkscrollbar(controlFrame, repeatinterval=5, 
+        command=function(...) tkyview(controlBox, ...))    
+    tkconfigure(controlBox, yscrollcommand=function(...) tkset(controlScroll, ...))
     for (var in .factors) tkinsert(controlBox, "end", var)
     subsetVariable <- tclVar("<all valid cases>")
     subsetFrame <- tkframe(top)
-    subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable,
-        xscrollcommand=function(...) tkset(subsetScroll, ...))
+    subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable)
     subsetScroll <- tkscrollbar(subsetFrame, orient="horizontal",
         repeatinterval=5, command=function(...) tkyview(subsetEntry, ...))
+    tkconfigure(subsetEntry, xscrollcommand=function(...) tkset(subsetScroll, ...))
     onOK <- function(){
         row <- as.character(tkget(rowBox, "active"))
         column <- as.character(tkget(columnBox, "active"))
@@ -244,12 +249,18 @@ multiWayTable <- function(){
     tkgrid(OKbutton, cancelButton, sticky="w")
     tkgrid(buttonsFrame, helpButton, sticky="w")
     tkgrid.configure(helpButton, sticky="e")
-    tkselection.set(rowBox, 0)
-    tkselection.set(columnBox, 0)
     tkgrid.configure(rowScroll, sticky="ns")
     tkgrid.configure(columnScroll, sticky="ns")
     tkgrid.configure(controlScroll, sticky="ns")
+    for (row in 0:5) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:2) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
+    tkselection.set(rowBox, 0)
+    tkselection.set(columnBox, 0)
     tkbind(top, "<Return>", onOK)
+    tkwm.deiconify(top)
+    tkgrab.set(top)
     tkfocus(top)
-    tkgrab(top)
+    tkwait.window(top)
     }

@@ -1,18 +1,30 @@
 # Statistics Menu dialogs
 
-# last modified 25 May 03 by J. Fox
+# last modified 11 June 03 by J. Fox
 
     # Summaries menu
+    
+summarizeDataSet <- function(){
+    if (activeDataSet() == FALSE) return()
+    nvar <- length(.variables)
+    if (nvar > 10){
+        response <- tkmessageBox(message=paste("There are ", nvar, " variables in the data set ",
+            .activeDataSet, ".\nDo you want to proceed?", sep=""),
+            icon="question", type="okcancel", default="cancel")
+        if ("cancel" == tclvalue(response)) return()
+        }
+    doItAndPrint(paste("summary(", .activeDataSet, ")", sep=""))
+    }
 
 numericalSummaries <- function(){
     if (activeDataSet() == FALSE) return()
     top <- tktoplevel()
     tkwm.title(top, "Numerical Summaries")
     xFrame <- tkframe(top)
-    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
     xBox <- tklistbox(xFrame, height=min(4, length(.numeric)),
-        selectmode="single", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(xScroll, ...))
+        selectmode="single", background="white", exportselection="FALSE")
+    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
+    tkconfigure(xBox, yscrollcommand=function(...) tkset(xScroll, ...))
     for (x in .numeric) tkinsert(xBox, "end", x)
     checkBoxFrame <- tkframe(top)
     meanVariable <- tclVar("1")
@@ -52,38 +64,48 @@ numericalSummaries <- function(){
         subdialog <- tktoplevel()
         tkwm.title(subdialog, "Groups")
         groupsFrame <- tkframe(subdialog)
-        groupsScroll <- tkscrollbar(groupsFrame, repeatinterval=5, command=function(...) tkyview(groupsBox, ...))
         groupsBox <- tklistbox(groupsFrame, height=min(4, length(.factors)),
-            selectmode="single", background="white", exportselection="FALSE",
-            yscrollcommand=function(...) tkset(groupsScroll, ...))
+            selectmode="single", background="white", exportselection="FALSE")
+        groupsScroll <- tkscrollbar(groupsFrame, repeatinterval=5, command=function(...) tkyview(groupsBox, ...))
+        tkconfigure(groupsBox, yscrollcommand=function(...) tkset(groupsScroll, ...))
         for (groups in .factors) tkinsert(groupsBox, "end", groups)
         onOKsub <- function() {
             groups <- as.character(tkget(groupsBox, "active"))
             assign(".groups", groups, envir=.GlobalEnv)
             tkgrab.release(subdialog)
-            tkfocus(top)
-            tkgrab(top)
             tkdestroy(subdialog)
+            tkwm.deiconify(top)
+            tkgrab.set(top)
+            tkfocus(top)
+            tkwait.window(top)
             }
         onCancelSub <- function() {
             tkgrab.release(subdialog)  
-            tkfocus(top)
-            tkgrab(top)
             tkdestroy(subdialog)
+            tkwm.deiconify(top)
+            tkgrab.set(top)
+            tkfocus(top)
+            tkwait.window(top)
             }
         subButtonFrame <- tkframe(subdialog)
         OKSubButton <- tkbutton(subButtonFrame, text="OK", width="12", command=onOKsub, default="active")
         cancelSubButton <- tkbutton(subButtonFrame, text="Cancel", width="12", command=onCancelSub)
-        tkselection.set(groupsBox, 0)
         tkgrid(tklabel(subdialog, text="Groups (pick one)"), sticky="w")
         tkgrid(groupsBox, groupsScroll, sticky="nw")
         tkgrid(groupsFrame, sticky="w")
-        tkgrid.configure(groupsScroll, sticky="ns")
         tkgrid(OKSubButton, cancelSubButton, sticky="w")
         tkgrid(subButtonFrame, sticky="w")
-        tkfocus(subdialog)
-        tkgrab(subdialog)
+        for (row in 0:2) tkgrid.rowconfigure(subdialog, row, weight=0)
+        for (col in 0:0) tkgrid.columnconfigure(subdialog, col, weight=0)
+        .Tcl("update idletasks")
+        tkwm.resizable(subdialog, 0, 0)
+        tkgrid.configure(groupsScroll, sticky="ns")
+        tkselection.set(groupsBox, 0)
         tkbind(subdialog, "<Return>", onOKsub)
+        tkwm.deiconify(subdialog)
+        tkgrab.set(subdialog)
+        tkfocus(subdialog)
+        tkwait.window(subdialog)
         }
     onCancel <- function() {
         tkgrab.release(top)
@@ -101,7 +123,6 @@ numericalSummaries <- function(){
     groupsButton <- tkbutton(top, text="Summarize by groups", command=onGroups)
     tkgrid(tklabel(top, text="Variable (pick one)"), sticky="w")
     tkgrid(xBox, xScroll, sticky="nw")
-    tkgrid.configure(xScroll, sticky="ns")
     tkgrid(xFrame, sticky="w")    
     tkgrid(tklabel(checkBoxFrame, text="Mean"), meanCheckBox, sticky="w")
     tkgrid(tklabel(checkBoxFrame, text="Standard deviation"), sdCheckBox, sticky="w")
@@ -112,10 +133,17 @@ numericalSummaries <- function(){
     tkgrid(groupsButton, sticky="w")
     tkgrid(OKbutton, cancelButton, tklabel(buttonFrame, text="    "), helpButton, sticky="w")
     tkgrid(buttonFrame, sticky="w")
+    tkgrid.configure(xScroll, sticky="ns")
+    for (row in 0:5) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
     tkselection.set(xBox, 0)
     tkbind(top, "<Return>", onOK)
+    tkwm.deiconify(top)
+    tkgrab.set(top)
     tkfocus(top)
-    tkgrab(top)
+    tkwait.window(top)
     }
 
 frequencyDistribution <- function(){
@@ -123,10 +151,10 @@ frequencyDistribution <- function(){
     top <- tktoplevel()
     tkwm.title(top, "Frequency Distribution")
     xFrame <- tkframe(top)
-    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
     xBox <- tklistbox(xFrame, height=min(4, length(.factors)),
-        selectmode="single", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(xScroll, ...))
+        selectmode="single", background="white", exportselection="FALSE")
+    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
+    tkconfigure(xBox, yscrollcommand=function(...) tkset(xScroll, ...))
     for (x in .factors) tkinsert(xBox, "end", x)
     onOK <- function(){
         x <- as.character(tkget(xBox, "active"))
@@ -157,14 +185,20 @@ frequencyDistribution <- function(){
     helpButton <- tkbutton(buttonFrame, text="Help", width="12", command=onHelp)
     tkgrid(tklabel(top, text="Variable (pick one)"), sticky="w")
     tkgrid(xBox, xScroll, sticky="nw")
-    tkgrid.configure(xScroll, sticky="ns")
     tkgrid(xFrame, sticky="w")    
     tkgrid(OKbutton, cancelButton, tklabel(buttonFrame, text="    "), helpButton, sticky="w")
     tkgrid(buttonFrame, sticky="w")
+    tkgrid.configure(xScroll, sticky="ns")
+    for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
     tkselection.set(xBox, 0)
     tkbind(top, "<Return>", onOK)
+    tkwm.deiconify(top)
+    tkgrab.set(top)
     tkfocus(top)
-    tkgrab(top)
+    tkwait.window(top)
     }
 
 statisticsTable <- function(){
@@ -174,17 +208,17 @@ statisticsTable <- function(){
     variablesFrame <- tkframe(top)
     groupFrame <- tkframe(variablesFrame)
     responseFrame <- tkframe(variablesFrame)
+    groupBox <- tklistbox(groupFrame, height=min(4, length(.factors)),
+        selectmode="multiple", background="white", exportselection="FALSE")
     groupScroll <- tkscrollbar(groupFrame, repeatinterval=5, 
         command=function(...) tkyview(groupBox, ...))
-    responseScroll <- tkscrollbar(responseFrame, repeatinterval=5, 
-        command=function(...) tkyview(responseBox, ...))    
-    groupBox <- tklistbox(groupFrame, height=min(4, length(.factors)),
-        selectmode="multiple", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(groupScroll, ...))
+    tkconfigure(groupBox, yscrollcommand=function(...) tkset(groupScroll, ...))
     for (group in .factors) tkinsert(groupBox, "end", group)
     responseBox <- tklistbox(responseFrame, height=min(4, length(.numeric)),
-        selectmode="single", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(responseScroll, ...))
+        selectmode="single", background="white", exportselection="FALSE")
+    responseScroll <- tkscrollbar(responseFrame, repeatinterval=5, 
+        command=function(...) tkyview(responseBox, ...))    
+    tkconfigure(responseBox, yscrollcommand=function(...) tkset(responseScroll, ...))
     for (response in .numeric) tkinsert(responseBox, "end", response)
     statisticVariable <- tclVar("mean")
     otherVariable <- tclVar("")
@@ -233,8 +267,6 @@ statisticsTable <- function(){
     tkgrid(responseBox, responseScroll, sticky="nw")
     tkgrid(groupFrame, responseFrame, sticky="nw")
     tkgrid(variablesFrame)
-    tkgrid.configure(responseScroll, sticky="ns")
-    tkgrid.configure(groupScroll, sticky="ns")
     tkgrid(tklabel(statisticFrame, text="Mean"), meanButton, sticky="w")
     tkgrid(tklabel(statisticFrame, text="Median"), medianButton, sticky="w")
     tkgrid(tklabel(statisticFrame, text="Standard deviation"), sdButton, sticky="w")
@@ -242,11 +274,19 @@ statisticsTable <- function(){
     tkgrid(statisticFrame, sticky="w")
     tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="    "), helpButton, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
+    tkgrid.configure(responseScroll, sticky="ns")
+    tkgrid.configure(groupScroll, sticky="ns")
     tkgrid.configure(helpButton, sticky="e")
+    for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
     tkselection.set(responseBox, 0)
     tkbind(top, "<Return>", onOK)
+    tkwm.deiconify(top)
+    tkgrab.set(top)
     tkfocus(top)
-    tkgrab(top)
+    tkwait.window(top)
     }
     
 correlationMatrix <- function(){
@@ -254,10 +294,10 @@ correlationMatrix <- function(){
     top <- tktoplevel()
     tkwm.title(top, "Correlation Matrix")
     xFrame <- tkframe(top)
-    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
     xBox <- tklistbox(xFrame, height=min(4, length(.numeric)),
-        selectmode="multiple", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(xScroll, ...))
+        selectmode="multiple", background="white", exportselection="FALSE")
+    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
+    tkconfigure(xBox, yscrollcommand=function(...) tkset(xScroll, ...))
     for (x in .numeric) tkinsert(xBox, "end", x)
     correlationsVariable <- tclVar("Pearson")
     correlationsFrame <- tkframe(top)
@@ -321,9 +361,15 @@ correlationMatrix <- function(){
     tkgrid(correlationsFrame, sticky="w")
     tkgrid(OKbutton, cancelButton, sticky="w")
     tkgrid(buttonsFrame, tklabel(top, text="    "), helpButton, sticky="w")
+    for (row in 0:3) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
     tkgrid.configure(helpButton, sticky="e")
     tkgrid.configure(xScroll, sticky="ns")
     tkbind(top, "<Return>", onOK)
+    tkwm.deiconify(top)
+    tkgrab.set(top)
     tkfocus(top)
-    tkgrab(top)
+    tkwait.window(top)
     }

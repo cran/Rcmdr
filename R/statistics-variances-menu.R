@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 15 May 03 by J. Fox
+# last modified 11 June 03 by J. Fox
 
     # Variances menu
     
@@ -10,17 +10,17 @@ twoVariancesFTest <- function(){
     tkwm.title(top, "Two Variances F-Test")
     groupFrame <- tkframe(top)
     responseFrame <- tkframe(top)
+    groupBox <- tklistbox(groupFrame, height=min(4, length(.twoLevelFactors)),
+        selectmode="single", background="white", exportselection="FALSE")
     groupScroll <- tkscrollbar(groupFrame, repeatinterval=5, 
         command=function(...) tkyview(groupBox, ...))
-    responseScroll <- tkscrollbar(responseFrame, repeatinterval=5, 
-        command=function(...) tkyview(responseBox, ...))    
-    groupBox <- tklistbox(groupFrame, height=min(4, length(.twoLevelFactors)),
-        selectmode="single", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(groupScroll, ...))
+    tkconfigure(groupBox, yscrollcommand=function(...) tkset(groupScroll, ...))
     for (group in .twoLevelFactors) tkinsert(groupBox, "end", group)
     responseBox <- tklistbox(responseFrame, height=min(4, length(.numeric)),
-        selectmode="single", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(responseScroll, ...))
+        selectmode="single", background="white", exportselection="FALSE")
+    responseScroll <- tkscrollbar(responseFrame, repeatinterval=5, 
+        command=function(...) tkyview(responseBox, ...))    
+    tkconfigure(responseBox, yscrollcommand=function(...) tkset(responseScroll, ...))
     for (response in .numeric) tkinsert(responseBox, "end", response)
     onOK <- function(){
         group <- as.character(tkget(groupBox, "active"))
@@ -61,9 +61,7 @@ twoVariancesFTest <- function(){
         tklabel(top, text="Response Variable (pick one)"), sticky="w")
     tkgrid(groupBox, groupScroll, sticky="nw")
     tkgrid(responseBox, responseScroll, sticky="nw")
-    tkgrid.configure(groupScroll, sticky="ns")
-    tkgrid.configure(responseScroll, sticky="ns")
-    tkgrid(groupFrame, responseFrame, sticky="w")
+    tkgrid(groupFrame, responseFrame, sticky="nw")
     tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis"), columnspan=2, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Two-sided"), twosidedButton, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Difference < 0"), lessButton, sticky="w")
@@ -73,12 +71,20 @@ twoVariancesFTest <- function(){
     tkgrid(alternativeFrame, confidenceFrame, sticky="n")
     tkgrid(OKbutton, cancelButton, sticky="w")
     tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid.configure(groupScroll, sticky="ns")
+    tkgrid.configure(responseScroll, sticky="ns")
     tkgrid.configure(helpButton, sticky="e")
+    for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
     tkselection.set(groupBox, 0)
     tkselection.set(responseBox, 0)
     tkbind(top, "<Return>", onOK)
+    tkwm.deiconify(top)
+    tkgrab.set(top)
     tkfocus(top)
-    tkgrab(top)
+    tkwait.window(top)
     }
 
 BartlettTest <- function(){
@@ -87,17 +93,17 @@ BartlettTest <- function(){
     tkwm.title(top, "Bartlett's Test")
     groupFrame <- tkframe(top)
     responseFrame <- tkframe(top)
+    groupBox <- tklistbox(groupFrame, height=min(4, length(.factors)),
+        selectmode="single", background="white", exportselection="FALSE")
     groupScroll <- tkscrollbar(groupFrame, repeatinterval=5, 
         command=function(...) tkyview(groupBox, ...))
-    responseScroll <- tkscrollbar(responseFrame, repeatinterval=5, 
-        command=function(...) tkyview(responseBox, ...))    
-    groupBox <- tklistbox(groupFrame, height=min(4, length(.factors)),
-        selectmode="single", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(groupScroll, ...))
+    tkconfigure(groupBox, yscrollcommand=function(...) tkset(groupScroll, ...))
     for (group in .factors) tkinsert(groupBox, "end", group)
     responseBox <- tklistbox(responseFrame, height=min(4, length(.numeric)),
-        selectmode="single", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(responseScroll, ...))
+        selectmode="single", background="white", exportselection="FALSE")
+    responseScroll <- tkscrollbar(responseFrame, repeatinterval=5, 
+        command=function(...) tkyview(responseBox, ...))    
+    tkconfigure(responseBox, yscrollcommand=function(...) tkset(responseScroll, ...))
     for (response in .numeric) tkinsert(responseBox, "end", response)
     onOK <- function(){
         group <- as.character(tkget(groupBox, "active"))
@@ -128,16 +134,22 @@ BartlettTest <- function(){
     tkgrid(groupBox, groupScroll, sticky="nw")
     tkgrid(responseBox, responseScroll, sticky="nw")
     tkgrid(groupFrame, responseFrame, sticky="nw")
-    tkgrid.configure(responseScroll, sticky="ns")
-    tkgrid.configure(groupScroll, sticky="ns")
     tkgrid(OKbutton, cancelButton, sticky="w")
     tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid.configure(responseScroll, sticky="ns")
+    tkgrid.configure(groupScroll, sticky="ns")
     tkgrid.configure(helpButton, sticky="e")
+    for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
     tkselection.set(groupBox, 0)
     tkselection.set(responseBox, 0)
     tkbind(top, "<Return>", onOK)
+    tkwm.deiconify(top)
+    tkgrab.set(top)
     tkfocus(top)
-    tkgrab(top)
+    tkwait.window(top)
     }
 
 LeveneTest <- function(){
@@ -146,17 +158,17 @@ LeveneTest <- function(){
     tkwm.title(top, "Levene's Test")
     groupFrame <- tkframe(top)
     responseFrame <- tkframe(top)
+    groupBox <- tklistbox(groupFrame, height=min(4, length(.factors)),
+        selectmode="single", background="white", exportselection="FALSE")
     groupScroll <- tkscrollbar(groupFrame, repeatinterval=5, 
         command=function(...) tkyview(groupBox, ...))
-    responseScroll <- tkscrollbar(responseFrame, repeatinterval=5, 
-        command=function(...) tkyview(responseBox, ...))    
-    groupBox <- tklistbox(groupFrame, height=min(4, length(.factors)),
-        selectmode="single", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(groupScroll, ...))
+    tkconfigure(groupBox, yscrollcommand=function(...) tkset(groupScroll, ...))
     for (group in .factors) tkinsert(groupBox, "end", group)
     responseBox <- tklistbox(responseFrame, height=min(4, length(.numeric)),
-        selectmode="single", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(responseScroll, ...))
+        selectmode="single", background="white", exportselection="FALSE")
+    responseScroll <- tkscrollbar(responseFrame, repeatinterval=5, 
+        command=function(...) tkyview(responseBox, ...))    
+    tkconfigure(responseBox, yscrollcommand=function(...) tkset(responseScroll, ...))
     for (response in .numeric) tkinsert(responseBox, "end", response)
     onOK <- function(){
         group <- as.character(tkget(groupBox, "active"))
@@ -187,14 +199,20 @@ LeveneTest <- function(){
     tkgrid(groupBox, groupScroll, sticky="nw")
     tkgrid(responseBox, responseScroll, sticky="nw")
     tkgrid(groupFrame, responseFrame, sticky="nw")
-    tkgrid.configure(responseScroll, sticky="ns")
-    tkgrid.configure(groupScroll, sticky="ns")
     tkgrid(OKbutton, cancelButton, sticky="w")
     tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid.configure(responseScroll, sticky="ns")
+    tkgrid.configure(groupScroll, sticky="ns")
     tkgrid.configure(helpButton, sticky="e")
+    for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
     tkselection.set(groupBox, 0)
     tkselection.set(responseBox, 0)
     tkbind(top, "<Return>", onOK)
+    tkwm.deiconify(top)
+    tkgrab.set(top)
     tkfocus(top)
-    tkgrab(top)
+    tkwait.window(top)
     }

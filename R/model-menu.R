@@ -1,41 +1,54 @@
 # Model menu dialogs
 
-# last modified 23 May 03 by J. Fox
+# last modified 11 June 03 by J. Fox
 
 selectActiveModel <- function(){
+    models <- union(listLinearModels(), listGeneralizedLinearModels())
+    if (length(models) == 0){
+        tkmessageBox(message="There are no models from which to choose.", 
+                icon="error", type="ok")
+        return()
+        }
     top <- tktoplevel()
     tkwm.title(top, "Select Model")
-    models <- union(listLinearModels(), listGeneralizedLinearModels())
     modelsFrame <- tkframe(top)
-    modelsScroll <- tkscrollbar(modelsFrame, repeatinterval=5, 
-        command=function(...) tkyview(dataSetsBox, ...))
     modelsBox <- tklistbox(modelsFrame, height=min(4, length(models)),
-        selectmode="single", background="white",
-        yscrollcommand=function(...) tkset(modelsScroll, ...))
+        selectmode="single", background="white")
+    modelsScroll <- tkscrollbar(modelsFrame, repeatinterval=5, 
+        command=function(...) tkyview(modelsBox, ...))
+    tkconfigure(modelsBox, yscrollcommand=function(...) tkset(modelsScroll, ...))
     for (mod in models) tkinsert(modelsBox, "end", mod)
     tkselection.set(modelsBox, if (is.null(.activeModel)) 0 else which(.activeModel == models) - 1)
+    buttonsFrame <- tkframe(top)
     onOK <- function(){
         activeModel(models[as.numeric(tkcurselection(modelsBox)) + 1])
         tkgrab.release(top)
         tkdestroy(top)
         tkfocus(.commander)
         }
-    OKbutton <- tkbutton(top, text="OK", width="12", command=onOK, default="active")
+    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
         tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }    
-    cancelButton <- tkbutton(top, text="Cancel", width="12", command=onCancel)
-    tkgrid(tklabel(top, fg="red", text=paste("Current model:", tclvalue(.modelName))))
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    tkgrid(tklabel(top, fg="red", text=paste("Current model:", tclvalue(.modelName))), sticky="w")
     tkgrid(tklabel(top, text="Models (pick one)"), sticky="w")
     tkgrid(modelsBox, modelsScroll, sticky="nw")
-    tkgrid.configure(modelsScroll, sticky="ns")
     tkgrid(modelsFrame, columnspan="2", sticky="w")
     tkgrid(OKbutton, cancelButton, sticky="w")
+    tkgrid(buttonsFrame, sticky="w")
+    tkgrid.configure(modelsScroll, sticky="ns")
+    for (row in 0:3) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
+    tkwm.deiconify(top)
+    tkgrab.set(top)
     tkfocus(top)
-    tkgrab(top)
+    tkwait.window(top)
     }
 
 summarizeModel <- function(){
@@ -178,7 +191,13 @@ addObservationStatistics <- function(){
         tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="            "), 
         helpButton, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
+    for (row in 0:5) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
+    tkwm.deiconify(top)
+    tkgrab.set(top)
     tkfocus(top)
-    tkgrab(top)
+    tkwait.window(top)
     }

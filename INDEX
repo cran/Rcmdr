@@ -4,4 +4,5 @@ Commander               R Commander
 influence.plot          Regression Influence Plot
 levene.test             Levene's Test
 partial.cor             Partial Correlations
+RcmdrPager              Pager for Text Files
 reliability             Reliability of a Composite Scale

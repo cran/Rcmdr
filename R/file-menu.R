@@ -1,4 +1,4 @@
-# last modified 23 May 2003 by J. Fox
+# last modified 29 May 2003 by J. Fox
 
 # File menu dialogs
 
@@ -45,7 +45,8 @@ closeCommander <- function(){
     response <- tclvalue(tkmessageBox(message="Exit?",
         icon="question", type="okcancel", default="cancel"))
     if (response == "cancel") return(invisible(response))
-    if (!is.null(.activeDataSet)) justDoIt(logger(paste("detach(", .activeDataSet, ")", sep="")))
+    if (!is.null(.activeDataSet) && (tclvalue(.attachDataSet) == "1")) 
+        justDoIt(logger(paste("detach(", .activeDataSet, ")", sep="")))
     assign(".activeDataSet", NULL, envir=.GlobalEnv)
     assign(".activeModel", NULL, envir=.GlobalEnv)
     if (tclvalue(tkget(.log, "1.0", "end")) != "\n"){
@@ -56,6 +57,8 @@ closeCommander <- function(){
     if (.Platform$OS.type != "windows") options(.oldPager)
     options(.saveOptions)
     tkdestroy(.commander)
+    tkwait <- options("Rcmdr")[[1]]$tkwait  # to address problem in Debian Linux
+    if ((!is.null(tkwait)) && tkwait) tclvalue(.commander.done) <<- "1"   
     return(invisible(response))
     }
     

@@ -68,6 +68,31 @@ Version 0.8-2
     
     o Added Standardize item to Data -> Manage variables menu.
     
+    o Reorganized Data menu, adding "Data in packages" and  "Active data set" submenus, and items to get help on active data set and to list variables in it.
+    
+Version 0.8-3
+
+    o Changed Compute dialog to use with(activeDataSet, expression) rather than to evaluate the expression in the global environment.
+    
+    o Added RcmdrPager function for non-Windows systems, a version of the tkpager modified slightly to use the Rcmdr monospaced font and a white background. This is for non-Windows systems.
+    
+    o Added Data -> Active data set -> Export active data set.
+    
+    o Reworked package initialization so as not to fail when a required package -- probably car -- is missing (thanks to Brian Ripley for help here).
+    
+    o Reworked options, mostly for better font support in non-Windows systems, but also to allow configurable size of log window, etc. Made default log window larger.
+    
+    o Added check box to the Commander window to enable/disable attaching of active data set.
+    
+    o Added flexibility to Data -> Import data -> From text file. Other small changes to Delete variables and Recode dialogs.
+    
+    o Added Statistics -> Summaries -> Active data set.
+    
+    o Cleaned up some dialogs -- for example, lm and glm dialogs have initial focus in the lhs field and tab directly to the rhs field.
+    
+    o Changes to all dialogs to ensure better behaviour, particularly in fast Windows XP systems: preventing scrollbars from sticking and dialogs from displaying completely (thanks to Peter Dalgaard and, especially, Marc Schwartz).
+    
+    o Re-executing lines from the log with assignment to a list (or data frame) element (e.g., data$x <- y) now works.
     
     
     

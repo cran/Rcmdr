@@ -1,6 +1,6 @@
 # R Commander Menu Definitions
 
-# last modified 25 May 03 by J. Fox
+# last modified 13 June 03 by J. Fox
 
 #   type    menu/item      operation/parent  label                                          command/menu
     
@@ -27,6 +27,7 @@
     item    activeMenu      command         "Select active data set..."                     selectActiveDataSet
     item    activeMenu      command         "Help on active data set (if available)"        helpDataSet
     item    activeMenu      command         "Variables in active data set"                  variablesDataSet
+    item    activeMenu      command         "Export active data set..."                     exportDataSet
     item    dataMenu        cascade         "Active data set"                               activeMenu
     menu    variablesMenu   dataMenu        ""                                              ""
     item    variablesMenu   command         "Recode variable..."                            Recode
@@ -34,11 +35,12 @@
     item    variablesMenu   command         "Standardize variables..."                      standardize
     item    variablesMenu   command         "Convert numeric variable to factor..."         numericToFactor
     item    variablesMenu   command         "Reorder factor levels..."                      reorderFactor
-    item    variablesMenu   command         "Delete variable from data set ..."             deleteVariable
+    item    variablesMenu   command         "Delete variables from data set ..."             deleteVariable
     item    dataMenu        cascade         "Manage variables in active data set"           variablesMenu
     item    topMenu         cascade         "Data"                                          dataMenu
     menu    statisticsMenu  topMenu         ""                                              ""  
-    menu    summariesMenu   statisticsMenu  ""                                              "" 
+    menu    summariesMenu   statisticsMenu  ""                                              ""
+    item    summariesMenu   command         "Active data set"                               summarizeDataSet            
     item    summariesMenu   command         "Numerical summaries..."                        numericalSummaries
     item    summariesMenu   command         "Frequency distribution..."                     frequencyDistribution
     item    summariesMenu   command         "Table of statistics..."                        statisticsTable

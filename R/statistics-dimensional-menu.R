@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 25 May 03 by J. Fox
+# last modified 11 June 03 by J. Fox
 
     # Dimensional-analysis menu
     
@@ -9,10 +9,10 @@ Reliability <- function(){
     top <- tktoplevel()
     tkwm.title(top, "Scale Reliability")
     xFrame <- tkframe(top)
-    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
     xBox <- tklistbox(xFrame, height=min(4, length(.numeric)),
-        selectmode="multiple", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(xScroll, ...))
+        selectmode="multiple", background="white", exportselection="FALSE")
+    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
+    tkconfigure(xBox, yscrollcommand=function(...) tkset(xScroll, ...))
     for (x in .numeric) tkinsert(xBox, "end", x)
     onOK <- function(){
         x <- .numeric[as.numeric(tkcurselection(xBox)) + 1]
@@ -51,9 +51,15 @@ Reliability <- function(){
     tkgrid(buttonsFrame, tklabel(top, text="    "), helpButton, sticky="w")
     tkgrid.configure(helpButton, sticky="e")
     tkgrid.configure(xScroll, sticky="ns")
+    for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
+    tkwm.deiconify(top)
+    tkgrab.set(top)
     tkfocus(top)
-    tkgrab(top)
+    tkwait.window(top)
     }
 
 principalComponents <- function(){
@@ -65,17 +71,17 @@ principalComponents <- function(){
     top <- tktoplevel()
     tkwm.title(top, "Principal Components Analysis")
     xFrame <- tkframe(top)
-    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
     xBox <- tklistbox(xFrame, height=min(4, length(.numeric)),
-        selectmode="multiple", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(xScroll, ...))
+        selectmode="multiple", background="white", exportselection="FALSE")
+    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
+    tkconfigure(xBox, yscrollcommand=function(...) tkset(xScroll, ...))
     for (x in .numeric) tkinsert(xBox, "end", x)
     subsetVariable <- tclVar("<all valid cases>")
     subsetFrame <- tkframe(top)
-    subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable,
-        xscrollcommand=function(...) tkset(subsetScroll, ...))
+    subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable)
     subsetScroll <- tkscrollbar(subsetFrame, orient="horizontal",
         repeatinterval=5, command=function(...) tkyview(subsetEntry, ...))
+    tkconfigure(subsetEntry, xscrollcommand=function(...) tkset(subsetScroll, ...))
     optionsFrame <- tkframe(top)
     correlationsVariable <- tclVar("1")
     correlationsCheckBox <- tkcheckbutton(optionsFrame, variable=correlationsVariable)
@@ -144,7 +150,7 @@ principalComponents <- function(){
         if (.Platform$OS.type != "windows") tkgrab.release(top)
         help(princomp)
         }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
     tkgrid(tklabel(top, text="Variables (pick two or more)"), sticky="w")
     tkgrid(xBox, xScroll, sticky="nw")
     tkgrid(xFrame, sticky="w")
@@ -155,19 +161,25 @@ principalComponents <- function(){
     tkgrid(tklabel(optionsFrame, text="Analyze correlation matrix"), 
         correlationsCheckBox, sticky="e")
     tkgrid(tklabel(optionsFrame, text="Screeplot"), screeplotCheckBox, sticky="e")
-    tkgrid(tklabel(optionsFrame, text="Add principal components\nto data set"),
+    tkgrid(tklabel(optionsFrame, text="Add principal components\nto data set", justify="left"),
         addPCCheckBox, sticky="ne")
+    tkgrid(optionsFrame, sticky="w")
+    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="    "), helpButton, sticky="w")
+    tkgrid(buttonsFrame, sticky="w")
     tkgrid.configure(correlationsCheckBox, sticky="w")
     tkgrid.configure(screeplotCheckBox, sticky="w")
     tkgrid.configure(addPCCheckBox, sticky="w")   
-    tkgrid(optionsFrame, sticky="w")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, tklabel(top, text="    "), helpButton, sticky="w")
     tkgrid.configure(helpButton, sticky="e")
     tkgrid.configure(xScroll, sticky="ns")
+    for (row in 0:4) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
+    tkwm.deiconify(top)
+    tkgrab.set(top)
     tkfocus(top)
-    tkgrab(top)
+    tkwait.window(top)
     }
 
 factorAnalysis <- function(){
@@ -179,17 +191,17 @@ factorAnalysis <- function(){
     top <- tktoplevel()
     tkwm.title(top, "Factor Analysis")
     xFrame <- tkframe(top)
-    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
     xBox <- tklistbox(xFrame, height=min(4, length(.numeric)),
-        selectmode="multiple", background="white", exportselection="FALSE",
-        yscrollcommand=function(...) tkset(xScroll, ...))
+        selectmode="multiple", background="white", exportselection="FALSE")
+    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
+    tkconfigure(xBox, yscrollcommand=function(...) tkset(xScroll, ...))
     for (x in .numeric) tkinsert(xBox, "end", x)
     subsetVariable <- tclVar("<all valid cases>")
     subsetFrame <- tkframe(top)
-    subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable,
-        xscrollcommand=function(...) tkset(subsetScroll, ...))
+    subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable)
     subsetScroll <- tkscrollbar(subsetFrame, orient="horizontal",
         repeatinterval=5, command=function(...) tkyview(subsetEntry, ...))
+    tkconfigure(subsetEntry, xscrollcommand=function(...) tkset(subsetScroll, ...))
     optionsFrame <- tkframe(top)
     nfactorVariable <- tclVar("1")
     nfactorEntry <- tkentry(optionsFrame, width="2", textvariable=nfactorVariable)
@@ -222,9 +234,13 @@ factorAnalysis <- function(){
         f <- function(k, p) ((p - k)^2 - p - k)^2
         max.factors <- floor(optimize(f, c(0, nvar), tol=.0001, p=nvar)$minimum)
         if (nfactor > max.factors) {
-            tkmessageBox(message=paste("Number of factors must be between 1 and ",
-                max.factors, ".", sep=""),
-                icon="error", type="ok")
+            if (max.factors > 1)
+                tkmessageBox(message=paste("Number of factors must be between 1 and ",
+                    max.factors, ".", sep=""),
+                    icon="error", type="ok")
+            else
+                tkmessageBox(message="Number of factors cannot exceed 1",
+                    icon="error", type="ok")
             tkgrab.release(top)
             tkdestroy(top)
             factorAnalysis()
@@ -275,7 +291,6 @@ factorAnalysis <- function(){
     tkgrid(tklabel(top, text="Variables (pick three or more)"), sticky="w")
     tkgrid(xBox, xScroll, sticky="nw")
     tkgrid(xFrame, sticky="w")
-    tkgrid.configure(xScroll, sticky="ns")
     tkgrid(tklabel(subsetFrame, text="Subset expression"), sticky="w")
     tkgrid(subsetEntry, sticky="w")
     tkgrid(subsetScroll, sticky="ew")
@@ -296,7 +311,14 @@ factorAnalysis <- function(){
     tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="        "), 
         helpButton,sticky="w")
     tkgrid(buttonsFrame,  sticky="w")
+    tkgrid.configure(xScroll, sticky="ns")
+    for (row in 0:5) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
+    tkwm.deiconify(top)
+    tkgrab.set(top)
     tkfocus(top)
-    tkgrab(top)
+    tkwait.window(top)
     }
