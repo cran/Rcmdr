@@ -1,6 +1,6 @@
 # R Commander Menu Definitions
 
-# last modified 18 November 2004 by J. Fox
+# last modified 5 December 2004 by J. Fox
 
 #   type    menu/item      operation/parent  label                                          command/menu
 
@@ -93,6 +93,12 @@
     item    dimensionalMenu command         "Scale reliability..."                          Reliability
     item    dimensionalMenu command         "Principal-components analysis..."              principalComponents
     item    dimensionalMenu command         "Factor analysis..."                            factorAnalysis
+    menu    clusterMenu     dimensionalMenu ""                                              ""
+    item    clusterMenu     command         "k-means cluster analysis..."                   kmeansClustering
+    item    clusterMenu     command         "Hierarchical cluster analysis..."              hierarchicalCluster
+    item    clusterMenu     command         "Summarize hierarchical clustering..."          hclustSummary
+    item    clusterMenu     command         "Add hierarchical clustering to data set..."    appendHclustGroup 
+    item    dimensionalMenu cascade         "Cluster analysis"                              clusterMenu
     menu    modelsMenu      statisticsMenu  ""                                              ""
     item    modelsMenu      command         "Linear regression..."                          linearRegressionModel
     item    modelsMenu      command         "Linear model..."                               linearModel

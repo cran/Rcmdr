@@ -1,6 +1,6 @@
 # The R Commander and command logger
 
-# last modified 18 Nov 04 by J. Fox
+# last modified 27 Nov 04 by J. Fox
 #   slight changes 12 Aug 04 by Ph. Grosjean
 
 Commander <- function(){
@@ -99,9 +99,9 @@ Commander <- function(){
         onSelectAll()
         onDelete()
         }
-    assign(".messages.connection", textConnection(".messages", open = "w"), envir=.GlobalEnv)
-    sink(.messages.connection, type="message")
-    assign(".length.messages", 0, envir=.GlobalEnv)
+#    assign(".messages.connection", textConnection(".messages", open = "w"), envir=.GlobalEnv)
+#    sink(.messages.connection, type="message")
+#    assign(".length.messages", 0, envir=.GlobalEnv)
     assign(".activeDataSet", NULL, envir=.GlobalEnv)
     assign(".activeModel", NULL, envir=.GlobalEnv)
     assign(".logFileName", NULL, envir=.GlobalEnv)
@@ -256,24 +256,7 @@ Commander <- function(){
                     function(.x) length(grep(paste("^", .x, "\\(", sep=""), current.line)) > 0))){ 
                 justDoIt(current.line)
                 }
-            else {
-                result <- try(eval(parse(text=current.line), envir=.GlobalEnv), 
-                    silent=TRUE)
-                if (class(result)[1] ==  "try-error"){
-                    tkmessageBox(message=paste("Error:",
-                        strsplit(result, ":")[[1]][2]), icon="error")
-                    tkfocus(.commander)
-                    }
-                else if (!is.null(result)) {
-                    output <- capture.output(print(result))
-                    if (.console.output) for (line in output) cat(paste(line, "\n", sep=""))
-                    else {
-                        for (line in output) tkinsert(.output, "end", paste(line, "\n", sep=""))
-                        tkyview.moveto(.output, 1)
-                        }
-                    }
-                checkWarnings()
-                }
+            else doItAndPrint(current.line, log=FALSE)
             iline <- iline + 1
             }
         tkyview.moveto(.output, 1)
@@ -400,54 +383,73 @@ logger <- function(command){
     command
     }
 
-doItAndPrint <- function(command) {
-    result <- try(eval(parse(text=logger(command)), envir=.GlobalEnv), 
-        silent=TRUE)
+justDoIt <- function(command) {
+    messages.connection<- textConnection("messages", open="w")
+    sink(messages.connection, type="message")
+    on.exit({
+        sink(type="message")
+        close(messages.connection)
+        })
+    capture.output(result <- try(eval(parse(text=command), envir=.GlobalEnv), silent=TRUE))
     if (class(result)[1] ==  "try-error"){
         tkmessageBox(message=paste("Error:",
             strsplit(result, ":")[[1]][2]), icon="error")
         tkfocus(.commander)
         return()
         }
-    if (!is.null(result)) {
-        if (.console.output) print(result)
+    checkWarnings(messages)
+    result
+    }
+
+doItAndPrint <- function(command, log=TRUE) {
+    messages.connection <- textConnection("messages", open="w")
+    sink(messages.connection, type="message")
+    output.connection <- textConnection("output", open="w")
+    sink(output.connection, type="output")
+    on.exit({
+        sink(type="message")
+        if (!.console.output) sink(type="output") # if .console.output, output connection already closed
+        close(messages.connection)
+        close(output.connection)
+        })
+    if (log) logger(command)
+    result <-  try(eval(parse(text=command), envir=.GlobalEnv), silent=TRUE)
+    if (class(result)[1] ==  "try-error"){
+        tkmessageBox(message=paste("Error:",
+            strsplit(result, ":")[[1]][2]), icon="error")
+        if (.console.output) sink(type="output")
+        tkfocus(.commander)
+        return()
+        }
+    if (isS4object(result)) show(result) else print(result)
+    if (output[length(output)] == "NULL") output <- output[-length(output)] # suppress "NULL" line at end of output
+    if (length(output) != 0) {  # is there output to print?
+        if (.console.output) {
+            out <- output
+            sink(type="output")
+            for (line in out) cat(paste(line, "\n", sep=""))
+            }
         else{
-            output <- capture.output(print(result))
             for (line in output) tkinsert(.output, "end", paste(line, "\n", sep=""))
             tkyview.moveto(.output, 1)
             }
         }
-    checkWarnings()
+    else if (.console.output) sink(type="output")
+    checkWarnings(messages)  # errors already intercepted, display any warnings
     result
     }
 
-justDoIt <- function(command) {
-    result <- try(eval(parse(text=command), envir=.GlobalEnv), silent=TRUE)
-    if (class(result)[1] ==  "try-error"){
-        tkmessageBox(message=paste("Error:",
-            strsplit(result, ":")[[1]][2]), icon="error")
-        tkfocus(.commander)
-        return()
-        }
-    checkWarnings()
-    result
-    }
-    
-checkWarnings <- function(){
+checkWarnings <- function(messages){
     if (is.SciViews()) return(invisible()) # PhG: added for SciViews compatibility 
-    length.messages <- length(.messages)
-    if (length.messages > .length.messages){
-        current.messages <- .messages[(.length.messages + 1):length.messages]
-        assign(".length.messages", length.messages, envir=.GlobalEnv)
-        # suppress X11 warnings (origin at this point unclear)
-        X11.warning <- grep("^Warning\\: X11 protocol error\\: BadWindow \\(invalid Window parameter\\)", current.messages)
-        if ((length(X11.warning) > 0) && !.report.X11.warnings){
-            current.messages <- current.messages[-X11.warning]
-            if (length(current.messages) == 0) return()
-            }
-        if (length(current.messages) > 10) current.messages <- c(paste(length(current.messages), "warnings."),
-            "First and last 5 warnings:", head(current.messages,5), ". . .", tail(current.messages, 5))
-        tkmessageBox(message=paste(current.messages, collapse="\n"), icon="warning")
-        tkfocus(.commander)
+    if (length(messages) == 0) return()
+    # suppress X11 warnings (origin at this point unclear)
+    X11.warning <- grep("^Warning\\: X11 protocol error\\: BadWindow \\(invalid Window parameter\\)", messages)
+    if ((length(X11.warning) > 0) && !.report.X11.warnings){
+        messages <-messages[-X11.warning]
+        if (length(messages) == 0) return()
         }
+    if (length(messages) > 10) messages <- c(paste(length(messages), "warnings."),
+        "First and last 5 warnings:", head(messages, 5), ". . .", tail(messages, 5))
+    tkmessageBox(message=paste(messages, collapse="\n"), icon="warning")
+    tkfocus(.commander)
     }

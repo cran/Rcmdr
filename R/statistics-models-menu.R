@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 18 Nov 04 by J. Fox
+# last modified 29 Nov 04 by J. Fox
 
     # Models menu
     
@@ -291,9 +291,9 @@ generalizedLinearModel <- function(){
 proportionalOddsModel <- function(){
     if (!checkActiveDataSet()) return()
     if (!checkVariables(2)) return()
-    initializeDialog(title="Multinomial Logit Model")
+    initializeDialog(title="Proportional-Odds Logit Model")
     currentModel <- if (!is.null(.activeModel)) 
-        eval(parse(text=paste("class(", .activeModel, ")[1] == 'multinom'", sep="")), 
+        eval(parse(text=paste("class(", .activeModel, ")[1] == 'polr'", sep="")), 
             envir=.GlobalEnv) 
         else FALSE
     if (currentModel) {

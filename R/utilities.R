@@ -1,4 +1,4 @@
-# last modified 18 Nov 04 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 5 Dec 04 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
 
 # utility functions
 
@@ -423,7 +423,7 @@ plotMeans <- function(response, factor1, factor2, error.bars = c("se", "sd", "co
 
 bin.var <- function (x, bins=4, method=c("intervals", "proportions", "natural"), labels=FALSE){
     method <- match.arg(method)
-# Author: Dan Putler (revision by J. Fox, 27 July 04)
+# Author: Dan Putler (revision by J. Fox, 5 Dec 04)
     if(length(x) < bins) {
       stop("The number of bins exceeds the number of data values")
         }
@@ -432,7 +432,7 @@ bin.var <- function (x, bins=4, method=c("intervals", "proportions", "natural"),
             include.lowest = TRUE, labels=labels)
         else {
             xx <- na.omit(x)
-            breaks <- c(min(xx), tapply(xx, kmeans(xx, bins)$cluster, max))
+            breaks <- c(min(xx), tapply(xx, KMeans(xx, bins)$cluster, max))
             cut(x, breaks, include.lowest=TRUE, labels=labels)
             }
     as.factor(x)
@@ -1304,3 +1304,9 @@ checkClass <- defmacro(object, class, message=NULL,
        properClass
        }
     )
+    
+
+# the following function is from John Chambers
+
+isS4object <- function(object) length(attr(object, "class"))==1 && class(object) != "by" && 
+ !is.null(getClass(class(object)))

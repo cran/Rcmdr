@@ -1,6 +1,6 @@
 Package: Rcmdr
-Version: 0.9-14
-Date: 2004/11/21
+Version: 0.9-15
+Date: 2004/12/5
 Title: R Commander
 Author: John Fox <jfox@mcmaster.ca>.
 Maintainer: John Fox <jfox@mcmaster.ca>
@@ -11,4 +11,4 @@ Description:
   A platform-independent basic-statistics GUI (graphical user interface) for R, based on the tcltk package.
 License: GPL version 2 or newer
 URL: http://www.r-project.org, http://socserv.socsci.mcmaster.ca/jfox/Misc/Rcmdr/
-Packaged: Sun Nov 21 13:44:58 2004; John Fox
+Packaged: Sun Dec  5 18:14:24 2004; John Fox

@@ -1,6 +1,6 @@
 # Graphs menu dialogs
 
-# last modified 28 Aug 04 by J. Fox
+# last modified 4 Dec 04 by J. Fox
 
 indexPlot <- function(){
     if(!checkActiveDataSet()) return()
@@ -632,6 +632,12 @@ PlotMeans <- function(){
     }
 
 Scatter3D <- function(){
+    if (!.rglPackage) {
+        tkmessageBox(message="rgl package not present:\n3D plots unavailable.",
+            icon="error", type="ok", default="ok")
+        tkfocus(.commander)
+        return()
+        }
     if (!checkActiveDataSet()) return()
     if (!checkNumeric(3)) return()
     initializeDialog(title="3D Scatterplot")

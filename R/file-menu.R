@@ -1,4 +1,4 @@
-# last modified 18 Nov 2004 by J. Fox
+# last modified 29 Nov 2004 by J. Fox
 
 # File menu dialogs
 
@@ -64,6 +64,7 @@ saveOutputAs <- function() {
 saveWorkspaceAs <- function(){
     saveFile <- tclvalue(tkgetSaveFile(filetypes='{"All Files" {"*"}}',
         defaultextension="", initialfile=".RData"))
+    if (saveFile == "") return()
     save(list=ls(envir=.GlobalEnv), file=saveFile)
     assign(".saveFileName", saveFile, envir=.GlobalEnv)
     }
@@ -77,10 +78,9 @@ closeCommander <- function(){
     globals <- c(".activeDataSet", ".activeModel", ".attach.data.set", ".command.text.color", ".commander", ".grab.focus", 
         ".console.output", ".contrasts", ".dataSetLabel", ".dataSetName", ".double.click", ".factors",
         ".length.messages", ".log", ".log.commands", ".logFileName", ".logFont", ".log.font.size", ".log.text.color",
-        ".messages", ".messages.connection", ".modelClasses",
-        ".modelLabel", ".modelName", ".modelNumber", ".modelWithSubset", ".multiple.select.mode",
+        ".modelClasses", ".modelLabel", ".modelName", ".modelNumber", ".modelWithSubset", ".multiple.select.mode",
         ".numeric", "oldPager", ".operatorFont", ".output", ".output.text.color", ".outputFileName", 
-        ".report.X11.warnings", ".rgl", ".saveFileName", ".saveOptions", ".sort.names",
+        ".report.X11.warnings", ".rgl", ".rglPackage", ".saveFileName", ".saveOptions", ".sort.names",
         ".twoLevelFactors", ".variables")
     response <- tclvalue(tkmessageBox(message="Exit?",
         icon="question", type="okcancel", default="cancel"))

@@ -306,3 +306,14 @@ Version 0.9-14
 
     o  Added support for multinomial logit models [via multinom() in nnet] and for proportional-odds logit models [via polr() in MASS].
     
+Version 0.9-15
+
+    o  Improvements to doItAndPrint(), justDoIt(), and checkWarnings() to handle wider range of output situations and to avoid intercepting errors and warnings when it is not desirable to do so (prompted by problems encountered by Bernhard Pfaff and suggestions by Brian Ripley).
+
+    o  If the rgl package is absent, a message is printed in the console, but the Rcmdr can still be used.
+    
+    o  Added various cluster-analysis facilities, courtesy of Dan Putler.
+
+    o  Small bug fixes.
+
+    
