@@ -1,4 +1,4 @@
-# last modified 28 Mar 04 by J. Fox
+# last modified 5 May 04 by J. Fox
 
 # utility functions
 
@@ -132,39 +132,6 @@ rowPercents <- function(tab, digits=2){
     aperm(colPercents(tab, digits=digits), c(2,1,3:dim))
     }
 
-# the following function slightly modified from Brian Ripley via R-help
-
-levene.test <- function(y, group) {
-    meds <- tapply(y, group, median, na.rm=TRUE)
-    resp <- abs(y - meds[group])
-    table <- anova(lm(resp ~ group))
-    rownames(table)[2] <- " "
-    cat("Levene's Test for Homogeneity of Variance\n\n")
-    table[,c(1,4,5)]
-    } 
-
-# the following function adapted from Fox, An R and S-PLUS Companion to Applied Regression
-
-influence.plot <- function(model, scale=10, col=c(1,2),
-    labels=names(rstud), ...){
-    hatval <- hatvalues(model)
-    rstud <- rstudent(model)
-    cook <- sqrt(cookd(model))
-    scale <- scale/max(cook, na.rm=TRUE)
-    p <- length(coef(model))
-    n <- length(rstud)
-    cutoff <- sqrt(4/(n - p))
-    plot(hatval, rstud, xlab='Hat-Values',
-        ylab='Studentized Residuals', type='n', ...)
-    abline(v=c(2, 3)*p/n, lty=2)
-    abline(h=c(-2, 0, 2), lty=2)
-    points(hatval, rstud, cex=scale*cook, 
-            col=ifelse(cook > cutoff, col[2], col[1]))
-    if (labels[1] != FALSE) identify(hatval, rstud, labels)
-    }
-
-
-
 reliability <- function(S){
     reliab <- function(S, R){
         k <- dim(S)[1]
@@ -175,12 +142,19 @@ reliability <- function(S){
         std.alpha <- k*rbar/(1 + (k - 1)*rbar)
         c(alpha=alpha, std.alpha=std.alpha)
         }
+    if ((!is.numeric(S)) || !is.matrix(S) || (nrow(S) != ncol(S)) 
+        || any(abs(S - t(S)) > max(abs(S))*1e-10) || nrow(S) < 2)
+        stop("argument must be a square, symmetric, numeric covariance matrix")
     k <- dim(S)[1]
     s <- sqrt(diag(S))
     R <- S/(s %o% s)
     rel <- reliab(S, R)
     cat(paste("Alpha reliability = ", round(rel[1], 4), "\n"))
     cat(paste("Standardized alpha = ", round(rel[2], 4), "\n"))
+    if (k < 3) {
+        warning("there are fewer than 3 items in the scale")
+        return(invisible(NULL))
+        }
     cat("\nReliability deleting each item in turn:\n")
     rel <- matrix(0, k, 3)
     for (i in 1:k) {
@@ -195,7 +169,8 @@ reliability <- function(S){
         }
     rownames(rel) <- rownames(S)
     colnames(rel) <- c("Alpha", "Std.Alpha", "r(item, total)")
-    round(rel, 4)
+    print(round(rel, 4))
+    invisible(NULL)
     }
     
 partial.cor <- function(X, ...){
@@ -362,7 +337,7 @@ plotMeans <- function(response, factor1, factor2, error.bars = c("se", "sd", "co
         factor1 <- factor1[valid]
         response <- response[valid]
         means <- tapply(response, factor1, mean)
-        sds <- tapply(response, factor1, mean)
+        sds <- tapply(response, factor1, sd)
         ns <- tapply(response, factor1, length)
         if (error.bars == "se") sds <- sds/sqrt(ns)
         if (error.bars == "conf.int") sds <- qt((1 - level)/2, df=ns - 1, lower.tail=FALSE) * sds/sqrt(ns)
@@ -384,7 +359,7 @@ plotMeans <- function(response, factor1, factor2, error.bars = c("se", "sd", "co
         factor2 <- factor2[valid]
         response <- response[valid]
         means <- tapply(response, list(factor1, factor2), mean)
-        sds <- tapply(response, list(factor1, factor2), mean)
+        sds <- tapply(response, list(factor1, factor2), sd)
         ns <- tapply(response, list(factor1, factor2), length)
         if (error.bars == "se") sds <- sds/sqrt(ns)
         if (error.bars == "conf.int") sds <- qt((1 - level)/2, df=ns - 1, lower.tail=FALSE) * sds/sqrt(ns)
@@ -595,3 +570,10 @@ RcmdrPager <- function (file, header, title, delete.file)
             tkcmd("file", "delete", zfile)
     }
 }
+
+    # Open browser with manual
+    
+browseManual <- function() {
+    browseURL(paste(file.path(.path.package(package="Rcmdr")[1], "doc"), 
+        "/Getting-Started-with-the-Rcmdr.pdf", sep=""))
+    }

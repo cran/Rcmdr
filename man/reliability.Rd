@@ -15,7 +15,8 @@ reliability(S)
 }
 
 \arguments{
-  \item{S}{the covariance matrix of the items}
+  \item{S}{the covariance matrix of the items; normally, there should be at least 3 items
+  and certainly no fewer than 2.}
 }
 
 }

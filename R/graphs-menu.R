@@ -1,6 +1,6 @@
 # Graphs menu dialogs
 
-# last modified 20 Mar 04 by J. Fox
+# last modified 8 May 04 by J. Fox
 
 indexPlot <- function(){
     if (activeDataSet() == FALSE) {
@@ -8,7 +8,7 @@ indexPlot <- function(){
         return()
         }
     if (length(.numeric) == 0){
-        tkmessageBox(message="There no numeric variables in the active data set.", 
+        tkmessageBox(message="There are no numeric variables in the active data set.", 
                 icon="error", type="ok")
         tkfocus(.commander)
         return()
@@ -1436,7 +1436,7 @@ Scatter3D <- function(){
     dfAddVariable <- tclVar("<auto>")
     dfAddField <- tkentry(surfacesFrame, width="6", textvariable=dfAddVariable)
     bgFrame <- tkframe(top)
-    bgVariable <-tclVar("black")
+    bgVariable <-tclVar("white")
     whiteButton <- tkradiobutton(bgFrame, variable=bgVariable, value="white")
     blackButton <- tkradiobutton(bgFrame, variable=bgVariable, value="black")
     assign(".groups", FALSE, envir=env)

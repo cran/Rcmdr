@@ -1,6 +1,6 @@
 # R Commander Menu Definitions
 
-# last modified 29 Jan 04 by J. Fox
+# last modified 30 April 04 by J. Fox
 
 #   type    menu/item      operation/parent  label                                          command/menu
     
@@ -89,6 +89,10 @@
     item    modelsMenu      command         "Linear regression..."                          linearRegressionModel
     item    modelsMenu      command         "Linear model..."                               linearModel
     item    modelsMenu      command         "Generalized linear model..."                   generalizedLinearModel
+    
+#    menu    transformMenu   statisticsMenu  ""                                              ""
+#    item    transformMenu   command         "Multivariate Box-Cox transformations..."       BoxCox
+    
     item    topMenu         cascade         "Statistics"                                    statisticsMenu
     item    statisticsMenu  cascade         "Summaries"                                     summariesMenu
     item    statisticsMenu  cascade         "Contingency tables"                            tablesMenu
@@ -98,6 +102,9 @@
     item    statisticsMenu  cascade         "Nonparametric tests"                           nonparametricMenu
     item    statisticsMenu  cascade         "Dimensional analysis"                          dimensionalMenu
     item    statisticsMenu  cascade         "Fit models"                                    modelsMenu
+    
+#    item    statisticsMenu  cascade         "Transform"                                     transformMenu
+    
     menu    graphsMenu      topMenu         ""                                              ""
     item    graphsMenu      command         "Index plot..."                                 indexPlot
     item    graphsMenu      command         "Histogram..."                                  Histogram
@@ -172,4 +179,5 @@
     menu    helpMenu        topMenu         ""                                              ""
     item    helpMenu        command         "Commander help"                                "function() help(Commander)"
     item    helpMenu        command         "About Rcmdr"                                   "function() help('aboutRcmdr')"
+    item    helpMenu        command         "Introduction to the R Commander"               browseManual
     item    topMenu         cascade         "Help"                                          helpMenu            

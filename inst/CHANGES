@@ -219,4 +219,19 @@ Version 0.9-6
 
     o Small changes to scatter3d; rgl and mgcv packages now required.
     
-    o Calls to data() now quote package in package= argument, necessary for R 1.9.0 (thanks to Erich Neuwirth for pointing this out). 
+    o Calls to data() now quote package in package= argument, necessary for R 1.9.0 (thanks to Erich Neuwirth for pointing this out).
+    
+Version 0.9-7
+
+    o Small bug fixes/improvements.
+    
+Version 0.9-8
+
+    o Moved levene.test and influence.plot functions to the car package (as suggested by Henric Nilsson).
+    
+    o Removed dependencies on ctest and tcltk packages. 
+    
+    o Added .csv and .CSV to list of text-file types (suggested by Adriano Azevedo-Filho).
+    
+    o Fixed bug in computation of error bars in plotMeans (reported by Andrea De Cesarei).
+    

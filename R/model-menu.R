@@ -1,6 +1,6 @@
 # Model menu dialogs
 
-# last modified 29 January 04 by J. Fox
+# last modified 27 April 04 by J. Fox
 
 selectActiveModel <- function(){
     models <- union(listLinearModels(), listGeneralizedLinearModels())
@@ -423,7 +423,8 @@ testLinearHypothesis <- function(){
         logger(paste(".RHS <- ", command, sep=""))
         command <- paste("linear.hypothesis(", .activeModel, ", .Hypothesis, rhs=.RHS)", sep="")
         doItAndPrint(command)
-        doItAndPrint("remove(.Hypothesis, .RHS, envir=.GlobalEnv)")                                                    
+        justDoIt("remove(.Hypothesis, .RHS, envir=.GlobalEnv)") 
+        logger("remove(.Hypothesis, .RHS)")                                              
         tkfocus(.commander)
         }
     buttonsFrame <- tkframe(top)

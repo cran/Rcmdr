@@ -1,4 +1,4 @@
-# last modified 20 Mar 2004 by J. Fox
+# last modified 2 May 2004 by J. Fox
 
 # Data menu dialogs
 
@@ -495,7 +495,7 @@ readDataSet <- function() {
                 return()
                 }
             }
-        file <- tclvalue(tkgetOpenFile(filetypes='{"Text Files" {".txt" ".TXT" ".dat" ".DAT"}} {"All Files" {"*"}}'))
+        file <- tclvalue(tkgetOpenFile(filetypes='{"Text Files" {".txt" ".TXT" ".dat" ".DAT" ".csv" ".CSV"}} {"All Files" {"*"}}'))
         if (file == "") {
             if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
@@ -1358,7 +1358,7 @@ exportDataSet <- function() {
         sep <- if (delim == "tabs") "\\t"
             else if (delim == "spaces") " "
             else ","
-        saveFile <- tclvalue(tkgetSaveFile(filetypes='{"Text Files" {".txt" ".TXT" ".dat" ".DAT"}} {"All Files" {"*"}}',
+        saveFile <- tclvalue(tkgetSaveFile(filetypes='{"Text Files" {".txt" ".TXT" ".dat" ".DAT", ".csv", ".CSV"}} {"All Files" {"*"}}',
             defaultextension="txt", initialfile=paste(dsname, ".txt", sep="")))
         if (saveFile == "") {
             if (.grab.focus) tkgrab.release(top)

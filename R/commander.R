@@ -1,6 +1,6 @@
 # The R Commander and command logger
 
-# last modified 31 Jan 04 by J. Fox
+# last modified 12 May 04 by J. Fox
 
 Commander <- function(){
     etc <- file.path(.path.package(package="Rcmdr")[1], "etc")
@@ -166,6 +166,10 @@ Commander <- function(){
         }
     exceptions <- scan(file.path(etc, "log-exceptions.txt"), what="", quiet=TRUE, comment.char="#")
     onEdit <- function(){
+        if (activeDataSet() == FALSE) {
+            tkfocus(.commander)
+            return()
+            }
         command <- paste("fix(", .activeDataSet, ")", sep="")
         logger(command)
         justDoIt(command)
@@ -174,7 +178,12 @@ Commander <- function(){
         tkfocus(.commander)
         }
     onView <- function(){
-        command <- paste("showData(", .activeDataSet, ", placement='-20+20')", sep="")
+        if (activeDataSet() == FALSE) {
+            tkfocus(.commander)
+            return()
+            }
+        command <- paste("showData(", .activeDataSet, ", placement='-20+200', font=.logFont, maxwidth=", 
+            log.width, ", maxheight=", as.numeric(log.height)*2, ")", sep="")
         logger(command)
         justDoIt(command)
         tkwm.deiconify(.commander)
