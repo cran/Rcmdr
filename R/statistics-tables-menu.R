@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 27 January 04 by J. Fox
+# last modified 5 June 04 by J. Fox
 
     # Tables menu
     
@@ -60,13 +60,10 @@ twoWayTable <- function(){
         command <- paste("xtabs(~", row, "+", column, ", data=", .activeDataSet, 
             subset, ")", sep="")
         logger(paste(".Table <- ", command, sep=""))
-        logger(".Table")
         assign(".Table", justDoIt(command), envir=.GlobalEnv)
-        print(.Table)
-        cat("\n")
+        doItAndPrint(".Table")
         if (percents == "row") doItAndPrint("rowPercents(.Table) # Row Percentages")
         if (percents == "column") doItAndPrint("colPercents(.Table) # Column Percentages")
-        cat("\n")
         if (chisq == 1) {
             command <- "chisq.test(.Table, correct=FALSE)"
             logger(paste(".Test <- ", command, sep=""))
@@ -212,7 +209,6 @@ multiWayTable <- function(){
             multiWayTable()
             return()
             }
-
         percents <- as.character(tclvalue(percentsVariable))
         subset <- tclvalue(subsetVariable)
         subset <- if (trim.blanks(subset) == "<all valid cases>") "" 
@@ -222,10 +218,8 @@ multiWayTable <- function(){
         command <- paste("xtabs(~", row, "+", column, "+", paste(controls, collapse="+"),
             ", data=", .activeDataSet, subset, ")", sep="")
         logger(paste(".Table <- ", command, sep=""))
-        logger(".Table")
         assign(".Table", justDoIt(command), envir=.GlobalEnv)
-        print(.Table)
-        cat("\n")
+        doItAndPrint(".Table")
         if (percents == "row") doItAndPrint("rowPercents(.Table) # Row Percentages")
         if (percents == "column") doItAndPrint("colPercents(.Table) # Column Percentages")
         logger("remove(.Table)") 
@@ -386,16 +380,12 @@ enterTable <- function(){
         assign(".Table", justDoIt(command), envir=.GlobalEnv)
         logger(paste(".Table <- ", command, sep=""))
         command <- paste("c(",paste(paste("'", row.names, "'", sep=""), collapse=", "), ")", sep="")
-#        justDoIt(paste("rownames(.Table) <<- ", command, sep=""))
         justDoIt(paste("rownames(.Table) <- ", command, sep=""))
         logger(paste("rownames(.Table) <- ", command, sep=""))
         command <- paste("c(",paste(paste("'", col.names, "'", sep=""), collapse=", "), ")", sep="")
-#        justDoIt(paste("colnames(.Table) <<- ", command, sep=""))
         justDoIt(paste("colnames(.Table) <- ", command, sep=""))
         logger(paste("colnames(.Table) <- ", command, sep=""))
-        logger(".Table  # Counts")
-        print(.Table)
-        cat("\n")
+        doItAndPrint(".Table  # Counts")
         if (percents == "row") doItAndPrint("rowPercents(.Table) # Row Percentages")
         if (percents == "column") doItAndPrint("colPercents(.Table) # Column Percentages")
         cat("\n")

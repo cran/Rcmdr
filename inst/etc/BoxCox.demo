@@ -29,10 +29,9 @@ BoxCox <- function(){
             }
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
-        command <- paste("summary(box.cox.powers(na.omit(cbind(", 
-            paste(variables, collapse=","), "))))", sep="")
-        logger(command)
-        justDoIt(paste("invisible(", command, ")"))
+        command <- paste("box.cox.powers(na.omit(cbind(", 
+            paste(variables, collapse=","), ")))", sep="")
+        doItAndPrint(command)
         tkfocus(.commander)
         }
     onCancel <- function() {

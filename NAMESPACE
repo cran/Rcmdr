@@ -3,3 +3,5 @@ export(Commander, colPercents, rowPercents, reliability,
     justDoIt, logger, listDataSets, activeDataSet, activeModel, is.valid.name, stem.leaf,
     Hist, plotMeans, scatter3d)
 
+S3method(print, stem.leaf)
+S3method(print, reliability) 

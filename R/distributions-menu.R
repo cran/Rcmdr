@@ -1,6 +1,6 @@
 # Distributions menu dialogs
 
-# last modified 27 Jab 04 by J. Fox
+# last modified 4 June 04 by J. Fox
 
 normalQuantiles <- function(){
     top <- tktoplevel()
@@ -798,9 +798,8 @@ binomialMass <- function(){
         logger(paste(".Table <- ", command, sep=""))
         assign(".Table", justDoIt(command), envir=.GlobalEnv)
         logger(paste("rownames(.Table) <- 0:", trials, sep=""))
-#        justDoIt(paste("rownames(.Table) <<- 0:", trials, sep=""))
         justDoIt(paste("rownames(.Table) <- 0:", trials, sep=""))
-        justDoIt(paste("print(", logger(".Table"), ")", sep=""))
+        doItAndPrint(".Table")
         logger("remove(.Table)") 
         remove(.Table, envir=.GlobalEnv)       
         tkfocus(.commander)
@@ -873,9 +872,8 @@ PoissonMass <- function(){
         logger(paste(".Table <- ", command, sep=""))
         assign(".Table", justDoIt(command), envir=.GlobalEnv)
         logger(paste("rownames(.Table) <- ", min, ":", max, sep=""))
-#        justDoIt(paste("rownames(.Table) <<- ", min, ":", max, sep=""))
         justDoIt(paste("rownames(.Table) <- ", min, ":", max, sep=""))
-        justDoIt(paste("print(", logger(".Table"), ")", sep=""))
+        doItAndPrint(".Table")
         logger("remove(.Table)") 
         remove(.Table, envir=.GlobalEnv)       
         tkfocus(.commander)

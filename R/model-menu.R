@@ -1,6 +1,6 @@
 # Model menu dialogs
 
-# last modified 27 April 04 by J. Fox
+# last modified 5 June 04 by J. Fox
 
 selectActiveModel <- function(){
     models <- union(listLinearModels(), listGeneralizedLinearModels())
@@ -651,13 +651,14 @@ BreuschPaganTest <- function(){
         type <- if (var == "fitted") paste(", varformula = ~ fitted.values(",
                     .activeModel, ")", sep="") 
                 else if (var == "predictors") ""
-                else paste(", varformula = ~", tclvalue(rhsVariable), 
-                ", data=", .activeDataSet, sep="")
+                else paste(", varformula = ~", tclvalue(rhsVariable), sep="")
         student <- if (tclvalue(studentVariable) == 1) "TRUE" else "FALSE"
+        model.formula <- as.character(eval(parse(text=paste("formula(", .activeModel, ")", sep=""))))
+        model.formula <- paste(model.formula[2], "~", model.formula[3])
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
-        command <- paste("bptest(", .activeModel, type, ", studentize=", student,
-             ")", sep="")
+        command <- paste("bptest(", model.formula, type, ", studentize=", student,
+            ", data=", .activeDataSet, ")", sep="")
         doItAndPrint(command)  
         tkfocus(.commander)
         }
@@ -759,10 +760,12 @@ DurbinWatsonTest <- function(){
     tkgrid(tklabel(top, text="Test for First-Order Error Autocorrelation"), sticky="w")
     onOK <- function(){
         altHypothesis <- tclvalue(altHypothesisVariable)
+        model.formula <- as.character(eval(parse(text=paste("formula(", .activeModel, ")", sep=""))))
+        model.formula <- paste(model.formula[2], "~", model.formula[3])
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
-        command <- paste("dwtest(", .activeModel, ', alternative="', altHypothesis,
-             '")', sep="")
+        command <- paste("dwtest(", model.formula, ', alternative="', altHypothesis,
+             '", data=', .activeDataSet, ')', sep="")
         doItAndPrint(command)  
         tkfocus(.commander)
         }
@@ -823,6 +826,8 @@ RESETtest <- function(){
         type <- tclvalue(typeVariable)
         square <- tclvalue(squareVariable)
         cube <- tclvalue(cubeVariable)
+        model.formula <- as.character(eval(parse(text=paste("formula(", .activeModel, ")", sep=""))))
+        model.formula <- paste(model.formula[2], "~", model.formula[3])
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         if (square == "0" && cube == "0"){
@@ -835,8 +840,8 @@ RESETtest <- function(){
         powers <- if (square == "1" && cube == "1") "2:3"
             else if (square == "1" && cube == "0") "2"
             else if (square == "0" && cube == "1") "3"
-        command <- paste("reset(", .activeModel, ", power=", powers,
-            ', type="', type, '")', sep="")
+        command <- paste("reset(", model.formula, ", power=", powers,
+            ', type="', type, '", data=', .activeDataSet, ')', sep="")
         doItAndPrint(command)  
         tkfocus(.commander)
         }

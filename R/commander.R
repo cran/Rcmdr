@@ -1,31 +1,43 @@
 # The R Commander and command logger
 
-# last modified 12 May 04 by J. Fox
+# last modified 11 June 04 by J. Fox
 
 Commander <- function(){
     etc <- file.path(.path.package(package="Rcmdr")[1], "etc")
     onCopy <- function(){
-        selection <- strsplit(tclvalue(tktag.ranges(.log, "sel")), " ")[[1]]
+        focused <- tkfocus()
+        if ((tclvalue(focused) != .log$ID) && (tclvalue(focused) != .output$ID)) 
+            focused <- .log
+        selection <- strsplit(tclvalue(tktag.ranges(focused, "sel")), " ")[[1]]
         if (is.na(selection[1])) return()
-        text <- tclvalue(tkget(.log, selection[1], selection[2]))
+        text <- tclvalue(tkget(focused, selection[1], selection[2]))
         tkclipboard.clear()
         tkclipboard.append(text)
         }    
     onDelete <- function(){
-        selection <- strsplit(tclvalue(tktag.ranges(.log, "sel")), " ")[[1]]
+        focused <- tkfocus()
+        if ((tclvalue(focused) != .log$ID) && (tclvalue(focused) != .output$ID))  
+            focused <- .log
+        selection <- strsplit(tclvalue(tktag.ranges(focused, "sel")), " ")[[1]]
         if (is.na(selection[1])) return()
-        tkdelete(.log, selection[1], selection[2])
+        tkdelete(focused, selection[1], selection[2])
         }        
     onCut <- function(){
         onCopy()
         onDelete()
         }        
     onPaste <- function(){
+        focused <- tkfocus()
+        if ((tclvalue(focused) != .log$ID) && (tclvalue(focused) != .output$ID))  
+            focused <- .log
         text <- tclvalue(.Tcl("selection get -selection CLIPBOARD"))    
         if (length(text) == 0) return()
-        tkinsert(.log, "insert", text)
+        tkinsert(focused, "insert", text)
         }       
     onFind <- function(){
+        focused <- tkfocus()
+        if ((tclvalue(focused) != .log$ID) && (tclvalue(focused) != .output$ID))  
+            focused <- .log
         top <- tktoplevel()
         tkwm.title(top, "Find")
         textFrame <- tkframe(top)
@@ -53,8 +65,8 @@ Commander <- function(){
             case <- tclvalue(caseVar) == 1
             direction <- tclvalue(directionVar)
             stop <- if (direction == "-forward") "end" else "1.0"
-            where <- if (case) tksearch(.log, type, direction, "--", text, "insert", stop)
-                        else tksearch(.log, type, direction, "-nocase", "--", text, "insert", stop)
+            where <- if (case) tksearch(focused, type, direction, "--", text, "insert", stop)
+                        else tksearch(focused, type, direction, "-nocase", "--", text, "insert", stop)
             where <- tclvalue(where)
             if (where == "") {
                 tkmessageBox(message="Text not found.",
@@ -65,9 +77,9 @@ Commander <- function(){
                 return()
                 }
             if (.grab.focus) tkgrab.release(top)
-            tkfocus(.log)
-            tkmark.set(.log, "insert", where)  
-            tksee(.log, where)
+            tkfocus(focused)
+            tkmark.set(focused, "insert", where)  
+            tksee(focused, where)
             tkdestroy(top)  
             }
         onCancel <- function() {
@@ -100,12 +112,20 @@ Commander <- function(){
         tkwait.window(top)
         }    
     onSelectAll <- function() {
-        tktag.add(.log, "sel", "1.0", "end")
-        tkfocus(.log)
+        focused <- tkfocus()
+        if ((tclvalue(focused) != .log$ID) && (tclvalue(focused) != .output$ID))  
+            focused <- .log
+        tktag.add(focused, "sel", "1.0", "end")
+        tkfocus(focused)
+        }
+    onClear <- function(){
+        onSelectAll()
+        onDelete()
         }
     assign(".activeDataSet", NULL, envir=.GlobalEnv)
     assign(".activeModel", NULL, envir=.GlobalEnv)
     assign(".logFileName", NULL, envir=.GlobalEnv)
+    assign(".outputFileName", NULL, envir=.GlobalEnv)
     assign(".modelNumber", 0, envir=.GlobalEnv)
     assign(".rgl", FALSE, envir=.GlobalEnv)
     log.font.size <- options("Rcmdr")[[1]]$log.font.size
@@ -117,18 +137,36 @@ Commander <- function(){
     if (!is.null(scale.factor)) .Tcl(paste("tk scaling ", scale.factor, sep=""))
     contrasts <- options("Rcmdr")[[1]]$contrasts
     contrasts <- if (is.null(contrasts)) c("contr.Treatment", "contr.poly") else contrasts
-    assign(".saveOptions", options(warn=1, contrasts=contrasts, 
-        na.action="na.exclude", graphics.record=TRUE), envir=.GlobalEnv)
+    log.commands <- options("Rcmdr")[[1]]$log.commands
+    assign(".log.commands", if (is.null(log.commands)) TRUE else log.commands, envir=.GlobalEnv)
+    console.output <- options("Rcmdr")[[1]]$console.output
+    assign(".console.output", if (is.null(console.output)) FALSE else console.output, envir=.GlobalEnv)
     log.height <- options("Rcmdr")[[1]]$log.height
-    log.height <- if (is.null(log.height)) "15" else as.character(log.height)
+    log.height <- if (!is.null(log.height)) as.character(log.height)
+        else if (!.log.commands) "0" else "10"
     log.width <- options("Rcmdr")[[1]]$log.width
-    log.width <- if (is.null(log.width)) "70" else as.character(log.width)    
+    log.width <- if (is.null(log.width)) "80" else as.character(log.width)   
+    output.height <- options("Rcmdr")[[1]]$output.height
+    output.height <- if (!is.null(output.height)) as.character(output.height) 
+        else if (.console.output) "0" 
+        else if ((as.numeric(log.height) != 0) || (!log.commands)) as.character(2*as.numeric(log.height))
+        else 20
+    assign(".saveOptions", options(warn=1, contrasts=contrasts, width=as.numeric(log.width),
+        na.action="na.exclude", graphics.record=TRUE), envir=.GlobalEnv) 
     double.click <- options("Rcmdr")[[1]]$double.click
     assign(".double.click", if (is.null(double.click)) FALSE else double.click, envir=.GlobalEnv)
     sort.names <- options("Rcmdr")[[1]]$sort.names
     assign(".sort.names", if (is.null(sort.names)) TRUE else sort.names, envir=.GlobalEnv)
     grab.focus <- options("Rcmdr")[[1]]$grab.focus
     assign(".grab.focus", if (is.null(grab.focus)) TRUE else grab.focus, envir=.GlobalEnv)
+    attach.data.set <- options("Rcmdr")[[1]]$attach.data.set
+    assign(".attach.data.set", if (is.null(attach.data.set)) TRUE else attach.data.set, envir=.GlobalEnv)
+    log.text.color <- options("Rcmdr")[[1]]$log.text.color
+    assign(".log.text.color", if (is.null(log.text.color)) "black" else log.text.color, envir=.GlobalEnv)
+    command.text.color <- options("Rcmdr")[[1]]$command.text.color
+    assign(".command.text.color", if (is.null(command.text.color)) "red" else command.text.color, envir=.GlobalEnv)
+    output.text.color <- options("Rcmdr")[[1]]$output.text.color
+    assign(".output.text.color", if (is.null(output.text.color)) "blue" else output.text.color, envir=.GlobalEnv)
     if (.Platform$OS.type != "windows") {
         assign(".oldPager", options(pager=RcmdrPager), envir=.GlobalEnv)
         default.font.size <- options("Rcmdr")[[1]]$default.font.size
@@ -182,8 +220,9 @@ Commander <- function(){
             tkfocus(.commander)
             return()
             }
+        view.height <- max(as.numeric(output.height) + as.numeric(log.height), 10)
         command <- paste("showData(", .activeDataSet, ", placement='-20+200', font=.logFont, maxwidth=", 
-            log.width, ", maxheight=", as.numeric(log.height)*2, ")", sep="")
+            log.width, ", maxheight=", view.height, ")", sep="")
         logger(command)
         justDoIt(command)
         tkwm.deiconify(.commander)
@@ -204,64 +243,105 @@ Commander <- function(){
             }
         lines <- tclvalue(tkget(.log, selection[1], selection[2]))
         lines <- strsplit(lines, "\n")[[1]]
-        for (line in lines){
-            cat(paste("\nR-cmdr>", line, "\n"))
-            if (length(grep("<-", line)) > 0){
-                var.value <- strsplit(line, "<-")[[1]]
+        if (!.console.output) tkinsert(.output, "end", "\n")
+        iline <- 1
+        nlines <- length(lines)
+        while (iline <= nlines){
+            current.line <- lines[iline]
+            if (.console.output) cat(paste("\nRcmdr> ", current.line,"\n", sep=""))
+            else{
+                tkinsert(.output, "end", paste("> ", current.line,"\n", sep=""))
+                tktag.add(.output, "currentLine", "end - 2 lines linestart", "end - 2 lines lineend")
+                tktag.configure(.output, "currentLine", foreground=.command.text.color)
+                }
+            jline <- iline + 1
+            while (jline <= nlines){
+                if (length(grep("^[\\ \t]", lines[jline])) == 0) break
+                if (.console.output)cat(paste("Rcmdr+ ", lines[jline],"\n", sep=""))
+                else{
+                    tkinsert(.output, "end", paste("+ ", lines[jline],"\n", sep=""))
+                    tktag.add(.output, "currentLine", "end - 2 lines linestart", "end - 2 lines lineend")
+                    tktag.configure(.output, "currentLine", foreground=.command.text.color)
+                    }
+                current.line <- paste(current.line, lines[jline])
+                jline <- jline + 1
+                iline <- iline + 1
+                }
+            if (length(grep("<-", current.line)) > 0){
+                var.value <- strsplit(current.line, "<-")[[1]]
                 var <- gsub(" ", "", var.value[1])
                 value <- var.value[2]
                 if ( (length(grep("\\$", var)) > 0) || (length(grep("\\[", var)) > 0) 
                     || length(grep("\\(", var) > 0))
-#                    || length(grep("row.names\\(", var) > 0) 
-#                    || length(grep("rownames\\(", var) > 0)
-#                    || length(grep("colnames\\(", var) > 0))
-#                    justDoIt(paste(var, "<<-", value))
                     justDoIt(paste(var, "<-", value))
                 else assign(var, justDoIt(value), envir=.GlobalEnv)
                 }
-            else if (length(grep("^remove\\(", line)) > 0){
-                line <- sub(")", ", envir=.GlobalEnv)", line)
-                eval(parse(text=line), envir=.GlobalEnv)
+            else if (length(grep("^remove\\(", current.line)) > 0){
+                current.line <- sub(")", ", envir=.GlobalEnv)", current.line)
+                justDoIt(current.line)
                 }
-            else if (length(grep("^hist\\(", line)) > 0){ 
-                eval(parse(text=paste("plot(", line, ")", sep="")),envir=.GlobalEnv)
+            else if (length(grep("^hist\\(", current.line)) > 0){ 
+                justDoIt(paste("plot(", current.line, ")", sep=""))
                 }
             else if (any(sapply(exceptions, 
-                    function(.x) length(grep(paste("^", .x, "\\(", sep=""), line)) > 0))){ 
-                justDoIt(line)
+                    function(.x) length(grep(paste("^", .x, "\\(", sep=""), current.line)) > 0))){ 
+                justDoIt(current.line)
                 }
             else {
-                result <- eval(parse(text=line), envir=.GlobalEnv)
-                if (!is.null(result)) print(result)
+                result <- try(eval(parse(text=current.line), envir=.GlobalEnv), 
+                    silent=TRUE)
+                if (class(result)[1] ==  "try-error"){
+                    tkmessageBox(message=paste("Error:",
+                        strsplit(result, ":")[[1]][2]), icon="error")
+                    tkfocus(.commander)
+                    }
+                else if (!is.null(result)) {
+                    output <- capture.output(print(result))
+                    if (.console.output) for (line in output) cat(paste(line, "\n", sep=""))
+                    else {
+                        for (line in output) tkinsert(.output, "end", paste(line, "\n", sep=""))
+                        tkyview.moveto(.output, 1)
+                        }
+                    }
                 }
+            iline <- iline + 1
             }
+        tkyview.moveto(.output, 1)
         }
-    contextMenu <- function(){
+    contextMenuLog <- function(){
         contextMenu <- tkmenu(tkmenu(.log), tearoff=FALSE)
+        tkadd(contextMenu, "command", label="Clear window", command=onClear)
         tkadd(contextMenu, "command", label="Submit", command=onSubmit)
         tkadd(contextMenu, "command", label="Cut", command=onCut)
         tkadd(contextMenu, "command", label="Copy", command=onCopy)
         tkadd(contextMenu, "command", label="Paste", command=onPaste)
-        tkadd(contextMenu, "command", label="Detele", command=onDelete)
+        tkadd(contextMenu, "command", label="Delete", command=onDelete)
         tkadd(contextMenu, "command", label="Find...", command=onFind)
         tkadd(contextMenu, "command", label="Select all", command=onSelectAll)
         tkpopup(contextMenu, tkwinfo("pointerx", .log), tkwinfo("pointery", .log))
+        }  
+    contextMenuOutput <- function(){
+        contextMenu <- tkmenu(tkmenu(.output), tearoff=FALSE)
+        tkadd(contextMenu, "command", label="Clear window", command=onClear)
+        tkadd(contextMenu, "command", label="Cut", command=onCut)
+        tkadd(contextMenu, "command", label="Copy", command=onCopy)
+        tkadd(contextMenu, "command", label="Paste", command=onPaste)
+        tkadd(contextMenu, "command", label="Delete", command=onDelete)
+        tkadd(contextMenu, "command", label="Find...", command=onFind)
+        tkadd(contextMenu, "command", label="Select all", command=onSelectAll)
+        tkpopup(contextMenu, tkwinfo("pointerx", .output), tkwinfo("pointery", .output))
         }    
     controlsFrame <- tkframe(.commander)
     editButton <- tkbutton(controlsFrame, text="Edit data set", command=onEdit)
     viewButton <- tkbutton(controlsFrame, text="View data set", command=onView)
     submitButton <- tkbutton(.commander, bitmap=paste("@", file.path(etc, "submit.xbm"), sep=""), 
         borderwidth="2", command=onSubmit)
-    assign(".logCommands", tclVar("1"), envir=.GlobalEnv)
-    logCheckBox <- tkcheckbutton(controlsFrame, variable=.logCommands)
-    assign(".attachDataSet", tclVar("1"), envir=.GlobalEnv)
-    attachCheckBox <- tkcheckbutton(controlsFrame, variable=.attachDataSet)
     assign(".dataSetName", tclVar("<No active dataset>"), envir=.GlobalEnv)
     assign(".dataSetLabel", tkbutton(controlsFrame, textvariable=.dataSetName, fg="red",
         relief="groove", command=selectActiveDataSet),
         envir=.GlobalEnv)
     logFrame <- tkframe(.commander)
-    assign(".log", tktext(logFrame, bg="white", font=.logFont, 
+    assign(".log", tktext(logFrame, bg="white", fg=.log.text.color, font=.logFont, 
         height=log.height, width=log.width, wrap="none"),  envir=.GlobalEnv)
     logXscroll <- tkscrollbar(logFrame, repeatinterval=5, orient="horizontal",
         command=function(...) tkxview(.log, ...))
@@ -269,9 +349,17 @@ Commander <- function(){
         command=function(...) tkyview(.log, ...))
     tkconfigure(.log, xscrollcommand=function(...) tkset(logXscroll, ...))
     tkconfigure(.log, yscrollcommand=function(...) tkset(logYscroll, ...))
+    outputFrame <- tkframe(.commander)
+    assign(".output", tktext(outputFrame, bg="white", fg=.output.text.color, font=.logFont, 
+        height=output.height, width=log.width, wrap="none"),  envir=.GlobalEnv)
+    outputXscroll <- tkscrollbar(outputFrame, repeatinterval=5, orient="horizontal",
+        command=function(...) tkxview(.output, ...))
+    outputYscroll <- tkscrollbar(outputFrame, repeatinterval=5,
+        command=function(...) tkyview(.output, ...))
+    tkconfigure(.output, xscrollcommand=function(...) tkset(outputXscroll, ...))
+    tkconfigure(.output, yscrollcommand=function(...) tkset(outputYscroll, ...))    
     assign(".modelName", tclVar("<No active model>"), envir=.GlobalEnv)
-    bottomLeftFrame <- tkframe(.commander)
-    assign(".modelLabel", tkbutton(bottomLeftFrame, textvariable=.modelName, fg="red",
+    assign(".modelLabel", tkbutton(controlsFrame, textvariable=.modelName, fg="red",
         relief="groove", command=selectActiveModel), 
         envir=.GlobalEnv)
     show.edit.button <- options("Rcmdr")[[1]]$show.edit.button
@@ -279,27 +367,43 @@ Commander <- function(){
     tkgrid(tklabel(controlsFrame, bitmap=paste("@", file.path(etc, "Rcmdr.xbm"), sep=""), fg="red"), 
         tklabel(controlsFrame, text="Data set:"), .dataSetLabel, 
         tklabel(controlsFrame, text="  "), if(show.edit.button) editButton, viewButton, 
-        tklabel(controlsFrame, text="  Log commands:"), logCheckBox, 
-        tklabel(controlsFrame, text="  Attach active data set:"), attachCheckBox, sticky="w")
-    tkgrid(controlsFrame, sticky="w", columnspan="2")
-    tkgrid(.log, logYscroll)
+        tklabel(controlsFrame, text="    Model: "), .modelLabel, sticky="w")
+    tkgrid(controlsFrame, if (.log.commands) submitButton, sticky="w")
+    if (.log.commands) tkgrid.configure(submitButton, sticky="e")
+    tkgrid(.log, logYscroll, sticky="news")
     tkgrid(logXscroll)
-    tkgrid(logFrame, columnspan="2")
-    tkgrid(tklabel(bottomLeftFrame, text="Model: "), .modelLabel)
-    tkgrid(bottomLeftFrame, submitButton)
+    if (.log.commands) tkgrid(logFrame, sticky="news", padx=10, pady=10, columnspan=2)
+    tkgrid(.output, outputYscroll, sticky="news")
+    tkgrid(outputXscroll)
+    if (!.console.output) tkgrid(outputFrame, sticky="news", padx=10, pady=10, columnspan=2)   
     tkgrid.configure(logYscroll, sticky="ns")
-    tkgrid.configure(logXscroll, sticky="ew")
-    tkgrid.configure(submitButton, sticky="e")
-    tkgrid.configure(bottomLeftFrame, sticky="w")
-    for (row in 0:4) tkgrid.rowconfigure(.commander, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(.commander, col, weight=0)
+    tkgrid.configure(logXscroll, sticky="ew")   
+    tkgrid.configure(outputYscroll, sticky="ns")
+    tkgrid.configure(outputXscroll, sticky="ew")    
+    tkgrid.rowconfigure(.commander, 0, weight=0)
+    tkgrid.rowconfigure(.commander, 1, weight=1)
+    tkgrid.rowconfigure(.commander, 2, weight=1)
+    tkgrid.columnconfigure(.commander, 0, weight=1)
+    tkgrid.columnconfigure(.commander, 1, weight=0)
+    if (.log.commands){
+        tkgrid.rowconfigure(logFrame, 0, weight=1)
+        tkgrid.rowconfigure(logFrame, 1, weight=0)
+        tkgrid.columnconfigure(logFrame, 0, weight=1)
+        tkgrid.columnconfigure(logFrame, 1, weight=0)
+        }
+    if (!.console.output){
+        tkgrid.rowconfigure(outputFrame, 0, weight=1)
+        tkgrid.rowconfigure(outputFrame, 1, weight=0)
+        tkgrid.columnconfigure(outputFrame, 0, weight=1)
+        tkgrid.columnconfigure(outputFrame, 1, weight=0)
+        }    
     .Tcl("update idletasks")
-    tkwm.resizable(.commander, 0, 0)
     tkbind(.commander, "<Control-r>", onSubmit)
     tkbind(.commander, "<Control-R>", onSubmit)
     tkbind(.commander, "<Control-f>", onFind)
     tkbind(.commander, "<Control-F>", onFind)
-    tkbind(.log, "<ButtonPress-3>", contextMenu)
+    tkbind(.log, "<ButtonPress-3>", contextMenuLog)
+    tkbind(.output, "<ButtonPress-3>", contextMenuOutput)
     tkwm.deiconify(.commander)
     tkfocus(.commander)
     tkwait <- options("Rcmdr")[[1]]$tkwait  # to address problem in Debian Linux
@@ -307,12 +411,19 @@ Commander <- function(){
     }
 
 logger <- function(command){
-    if (tclvalue(.logCommands) == "1") {
+    if (.log.commands) {
         tkinsert(.log, "end", paste(command,"\n", sep=""))
         tkyview.moveto(.log, 1)
         }
     lines <- strsplit(command, "\n")[[1]]
-    for (line in lines) cat(paste("\nR-cmdr>", line, "\n"))
+    tkinsert(.output, "end", "\n")
+    if (.console.output) for (line in lines) cat(paste("\nRcmdr>", line, "\n"))
+    else {
+        for (line in lines) tkinsert(.output, "end", paste("> ", command,"\n", sep=""))
+        tktag.add(.output, "currentLine", "end - 2 lines linestart", "end - 2 lines lineend")
+        tktag.configure(.output, "currentLine", foreground=.command.text.color)
+        tkyview.moveto(.output, 1)
+        }
     command
     }
 
@@ -325,7 +436,14 @@ doItAndPrint <- function(command) {
         tkfocus(.commander)
         return()
         }
-    if (!is.null(result)) print(result)
+    if (!is.null(result)) {
+        if (.console.output) print(result)
+        else{
+            output <- capture.output(print(result))
+            for (line in output) tkinsert(.output, "end", paste(line, "\n", sep=""))
+            tkyview.moveto(.output, 1)
+            }
+        }
     }
 
 justDoIt <- function(command) {

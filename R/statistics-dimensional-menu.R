@@ -283,8 +283,7 @@ factorAnalysis <- function(){
             '", scores="', scores, '", data=', .activeDataSet, subset, ")", sep="")
         assign(".FA", justDoIt(command), envir=.GlobalEnv)
         logger(paste(".FA <- ", command, sep=""))
-        logger("print(.FA, cutoff=0)")
-        justDoIt("print(.FA, cutoff=0)")
+        doItAndPrint(".FA")
         if (scores != "none") {
             if (is.element("F1", .variables)) {
                 if ("no" == tclvalue(checkReplace("F1"))){
@@ -296,7 +295,6 @@ factorAnalysis <- function(){
                     }
                 }
             for(i in 1:nfactor){
-#                justDoIt(paste(.activeDataSet, "$F", i, " <<- .FA$scores[,", i, "]", sep=""))
                 justDoIt(paste(.activeDataSet, "$F", i, " <- .FA$scores[,", i, "]", sep=""))
                 logger(paste(.activeDataSet, "$F", i, " <- .FA$scores[,", i, "]", sep=""))
                 }

@@ -1,5 +1,6 @@
 \name{reliability}
 \alias{reliability}
+\alias{print.reliability}
 
 \title{Reliability of a Composite Scale}
 \description{
@@ -12,17 +13,21 @@
 
 \usage{
 reliability(S)
+
+\method{print}{reliability}(x, digits=4, ...)
 }
 
 \arguments{
   \item{S}{the covariance matrix of the items; normally, there should be at least 3 items
   and certainly no fewer than 2.}
+  \item{x}{reliability object to be printed.}
+  \item{digits}{number of decimal places.}
+  \item{...}{not used: for compatibility with the print generic."}
 }
 
 }
 \value{
-    The function does not return a useful value; it is called
-    for its side effect -- to print the results.
+    an object of class reliability, which normally would be printed.
 }
 
 \references{

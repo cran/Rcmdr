@@ -1,5 +1,6 @@
 \name{stem.leaf}
 \alias{stem.leaf}
+\alias{print.stem.leaf}
 
 \title{Stem-and-Leaf Display}
 \description{
@@ -9,7 +10,9 @@
 \usage{
 stem.leaf(data, unit, m, Min, Max, rule.line = c("Dixon", "Velleman", "Sturges"), 
     style = c("Tukey", "bare"), trim.outliers = TRUE, depths = TRUE,
-    reverse.negative.leaves = TRUE, print=TRUE)
+    reverse.negative.leaves = TRUE)
+
+\method{print}{stem.leaf}(x, ...)
 }
 
 \arguments{
@@ -32,7 +35,8 @@ stem.leaf(data, unit, m, Min, Max, rule.line = c("Dixon", "Velleman", "Sturges")
     parentheses.}
   \item{reverse.negative.leaves}{if \code{TRUE} (the default), reverse the leaves on negative
     stems (so, e.g., the leaf 9 comes before the leaf 8, etc.).}
-  \item{print}{if \code{TRUE} (the default), prints the stem-and-leaf display.}
+  \item{x}{an object of class stem.leaf to be printed.}
+  \item{...}{not used: for compatibility with the generic print function.}
 }
 
 \details{
@@ -42,8 +46,7 @@ stem.leaf(data, unit, m, Min, Max, rule.line = c("Dixon", "Velleman", "Sturges")
 }
 
 \value{
-  If \code{print = TRUE}, invisibly returns \code{NULL}; otherwise returns a list with
-  information for constructing the stem-and-leaf display.
+  Returns on object of class stem.leaf, which normally would be printed.
 }
 
 \references{

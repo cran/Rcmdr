@@ -1,6 +1,6 @@
 # Graphs menu dialogs
 
-# last modified 8 May 04 by J. Fox
+# last modified 4 June 04 by J. Fox
 
 indexPlot <- function(){
     if (activeDataSet() == FALSE) {
@@ -226,8 +226,7 @@ stemAndLeaf <- function(){
         tkdestroy(top)
         command <- paste("stem.leaf(", .activeDataSet, "$", x, style, unit, m, trim, 
             depths, reverse, ")", sep="")
-        logger(command)
-        justDoIt(command)
+        doItAndPrint(command)
         tkfocus(.commander)
         }
     onCancel <- function() {
@@ -867,7 +866,7 @@ barGraph <- function(){
         variable <- as.character(tkget(variableBox, "active"))
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
-        command <- paste("barplot(table(", .activeDataSet, "$", variable, '), xlab="',
+        command <- paste("barplot(as.vector(table(", .activeDataSet, "$", variable, ')), xlab="',
             variable, '", ylab="Frequency")', sep="")
         logger(command)
         justDoIt(command)

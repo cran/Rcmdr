@@ -235,3 +235,25 @@ Version 0.9-8
     
     o Fixed bug in computation of error bars in plotMeans (reported by Andrea De Cesarei).
     
+Version 0.9-9
+
+    o  Major changes to the R Commander interface:
+    
+        - New default is for output to appear in an output window within the Commander window (suggested by Brian Ripley).
+        
+        - Toolbar, options, and option dialog rearranged to conform to the new scheme.
+        
+        - Log/script files now have .R extension (suggested by Philippe Grosjean); the output window can be saved to a file
+          (by default with a .txt extension).
+          
+        - The Commander window is now resizable. 
+        
+        - Individual commands entered into the log/script window can extend over more than one line (with additional lines indented).
+        
+    o  Added "Clear" item to Edit menu and context menus.
+        
+    o  Added setOutputWidth dialog and corresponding menu item.
+    
+    o  Various small changes for compatibility with the new interface.
+    
+    o  Changes to numerical model tests dialogs for compatibility with new lmtest package. 

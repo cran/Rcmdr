@@ -1,20 +1,22 @@
 # R Commander Menu Definitions
 
-# last modified 30 April 04 by J. Fox
+# last modified 11 June 04 by J. Fox
 
 #   type    menu/item      operation/parent  label                                          command/menu
     
     menu    fileMenu        topMenu         ""                                              ""
-    item    fileMenu        command         "Load log from file..."                         loadLog
-    item    fileMenu        command         "Save log..."                                   saveLog
-    item    fileMenu        command         "Save log as..."                                saveLogAs
+    item    fileMenu        command         "Load script from file..."                      loadLog
+    item    fileMenu        command         "Save script..."                                saveLog
+    item    fileMenu        command         "Save script as..."                             saveLogAs
     item    fileMenu        command         "Options..."                                    Options
+    item    fileMenu        command         "Reset output width..."                         setOutputWidth
     menu    exitMenu        fileMenu        ""                                              ""
     item    exitMenu        command         "From Commander"                                closeCommander
     item    exitMenu        command         "From Commander and R"                          closeCommanderAndR
     item    fileMenu        cascade         "Exit"                                          exitMenu
     item    topMenu         cascade         "File"                                          fileMenu
     menu    editMenu        topMenu         ""                                              ""
+    item    editMenu        command         "Clear window"                                  onClear
     item    editMenu        command         "Cut"                                           onCut
     item    editMenu        command         "Copy"                                          onCopy
     item    editMenu        command         "Paste"                                         onPaste

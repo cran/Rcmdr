@@ -1,4 +1,4 @@
-# last modified 5 May 04 by J. Fox
+# last modified 4 June 04 by J. Fox
 
 # utility functions
 
@@ -35,7 +35,7 @@ activeDataSet <- function(dsname){
         tkfocus(.commander)
         return()
         }
-    if (!is.null(.activeDataSet) && (tclvalue(.attachDataSet) == "1") 
+    if (!is.null(.activeDataSet) && .attach.data.set
         && (length(grep(.activeDataSet, search())) !=0)) {
         detach(pos = match(.activeDataSet, search()))
         logger(paste("detach(", .activeDataSet, ")", sep=""))
@@ -50,7 +50,7 @@ activeDataSet <- function(dsname){
     assign(".twoLevelFactors", listTwoLevelFactors(), envir=.GlobalEnv)
     tclvalue(.dataSetName) <- paste(.activeDataSet, " ")
     tkconfigure(.dataSetLabel, fg="blue")
-    if (tclvalue(.attachDataSet) == "1"){
+    if (.attach.data.set){
         attach(get(dsname, envir=.GlobalEnv), name=dsname)
         logger(paste("attach(", dsname, ")", sep=""))
         }
@@ -142,6 +142,7 @@ reliability <- function(S){
         std.alpha <- k*rbar/(1 + (k - 1)*rbar)
         c(alpha=alpha, std.alpha=std.alpha)
         }
+    result <- list()
     if ((!is.numeric(S)) || !is.matrix(S) || (nrow(S) != ncol(S)) 
         || any(abs(S - t(S)) > max(abs(S))*1e-10) || nrow(S) < 2)
         stop("argument must be a square, symmetric, numeric covariance matrix")
@@ -149,13 +150,12 @@ reliability <- function(S){
     s <- sqrt(diag(S))
     R <- S/(s %o% s)
     rel <- reliab(S, R)
-    cat(paste("Alpha reliability = ", round(rel[1], 4), "\n"))
-    cat(paste("Standardized alpha = ", round(rel[2], 4), "\n"))
+    result$alpha <- rel[1]
+    result$st.alpha <- rel[2]
     if (k < 3) {
         warning("there are fewer than 3 items in the scale")
         return(invisible(NULL))
         }
-    cat("\nReliability deleting each item in turn:\n")
     rel <- matrix(0, k, 3)
     for (i in 1:k) {
         rel[i, c(1,2)] <- reliab(S[-i, -i], R[-i, -i])
@@ -169,8 +169,17 @@ reliability <- function(S){
         }
     rownames(rel) <- rownames(S)
     colnames(rel) <- c("Alpha", "Std.Alpha", "r(item, total)")
-    print(round(rel, 4))
-    invisible(NULL)
+    result$rel.matrix <- rel
+    class(result) <- "reliability"
+    result
+    }
+
+print.reliability <- function(x, digits=4, ...){
+    cat(paste("Alpha reliability = ", round(x$alpha, digits), "\n"))
+    cat(paste("Standardized alpha = ", round(x$st.alpha, digits), "\n"))
+    cat("\nReliability deleting each item in turn:\n")
+    print(round(x$rel.matrix, digits))
+    invisible(x)
     }
     
 partial.cor <- function(X, ...){
@@ -207,8 +216,7 @@ Hist <- function(x, scale=c("frequency", "percent", "density"), ...){
     }
 
 stem.leaf <- function(data, unit, m, Min, Max, rule.line=c("Dixon", "Velleman", "Sturges"),
-     style=c("Tukey", "bare"), trim.outliers=TRUE, depths=TRUE, reverse.negative.leaves=TRUE,
-     print=TRUE){
+     style=c("Tukey", "bare"), trim.outliers=TRUE, depths=TRUE, reverse.negative.leaves=TRUE){
 #Author:  Peter Wolf 05/2003  (modified slightly by J. Fox, 20 July 03)
     rule.line <- match.arg(rule.line)
     style <- match.arg(style)
@@ -315,11 +323,13 @@ stem.leaf <- function(data, unit, m, Min, Max, rule.line=c("Dixon", "Velleman", 
     if(exists("lower.line")) stem <- c(lower=lower.line, stem)
     if(exists("upper.line")) stem <- c(stem, upper=upper.line)
     result <- list(info=info, stem=stem)
-    if (print){
-        for(i in seq(result)) cat(result[[i]],sep="\n")
-        invisible(NULL)
-        }
-    else result
+    class(result) <- "stem.leaf"
+    result
+    }
+    
+print.stem.leaf <- function(x, ...){
+    for(i in seq(x)) cat(x[[i]],sep="\n")
+    invisible(x)
     }
 
 plotMeans <- function(response, factor1, factor2, error.bars = c("se", "sd", "conf.int", "none"),
