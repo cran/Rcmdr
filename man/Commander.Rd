@@ -108,6 +108,9 @@ set none, one, several, or all options. The available options are as follows:
     
     \item{\code{log.height}}{The height of the log window, in lines. The default is 15.}
     
+    \item{\code{placement}}{Placement of the Commander window, in pixels; the default is
+    \code{"-40+40"}, which puts the window near the upper-right corner of the screen.}
+    
     \item{\code{contrasts}}{Serves the same function as the general \code{contrasts} option; the default is 
     \code{c("contr.Treatment", "contr.poly")}. When the Commander exits, the \code{contrasts}
     option is returned to its pre-existing value. Note that \code{contr.Treatment} is from the \code{car} package.}
@@ -120,6 +123,9 @@ set none, one, several, or all options. The available options are as follows:
     
     \item{\code{double.click}}{Set to \code{TRUE} if you want a double-click of the left mouse
     button to press the default button in all dialogs. The default is \code{FALSE}.}
+    
+    \item{\code{sort.names}}{Set to \code{TRUE} (the default) if you want variable names to be sorted
+    alphabetically in variable lists.}
     
     \item{\code{show.edit.button}}{Set to \code{TRUE} (the default) if you want an Edit button in the Commander
     window, permitting you to edit the active data set. Windows users may wish to set this option to \code{FALSE}
@@ -146,7 +152,7 @@ set none, one, several, or all options. The available options are as follows:
     under Windows, and it should not be used with the Windows R GUI with buffered output.}
     }
     
-Most options may also be set via the File -> Options menu, which will restart the Commander after options are set.
+Most options may also be set via the emph{File -> Options} menu, which will restart the Commander after options are set.
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}}

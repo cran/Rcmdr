@@ -1,6 +1,6 @@
 # R Commander Menu Definitions
 
-# last modified 22 Dec 03 by J. Fox
+# last modified 29 Jan 04 by J. Fox
 
 #   type    menu/item      operation/parent  label                                          command/menu
     
@@ -48,6 +48,7 @@
     item    variablesMenu   command         "Standardize variables..."                      standardize
     item    variablesMenu   command         "Convert numeric variable to factor..."         numericToFactor
     item    variablesMenu   command         "Reorder factor levels..."                      reorderFactor
+    item    variablesMenu   command         "Define contrasts for a factor..."              setContrasts
     item    variablesMenu   command         "Rename variables..."                           renameVariables
     item    variablesMenu   command         "Delete variables from data set ..."            deleteVariable
     item    dataMenu        cascade         "Manage variables in active data set"           variablesMenu
@@ -105,7 +106,9 @@
     item    graphsMenu      command         "Quantile-comparison plot..."                   QQPlot
     item    graphsMenu      command         "Scatterplot..."                                scatterPlot
     item    graphsMenu      command         "Scatterplot matrix..."                         scatterPlotMatrix
+    item    graphsMenu      command         "3D scatterplot..."                             Scatter3D
     item    graphsMenu      command         "Line graph..."                                 linePlot
+    item    graphsMenu      command         "Plot of means..."                              PlotMeans
     item    graphsMenu      command         "Bar graph..."                                  barGraph
     item    graphsMenu      command         "Pie chart..."                                  pieChart
     item    topMenu         cascade         "Graphs"                                        graphsMenu
@@ -124,6 +127,7 @@
     item    diagnosticsMenu command         "Breusch-Pagan test for heteroscedasticity..."  BreuschPaganTest
     item    diagnosticsMenu command         "Durbin-Watson test for autocorrelation..."     DurbinWatsonTest
     item    diagnosticsMenu command         "RESET test for nonlinearity..."                RESETtest
+    item    diagnosticsMenu command         "Bonferroni outlier test"                    outlierTest
     menu    graphsMenu      modelsMenu      ""                                              "" 
     item    modelsMenu      cascade         "Graphs"                                        graphsMenu  
     item    graphsMenu      command         "Basic diagnostic plots"                        plotModel

@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 19 July 03 by J. Fox
+# last modified 27 Jan 04 by J. Fox
 
     # Variances menu
     
@@ -44,7 +44,8 @@ twoVariancesFTest <- function(){
         level <- tclvalue(confidenceLevel)
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
-        doItAndPrint(paste("tapply(", response, ", ", group, ",  var, na.rm=TRUE)", sep=""))
+        doItAndPrint(paste("tapply(", .activeDataSet, "$", response, ", ", 
+            .activeDataSet, "$", group, ",  var, na.rm=TRUE)", sep=""))
         doItAndPrint(paste("var.test(", response, " ~ ", group,
             ", alternative='", alternative, "', conf.level=", level,
             ", data=", .activeDataSet, ")", sep=""))
@@ -52,13 +53,13 @@ twoVariancesFTest <- function(){
         tkdestroy(top)
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
     onCancel <- function() {
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }    
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(var.test)
@@ -77,13 +78,13 @@ twoVariancesFTest <- function(){
     tkgrid(groupBox, groupScroll, sticky="nw")
     tkgrid(responseBox, responseScroll, sticky="nw")
     tkgrid(groupFrame, responseFrame, sticky="nw")
-    tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis"), columnspan=2, sticky="w")
+    tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis", fg="blue"), columnspan=2, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Two-sided"), twosidedButton, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Difference < 0"), lessButton, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Difference > 0"), greaterButton, sticky="w")
     tkgrid(tklabel(confidenceFrame, text="Confidence Level"))
     tkgrid(confidenceField)
-    tkgrid(alternativeFrame, confidenceFrame, sticky="n")
+    tkgrid(alternativeFrame, confidenceFrame, sticky="nw")
     tkgrid(OKbutton, cancelButton, sticky="w")
     tkgrid(buttonsFrame, helpButton, sticky="w")
     tkgrid.configure(groupScroll, sticky="ns")
@@ -148,13 +149,13 @@ BartlettTest <- function(){
         tkfocus(.commander)
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
     onCancel <- function() {
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(bartlett.test)
@@ -229,13 +230,13 @@ LeveneTest <- function(){
         tkfocus(.commander)
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
     onCancel <- function() {
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(levene.test)

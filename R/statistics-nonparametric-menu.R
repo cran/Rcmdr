@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 20 July 03 by J. Fox
+# last modified 27 Jan 04 by J. Fox
 
     # Nonparametric tests menu
     
@@ -47,22 +47,22 @@ twoSampleWilcoxonTest <- function(){
         doItAndPrint(paste("tapply(", paste(.activeDataSet,"$", response, sep=""),
             ", ", paste(.activeDataSet,"$", group, sep=""), ", median, na.rm=TRUE)", sep=""))
         if (test == "default"){
-            doItAndPrint(paste("wilcox.test(", response, " ~ ", group, ", alternative='", 
-            alternative, "')", sep=""))
+            doItAndPrint(paste("wilcox.test(", response, " ~ ", group, ', alternative="', 
+            alternative, '", data=', .activeDataSet, ")", sep=""))
             }
         else doItAndPrint(paste("wilcox.test(", response, " ~ ", group, ", alternative='", 
             alternative, "', exact=", test=="exact", 
-            ", correct=", test=="correct", ")", sep=""))
+            ", correct=", test=="correct",", data=", .activeDataSet, ")", sep=""))
         tkfocus(.commander)
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
     onCancel <- function() {
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }  
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(wilcox.test)
@@ -84,11 +84,11 @@ twoSampleWilcoxonTest <- function(){
     tkgrid(groupBox, groupScroll, sticky="nw")
     tkgrid(responseBox, responseScroll, sticky="nw")
     tkgrid(groupFrame, responseFrame, sticky="nw")
-    tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis"), columnspan=2, sticky="w")
+    tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis", fg="blue"), columnspan=2, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Two-sided"), twosidedButton, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Difference < 0"), lessButton, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Difference > 0"), greaterButton, sticky="w")
-    tkgrid(tklabel(testFrame, text="Type of Test"), columnspan=2, sticky="w")
+    tkgrid(tklabel(testFrame, text="Type of Test", fg="blue"), columnspan=2, sticky="w")
     tkgrid(tklabel(testFrame, text="Default"), defaultButton, sticky="w")
     tkgrid(tklabel(testFrame, text="Exact"), exactButton, sticky="w")
     tkgrid(tklabel(testFrame, text="Normal approximation"), normalButton, sticky="w")
@@ -181,8 +181,8 @@ pairedWilcoxonTest <- function(){
         tkdestroy(top)  
         }  
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(wilcox.test)
@@ -204,17 +204,17 @@ pairedWilcoxonTest <- function(){
     tkgrid(xBox, xScroll, sticky="nw")
     tkgrid(yBox, yScroll, sticky="nw")
     tkgrid(xFrame, yFrame, sticky="nw")    
-    tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis"), columnspan=2, sticky="w")
+    tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis", fg="blue"), columnspan=2, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Two-sided"), twosidedButton, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Difference < 0"), lessButton, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Difference > 0"), greaterButton, sticky="w")
-    tkgrid(tklabel(testFrame, text="Type of Test"), columnspan=2, sticky="w")
+    tkgrid(tklabel(testFrame, text="Type of Test", fg="blue"), columnspan=2, sticky="w")
     tkgrid(tklabel(testFrame, text="Default"), defaultButton, sticky="w")
     tkgrid(tklabel(testFrame, text="Exact"), exactButton, sticky="w")
     tkgrid(tklabel(testFrame, text="Normal approximation"), normalButton, sticky="w")
     tkgrid(tklabel(testFrame, text="Normal approximation with\ncontinuity correction", justify="left"), 
         correctButton, sticky="w")    
-    tkgrid(alternativeFrame, testFrame, sticky="n")
+    tkgrid(alternativeFrame, testFrame, sticky="nw")
     tkgrid(OKbutton, cancelButton, sticky="w")
     tkgrid(buttonsFrame, helpButton, sticky="w")
     tkgrid.configure(xScroll, sticky="ns")
@@ -279,13 +279,13 @@ KruskalWallisTest <- function(){
         tkfocus(.commander)
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
     onCancel <- function() {
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(kruskal.test)

@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 3 November 03 by J. Fox
+# last modified 4 Feb 04 by J. Fox
 
     # Summaries menu
     
@@ -23,6 +23,8 @@ summarizeDataSet <- function(){
     }
 
 numericalSummaries <- function(){
+    env <- environment()
+    .groupsLabel <- tclVar("Summarize by groups")
     if (activeDataSet() == FALSE) {
         tkfocus(.commander)
         return()
@@ -51,14 +53,14 @@ numericalSummaries <- function(){
     quantilesCheckBox <- tkcheckbutton(quantilesFrame, variable=quantilesVariable)
     quantiles <- tclVar("0,.25,.5,.75,1")
     quantilesEntry <- tkentry(quantilesFrame, width="20", textvariable=quantiles)
-    assign(".groups", "FALSE", envir=.GlobalEnv)
+    .groups <- FALSE
     onOK <- function(){
         x <- as.character(tkget(xBox, "active"))
         quants <- paste("c(", gsub(" ", ",", tclvalue(quantiles)), ")")
         var <- paste(.activeDataSet, "$", x, sep="")
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
-        if (.groups == "FALSE") {
+        if (.groups == FALSE) {
             if (tclvalue(meanVariable) == "1") doItAndPrint(paste("mean(", var, ", na.rm=TRUE)", sep=""))
             if (tclvalue(sdVariable) == "1") doItAndPrint(paste("sd(", var, ", na.rm=TRUE)", sep=""))
             if (tclvalue(quantilesVariable) == "1") doItAndPrint(paste("quantile(", var, ", ",
@@ -86,7 +88,9 @@ numericalSummaries <- function(){
         for (groups in .factors) tkinsert(groupsBox, "end", groups)
         onOKsub <- function() {
             groups <- as.character(tkget(groupsBox, "active"))
-            assign(".groups", groups, envir=.GlobalEnv)
+            assign(".groups", groups, envir=env)
+            tclvalue(.groupsLabel) <- paste("Summarize by:", groups)
+            tkconfigure(groupsButton, fg="blue")
             if (.grab.focus) tkgrab.release(subdialog)
             tkdestroy(subdialog)
             tkwm.deiconify(top)
@@ -95,6 +99,9 @@ numericalSummaries <- function(){
             tkwait.window(top)
             }
         onCancelSub <- function() {
+            assign(".groups", FALSE, envir=env)
+            tclvalue(.groupsLabel) <- "Summarize by groups"
+            tkconfigure(groupsButton, fg="black")
             if (.grab.focus) tkgrab.release(subdialog)  
             tkdestroy(subdialog)
             tkwm.deiconify(top)
@@ -103,8 +110,8 @@ numericalSummaries <- function(){
             tkwait.window(top)
             }
         subButtonFrame <- tkframe(subdialog)
-        OKSubButton <- tkbutton(subButtonFrame, text="OK", width="12", command=onOKsub, default="active")
-        cancelSubButton <- tkbutton(subButtonFrame, text="Cancel", width="12", command=onCancelSub)
+        OKSubButton <- tkbutton(subButtonFrame, text="OK", fg="darkgreen", width="12", command=onOKsub, default="active")
+        cancelSubButton <- tkbutton(subButtonFrame, text="Cancel", fg="red", width="12", command=onCancelSub)
         tkgrid(tklabel(subdialog, text="Groups (pick one)"), sticky="w")
         tkgrid(groupsBox, groupsScroll, sticky="nw")
         tkgrid(groupsFrame, sticky="w")
@@ -130,14 +137,14 @@ numericalSummaries <- function(){
         tkdestroy(top)  
         }
     buttonFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonFrame, text="Cancel", width="12",command=onCancel)
+    OKbutton <- tkbutton(buttonFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonFrame, text="Cancel", fg="red", width="12",command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(quantile)
         }
     helpButton <- tkbutton(buttonFrame, text="Help", width="12", command=onHelp)
-    groupsButton <- tkbutton(top, text="Summarize by groups", command=onGroups)
+    groupsButton <- tkbutton(top, textvariable=.groupsLabel, command=onGroups)
     tkgrid(tklabel(top, text="Variable (pick one)"), sticky="w")
     tkgrid(xBox, xScroll, sticky="nw")
     tkgrid(xFrame, sticky="w")    
@@ -183,17 +190,94 @@ frequencyDistribution <- function(){
     xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
     tkconfigure(xBox, yscrollcommand=function(...) tkset(xScroll, ...))
     for (x in .factors) tkinsert(xBox, "end", x)
+    optionsFrame <- tkframe(top)
+    goodnessOfFitVariable <- tclVar("0")
+    goodnessOfFitCheckBox <- tkcheckbutton(optionsFrame, variable=goodnessOfFitVariable)
     onOK <- function(){
         x <- as.character(tkget(xBox, "active"))
+        goodnessOfFit <- tclvalue(goodnessOfFitVariable)
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         command <- paste("table(", .activeDataSet, "$", x, ")", sep="")
         logger(paste(".Table <-", command))
         assign(".Table", justDoIt(command), envir=.GlobalEnv)
         doItAndPrint(".Table  # counts")
-       # logger(".Table")
-       # print(.Table)
-        doItAndPrint("100*.Table/sum(.Table)  # percentages")
+        doItAndPrint("100*.Table/sum(.Table)  # percentages")        
+        env <- environment()
+        if (goodnessOfFit == 1){
+            subwin <- tktoplevel()
+            tkwm.title(subwin, "Goodness-of-Fit Test")
+            hypothesisFrame <- tkframe(subwin)
+            levs <- eval(parse(text=paste("levels(", .activeDataSet, "$", x, ")", sep="")))
+            n.levs <- length(levs)
+            assign(".entry.1", tclVar(paste("1/", n.levs, sep="")), envir=env)
+            make.entries <- "tklabel(hypothesisFrame, text='Hypothesized probabilities', fg='blue')"
+            make.lev.names <- "tklabel(hypothesisFrame, text='Factor levels', fg='blue')"
+            for (i in 1:n.levs) {
+                entry.varname <- paste(".entry.", i, sep="")
+                assign(entry.varname, tclVar(paste("1/", n.levs, sep="")), envir=env)
+                make.entries <- paste(make.entries, ", ", "tkentry(hypothesisFrame, width='5', textvariable=", 
+                        entry.varname, ")", sep="")
+                make.lev.names <- paste(make.lev.names, ", tklabel(hypothesisFrame, text='", levs[i], "')", sep="")
+                }
+            eval(parse(text=paste("tkgrid(", make.lev.names, ", sticky='w')", sep="")), envir=env)
+            eval(parse(text=paste("tkgrid(", make.entries, ", stick='w')", sep="")), envir=env)
+            tkgrid(hypothesisFrame, sticky="w")
+            onOKsub <- function(){
+                probs <- rep(NA, n.levs)
+                for (i in 1:n.levs){
+                    entry.varname <- paste(".entry.", i, sep="")
+                    probs[i] <- eval(parse(text=eval(parse(text=paste("tclvalue(", entry.varname,")", sep="")), envir=env)))
+                    }
+                probs <- na.omit(probs)
+                if (length(probs) != n.levs){
+                    tkmessageBox(message=paste("Number of valid entries (", length(probs), ")\n",
+                        "not equal to number levels (", n.levs,").", 
+                        sep=""), icon="error", type="ok")
+                    if (.grab.focus) tkgrab.release(sub)
+                    tkdestroy(subwin)
+                    return()
+                    }
+                if (any(probs < 0)){
+                    tkmessageBox(message="Negative probabilities not allowed.", icon="error", type="ok")
+                    if (.grab.focus) tkgrab.release(subwin)
+                    tkdestroy(subwin)
+                    return()
+                    }
+                if (abs(sum(probs) - 1) > 0.001){
+                    tkmessageBox(message="Probabilities rescaled to sum to 1.", icon="warning", type="ok")
+                    probs <- probs/sum(probs)
+                    }
+                if (.grab.focus) tkgrab.release(subwin)
+                tkdestroy(subwin)
+                command <- paste("c(", paste(probs, collapse=","), ")", sep="")
+                logger(paste(".Probs <-", command))
+                assign(".Probs", justDoIt(command), envir=.GlobalEnv)
+                doItAndPrint("chisq.test(.Table, p=.Probs)")
+                logger("remove(.Probs)")
+                remove(.Probs, envir=.GlobalEnv)
+                }
+            onCancelSub <- function() {
+                if (.grab.focus) tkgrab.release(subwin)
+                tkfocus(.commander)
+                tkdestroy(subwin)  
+                } 
+            buttonFrameSub <- tkframe(subwin)
+            OKbuttonSub <- tkbutton(buttonFrameSub, text="OK", fg="darkgreen", width="12", command=onOKsub, default="active")
+            cancelButtonSub <- tkbutton(buttonFrameSub, text="Cancel", fg="red", width="12",command=onCancelSub)
+            tkgrid(OKbuttonSub, tklabel(buttonFrameSub, text="    "), cancelButtonSub, sticky="w")
+            tkgrid(buttonFrameSub, sticky="w")
+            for (row in 0:2) tkgrid.rowconfigure(subwin, row, weight=0)
+            for (col in 0:0) tkgrid.columnconfigure(subwin, col, weight=0)
+            .Tcl("update idletasks")
+            tkwm.resizable(subwin, 0, 0)
+            tkbind(subwin, "<Return>", onOKsub)
+            if (.double.click) tkbind(subwin, "<Double-ButtonPress-1>", onOKsub)
+            tkwm.deiconify(subwin)
+            if (.grab.focus) tkgrab.set(subwin)
+            tkfocus(subwin)
+            tkwait.window(subwin)
+            }            
         logger("remove(.Table)") 
         remove(.Table, envir=.GlobalEnv)  
         tkfocus(.commander)
@@ -204,8 +288,8 @@ frequencyDistribution <- function(){
         tkdestroy(top)  
         } 
     buttonFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonFrame, text="Cancel", width="12",command=onCancel)
+    OKbutton <- tkbutton(buttonFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonFrame, text="Cancel", fg="red", width="12",command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(table)
@@ -214,6 +298,8 @@ frequencyDistribution <- function(){
     tkgrid(tklabel(top, text="Variable (pick one)"), sticky="w")
     tkgrid(xBox, xScroll, sticky="nw")
     tkgrid(xFrame, sticky="w")    
+    tkgrid(tklabel(optionsFrame, text="Chi-square goodness-of-fit test"), goodnessOfFitCheckBox, sticky="w")
+    tkgrid(optionsFrame, sticky="w")
     tkgrid(OKbutton, cancelButton, tklabel(buttonFrame, text="    "), helpButton, sticky="w")
     tkgrid(buttonFrame, sticky="w")
     tkgrid.configure(xScroll, sticky="ns")
@@ -288,19 +374,19 @@ statisticsTable <- function(){
         if (statistic == "other") statistic <- tclvalue(otherVariable)
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
-        groups.list <- paste(paste(groups, "=", groups, sep=""), collapse=", ")
-        doItAndPrint(paste("tapply(", response, ", list(", groups.list,
+        groups.list <- paste(paste(groups, "=", .activeDataSet, "$", groups, sep=""), collapse=", ")
+        doItAndPrint(paste("tapply(", .activeDataSet, "$", response, ", list(", groups.list,
              "), ", statistic, ", na.rm=TRUE)", sep=""))
         tkfocus(.commander)
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
     onCancel <- function() {
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }  
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(tapply)
@@ -312,6 +398,7 @@ statisticsTable <- function(){
     tkgrid(responseBox, responseScroll, sticky="nw")
     tkgrid(groupFrame, responseFrame, sticky="nw")
     tkgrid(variablesFrame)
+    tkgrid(tklabel(statisticFrame, text="Statistic", fg="blue"), sticky="w")
     tkgrid(tklabel(statisticFrame, text="Mean"), meanButton, sticky="w")
     tkgrid(tklabel(statisticFrame, text="Median"), medianButton, sticky="w")
     tkgrid(tklabel(statisticFrame, text="Standard deviation"), sdButton, sticky="w")
@@ -399,8 +486,8 @@ correlationMatrix <- function(){
         tkdestroy(top)  
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(cor)
@@ -409,7 +496,7 @@ correlationMatrix <- function(){
     tkgrid(tklabel(top, text="Variables (pick two or more)"), sticky="w")
     tkgrid(xBox, xScroll, sticky="nw")
     tkgrid(xFrame, sticky="w")
-    tkgrid(tklabel(correlationsFrame, text="Type of Correlations"), sticky="w")
+    tkgrid(tklabel(correlationsFrame, text="Type of Correlations", fg="blue"), sticky="w")
     tkgrid(tklabel(correlationsFrame, text="Pearson product-moment"), pearsonButton, sticky="w")
     tkgrid(tklabel(correlationsFrame, text="Spearman rank-order"), spearmanButton, sticky="w")
     tkgrid(tklabel(correlationsFrame, text="Partial"), partialButton, sticky="w")

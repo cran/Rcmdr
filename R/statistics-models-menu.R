@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 23 July 03 by J. Fox
+# last modified 28 Jan 04 by J. Fox
 
     # Models menu
     
@@ -106,8 +106,8 @@ linearRegressionModel <- function(){
         tkdestroy(top)  
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(lm)
@@ -185,8 +185,7 @@ linearModel <- function(){
         }
     top <- tktoplevel()
     tkwm.title(top, "Linear Model")
-    variables <- paste(.variables, ifelse(sapply(eval(parse(text=.activeDataSet), 
-        envir=.GlobalEnv), is.factor), "[factor]", ""))
+    variables <- paste(.variables, ifelse(is.element(.variables, .factors), "[factor]", ""))
     xFrame <- tkframe(top)
     xBox <- tklistbox(xFrame, height=min(4, length(.variables)),
         selectmode="single", background="white", exportselection="FALSE")
@@ -390,8 +389,8 @@ linearModel <- function(){
     rightParenButton <- tkbutton(operatorsFrame, text=")", width="3", command=onRightParen, 
         font=.operatorFont)
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(linearModel)
@@ -487,8 +486,7 @@ generalizedLinearModel <- function(){
         }
     top <- tktoplevel()
     tkwm.title(top, "Generalized Linear Model")
-    variables <- paste(.variables, ifelse(sapply(eval(parse(text=.activeDataSet), 
-        envir=.GlobalEnv), is.factor), "[factor]", ""))
+    variables <- paste(.variables, ifelse(is.element(.variables, .factors), "[factor]", ""))
     xFrame <- tkframe(top)
     xBox <- tklistbox(xFrame, height=min(4, length(.variables)),
         selectmode="single", background="white", exportselection="FALSE")
@@ -715,8 +713,8 @@ generalizedLinearModel <- function(){
     rightParenButton <- tkbutton(operatorsFrame, text=")", width="3", command=onRightParen, 
         font=.operatorFont)
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(generalizedLinearModel)

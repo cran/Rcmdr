@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 20 July 03 by J. Fox
+# last modified 27 Jan 04 by J. Fox
 
     # Means menu
 
@@ -52,13 +52,13 @@ independentSamplesTTest <- function(){
         tkfocus(.commander)
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12",command=onOK, default="active")
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12",command=onOK, default="active")
     onCancel <- function() {
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         } 
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",command=onCancel)
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(t.test)
@@ -81,13 +81,13 @@ independentSamplesTTest <- function(){
     tkgrid(groupBox, groupScroll, sticky="nw")
     tkgrid(responseBox, responseScroll, sticky="nw")
     tkgrid(groupFrame, responseFrame, sticky="nw")
-    tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis"), columnspan=2, sticky="w")
+    tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis", fg="blue"), columnspan=2, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Two-sided"), twosidedButton, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Difference < 0"), lessButton, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Difference > 0"), greaterButton, sticky="w")
     tkgrid(tklabel(confidenceFrame, text="Confidence Level"),sticky="w")
     tkgrid(confidenceField, sticky="w")
-    tkgrid(tklabel(variancesFrame, text="Assume equal variance?"), columnspan=2, sticky="w")
+    tkgrid(tklabel(variancesFrame, text="Assume equal variance?", fg="blue"), columnspan=2, sticky="w")
     tkgrid(tklabel(variancesFrame, text="No"), noButton, sticky="w")
     tkgrid(tklabel(variancesFrame, text="Yes"), yesButton, sticky="w")
     tkgrid(alternativeFrame, confidenceFrame, variancesFrame, sticky="nw")
@@ -163,8 +163,8 @@ pairedTTest <- function(){
         tkdestroy(top)  
         }  
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(t.test)
@@ -183,7 +183,7 @@ pairedTTest <- function(){
     tkgrid(xBox, xScroll, sticky="nw")
     tkgrid(yBox, yScroll, sticky="nw")
     tkgrid(xFrame, yFrame, sticky="nw")    
-    tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis"), columnspan=2, sticky="w")
+    tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis", fg="blue"), columnspan=2, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Two-sided"), twosidedButton, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Difference < 0"), lessButton, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Difference > 0"), greaterButton, sticky="w")
@@ -247,8 +247,8 @@ singleSampleTTest <- function(){
         tkdestroy(top)  
         } 
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(t.test)
@@ -269,7 +269,7 @@ singleSampleTTest <- function(){
     tkgrid(tklabel(top, text="Variable (pick one)"), sticky="w")
     tkgrid(xBox, xScroll, sticky="nw")
     tkgrid(xFrame, sticky="nw")    
-    tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis"), columnspan=2, sticky="w")
+    tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis", fg="blue"), columnspan=2, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Population mean = mu0"), twosidedButton, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Population mean < mu0"), lessButton, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Population mean > mu0"), greaterButton, sticky="w")
@@ -329,25 +329,39 @@ oneWayAnova <- function(){
         command=function(...) tkyview(responseBox, ...))    
     tkconfigure(responseBox, yscrollcommand=function(...) tkset(responseScroll, ...))
     for (response in .numeric) tkinsert(responseBox, "end", response)
+    optionsFrame <- tkframe(top)
+    pairwiseVariable <- tclVar("0")
+    pairwiseCheckBox <- tkcheckbutton(optionsFrame, variable=pairwiseVariable)
     onOK <- function(){
         group <- as.character(tkget(groupBox, "active"))
         response <- as.character(tkget(responseBox, "active"))
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
-        doItAndPrint(paste("anova(lm(", response, " ~ ", group, "))", sep=""))
-        doItAndPrint(paste("tapply(", response, ", ", group, ", mean, na.rm=TRUE) # means", sep=""))
-        doItAndPrint(paste("tapply(", response, ", ", group, ", sd, na.rm=TRUE) # std. deviations", sep=""))
-        doItAndPrint(paste("tapply(", response, ", ", group, ", function(x) sum(!is.na(x))) # counts", sep=""))
+        doItAndPrint(paste("anova(lm(", response, " ~ ", group, ", data=", .activeDataSet, "))", sep=""))
+        doItAndPrint(paste("tapply(", .activeDataSet, "$", response, ", ", .activeDataSet, "$", group, 
+            ", mean, na.rm=TRUE) # means", sep=""))
+        doItAndPrint(paste("tapply(", .activeDataSet, "$", response, ", ", .activeDataSet, "$", group, 
+            ", sd, na.rm=TRUE) # std. deviations", sep=""))
+        doItAndPrint(paste("tapply(", .activeDataSet, "$", response, ", ", .activeDataSet, "$", group, 
+            ", function(x) sum(!is.na(x))) # counts", sep=""))
+        pairwise <- tclvalue(pairwiseVariable)
+        if (pairwise == 1) {
+            if (eval(parse(text=paste("length(levels(", .activeDataSet, "$", group, ")) < 3")))) 
+                tkmessageBox (message="Factor has fewer than 3 levels; pairwise comparisons omitted.",
+                    icon="warning", type="ok")
+            else doItAndPrint(paste("summary(simtest(", response, " ~ ", group, 
+                ', type="Tukey", data=', .activeDataSet, '))', sep=""))
+            }
         tkfocus(.commander)
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
     onCancel <- function() {
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(anova)
@@ -358,12 +372,14 @@ oneWayAnova <- function(){
     tkgrid(groupBox, groupScroll, sticky="nw")
     tkgrid(responseBox, responseScroll, sticky="nw")
     tkgrid(groupFrame, responseFrame, sticky="nw")
+    tkgrid(tklabel(optionsFrame, text="Pairwise comparisons of means"), pairwiseCheckBox, sticky="w")
+    tkgrid(optionsFrame, sticky="w")
     tkgrid(OKbutton, cancelButton, sticky="w")
     tkgrid(buttonsFrame, helpButton, sticky="w")
     tkgrid.configure(responseScroll, sticky="ns")
     tkgrid.configure(groupScroll, sticky="ns")
     tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
+    for (row in 0:3) tkgrid.rowconfigure(top, row, weight=0)
     for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)
@@ -423,25 +439,25 @@ multiWayAnova <- function(){
             }
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
-        groups.list <- paste(paste(groups, "=", groups, sep=""), collapse=", ")
+        groups.list <- paste(paste(groups, "=", .activeDataSet, "$", groups, sep=""), collapse=", ")
         doItAndPrint(paste("Anova(lm(", response, " ~ ", paste(groups, collapse="*"),
-             "))", sep=""))
-        doItAndPrint(paste("tapply(", response, ", list(", groups.list,
+             ", data=", .activeDataSet, "))", sep=""))
+        doItAndPrint(paste("tapply(", .activeDataSet, "$", response, ", list(", groups.list,
              "), mean, na.rm=TRUE) # means", sep=""))
-        doItAndPrint(paste("tapply(", response, ", list(", groups.list,
+        doItAndPrint(paste("tapply(", .activeDataSet, "$", response, ", list(", groups.list,
              "), sd, na.rm=TRUE) # std. deviations", sep=""))
-        doItAndPrint(paste("tapply(", response, ", list(", groups.list,
+        doItAndPrint(paste("tapply(", .activeDataSet, "$", response, ", list(", groups.list,
              "), function(x) sum(!is.na(x))) # counts", sep=""))
         tkfocus(.commander)
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
     onCancel <- function() {
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }  
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(Anova)

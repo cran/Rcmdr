@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 2 December 03 by J. Fox
+# last modified 27 January 04 by J. Fox
 
     # Tables menu
     
@@ -89,13 +89,13 @@ twoWayTable <- function(){
         tkfocus(.commander)
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
     onCancel <- function() {
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",command=onCancel)
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(xtabs)
@@ -118,11 +118,12 @@ twoWayTable <- function(){
     tkgrid(rowBox, rowScroll, sticky="nw")
     tkgrid(columnBox, columnScroll, sticky="nw")
     tkgrid(rowFrame, columnFrame, sticky="nw")
-    tkgrid(tklabel(percentsFrame, text="Compute Percentages"), columnspan=2, sticky="w")
+    tkgrid(tklabel(percentsFrame, text="Compute Percentages", fg="blue"), columnspan=2, sticky="w")
     tkgrid(tklabel(percentsFrame, text="Row percentages"), rowPercentsButton, sticky="w")
     tkgrid(tklabel(percentsFrame, text="Column percentages"), columnPercentsButton, sticky="w")
     tkgrid(tklabel(percentsFrame, text="No percentages"), nonePercentsButton, sticky="w")
     tkgrid(percentsFrame, sticky="w")
+    tkgrid(tklabel(testsFrame, text="Hypothesis Tests", fg="blue"), sticky="w")
     tkgrid(tklabel(testsFrame, text="Chisquare test of independence"), chisqCheckBox, sticky="e")
     tkgrid(tklabel(testsFrame, text="Print expected frequencies"), expFreqCheckBox, sticky="e")
     tkgrid(tklabel(testsFrame, text="Fisher's exact test"), fisherCheckBox, sticky="e")
@@ -232,13 +233,13 @@ multiWayTable <- function(){
         tkfocus(.commander)
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
     onCancel <- function() {
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         } 
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",command=onCancel)
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(xtabs)
@@ -256,7 +257,7 @@ multiWayTable <- function(){
     tkgrid(columnBox, columnScroll, sticky="nw")
     tkgrid(controlBox, controlScroll, sticky="nw")
     tkgrid(rowFrame, columnFrame, controlFrame, sticky="nw")
-    tkgrid(tklabel(percentsFrame, text="Compute Percentages"), columnspan=3, sticky="w")
+    tkgrid(tklabel(percentsFrame, text="Compute Percentages", fg="blue"), columnspan=3, sticky="w")
     tkgrid(tklabel(percentsFrame, text="Row percentages"), rowPercentsButton, sticky="w")
     tkgrid(tklabel(percentsFrame, text="Column percentages"), columnPercentsButton, sticky="w")
     tkgrid(tklabel(percentsFrame, text="No percentages"), nonePercentsButton, sticky="w")
@@ -286,41 +287,42 @@ multiWayTable <- function(){
     }
 
 enterTable <- function(){
+    env <- environment()
     top <- tktoplevel()
     tkwm.title(top, "Enter and Analyze Two-Way Table")
     outerTableFrame <- tkframe(top)
-    assign(".tableFrame", tkframe(outerTableFrame), envir=.GlobalEnv)
+    assign(".tableFrame", tkframe(outerTableFrame), envir=env)
     setUpTable <- function(...){
-        tkdestroy(get(".tableFrame", envir=.GlobalEnv))
-        assign(".tableFrame", tkframe(outerTableFrame), envir=.GlobalEnv)
+        tkdestroy(get(".tableFrame", envir=env))
+        assign(".tableFrame", tkframe(outerTableFrame), envir=env)
         nrows <- as.numeric(tclvalue(rowsValue))
         ncols <- as.numeric(tclvalue(colsValue))
         make.col.names <- "tklabel(.tableFrame, text='')"
         for (j in 1:ncols) {
             col.varname <- paste(".colname.", j, sep="")
-            assign(col.varname, tclVar(j), envir=.GlobalEnv)
+            assign(col.varname, tclVar(j), envir=env)
             make.col.names <- paste(make.col.names, ", ", "tkentry(.tableFrame, width='5', textvariable=", 
                     col.varname, ")", sep="")
             }
-        eval(parse(text=paste("tkgrid(", make.col.names, ")", sep="")), envir=.GlobalEnv)
+        eval(parse(text=paste("tkgrid(", make.col.names, ")", sep="")), envir=env)
         for (i in 1:nrows){   
             varname <- paste(".tab.", i, ".1", sep="") 
-            assign(varname, tclVar("") , envir=.GlobalEnv)
+            assign(varname, tclVar("") , envir=env)
             row.varname <- paste(".rowname.", i, sep="")
-            assign(row.varname, tclVar(i), envir=.GlobalEnv)
+            assign(row.varname, tclVar(i), envir=env)
             make.row <- paste("tkentry(.tableFrame, width='5', textvariable=",
                 row.varname, ")", sep="")
             make.row <- paste(make.row, ", ", "tkentry(.tableFrame, width='5', textvariable=", 
                 varname, ")", sep="")
             for (j in 2:ncols){
                 varname <- paste(".tab.", i, ".", j, sep="")
-                assign(varname, tclVar(""), envir=.GlobalEnv)
+                assign(varname, tclVar(""), envir=env)
                 make.row <- paste(make.row, ", ", "tkentry(.tableFrame, width='5', textvariable=", 
                     varname, ")", sep="")
                 }
-            eval(parse(text=paste("tkgrid(", make.row, ")", sep="")), envir=.GlobalEnv)
+            eval(parse(text=paste("tkgrid(", make.row, ")", sep="")), envir=env)
             }
-        tkgrid(get(".tableFrame", envir=.GlobalEnv), sticky="w")
+        tkgrid(get(".tableFrame", envir=env), sticky="w")
         }
     rowColFrame <- tkframe(top)
     rowsValue <- tclVar("2")
@@ -379,10 +381,6 @@ enterTable <- function(){
         fisher <- tclvalue(fisherTest)
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
-        remove(.tableFrame, envir=.GlobalEnv)
-        remove(list=ls(pattern="\\.tab\\.", all.names=TRUE, envir=.GlobalEnv), envir=.GlobalEnv)
-        remove(list=ls(pattern="\\.rowname\\.", all.names=TRUE, envir=.GlobalEnv), envir=.GlobalEnv)
-        remove(list=ls(pattern="\\.colname\\.", all.names=TRUE, envir=.GlobalEnv), envir=.GlobalEnv)
         command <- paste("matrix(c(", paste(counts, collapse=","), "), ", nrows, ", ", ncols,
             ", byrow=TRUE)", sep="")
         assign(".Table", justDoIt(command), envir=.GlobalEnv)
@@ -423,13 +421,13 @@ enterTable <- function(){
         tkfocus(.commander)
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
     onCancel <- function() {
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",command=onCancel)
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(chisq.test)
@@ -450,13 +448,14 @@ enterTable <- function(){
     tkgrid(tklabel(rowColFrame, text="Number of Rows:"), rowsSlider, rowsShow, sticky="w")
     tkgrid(tklabel(rowColFrame, text="Number of Columns:"), colsSlider, colsShow, sticky="w")
     tkgrid(rowColFrame, sticky="w")
-    tkgrid(tklabel(top, text="Enter counts:"), sticky="w")
+    tkgrid(tklabel(top, text="Enter counts:", fg="blue"), sticky="w")
     tkgrid(outerTableFrame, sticky="w")
-    tkgrid(tklabel(percentsFrame, text="Compute Percentages"), columnspan=2, sticky="w")
+    tkgrid(tklabel(percentsFrame, text="Compute Percentages", fg="blue"), columnspan=2, sticky="w")
     tkgrid(tklabel(percentsFrame, text="Row percentages"), rowPercentsButton, sticky="w")
     tkgrid(tklabel(percentsFrame, text="Column percentages"), columnPercentsButton, sticky="w")
     tkgrid(tklabel(percentsFrame, text="No percentages"), nonePercentsButton, sticky="w")
     tkgrid(percentsFrame, sticky="w")
+    tkgrid(tklabel(testsFrame, text="Hypothesis Tests", fg="blue"), sticky="w")
     tkgrid(tklabel(testsFrame, text="Chisquare test of independence"), chisqCheckBox, sticky="e")
     tkgrid(tklabel(testsFrame, text="Print expected frequencies"), expFreqCheckBox, sticky="e")
     tkgrid(tklabel(testsFrame, text="Fisher's exact test"), fisherCheckBox, sticky="e")

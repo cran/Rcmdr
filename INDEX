@@ -9,8 +9,11 @@ influence.plot          Regression Influence Plot
 levene.test             Levene's Test
 linearModel             Rcmdr Linear Model Dialog
 partial.cor             Partial Correlations
+plotMeans               Plot Means for One or Two-Way Layout
 Rcmdr.Utilities         Rcmdr Utility Functions
 RcmdrPager              Pager for Text Files
 Recode                  Rcmdr Recode Dialog
 reliability             Reliability of a Composite Scale
+scatter3d               Three-Dimensional Scatterplots
+Scatter3DDialog         Rcmdr 3D Scatterplot Dialog
 stem.leaf               Stem-and-Leaf Display

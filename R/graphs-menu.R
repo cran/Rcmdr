@@ -1,6 +1,6 @@
 # Graphs menu dialogs
 
-# last modified 9 Dec 03 by J. Fox
+# last modified 4 Feb 04 by J. Fox
 
 indexPlot <- function(){
     if (activeDataSet() == FALSE) {
@@ -43,8 +43,8 @@ indexPlot <- function(){
         tkdestroy(top)  
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(plot)
@@ -102,12 +102,12 @@ Histogram <- function(){
     onOK <- function(){
         x <- .numeric[as.numeric(tkcurselection(xBox)) + 1]
         bins <- tclvalue(binsVariable)
-        bins <- if (bins == "<auto>") "'Sturges'" else as.numeric(bins)
+        bins <- if (bins == "<auto>") '"Sturges"' else as.numeric(bins)
         scale <- tclvalue(scaleVariable)
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         command <- paste("Hist(", .activeDataSet, "$", x, ', scale="',
-            scale, '", breaks=', bins, ")", sep="")
+            scale, '", breaks=', bins, ', col="darkgray")', sep="")
         doItAndPrint(command)
         tkfocus(.commander)
         }
@@ -117,8 +117,8 @@ Histogram <- function(){
         tkdestroy(top)  
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(Hist)
@@ -135,7 +135,7 @@ Histogram <- function(){
     tkgrid(tklabel(top, text="Variable"), sticky="w")
     tkgrid(xBox, xScroll, sticky="nw")
     tkgrid(xFrame, sticky="nw")    
-    tkgrid(tklabel(scaleFrame, text="Axis Scaling"), columnspan=2, sticky="w")
+    tkgrid(tklabel(scaleFrame, text="Axis Scaling", fg="blue"), columnspan=2, sticky="w")
     tkgrid(tklabel(scaleFrame, text="Frequency counts"), frequenciesButton, sticky="w")
     tkgrid(tklabel(scaleFrame, text="Percentages"), percentsButton, sticky="w")
     tkgrid(tklabel(scaleFrame, text="Densities"), densitiesButton, sticky="w")
@@ -236,8 +236,8 @@ stemAndLeaf <- function(){
         tkdestroy(top)  
         }    
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(stem.leaf)
@@ -246,16 +246,19 @@ stemAndLeaf <- function(){
     tkgrid(tklabel(top, text="Variable (pick one)"), sticky="w")
     tkgrid(xBox, xScroll, sticky="nw")
     tkgrid(xFrame, sticky="nw")
-    tkgrid(tklabel(leafsFrame, text="Leafs digit: Automatic"), leafsDigitCheckBox,
+    tkgrid(tklabel(leafsFrame, text="Leafs Digit:  ", fg="blue"),
+        tklabel(leafsFrame, text="Automatic"), leafsDigitCheckBox,
         tklabel(leafsFrame, text="  or set:", fg="red"), leafsDigitShow, leafsDigitSlider, sticky="w")  
     tkgrid(leafsFrame, sticky="w") 
-    tkgrid(tklabel(partsFrame, text="Parts per stem:   Automatic"), partsAutoButton,
+    tkgrid(tklabel(partsFrame, text="Parts Per Stem:  ", fg="blue"),
+        tklabel(partsFrame, text="Automatic"), partsAutoButton,
         tklabel(partsFrame, text="  1"), parts1Button, 
         tklabel(partsFrame, text="  2"), parts2Button, 
         tklabel(partsFrame, text="  5"), parts5Button, sticky="w")
     tkgrid(partsFrame, sticky="w")
-    tkgrid(tklabel(styleFrame, text="Style of divided stems: Tukey"), TukeyButton,
-        tklabel(styleFrame, text="  repeated stem digits"), bareButton, sticky="w")
+    tkgrid(tklabel(styleFrame, text="Style of Divided Stems:  ", fg="blue"),
+        tklabel(styleFrame, text="Tukey"), TukeyButton,
+        tklabel(styleFrame, text="  Repeated stem digits"), bareButton, sticky="w")
     tkgrid(styleFrame, sticky="w")
     tkgrid(tklabel(optionsFrame, text="Trim outliers"), trimOutliersCheckBox, sticky="w")
     tkgrid(tklabel(optionsFrame, text="Show depths"), showDepthsCheckBox, sticky="w")
@@ -279,6 +282,8 @@ stemAndLeaf <- function(){
     }
 
 boxPlot <- function(){
+    env <- environment()
+    .groupsLabel <- tclVar("Plot by groups")
     if (activeDataSet() == FALSE) {
         tkfocus(.commander)
         return()
@@ -300,14 +305,14 @@ boxPlot <- function(){
     identifyVariable <- tclVar("0")
     identifyFrame <- tkframe(top)
     identifyCheckBox <- tkcheckbutton(identifyFrame, variable=identifyVariable)
-    assign(".groups", "FALSE", envir=.GlobalEnv)
+    .groups <- FALSE
     onOK <- function(){
         x <- as.character(tkget(xBox, "active"))
         identifyPoints <- "1" == tclvalue(identifyVariable)
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         var <- paste(.activeDataSet, "$", x, sep="")
-        if (.groups == "FALSE") {
+        if (.groups == FALSE) {
             command <- (paste("boxplot(", var, ', ylab="', x, '")', sep=""))
             logger(command)
             justDoIt(command)     
@@ -320,7 +325,7 @@ boxPlot <- function(){
                 ", data=", .activeDataSet, ")", sep=""))
             logger(command)
             justDoIt(command)
-            if (identifyPoints) doItAndPrint(paste("identify(", .groups, ",", var,
+            if (identifyPoints) doItAndPrint(paste("identify(", .activeDataSet, "$", .groups, ", ", var,
                 ", rownames(", .activeDataSet,"))", sep=""))
             }
         tkfocus(.commander)
@@ -345,7 +350,9 @@ boxPlot <- function(){
         for (groups in .factors) tkinsert(groupsBox, "end", groups)
         onOKsub <- function() {
             groups <- as.character(tkget(groupsBox, "active"))
-            assign(".groups", groups, envir=.GlobalEnv)
+            assign(".groups", groups, envir=env)
+            tclvalue(.groupsLabel) <- paste("Plot by:", groups)
+            tkconfigure(groupsButton, fg="blue")
             if (.grab.focus) tkgrab.release(subdialog)
             tkdestroy(subdialog)
             tkwm.deiconify(top)
@@ -354,6 +361,9 @@ boxPlot <- function(){
             tkwait.window(top)
             }
         onCancelSub <- function() {
+            assign(".groups", FALSE, envir=env)
+            tclvalue(.groupsLabel) <- "Plot by groups"
+            tkconfigure(groupsButton, fg="black")
             if (.grab.focus) tkgrab.release(subdialog) 
             tkdestroy(subdialog) 
             tkwm.deiconify(top)
@@ -362,8 +372,8 @@ boxPlot <- function(){
             tkwait.window(top)
             }
         subButtonFrame <- tkframe(subdialog)
-        OKSubButton <- tkbutton(subButtonFrame, text="OK", width="12", command=onOKsub, default="active")
-        cancelSubButton <- tkbutton(subButtonFrame, text="Cancel", width="12",command=onCancelSub)
+        OKSubButton <- tkbutton(subButtonFrame, text="OK", fg="darkgreen", width="12", command=onOKsub, default="active")
+        cancelSubButton <- tkbutton(subButtonFrame, text="Cancel", fg="red", width="12",command=onCancelSub)
         tkgrid(tklabel(subdialog, text="Groups variable (pick one)"), sticky="w")
         tkgrid(groupsBox, groupsScroll, sticky="nw")
         tkgrid(groupsFrame, sticky="w")
@@ -389,14 +399,14 @@ boxPlot <- function(){
         tkdestroy(top)  
         }
     buttonFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonFrame, text="Cancel", width="12", command=onCancel)
+    OKbutton <- tkbutton(buttonFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(boxplot)
         }
     helpButton <- tkbutton(buttonFrame, text="Help", width="12", command=onHelp)
-    groupsButton <- tkbutton(top, text="Plot by groups", command=onGroups)
+    groupsButton <- tkbutton(top, textvariable=.groupsLabel, command=onGroups)
     tkgrid(tklabel(top, text="Variable (pick one)"), sticky="w")
     tkgrid(xBox, xScroll, sticky="nw")
     tkgrid(xFrame, sticky="w")    
@@ -422,6 +432,8 @@ boxPlot <- function(){
     }
 
 scatterPlot <- function(){
+    env <- environment()
+    .groupsLabel <- tclVar("Plot by groups")
     if (activeDataSet() == FALSE) {
         tkfocus(.commander)
         return()
@@ -468,8 +480,8 @@ scatterPlot <- function(){
     subsetScroll <- tkscrollbar(subsetFrame, orient="horizontal",
         repeatinterval=5, command=function(...) tkxview(subsetEntry, ...))
     tkconfigure(subsetEntry, xscrollcommand=function(...) tkset(subsetScroll, ...))
-    assign(".groups", "FALSE", envir=.GlobalEnv)
-    assign(".linesByGroup", "FALSE", envir=.GlobalEnv)
+    .groups <- FALSE
+    .linesByGroup <- FALSE
     onOK <- function(){
         x <- as.character(tkget(xBox, "active"))
         y <- as.character(tkget(yBox, "active"))
@@ -495,7 +507,7 @@ scatterPlot <- function(){
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)
-        if (.groups == "FALSE") {
+        if (.groups == FALSE) {
             doItAndPrint(paste("scatterplot(", y, "~", x,
                 ", reg.line=", line, ", smooth=", smooth, ", labels=", labels,
                 ", boxplots=", box, ", span =", span/100,
@@ -533,9 +545,11 @@ scatterPlot <- function(){
         linesCheckBox <- tkcheckbutton(linesByGroupFrame, variable=linesByGroup)
         onOKsub <- function(){
             groups <- as.character(tkget(groupsBox, "active"))
-            assign(".groups", groups, envir=.GlobalEnv)
+            assign(".groups", groups, envir=env)
+            tclvalue(.groupsLabel) <- paste("Plot by:", groups)
+            tkconfigure(groupsButton, fg="blue")
             lines <- as.character("1" == tclvalue(linesByGroup))
-            assign(".linesByGroup", lines, envir=.GlobalEnv)
+            assign(".linesByGroup", lines, envir=env)
             if (.grab.focus) tkgrab.release(subdialog)
             tkdestroy(subdialog)
             tkwm.deiconify(top)
@@ -544,6 +558,10 @@ scatterPlot <- function(){
             tkwait.window(top)
             }
         onCancelSub <- function() {
+            assign(".groups", FALSE, envir=env)
+            assign(".linesByGroup", FALSE, envir=env)
+            tclvalue(.groupsLabel) <- "Plot by groups"
+            tkconfigure(groupsButton, fg="black")
             if (.grab.focus) tkgrab.release(subdialog)  
             tkdestroy(subdialog)
             tkwm.deiconify(top)
@@ -551,8 +569,8 @@ scatterPlot <- function(){
             tkfocus(top)
             tkwait.window(top)
             }
-        OKSubButton <- tkbutton(linesButtonFrame, text="OK", width="12", command=onOKsub, default="active")
-        cancelSubButton <- tkbutton(linesButtonFrame, text="Cancel", width="12", command=onCancelSub)
+        OKSubButton <- tkbutton(linesButtonFrame, text="OK", fg="darkgreen", width="12", command=onOKsub, default="active")
+        cancelSubButton <- tkbutton(linesButtonFrame, text="Cancel", fg="red", width="12", command=onCancelSub)
         tkgrid(tklabel(subdialog, text="Groups (pick one)"), sticky="w")
         tkgrid(groupsBox, groupsScroll, sticky="nw")
         tkgrid(groupsFrame, sticky="w")
@@ -560,7 +578,7 @@ scatterPlot <- function(){
         tkgrid(linesByGroupFrame, sticky="w")
         tkgrid(OKSubButton, cancelSubButton, sticky="w")
         tkgrid(linesButtonFrame, sticky="w")
-        tkgrid(tklabel(subdialog, text="Position legend with mouse click"))
+        tkgrid(tklabel(subdialog, text="Position legend with mouse click", fg="blue"))
         tkgrid.configure(groupsScroll, sticky="ns")
         for (row in 0:4) tkgrid.rowconfigure(subdialog, row, weight=0)
         for (col in 0:0) tkgrid.columnconfigure(subdialog, col, weight=0)
@@ -580,14 +598,14 @@ scatterPlot <- function(){
         tkdestroy(top)  
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(scatterplot)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
-    groupsButton <- tkbutton(top, text="Plot by groups", command=onGroups)
+    groupsButton <- tkbutton(top, textvariable=.groupsLabel, command=onGroups)
     tkgrid(tklabel(top, text="x-variable (pick one)"), 
         tklabel(top, text="y-variable (pick one)"), sticky="w")
     tkgrid(xBox, xScroll, sticky="nw")
@@ -626,6 +644,8 @@ scatterPlot <- function(){
     }
 
 scatterPlotMatrix <- function(){
+    env <- environment()
+    .groupsLabel <- tclVar("Plot by groups")
     if (activeDataSet() == FALSE) {
         tkfocus(.commander)
         return()
@@ -686,7 +706,7 @@ scatterPlotMatrix <- function(){
             else paste(", subset=", subset, sep="")
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
-        if (.groups == "FALSE") {
+        if (.groups == FALSE) {
            command <- paste("scatterplot.matrix(~", paste(variables, collapse="+"),
                 ", reg.line=", line, ", smooth=", smooth,
                 ", span=", span/100, ", diagonal = '", diag,
@@ -729,9 +749,11 @@ scatterPlotMatrix <- function(){
         linesCheckBox <- tkcheckbutton(linesByGroupFrame, variable=linesByGroup)
         onOKsub <- function(){
             groups <- as.character(tkget(groupsBox, "active"))
-            assign(".groups", groups, envir=.GlobalEnv)
+            assign(".groups", groups, envir=env)
+            tclvalue(.groupsLabel) <- paste("Plot by:", groups)
+            tkconfigure(groupsButton, fg="blue")
             lines <- as.character("1" == tclvalue(linesByGroup))
-            assign(".linesByGroup", lines, envir=.GlobalEnv)
+            assign(".linesByGroup", lines, envir=env)
             if (.grab.focus) tkgrab.release(subdialog)
             tkdestroy(subdialog)
             tkwm.deiconify(top)
@@ -740,6 +762,9 @@ scatterPlotMatrix <- function(){
             tkwait.window(top)
             }
         onCancelSub <- function() {
+            assign(".groups", FALSE, envir=env)
+            tclvalue(.groupsLabel) <- "Plot by groups"
+            tkconfigure(groupsButton, fg="black")
             if (.grab.focus) tkgrab.release(subdialog)  
             tkdestroy(subdialog)
             tkwm.deiconify(top)
@@ -747,8 +772,8 @@ scatterPlotMatrix <- function(){
             tkfocus(top)
             tkwait.window(top)
             }
-        OKSubButton <- tkbutton(linesButtonFrame, text="OK", width="12", command=onOKsub, default="active")
-        cancelSubButton <- tkbutton(linesButtonFrame, text="Cancel", width="12", command=onCancelSub)
+        OKSubButton <- tkbutton(linesButtonFrame, text="OK", fg="darkgreen", width="12", command=onOKsub, default="active")
+        cancelSubButton <- tkbutton(linesButtonFrame, text="Cancel", fg="red", width="12", command=onCancelSub)
         tkselection.set(groupsBox, 0)
         tkgrid(tklabel(subdialog, text="Groups (pick one)"), sticky="w")
         tkgrid(groupsBox, groupsScroll, sticky="nw")
@@ -775,14 +800,14 @@ scatterPlotMatrix <- function(){
         tkdestroy(top)  
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(scatterplot.matrix)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
-    groupsButton <- tkbutton(top, text="Plot by groups", command=onGroups)
+    groupsButton <- tkbutton(top, textvariable=.groupsLabel, command=onGroups)
     tkgrid(tklabel(top, text="Select variables (three or more)"), sticky="w")
     tkgrid(variablesBox, variablesScroll, sticky="nw")
     tkgrid(variablesFrame, sticky="nw")    
@@ -790,7 +815,7 @@ scatterPlotMatrix <- function(){
     tkgrid(tklabel(optionsFrame, text="Smooth line"), smoothCheckBox, sticky="w")
     tkgrid(tklabel(optionsFrame, text="Span for smooth"), slider, sticky="w")
     tkgrid(optionsFrame)
-    tkgrid(tklabel(diagonalFrame, text="On Diagonal:"), columnspan=2, sticky="w")
+    tkgrid(tklabel(diagonalFrame, text="On Diagonal:", fg="blue"), columnspan=2, sticky="w")
     tkgrid(tklabel(diagonalFrame, text="Density plots"), densityButton, sticky="w")
     tkgrid(tklabel(diagonalFrame, text="Histograms"), histogramButton, sticky="w")
     tkgrid(tklabel(diagonalFrame, text="Boxplots"), boxplotButton, sticky="w")
@@ -842,20 +867,20 @@ barGraph <- function(){
         variable <- as.character(tkget(variableBox, "active"))
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
-        command <- paste("barplot(table(", variable, '), xlab="',
+        command <- paste("barplot(table(", .activeDataSet, "$", variable, '), xlab="',
             variable, '", ylab="Frequency")', sep="")
         logger(command)
         justDoIt(command)
         tkfocus(.commander)
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
     onCancel <- function() {
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(barplot)
@@ -905,21 +930,21 @@ pieChart <- function(){
         variable <- as.character(tkget(variableBox, "active"))
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
-        command <- (paste("pie(table(", variable, "), labels=levels(",
-            variable, '), main="', variable, '", col=rainbow(length(levels(',
-            variable, "))))", sep=""))
+        command <- (paste("pie(table(", .activeDataSet, "$", variable, "), labels=levels(",
+            .activeDataSet, "$", variable, '), main="', variable, '", col=rainbow(length(levels(',
+            .activeDataSet, "$", variable, "))))", sep=""))
         logger(command)
         justDoIt(command)
         tkfocus(.commander)
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
     onCancel <- function() {
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(pie)
@@ -1000,7 +1025,7 @@ linePlot <- function(){
             linePlot()
             return()
             }
-        .x <- na.omit(eval(parse(text=x), envir=.GlobalEnv))
+        .x <- na.omit(eval(parse(text=paste(.activeDataSet, "$", x, sep="")), envir=.GlobalEnv))
         if (!identical(order(.x), seq(along=.x))){
             response <- tclvalue(tkmessageBox(message="x-values are not in order.\nContinue?", 
                 icon="warning", type="okcancel", default="cancel"))
@@ -1019,7 +1044,7 @@ linePlot <- function(){
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         pch <- if (length(y) == 1) ", pch=1" else ""
-        command <- paste("matplot(", x, ", ", .activeDataSet, "[, ",
+        command <- paste("matplot(", .activeDataSet, "$", x, ", ", .activeDataSet, "[, ",
             paste("c(", paste(paste('"', y, '"', sep=""), collapse=","), ")", sep=""),
             '], type="b", lty=1, ylab="', axisLabel, '"', pch, ")", sep="")
         logger(command)
@@ -1042,8 +1067,8 @@ linePlot <- function(){
         tkdestroy(top)  
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(matplot)
@@ -1169,8 +1194,8 @@ QQPlot <- function()
         tkdestroy(top)  
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",
                              command=onCancel)
     helpButton <- tkbutton(buttonsFrame, text="Help", width="12",
                            command=function()help(qq.plot))
@@ -1203,7 +1228,10 @@ QQPlot <- function()
     tkgrid(tklabel(top, text="Variable"), sticky="w")
     tkgrid(xBox, xScroll, sticky="nw")
     tkgrid(xFrame, sticky="nw")
-    tkgrid(tklabel(distFrame, text="Distribution"), columnspan=6, sticky="w")
+    tkgrid(tklabel(identifyFrame, text="Identify observations\nwith mouse", justify="left"),
+           identifyCheckBox, sticky="w")
+    tkgrid(identifyFrame, sticky="w")
+    tkgrid(tklabel(distFrame, text="Distribution", fg="blue"), columnspan=6, sticky="w")
     tkgrid(tklabel(distFrame, text="Normal"), normalButton, sticky="w")
     tkgrid(tklabel(tDfFrame, text="df = "), tDfField, sticky="w")
     tkgrid(tklabel(distFrame, text="t"), tButton, tDfFrame, sticky="w")
@@ -1219,9 +1247,6 @@ QQPlot <- function()
     tkgrid(tklabel(distFrame, text="Other"), otherButton,
            otherParamsFrame, sticky="w")
     tkgrid(distFrame, sticky="w")
-    tkgrid(tklabel(identifyFrame, text="Identify observations\nwith mouse", justify="left"),
-           identifyCheckBox, sticky="w")
-    tkgrid(identifyFrame, sticky="w")
     tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="    "), helpButton, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
     tkgrid.configure(xScroll, sticky="ns")
@@ -1230,6 +1255,351 @@ QQPlot <- function()
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)
     tkselection.set(xBox, 0)
+    tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
+    tkwm.deiconify(top)
+    if (.grab.focus) tkgrab.set(top)
+    tkfocus(top)
+    tkwait.window(top)
+    }
+
+PlotMeans <- function(){
+    if (activeDataSet() == FALSE) {
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.numeric) == 0){
+        tkmessageBox(message="There no numeric variables in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.factors) == 0){
+        tkmessageBox(message="There no factors in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
+    top <- tktoplevel()
+    tkwm.title(top, "Plot Means")
+    groupFrame <- tkframe(top)
+    responseFrame <- tkframe(top)
+    groupBox <- tklistbox(groupFrame, height=min(4, length(.factors)),
+        selectmode="multiple", background="white", exportselection="FALSE")
+    groupScroll <- tkscrollbar(groupFrame, repeatinterval=5, 
+        command=function(...) tkyview(groupBox, ...))
+    tkconfigure(groupBox, yscrollcommand=function(...) tkset(groupScroll, ...))
+    for (group in .factors) tkinsert(groupBox, "end", group)
+    responseBox <- tklistbox(responseFrame, height=min(4, length(.numeric)),
+        selectmode="single", background="white", exportselection="FALSE")
+    responseScroll <- tkscrollbar(responseFrame, repeatinterval=5, 
+        command=function(...) tkyview(responseBox, ...))    
+    tkconfigure(responseBox, yscrollcommand=function(...) tkset(responseScroll, ...))
+    for (response in .numeric) tkinsert(responseBox, "end", response)
+    onOK <- function(){
+        groups <- .factors[as.numeric(tkcurselection(groupBox)) + 1]
+        response <- as.character(tkget(responseBox, "active"))
+        if (0 == length(groups)) {
+            tkmessageBox(message="No factors selected.", 
+                icon="error", type="ok")
+            if (.grab.focus) tkgrab.release(top)
+            tkdestroy(top)
+            PlotMeans()
+            return()
+            }
+        if (2 < length(groups)) {
+            tkmessageBox(message="More than two factors selected.", 
+                icon="error", type="ok")
+            if (.grab.focus) tkgrab.release(top)
+            tkdestroy(top)
+            PlotMeans()
+            return()
+            }
+        if (.grab.focus) tkgrab.release(top)
+        tkdestroy(top)
+        error.bars <- tclvalue(errorBarsVariable)
+        level <- if (error.bars == "conf.int") paste(", level=", tclvalue(levelVariable), sep="") else ""
+        if (length(groups) == 1) doItAndPrint(paste("plotMeans(", .activeDataSet, "$", response, 
+            ", ", .activeDataSet, "$", groups[1], 
+            ', error.bars="', error.bars, '"', level, ')', sep=""))
+        else {
+            if (eval(parse(text=paste("length(levels(", .activeDataSet, "$", groups[1], 
+                ")) < length(levels(", .activeDataSet, "$", groups[2], "))", sep=""))))
+                groups <- rev(groups)
+            doItAndPrint(paste("plotMeans(", .activeDataSet, "$", response, ", ", .activeDataSet, "$", groups[1], 
+                ", ", .activeDataSet, "$", groups[2], ', error.bars="', error.bars, '"', level, ')', sep=""))
+            }
+        tkfocus(.commander)
+        }
+    optionsFrame <- tkframe(top)
+    errorBarsVariable <- tclVar("se")
+    seButton <- tkradiobutton(optionsFrame, variable=errorBarsVariable, value="se")
+    sdButton <- tkradiobutton(optionsFrame, variable=errorBarsVariable, value="sd")
+    confIntButton <- tkradiobutton(optionsFrame, variable=errorBarsVariable, value="conf.int")
+    noneButton <- tkradiobutton(optionsFrame, variable=errorBarsVariable, value="none")
+    levelVariable <- tclVar("0.95")
+    levelEntry <- tkentry(optionsFrame, width="6", textvariable=levelVariable)    
+    buttonsFrame <- tkframe(top)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    onCancel <- function() {
+        if (.grab.focus) tkgrab.release(top)
+        tkfocus(.commander)
+        tkdestroy(top)  
+        }  
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
+    onHelp <- function() {
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
+        help(plotMeans)
+        }
+    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    tkgrid(tklabel(top, text="Factors (pick one or two)"), 
+        tklabel(top, text="Response Variable (pick one)"), sticky="w")
+    tkgrid(groupBox, groupScroll, sticky="nw")
+    tkgrid(responseBox, responseScroll, sticky="nw")
+    tkgrid(groupFrame, responseFrame, sticky="nw")
+    tkgrid(tklabel(optionsFrame, text="Error Bars", fg="blue"), sticky="w")
+    tkgrid(tklabel(optionsFrame, text="Standard errors"), seButton, sticky="w")
+    tkgrid(tklabel(optionsFrame, text="Standard deviations"), sdButton, sticky="w")
+    tkgrid(tklabel(optionsFrame, text="Confidence intervals"), confIntButton,
+        tklabel(optionsFrame, text="   Level of confidence:"), levelEntry, sticky="w")
+    tkgrid(tklabel(optionsFrame, text="No error bars"), noneButton, sticky="w")
+    tkgrid(optionsFrame, sticky="w", columnspan=2)
+    tkgrid(OKbutton, cancelButton, sticky="w")
+    tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid.configure(responseScroll, sticky="ns")
+    tkgrid.configure(groupScroll, sticky="ns")
+    tkgrid.configure(helpButton, sticky="e")
+    for (row in 0:3) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
+    tkselection.set(responseBox, 0)
+    tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
+    tkwm.deiconify(top)
+    if (.grab.focus) tkgrab.set(top)
+    tkfocus(top)
+    tkwait.window(top)
+    }
+
+Scatter3D <- function(){
+    env <- environment()
+    .groupsLabel <- tclVar("Plot by groups")
+    rgl <- require(rgl)
+    mgcv <- require(mgcv)
+    absent <- !c(rgl, mgcv)
+    if (any(absent)) {
+        tkmessageBox(message= paste(
+            "The following packages required for 3D scatterplots are missing:\n",
+            paste(c("rgl", "mgcv")[absent], collapse=", ")), icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
+    if (activeDataSet() == FALSE) {
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.numeric) < 3){
+        tkmessageBox(message="There are fewer than 3 numeric variables in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
+    top <- tktoplevel()
+    tkwm.title(top, "3D Scatterplot")
+    variablesFrame <- tkframe(top)
+    xFrame <- tkframe(variablesFrame)
+    yFrame <- tkframe(variablesFrame)
+    xBox <- tklistbox(xFrame, height=min(4, length(.numeric)),
+        selectmode="multiple", background="white", exportselection="FALSE")
+    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
+    tkconfigure(xBox, yscrollcommand=function(...) tkset(xScroll, ...))
+    for (x in .numeric) tkinsert(xBox, "end", x)
+    yBox <- tklistbox(yFrame, height=min(4, length(.numeric)),
+        selectmode="single", background="white", exportselection="FALSE")
+    yScroll <- tkscrollbar(yFrame, repeatinterval=5, command=function(...) tkyview(yBox, ...))    
+    tkconfigure(yBox, yscrollcommand=function(...) tkset(yScroll, ...))
+    for (y in .numeric) tkinsert(yBox, "end", y)
+    surfacesFrame <- tkframe(top)
+    linearLSSurface <- tclVar("1")
+    linearLSCheckBox <- tkcheckbutton(surfacesFrame, variable=linearLSSurface)
+    quadLSSurface <- tclVar("0")
+    quadLSCheckBox <- tkcheckbutton(surfacesFrame, variable=quadLSSurface)
+    nonparSurface <- tclVar("0")
+    nonparCheckBox <- tkcheckbutton(surfacesFrame, variable=nonparSurface)
+    dfNonparVariable <- tclVar("<auto>")
+    dfNonparField <- tkentry(surfacesFrame, width="6", textvariable=dfNonparVariable)
+    additiveSurface <- tclVar("0")
+    additiveCheckBox <- tkcheckbutton(surfacesFrame, variable=additiveSurface)
+    dfAddVariable <- tclVar("<auto>")
+    dfAddField <- tkentry(surfacesFrame, width="6", textvariable=dfAddVariable)
+    bgFrame <- tkframe(top)
+    bgVariable <-tclVar("black")
+    whiteButton <- tkradiobutton(bgFrame, variable=bgVariable, value="white")
+    blackButton <- tkradiobutton(bgFrame, variable=bgVariable, value="black")
+    assign(".groups", FALSE, envir=env)
+    onOK <- function(){
+        x <- .numeric[as.numeric(tkcurselection(xBox)) + 1]
+        y <- as.character(tkget(yBox, "active"))
+        if (2 != length(x)) {
+            tkmessageBox(message="You must select 2 explanatory variables.", 
+                icon="error", type="ok")
+            if (.grab.focus) tkgrab.release(top)
+            tkdestroy(top)
+            Scatter3D()
+            return()
+            }
+        if (is.element(y, x)) {
+            tkmessageBox(message="Response and explanatory variables must be different.", 
+                icon="error", type="ok")
+            if (.grab.focus) tkgrab.release(top)
+            tkdestroy(top)
+            Scatter3D()
+            return()
+            }
+        if (.grab.focus) tkgrab.release(top)
+        tkdestroy(top)
+        lin <- if(tclvalue(linearLSSurface) == 1) '"linear"'
+        quad <- if(tclvalue(quadLSSurface) == 1) '"quadratic"'
+        nonpar <- if (tclvalue(nonparSurface) == 1) '"smooth"'
+        additive <- if (tclvalue(additiveSurface) == 1) '"additive"'
+        surfaces <- c(lin, quad, nonpar, additive)
+        nsurfaces <- length(surfaces)
+        dfNonpar <- tclvalue(dfNonparVariable)
+        dfNonpar <- if (dfNonpar == "<auto>") "" else paste(", df.smooth=", as.numeric(dfNonpar), sep="")
+        dfAdd <- tclvalue(dfAddVariable)
+        dfAdd <- if (dfAdd == "<auto>") "" else paste(", df.additive=", as.numeric(dfAdd), sep="")
+        fit <- if (nsurfaces == 0) ", surface=FALSE"
+            else if (nsurfaces == 1) paste(", fit=", surfaces, sep="")
+            else paste(", fit=c(", paste(surfaces, collapse=","), ")", sep="")
+        bg <- tclvalue(bgVariable)
+        if (.groups != FALSE){ 
+            groups <- paste(", groups=", .groups, sep="")
+            parallel <- paste(", parallel=", .parallelSurfaces, sep="")
+            }
+        else groups <- parallel <- ""                   
+        command <- paste("scatter3d(", x[1], ", ", y, ", ", x[2], fit, dfNonpar, 
+            dfAdd, groups, parallel, ', bg="', bg, '")', sep="")
+        doItAndPrint(command)
+        assign(".rgl", TRUE, envir=.GlobalEnv)
+        tkfocus(.commander)
+        }
+    onGroups <- function(){
+        if (length(.factors) == 0){
+            tkmessageBox(message="There no factors in the active data set.", 
+                    icon="error", type="ok")
+            tkwm.deiconify(top)
+            if (.grab.focus) tkgrab.set(top)
+            tkfocus(top)
+            tkwait.window(top)
+            return()
+            }
+        subdialog <- tktoplevel()
+        tkwm.title(subdialog, "Groups")
+        groupsFrame <- tkframe(subdialog)
+        groupsBox <- tklistbox(groupsFrame, height=min(4, length(.factors)),
+            selectmode="single", background="white", exportselection="FALSE")
+        groupsScroll <- tkscrollbar(groupsFrame, repeatinterval=5, command=function(...) tkyview(groupsBox, ...))
+        tkconfigure(groupsBox, yscrollcommand=function(...) tkset(groupsScroll, ...))
+        for (groups in .factors) tkinsert(groupsBox, "end", groups)
+        parallelSurfacesFrame <- tkframe(subdialog)
+        parallelSurfacesVariable <- tclVar("1")
+        parallelSurfacesCheckBox <- tkcheckbutton(parallelSurfacesFrame, variable=parallelSurfacesVariable)
+        onOKsub <- function() {
+            groups <- as.character(tkget(groupsBox, "active"))
+            assign(".groups", groups, envir=env)
+            tclvalue(.groupsLabel) <- paste("Plot by:", groups)
+            tkconfigure(groupsButton, fg="blue")
+            assign(".parallelSurfaces", tclvalue(parallelSurfacesVariable) == "1", envir=env)
+            if (.grab.focus) tkgrab.release(subdialog)
+            tkdestroy(subdialog)
+            tkwm.deiconify(top)
+            if (.grab.focus) tkgrab.set(top)
+            tkfocus(top)
+            tkwait.window(top)
+            }
+        onCancelSub <- function() {
+            assign(".groups", FALSE, envir=env)
+            tclvalue(.groupsLabel) <- "Plot by groups"
+            tkconfigure(groupsButton, fg="black")
+            if (.grab.focus) tkgrab.release(subdialog) 
+            tkdestroy(subdialog) 
+            tkwm.deiconify(top)
+            if (.grab.focus) tkgrab.set(top)
+            tkfocus(top)
+            tkwait.window(top)
+            }
+        subButtonFrame <- tkframe(subdialog)
+        OKSubButton <- tkbutton(subButtonFrame, text="OK", fg="darkgreen", width="12", command=onOKsub, default="active")
+        cancelSubButton <- tkbutton(subButtonFrame, text="Cancel", fg="red", width="12",command=onCancelSub)
+        tkgrid(tklabel(subdialog, text="Groups variable (pick one)"), sticky="w")
+        tkgrid(groupsBox, groupsScroll, sticky="nw")
+        tkgrid(groupsFrame, sticky="w")
+        tkgrid(tklabel(parallelSurfacesFrame, text="Parallel regression surfaces"), parallelSurfacesCheckBox, sticky="w")
+        tkgrid(parallelSurfacesFrame, sticky="w")
+        tkgrid(OKSubButton, cancelSubButton, sticky="w")
+        tkgrid(subButtonFrame, sticky="w")
+        tkgrid.configure(groupsScroll, sticky="ns")
+        for (row in 0:3) tkgrid.rowconfigure(subdialog, row, weight=0)
+        for (col in 0:0) tkgrid.columnconfigure(subdialog, col, weight=0)
+        .Tcl("update idletasks")
+        tkwm.resizable(subdialog, 0, 0)
+        tkbind(subdialog, "<Return>", onOKsub)
+        if (.double.click) tkbind(subdialog, "<Double-ButtonPress-1>", onOKsub)
+        tkbind(groupsBox, "<Double-ButtonPress-1>", onOKsub)
+        tkselection.set(groupsBox, 0)
+        tkwm.deiconify(subdialog)
+        if (.grab.focus) tkgrab.set(subdialog)
+        tkfocus(subdialog)
+        tkwait.window(subdialog)
+        }
+    onCancel <- function() {
+        if (.grab.focus) tkgrab.release(top)
+        tkfocus(.commander)
+        tkdestroy(top)  
+        }
+    buttonsFrame <- tkframe(top)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
+    onHelp <- function() {
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
+        help("Scatter3DDialog")
+        }
+    helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
+    groupsButton <- tkbutton(top, textvariable=.groupsLabel, command=onGroups)
+    tkgrid(tklabel(variablesFrame, text="Response variable (pick one)"), 
+        tklabel(variablesFrame, text="    "),
+        tklabel(variablesFrame, text="Explanatory variables (pick two)"), sticky="w")
+    tkgrid(yBox, yScroll, sticky="nw")
+    tkgrid(xBox, xScroll, sticky="nw")
+    tkgrid(yFrame, tklabel(variablesFrame, text="    "), xFrame, sticky="nw")
+    tkgrid(variablesFrame, sticky="w")   
+    tkgrid(tklabel(surfacesFrame, text="Surfaces to Fit", fg="blue"), sticky="w")
+    tkgrid(tklabel(surfacesFrame, text="Linear least-squares"), linearLSCheckBox, sticky="w")
+    tkgrid(tklabel(surfacesFrame, text="Quadratic least-squares"), quadLSCheckBox, sticky="w")
+    dfLabel <- tklabel(surfacesFrame, text="df = ")
+    tkgrid(tklabel(surfacesFrame, text="Smooth regression"), nonparCheckBox, 
+        dfLabel, dfNonparField, sticky="w")
+    tkgrid.configure(dfLabel, sticky="e")
+    tkgrid(tklabel(surfacesFrame, text="Additive regression"), additiveCheckBox, 
+        tklabel(surfacesFrame, text="df(each term) = "), dfAddField, sticky="w")
+    tkgrid(surfacesFrame, sticky="w") 
+    tkgrid(tklabel(bgFrame, text="Background Color", fg="blue"), sticky="w", columnspan=2)
+    tkgrid(tklabel(bgFrame, text="Black"), blackButton, sticky="w")
+    tkgrid(tklabel(bgFrame, text="White"), whiteButton, sticky="w")
+    tkgrid(bgFrame, sticky="w")
+    tkgrid(groupsButton, sticky="w")
+    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="            "), 
+        helpButton, sticky="w")
+    tkgrid(buttonsFrame, stick="w")
+    tkgrid.configure(helpButton, sticky="e")
+    tkgrid.configure(xScroll, sticky="ns")
+    tkgrid.configure(yScroll, sticky="ns")
+    for (row in 0:4) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
+    tkselection.set(yBox, 0)
     tkbind(top, "<Return>", onOK)
     if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)

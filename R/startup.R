@@ -1,7 +1,7 @@
-# last modified 22 December 03 by J. Fox
+# last modified 22 Jan 04 by J. Fox
 
 .onAttach <- function(...){
-    cat("\nRcmdr Version 0.9-3\n")
+    cat("\nRcmdr Version 0.9-4\n")
     Commander()
     }
 
@@ -15,13 +15,17 @@
     tcltk <- require(tcltk)
     abind <- require(abind)
     lmtest <- require(lmtest)
+    multcomp <- require(multcomp)
+    mvtnorm <- require(mvtnorm)
+    relimp <- require(relimp)
     effects <- require(effects)
     car <- require(car)
-    absent <- !c(lattice, foreign, mva, ctest, tcltk, abind, lmtest, effects, car)
+    absent <- !c(lattice, foreign, mva, ctest, tcltk, abind, lmtest, multcomp, mvtnorm, relimp,
+        effects, car)
     if (any(absent)) {
         cat("\nThe following packages required by Rcmdr are missing:\n")
-        cat(paste(c("lattice", "foreign", "mva", "ctest", "tcltk", "abind", "lmtest", 
-            "effects", "car")[absent], collapse=", "))
+        cat(paste(c("lattice", "foreign", "mva", "ctest", "tcltk", "abind", "lmtest", "multcomp", 
+            "mvtnorm", "relimp", "effects", "car")[absent], collapse=", "))
         cat("\n")
         }
     }

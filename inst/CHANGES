@@ -178,7 +178,7 @@ Version 0.9-2
         
     o Small changes.
 
-Version 0.9-2
+Version 0.9-3
 
     o Reorganized Models menu using sub-menus (Hypothesis tests, Numerical diagnostics, Graphs).
     
@@ -189,4 +189,24 @@ Version 0.9-2
     o Added Breusch-Pagan test, Durbin-Watson test, and RESET test to "Models -> Numerical diagnostics" menu; lmtest package now required.
     
     
+Version 0.9-4
     
+    o Cleaned up code in enterTable and testLinearHypothesis functions to eliminate use of global variables. 
+    
+    o Added plotMeans function; "Graphs -> Plot of means" menu and dialog; option for pairwise comparisons to one-way ANOVA dialog; "Data -> Manage variables in active data set -> Define contrasts for a factor" menu and dialog; chi-square goodness-of-fit test to frequency distribution dialog -- all from suggestions by Murray Logan.
+
+    o Now use the showData function in the relimp package to display data frames (thanks to David Firth).
+    
+    o Added commas as decimal points as an option to inport text files (as suggested by Philippe Grosjean).
+    
+    o Try to insure that the active data set stays in sync with the active model when data sets or models are changed (suggested by Philippe Grosjean).
+    
+    o Added "Graphs -> 3D scatterplot" menu and dialog and supporting scatter3d function; depends on mgcv and rgl packages, the latter available at <http://wsopuppenkiste.wiso.uni-goettingen.de/~dadler/rgl/>.
+
+    o Added "Models -> Numerical diagnostics -> Bonferroni outlier test".
+    
+    o New sort.names Rcmdr option; if TRUE (now the default), names of variables are sorted alphabetically in variable lists.
+    
+    o Small changes to handling lines executed from the log.
+    
+    o Small bug fixes and interface improvements. 

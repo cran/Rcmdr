@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 1 Dec 03 by J. Fox
+# last modified 27 Jan 04 by J. Fox
 
     # Dimensional-analysis menu
     
@@ -46,8 +46,8 @@ Reliability <- function(){
         tkdestroy(top)  
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(reliability)
@@ -164,8 +164,8 @@ principalComponents <- function(){
         tkdestroy(top)  
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(princomp)
@@ -312,8 +312,8 @@ factorAnalysis <- function(){
         tkdestroy(top)  
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(factanal)
@@ -328,11 +328,11 @@ factorAnalysis <- function(){
     tkgrid(subsetFrame, sticky="w")
     tkgrid(tklabel(optionsFrame, text="Number of factors:"),
         nfactorEntry, sticky="w")
-    tkgrid(tklabel(rotationFrame, text="Factor Rotation"), sticky="w")
+    tkgrid(tklabel(rotationFrame, text="Factor Rotation", fg="blue"), sticky="w")
     tkgrid(tklabel(rotationFrame, text="None"), noRotateButton, sticky="w")
     tkgrid(tklabel(rotationFrame, text="Varimax"), varimaxButton, sticky="w")
     tkgrid(tklabel(rotationFrame, text="Promax"), promaxButton, sticky="w")
-    tkgrid(tklabel(scoresFrame, text="Factor Scores"), sticky="w")
+    tkgrid(tklabel(scoresFrame, text="Factor Scores", fg="blue"), sticky="w")
     tkgrid(tklabel(scoresFrame, text="None"), noScoresButton, sticky="w")
     tkgrid(tklabel(scoresFrame, text="Bartlett's method"), bartlettButton, sticky="w")
     tkgrid(tklabel(scoresFrame, text="Regression method"), regressionButton, sticky="w")

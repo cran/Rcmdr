@@ -1,6 +1,6 @@
 # The R Commander and command logger
 
-# last modified 6 Dec 03 by J. Fox
+# last modified 31 Jan 04 by J. Fox
 
 Commander <- function(){
     etc <- file.path(.path.package(package="Rcmdr")[1], "etc")
@@ -76,13 +76,13 @@ Commander <- function(){
             tkdestroy(top)  
             }
         buttonsFrame <- tkframe(top)
-        OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-        cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",command=onCancel)  
+        OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+        cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)  
         tkgrid(tklabel(textFrame, text="Search for:"), textEntry, sticky="w") 
         tkgrid(textFrame, sticky="w") 
         tkgrid(tklabel(optionsFrame, text="Regular-expression search"), regexprCheckBox, sticky="w")
         tkgrid(tklabel(optionsFrame, text="Case sensitive"), caseCheckBox, sticky="w")
-        tkgrid(tklabel(optionsFrame, text="Search Direction"), sticky="w")
+        tkgrid(tklabel(optionsFrame, text="Search Direction", fg="blue"), sticky="w")
         tkgrid(tklabel(optionsFrame, text="Forward"), forwardButton, sticky="w")
         tkgrid(tklabel(optionsFrame, text="Backward"), backwardButton, sticky="w")
         tkgrid(optionsFrame, sticky="w")
@@ -107,6 +107,7 @@ Commander <- function(){
     assign(".activeModel", NULL, envir=.GlobalEnv)
     assign(".logFileName", NULL, envir=.GlobalEnv)
     assign(".modelNumber", 0, envir=.GlobalEnv)
+    assign(".rgl", FALSE, envir=.GlobalEnv)
     log.font.size <- options("Rcmdr")[[1]]$log.font.size
     log.font.size <- if (is.null(log.font.size)) 10 else log.font.size
     assign(".logFont", tkfont.create(family="courier", size=log.font.size), envir=.GlobalEnv)
@@ -124,6 +125,8 @@ Commander <- function(){
     log.width <- if (is.null(log.width)) "70" else as.character(log.width)    
     double.click <- options("Rcmdr")[[1]]$double.click
     assign(".double.click", if (is.null(double.click)) FALSE else double.click, envir=.GlobalEnv)
+    sort.names <- options("Rcmdr")[[1]]$sort.names
+    assign(".sort.names", if (is.null(sort.names)) TRUE else sort.names, envir=.GlobalEnv)
     grab.focus <- options("Rcmdr")[[1]]$grab.focus
     assign(".grab.focus", if (is.null(grab.focus)) TRUE else grab.focus, envir=.GlobalEnv)
     if (.Platform$OS.type != "windows") {
@@ -136,6 +139,9 @@ Commander <- function(){
         .Tcl(paste("option add *font ", default.font, sep=""))
         } 
     assign(".commander", tktoplevel(), envir=.GlobalEnv)
+    placement <- options("Rcmdr")[[1]]$placement
+    placement <- if (is.null(placement)) "-40+40" else placement
+    tkwm.geometry(.commander, placement)
     tkwm.title(.commander, "R Commander")
     tkwm.protocol(.commander, "WM_DELETE_WINDOW", closeCommander)
     topMenu <- tkmenu(.commander)
@@ -168,8 +174,8 @@ Commander <- function(){
         tkfocus(.commander)
         }
     onView <- function(){
-        command <- paste("edit(", .activeDataSet, ")", sep="")
-        logger(paste("invisible(", command, ")", sep=""))
+        command <- paste("showData(", .activeDataSet, ", placement='-20+20')", sep="")
+        logger(command)
         justDoIt(command)
         tkwm.deiconify(.commander)
         tkfocus(.commander)
@@ -196,9 +202,10 @@ Commander <- function(){
                 var <- gsub(" ", "", var.value[1])
                 value <- var.value[2]
                 if ( (length(grep("\\$", var)) > 0) || (length(grep("\\[", var)) > 0) 
-                    || length(grep("row.names\\(", var) > 0) 
-                    || length(grep("rownames\\(", var) > 0)
-                    || length(grep("colnames\\(", var) > 0))
+                    || length(grep("\\(", var) > 0))
+#                    || length(grep("row.names\\(", var) > 0) 
+#                    || length(grep("rownames\\(", var) > 0)
+#                    || length(grep("colnames\\(", var) > 0))
 #                    justDoIt(paste(var, "<<-", value))
                     justDoIt(paste(var, "<-", value))
                 else assign(var, justDoIt(value), envir=.GlobalEnv)
@@ -323,107 +330,3 @@ justDoIt <- function(command) {
     result
     }
     
-    onCopy <- function(){
-        selection <- strsplit(tclvalue(tktag.ranges(.log, "sel")), " ")[[1]]
-        if (is.na(selection[1])) return()
-        text <- tclvalue(tkget(.log, selection[1], selection[2]))
-        tkclipboard.clear()
-        tkclipboard.append(text)
-        }
-    
-    onDelete <- function(){
-        selection <- strsplit(tclvalue(tktag.ranges(.log, "sel")), " ")[[1]]
-        if (is.na(selection[1])) return()
-        tkdelete(.log, selection[1], selection[2])
-        }
-        
-    onCut <- function(){
-        onCopy()
-        onDelete()
-        }
-        
-    onPaste <- function(){
-        text <- tclvalue(.Tcl("selection get -selection CLIPBOARD"))    
-        if (length(text) == 0) return()
-        tkinsert(.log, "insert", text)
-        }
-        
-    onFind <- function(){
-        top <- tktoplevel()
-        tkwm.title(top, "Find")
-        textFrame <- tkframe(top)
-        textVar <- tclVar("")
-        textEntry <- tkentry(textFrame, width="20", textvariable=textVar)
-        optionsFrame <- tkframe(top)
-        regexprVar <- tclVar("0")
-        regexprCheckBox <- tkcheckbutton(optionsFrame, variable=regexprVar)
-        caseVar <- tclVar("1")
-        caseCheckBox <- tkcheckbutton(optionsFrame, variable=caseVar)
-        directionVar <- tclVar("-forward")
-        forwardButton <- tkradiobutton(optionsFrame, variable=directionVar, value="-forward")
-        backwardButton <- tkradiobutton(optionsFrame, variable=directionVar, value="-backward")
-        onOK <- function(){
-            text <- tclvalue(textVar)
-            if (text == ""){
-                tkmessageBox(message="No search text specified.", 
-                    icon="error", type="ok")
-                if (.grab.focus) tkgrab.release(top)
-                tkdestroy(top)
-                onFind()
-                return()
-                }
-            type <- if (tclvalue(regexprVar) == 1) "-regexp" else "-exact"
-            case <- tclvalue(caseVar) == 1
-            direction <- tclvalue(directionVar)
-            stop <- if (direction == "-forward") "end" else "1.0"
-            where <- if (case) tksearch(.log, type, direction, "--", text, "insert", stop)
-                        else tksearch(.log, type, direction, "-nocase", "--", text, "insert", stop)
-            where <- tclvalue(where)
-            if (where == "") {
-                tkmessageBox(message="Text not found.",
-                    icon="info", type="ok")
-                if (.grab.focus) tkgrab.release(top)
-                tkdestroy(top)
-                tkfocus(.commander)
-                return()
-                }
-            if (.grab.focus) tkgrab.release(top)
-            tkfocus(.log)
-            tkmark.set(.log, "insert", where)  
-            tksee(.log, where)
-            tkdestroy(top)  
-            }
-        onCancel <- function() {
-            if (.grab.focus) tkgrab.release(top)
-            tkfocus(.commander)
-            tkdestroy(top)  
-            }
-        buttonsFrame <- tkframe(top)
-        OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-        cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",command=onCancel)  
-        tkgrid(tklabel(textFrame, text="Search for:"), textEntry, sticky="w") 
-        tkgrid(textFrame, sticky="w") 
-        tkgrid(tklabel(optionsFrame, text="Regular-expression search"), regexprCheckBox, sticky="w")
-        tkgrid(tklabel(optionsFrame, text="Case sensitive"), caseCheckBox, sticky="w")
-        tkgrid(tklabel(optionsFrame, text="Search Direction"), sticky="w")
-        tkgrid(tklabel(optionsFrame, text="Forward"), forwardButton, sticky="w")
-        tkgrid(tklabel(optionsFrame, text="Backward"), backwardButton, sticky="w")
-        tkgrid(optionsFrame, sticky="w")
-        tkgrid(OKbutton, tklabel(buttonsFrame, text="        "), cancelButton, sticky="w")
-        tkgrid(buttonsFrame, sticky="w")
-        for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
-        for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
-        .Tcl("update idletasks")
-        tkwm.resizable(top, 0, 0)
-        tkbind(top, "<Return>", onOK)
-        if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-        tkwm.deiconify(top)
-        if (.grab.focus) tkgrab.set(top)
-        tkfocus(textEntry)
-        tkwait.window(top)
-        }
-    
-    onSelectAll <- function() {
-        tktag.add(.log, "sel", "1.0", "end")
-        tkfocus(.log)
-        }

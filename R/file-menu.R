@@ -1,4 +1,4 @@
-# last modified 28 November 2003 by J. Fox
+# last modified 4 Feb 2004 by J. Fox
 
 # File menu dialogs
 
@@ -43,14 +43,15 @@ saveLogAs <- function() {
 
 closeCommander <- function(){
     globals <- c(".activeDataSet", ".activeModel", ".attachDataSet", ".commander", 
-        ".dataSetLabel", ".dataSetName", ".double.click", ".factors", ".groups", 
-        ".linesByGroup", ".log", ".logCommands", ".logFileName", ".logFont", 
+        ".dataSetLabel", ".dataSetName", ".double.click", ".factors",
+        ".log", ".logCommands", ".logFileName", ".logFont", 
         ".grab.focus", ".modelLabel", ".modelName", ".modelNumber", ".modelWithSubset", 
-        ".numeric", "oldPager", ".operatorFont", ".saveOptions", ".twoLevelFactors", 
-        ".variables")
+        ".numeric", "oldPager", ".operatorFont", ".rgl", ".saveOptions", ".sort.names",
+        ".twoLevelFactors", ".variables")
     response <- tclvalue(tkmessageBox(message="Exit?",
         icon="question", type="okcancel", default="cancel"))
     if (response == "cancel") return(invisible(response))
+    if (.rgl) rgl.quit()
     if (!is.null(.activeDataSet) && (tclvalue(.attachDataSet) == "1")) 
         justDoIt(logger(paste("detach(", .activeDataSet, ")", sep="")))
     assign(".activeDataSet", NULL, envir=.GlobalEnv)
@@ -86,6 +87,7 @@ Options <- function(){
     contrasts <- if (is.null(current$contrasts)) c("contr.Treatment", "contr.poly") else current$contrasts
     grab.focus <- if (is.null(current$grab.focus)) TRUE else current$grab.focus
     double.click <- if (is.null(current$double.click)) FALSE else current$double.click
+    sort.names <- if (is.null(current$sort.names)) TRUE else current$sort.names
     show.edit.button <- if (is.null(current$show.edit.button)) TRUE else current$show.edit.button
     scale.factor <- current$scale.factor
     default.font.size <- if (is.null(current$default.font.size)) 10 else current$default.font.size
@@ -109,6 +111,8 @@ Options <- function(){
     grabFocusCheckBox <- tkcheckbutton(top, variable=grabFocusVar)
     doubleClickVar <- tclVar(as.numeric(double.click))
     doubleClickCheckBox <- tkcheckbutton(top, variable=doubleClickVar)
+    sortNamesVar <- tclVar(as.numeric(sort.names))
+    sortNamesCheckBox <- tkcheckbutton(top, variable=sortNamesVar)
     showEditButtonVar <- tclVar(as.numeric(show.edit.button))
     showEditButtonCheckBox <- tkcheckbutton(top, variable=showEditButtonVar)
     scaleFactorVar <- tclVar(if (is.null(scale.factor)) 1.0 else scale.factor)
@@ -123,6 +127,7 @@ Options <- function(){
         contrasts <- c(tclvalue(contrasts1), tclvalue(contrasts2))
         grab.focus <- tclvalue(grabFocusVar) == 1
         double.click <- tclvalue(doubleClickVar) == 1
+        sort.names <- tclvalue(sortNamesVar) == 1
         show.edit.button <- tclvalue(showEditButtonVar) == 1
         scale.factor <- round(as.numeric(tclvalue(scaleFactorVar)), 1)
         if (scale.factor == 1) scale.factor <- NULL
@@ -134,6 +139,7 @@ Options <- function(){
             contrasts=contrasts,
             grab.focus=grab.focus,
             double.click=double.click,
+            sort.names=sort.names,
             show.edit.button=show.edit.button
             )
         if (.Platform$OS.type == "windows") options$scale.factor <- scale.factor
@@ -150,8 +156,9 @@ Options <- function(){
         tkdestroy(top)  
         }    
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="Restart Commander", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="Restart Commander", fg="darkgreen", command=onOK, 
+        default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(Commander)
@@ -172,6 +179,8 @@ Options <- function(){
     tkgrid.configure(grabFocusCheckBox, sticky="w")
     tkgrid(tklabel(top, text="Double-click presses OK button"), doubleClickCheckBox, sticky="e")
     tkgrid.configure(doubleClickCheckBox, sticky="w")
+    tkgrid(tklabel(top, text="Sort variable names alphabetically"), sortNamesCheckBox, sticky="e")
+    tkgrid.configure(sortNamesCheckBox, sticky="w")
     tkgrid(tklabel(top, text="Show edit button"), showEditButtonCheckBox, sticky="e")
     tkgrid.configure(showEditButtonCheckBox, sticky="w")
     if (.Platform$OS.type == "windows"){
@@ -185,7 +194,7 @@ Options <- function(){
     tkgrid(OKbutton, cancelButton, sticky="w")
     tkgrid(buttonsFrame, helpButton, sticky="w")
     tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:7) tkgrid.rowconfigure(top, row, weight=0)
+    for (row in 0:8) tkgrid.rowconfigure(top, row, weight=0)
     for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)

@@ -1,4 +1,4 @@
-# last modified 29 November 2003 by J. Fox
+# last modified 7 Feb 04 by J. Fox
 
 # utility functions
 
@@ -40,6 +40,9 @@ activeDataSet <- function(dsname){
         detach(pos = match(.activeDataSet, search()))
         logger(paste("detach(", .activeDataSet, ")", sep=""))
         }
+    assign(".activeModel", NULL, envir=.GlobalEnv)
+    tclvalue(.modelName) <- "<No active model>"
+    tkconfigure(.modelLabel, fg="red")
     assign(".activeDataSet", dsname, envir=.GlobalEnv)
     assign(".variables", listVariables(), envir=.GlobalEnv)
     assign(".numeric", listNumeric(), envir=.GlobalEnv)
@@ -69,11 +72,13 @@ activeModel <- function(model){
     model
     }
     
-listVariables <- function(dataSet=.activeDataSet) eval(parse(text=paste("names(", dataSet,")")),
-    envir=.GlobalEnv)
+listVariables <- function(dataSet=.activeDataSet) {
+    vars <- eval(parse(text=paste("names(", dataSet,")")), envir=.GlobalEnv)
+    if (.sort.names) sort(vars) else vars
+    }
 
 listFactors <- function(dataSet=.activeDataSet) {
-    variables <- listVariables(dataSet)
+    variables <- if (exists(".variables")) .variables else listVariables(dataSet)
     variables[sapply(variables, function(.x)
         is.factor(eval(parse(text=.x), envir=eval(parse(text=dataSet), envir=.GlobalEnv))))]
     }
@@ -87,7 +92,7 @@ listTwoLevelFactors <- function(dataSet=.activeDataSet){
     }
     
 listNumeric <- function(dataSet=.activeDataSet) {
-    variables <- listVariables(dataSet)
+    variables <- if (exists(".variables")) .variables else listVariables(dataSet)
     variables[sapply(variables,function(.x)
         is.numeric(eval(parse(text=.x), envir=eval(parse(text=dataSet), envir=.GlobalEnv))))]
     }
@@ -341,6 +346,218 @@ stem.leaf <- function(data, unit, m, Min, Max, rule.line=c("Dixon", "Velleman", 
         }
     else result
     }
+
+plotMeans <- function(response, factor1, factor2, error.bars = c("se", "sd", "conf.int", "none"),
+    level=0.95, xlab=deparse(substitute(factor1)), ylab=paste("mean of", deparse(substitute(response))), 
+    legend.lab=deparse(substitute(factor2)), main="Plot of Means",
+    pch=1:n.levs.2, lty=1:n.levs.2, col=palette()){
+    if (!is.numeric(response)) stop("Argument response must be numeric.")
+    xlab # force evaluation
+    ylab
+    legend.lab
+    error.bars <- match.arg(error.bars)
+    if (missing(factor2)){
+        if (!is.factor(factor1)) stop("Argument factor1 must be a factor.")
+        valid <- !(is.na(factor1) | is.na(response))
+        factor1 <- factor1[valid]
+        response <- response[valid]
+        means <- tapply(response, factor1, mean)
+        sds <- tapply(response, factor1, mean)
+        ns <- tapply(response, factor1, length)
+        if (error.bars == "se") sds <- sds/sqrt(ns)
+        if (error.bars == "conf.int") sds <- qt((1 - level)/2, df=ns - 1, lower.tail=FALSE) * sds/sqrt(ns)
+        yrange <-  if (error.bars != "none") c( min(means - sds), max(means + sds)) else range(means)
+        levs <- levels(factor1)
+        n.levs <- length(levs)
+        plot(c(1, n.levs), yrange, type="n", xlab=xlab, ylab=ylab, axes=FALSE, main=main)
+        points(1:n.levs, means, type="b", pch=16, cex=2)
+        box()
+        axis(2)
+        axis(1, at=1:n.levs, labels=levs)
+        if (error.bars != "none") arrows(1:n.levs, means - sds, 1:n.levs, means + sds, 
+            angle=90, lty=2, code=3, length=0.125)
+        }
+    else {
+        if (!(is.factor(factor1) | is.factor(factor2))) stop("Arguments factor1 and factor2 must be factors.")
+        valid <- !(is.na(factor1) | is.na(factor2) | is.na(response))
+        factor1 <- factor1[valid]
+        factor2 <- factor2[valid]
+        response <- response[valid]
+        means <- tapply(response, list(factor1, factor2), mean)
+        sds <- tapply(response, list(factor1, factor2), mean)
+        ns <- tapply(response, list(factor1, factor2), length)
+        if (error.bars == "se") sds <- sds/sqrt(ns)
+        if (error.bars == "conf.int") sds <- qt((1 - level)/2, df=ns - 1, lower.tail=FALSE) * sds/sqrt(ns)
+        yrange <-  if (error.bars != "none") c( min(means - sds), max(means + sds)) else range(means)
+        levs.1 <- levels(factor1)
+        levs.2 <- levels(factor2)
+        n.levs.1 <- length(levs.1)
+        n.levs.2 <- length(levs.2)
+        if (n.levs.2 > length(col)) stop(paste("Number of groups for factor2, ", n.levs.2,
+            ", exceeds number of distinct colours, ", length(col), ".", sep=""))
+        plot(c(1, n.levs.1 + 1), yrange, type="n", xlab=xlab, ylab=ylab, axes=FALSE, main=main)
+        box()
+        axis(2)
+        axis(1, at=1:n.levs.1, labels=levs.1)
+        for (i in 1:n.levs.2){
+            points(1:n.levs.1, means[, i], type="b", pch=pch[i], cex=2, col=col[i], lty=lty[i])
+            if (error.bars != "none") arrows(1:n.levs.1, means[, i] - sds[, i], 
+                1:n.levs.1, means[, i] + sds[, i], angle=90, code=3, col=col[i], lty=lty[i], length=0.125)
+            }
+        x.posn <- n.levs.1 + 0.25
+        y.posn <- sum(c(0.1, 0.9) * par("usr")[c(3,4)])
+        text(x.posn, y.posn, legend.lab, adj=c(0, -.5))
+        legend(x.posn, y.posn, levs.2, pch=pch, col=col, lty=lty)
+        }
+    invisible(NULL)
+    }
+
+
+# 3D scatterplots via rgl
+
+scatter3d <- function(x, y, z, xlab=deparse(substitute(x)), ylab=deparse(substitute(y)),
+                      zlab=deparse(substitute(z)), revolutions=0, bg.col=c("black", "white"), axis.col=NULL,
+                      surface.col=c("blue", "green", "orange", "magenta", "cyan", "red", "yellow", "gray"), 
+                      neg.res.col="red", pos.res.col="green", point.col="yellow",
+                      text.col=axis.col, fogtype=c("exp2", "linear", "exp", "none"), 
+                      residuals=(length(fit) == 1), surface=TRUE, df.smooth=NULL, df.additive=NULL,
+                      sphere.size=1, threshold=0.01, speed=1, fov=60, 
+                      fit="linear", groups=NULL, parallel=TRUE, model.summary=FALSE){
+    require(rgl)
+    require(mgcv)
+    if ((!is.null(groups)) && (nlevels(groups) > length(surface.col))) stop(paste("Number of groups (", 
+        nlevels(groups), ") exceeds number of colors (", length(surface.col), ").", sep=""))
+    if ((!is.null(groups)) && (!is.factor(groups))) stop("groups variable must be a factor.")
+    bg.col <- match.arg(bg.col)
+    fogtype <- match.arg(fogtype)
+    if ((length(fit) > 1) && residuals && surface)
+        stop("cannot plot both multiple surfaces and residuals")
+    if (is.null(axis.col)) axis.col <- if (bg.col == "white") "black" else "white"
+    xlab
+    ylab
+    zlab
+    rgl.clear()
+    rgl.viewpoint(fov=fov)
+    rgl.bg(col=bg.col, fogtype=fogtype)
+    valid <- if (is.null(groups)) !(is.na(x) | is.na(y) | is.na(z))
+        else !(is.na(x) | is.na(y) | is.na(z) | is.na(groups))
+    x <- x[valid]
+    y <- y[valid]
+    z <- z[valid]
+    if (!is.null(groups)) groups <- groups[valid]
+    x <- (x - min(x))/(max(x) - min(x))
+    y <- (y - min(y))/(max(y) - min(y))
+    z <- (z - min(z))/(max(z) - min(z))
+    size <- sphere.size*((100/length(x))^(1/3))*0.015
+    if (is.null(groups)){
+        if (size > threshold) rgl.spheres(x, y, z, color=point.col, radius=size)
+            else rgl.points(x, y, z, color=point.col)
+            }
+    else {
+        if (size > threshold) rgl.spheres(x, y, z, color=surface.col[as.numeric(groups)], radius=size)
+            else rgl.points(x, y, z, color=surface.col[as.numeric(groups)])
+            }    
+    rgl.lines(c(0,1), c(0,0), c(0,0), color=axis.col)
+    rgl.lines(c(0,0), c(0,1), c(0,0), color=axis.col)
+    rgl.lines(c(0,0), c(0,0), c(0,1), color=axis.col)
+    rgl.texts(1, 0, 0, xlab, justify="right", color=text.col)
+    rgl.texts(0, 1, 0, ylab, justify="right", color=text.col)
+    rgl.texts(0, 0, 1, zlab, justify="right", color=text.col)
+    if (surface){
+        for (i in 1:length(fit)){
+            f <- match.arg(fit[i], c("linear", "quadratic", "smooth", "additive"))
+            vals <- seq(0, 1, length=25)
+            dat <- expand.grid(x=vals, z=vals)
+            if (is.null(groups)){
+                mod <- switch(f,
+                    linear = lm(y ~ x + z),
+                    quadratic = lm(y ~ (x + z)^2 + I(x^2) + I(z^2)),
+                    smooth = if (is.null(df.smooth)) gam(y ~ s(x, z))
+                        else gam(y ~ s(x, z, fx=TRUE, k=df.smooth)),
+                    additive = if (is.null(df.additive)) gam(y ~ s(x) + s(z))
+                        else gam(y ~ s(x, fx=TRUE, k=df.additive[1]+1) + 
+                            s(z, fx=TRUE, k=(rev(df.additive+1)[1]+1)))
+                    )
+                if (model.summary) print(summary(mod))
+                yhat <- predict(mod, newdata=dat)
+                rgl.surface(vals, vals, matrix(yhat, 25, 25), color=surface.col[i], alpha=0.5, lit=FALSE)
+                if (residuals){
+                    n <- length(y)
+                    fitted <- fitted(mod)
+                    colors <- ifelse(residuals(mod) > 0, pos.res.col, neg.res.col)
+                    rgl.lines(as.vector(rbind(x,x)), as.vector(rbind(y,fitted)), as.vector(rbind(z,z)),
+                        color=as.vector(rbind(colors,colors)))
+                    }
+                }
+            else{
+                if (parallel){
+                    mod <- switch(f,
+                        linear = lm(y ~ x + z + groups),
+                        quadratic = lm(y ~ (x + z)^2 + I(x^2) + I(z^2) + groups),
+                        smooth = if (is.null(df.smooth)) gam(y ~ s(x, z) + groups)
+                            else gam(y ~ s(x, z, fx=TRUE, k=df.smooth) + groups),
+                        additive = if (is.null(df.additive)) gam(y ~ s(x) + s(z) + groups)
+                            else gam(y ~ s(x, fx=TRUE, k=df.additive[1]+1) + 
+                                s(z, fx=TRUE, k=(rev(df.additive+1)[1]+1)) + groups)
+                        )
+                    if (model.summary) print(summary(mod))
+                    levs <- levels(groups)
+                    for (j in 1:length(levs)){
+                        group <- levs[j]
+                        select.obs <- groups == group
+                        yhat <- predict(mod, newdata=cbind(dat, groups=group))
+                        rgl.surface(vals, vals, matrix(yhat, 25, 25), color=surface.col[j], alpha=0.5, lit=FALSE)
+                        rgl.texts(0, predict(mod, newdata=data.frame(x=0, z=0, groups=group)), 0, 
+                            paste(group, " "), justify="right", color=surface.col[j])
+                        if (residuals){
+                            yy <- y[select.obs]
+                            xx <- x[select.obs]
+                            zz <- z[select.obs]
+                            fitted <- fitted(mod)[select.obs]
+                            rgl.lines(as.vector(rbind(xx,xx)), as.vector(rbind(yy,fitted)), as.vector(rbind(zz,zz)),
+                                col=surface.col[j])
+                            }
+                        }
+                    }
+                else {
+                    levs <- levels(groups)
+                    for (j in 1:length(levs)){
+                        group <- levs[j]
+                        select.obs <- groups == group
+                        mod <- switch(f,
+                            linear = lm(y ~ x + z, subset=select.obs),
+                            quadratic = lm(y ~ (x + z)^2 + I(x^2) + I(z^2), subset=select.obs),
+                            smooth = if (is.null(df.smooth)) gam(y ~ s(x, z), subset=select.obs)
+                                else gam(y ~ s(x, z, fx=TRUE, k=df.smooth), subset=select.obs),
+                            additive = if (is.null(df.additive)) gam(y ~ s(x) + s(z), subset=select.obs)
+                                else gam(y ~ s(x, fx=TRUE, k=df.additive[1]+1) + 
+                                    s(z, fx=TRUE, k=(rev(df.additive+1)[1]+1)), subset=select.obs)
+                            )
+                        if (model.summary) print(summary(mod))
+                        yhat <- predict(mod, newdata=dat)
+                        rgl.surface(vals, vals, matrix(yhat, 25, 25), color=surface.col[j], alpha=0.5, lit=FALSE)
+                        rgl.texts(0, predict(mod, newdata=data.frame(x=0, z=0, groups=group)), 0, 
+                            paste(group, " "), justify="right", color=surface.col[j])
+                        if (residuals){
+                            yy <- y[select.obs]
+                            xx <- x[select.obs]
+                            zz <- z[select.obs]
+                            fitted <- fitted(mod)
+                            rgl.lines(as.vector(rbind(xx,xx)), as.vector(rbind(yy,fitted)), as.vector(rbind(zz,zz)),
+                                col=surface.col[j])
+                            }
+                        }
+                    }
+                }    
+            }
+        }
+    if (revolutions > 0) {
+        for (i in 1:revolutions){
+            for (angle in seq(1, 360, length=360/speed)) rgl.viewpoint(-angle, fov=fov)
+            }
+        }
+    }
+
 
     # Pager
 

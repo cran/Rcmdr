@@ -1,6 +1,6 @@
 # Model menu dialogs
 
-# last modified 30 December 03 by J. Fox
+# last modified 29 January 04 by J. Fox
 
 selectActiveModel <- function(){
     models <- union(listLinearModels(), listGeneralizedLinearModels())
@@ -22,19 +22,43 @@ selectActiveModel <- function(){
     tkselection.set(modelsBox, if (is.null(.activeModel)) 0 else which(.activeModel == models) - 1)
     buttonsFrame <- tkframe(top)
     onOK <- function(){
-        activeModel(models[as.numeric(tkcurselection(modelsBox)) + 1])
+    model <- models[as.numeric(tkcurselection(modelsBox)) + 1]
+    dataSet <- eval(parse(text=paste("as.character(", model, "$call$data)")))
+    if (length(dataSet) == 0){
+        tkmessageBox(message="There is no dataset associated with this model.", 
+                icon="error", type="ok")
+            if (.grab.focus) tkgrab.release(top)
+            tkdestroy(top)
+            tkfocus(.commander)
+            return()
+            }
+        dataSets <- listDataSets()
+        if (!is.element(dataSet, dataSets)){
+        tkmessageBox(message=paste("The dataset associated with this model, ", 
+                dataSet, ", is not in memory.", sep=""),
+                icon="error", type="ok")
+            if (.grab.focus) tkgrab.release(top)
+            tkdestroy(top)
+            tkfocus(.commander)
+            return()
+            }
+        if (dataSet != .activeDataSet) activeDataSet(dataSet)
+        activeModel(model)
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         tkfocus(.commander)
         }
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
     onCancel <- function() {
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }    
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
-    tkgrid(tklabel(top, fg="red", text=paste("Current model:", tclvalue(.modelName))), sticky="w")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
+    nameFrame <- tkframe(top)
+    tkgrid(tklabel(nameFrame, fg="blue", text="Current Model: "), 
+        tklabel(nameFrame, text=tclvalue(.modelName)), sticky="w")
+    tkgrid(nameFrame, sticky="w", columnspan="2")
     tkgrid(tklabel(top, text="Models (pick one)"), sticky="w")
     tkgrid(modelsBox, modelsScroll, sticky="nw")
     tkgrid(modelsFrame, columnspan="2", sticky="w")
@@ -42,7 +66,7 @@ selectActiveModel <- function(){
     tkgrid(buttonsFrame, sticky="w")
     tkgrid.configure(modelsScroll, sticky="ns")
     for (row in 0:3) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
+    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
@@ -206,13 +230,13 @@ addObservationStatistics <- function(){
         tkfocus(.commander)
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
     onCancel <- function() {
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }    
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(influence.measures)
@@ -265,13 +289,13 @@ residualQQPlot <- function(){
         tkfocus(.commander)
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
     onCancel <- function() {
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }    
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(qq.plot.lm)
@@ -301,13 +325,14 @@ testLinearHypothesis <- function(){
         tkfocus(.commander)
         return()
         }
+    env <- environment()
     top <- tktoplevel()
     tkwm.title(top, "Test Linear Hypothesis")
     outerTableFrame <- tkframe(top)
-    assign(".tableFrame", tkframe(outerTableFrame), envir=.GlobalEnv)
+    assign(".tableFrame", tkframe(outerTableFrame), envir=env)
     setUpTable <- function(...){
-        tkdestroy(get(".tableFrame", envir=.GlobalEnv))
-        assign(".tableFrame", tkframe(outerTableFrame), envir=.GlobalEnv)
+        tkdestroy(get(".tableFrame", envir=env))
+        assign(".tableFrame", tkframe(outerTableFrame), envir=env)
         nrows <- as.numeric(tclvalue(rowsValue))
         col.names <- eval(parse(text=paste("names(coef(", .activeModel, "))")))
         col.names <- substring(paste(abbreviate(col.names, 12), "            "), 1, 12)
@@ -318,26 +343,26 @@ testLinearHypothesis <- function(){
             }
         make.col.names <- paste(make.col.names, ", tklabel(.tableFrame, text='          ')",
             ", tklabel(.tableFrame, text='Right-hand side')", sep="")
-        eval(parse(text=paste("tkgrid(", make.col.names, ")", sep="")), envir=.GlobalEnv)
+        eval(parse(text=paste("tkgrid(", make.col.names, ")", sep="")), envir=env)
         for (i in 1:nrows){   
             varname <- paste(".tab.", i, ".1", sep="") 
             rhs.name <- paste(".rhs.", i, sep="")
-            assign(varname, tclVar("0") , envir=.GlobalEnv)
-            assign(rhs.name, tclVar("0"), envir=.GlobalEnv)
+            assign(varname, tclVar("0") , envir=env)
+            assign(rhs.name, tclVar("0"), envir=env)
             make.row <- paste("tklabel(.tableFrame, text=", i, ")")
             make.row <- paste(make.row, ", ", "tkentry(.tableFrame, width='5', textvariable=", 
                 varname, ")", sep="")
             for (j in 2:ncols){
                 varname <- paste(".tab.", i, ".", j, sep="")
-                assign(varname, tclVar("0"), envir=.GlobalEnv)
+                assign(varname, tclVar("0"), envir=env)
                 make.row <- paste(make.row, ", ", "tkentry(.tableFrame, width='5', textvariable=", 
                     varname, ")", sep="")
                 }
             make.row <- paste(make.row, ", tklabel(.tableFrame, text='     '),",
                 "tkentry(.tableFrame, width='5', textvariable=", rhs.name, ")", sep="")
-            eval(parse(text=paste("tkgrid(", make.row, ")", sep="")), envir=.GlobalEnv)
+            eval(parse(text=paste("tkgrid(", make.row, ")", sep="")), envir=env)
             }
-        tkgrid(get(".tableFrame", envir=.GlobalEnv), sticky="w")
+        tkgrid(get(".tableFrame", envir=env), sticky="w")
         }
     ncols <- eval(parse(text=paste("length(coef(", .activeModel, "))")))
     rowsFrame <- tkframe(top)
@@ -389,9 +414,6 @@ testLinearHypothesis <- function(){
             }
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
-        remove(.tableFrame, envir=.GlobalEnv)
-        remove(list=ls(pattern="\\.tab\\.", all.names=TRUE, envir=.GlobalEnv), envir=.GlobalEnv)
-        remove(list=ls(pattern="\\.rhs\\.", all.names=TRUE, envir=.GlobalEnv), envir=.GlobalEnv)
         command <- paste("matrix(c(", paste(values, collapse=","), "), ", nrows, ", ", ncols,
             ", byrow=TRUE)", sep="")
         assign(".Hypothesis", justDoIt(command), envir=.GlobalEnv)
@@ -405,13 +427,13 @@ testLinearHypothesis <- function(){
         tkfocus(.commander)
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
     onCancel <- function() {
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",command=onCancel)
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(linear.hypothesis)
@@ -419,7 +441,7 @@ testLinearHypothesis <- function(){
     helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
     tkgrid(tklabel(rowsFrame, text="Number of Rows:"), rowsSlider, rowsShow, sticky="w")
     tkgrid(rowsFrame, sticky="w")
-    tkgrid(tklabel(top, text="Enter hypothesis matrix and right-hand side vector:"), sticky="w")
+    tkgrid(tklabel(top, text="Enter hypothesis matrix and right-hand side vector:", fg="blue"), sticky="w")
     tkgrid(outerTableFrame, sticky="w")
     tkgrid(tklabel(top, text=""))
     tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="        "), helpButton, sticky="w")
@@ -478,7 +500,7 @@ compareModels <- function(){
         doItAndPrint(paste("anova(", model1, ",", model2, ")", sep=""))
         tkfocus(.commander)
         }
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
     onCancel <- function() {
         tkgrab.release(top)
         tkfocus(.commander)
@@ -489,7 +511,7 @@ compareModels <- function(){
         help(anova)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     tkgrid(tklabel(modelsFrame1, text="First model (pick one)"), sticky="w")
     tkgrid(modelsBox1, modelsScroll1, sticky="nw")
     tkgrid(tklabel(modelsFrame2, text="Second model (pick one)"), sticky="w")
@@ -535,8 +557,7 @@ BreuschPaganTest <- function(){
     top <- tktoplevel()
     tkwm.title(top, "Breusch-Pagan Test")
     tkgrid(tklabel(top, text="Score Test for Nonconstant Error Variance"), sticky="w")
-    variables <- paste(.variables, ifelse(sapply(eval(parse(text=.activeDataSet), 
-        envir=.GlobalEnv), is.factor), "[factor]", ""))
+    variables <- paste(.variables, ifelse(is.element(.variables, .factors), "[factor]", ""))
     optionsFrame <- tkframe(top)
     xFrame <- tkframe(optionsFrame)
     xBox <- tklistbox(xFrame, height=min(4, length(.variables)),
@@ -664,8 +685,8 @@ BreuschPaganTest <- function(){
     rightParenButton <- tkbutton(operatorsFrame, text=")", width="3", command=onRightParen, 
         font=.operatorFont)
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(bptest)
@@ -682,7 +703,9 @@ BreuschPaganTest <- function(){
     rhsXscroll <- tkscrollbar(optionsFrame, repeatinterval=10,
         orient="horizontal", command=function(...) tkxview(rhs, ...))
     tkconfigure(rhsEntry, xscrollcommand=function(...) tkset(rhsXscroll, ...))  
-    tkgrid(tklabel(top, text="Variance Formula"), sticky="w") 
+    tkgrid(tklabel(optionsFrame, text="Studentized\ntest statistic", justify="left"),
+        studentCheckBox, sticky="w")
+    tkgrid(tklabel(optionsFrame, text="Variance Formula", fg="blue"), sticky="w") 
     tkgrid(tklabel(optionsFrame, text="Fitted values"), fittedButton, sticky="w")
     tkgrid(tklabel(optionsFrame, text="Explanatory variables"), predictorsButton, sticky="w")
     tkgrid(tklabel(optionsFrame, text="Other (specify)"), otherButton, 
@@ -701,8 +724,6 @@ BreuschPaganTest <- function(){
     tkgrid(tklabel(optionsFrame, text=""),tklabel(optionsFrame, text=""),
         tklabel(optionsFrame, text=""), xFrame, sticky="w")
     tkgrid.configure(xScroll, sticky="ns")
-    tkgrid(tklabel(optionsFrame, text="Studentized\ntest statistic", justify="left"),
-        studentCheckBox, sticky="w")
     tkgrid(optionsFrame, sticky="w")
     tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="        "), helpButton, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
@@ -750,8 +771,8 @@ DurbinWatsonTest <- function(){
         tkdestroy(top)  
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(dwtest)
@@ -762,7 +783,7 @@ DurbinWatsonTest <- function(){
     greaterButton <- tkradiobutton(optionsFrame, variable=altHypothesisVariable, value="greater")
     notequalButton <- tkradiobutton(optionsFrame, variable=altHypothesisVariable, value="two.sided")
     lessButton <- tkradiobutton(optionsFrame, variable=altHypothesisVariable, value="less")
-    tkgrid(tklabel(top, text="Alternative Hypothesis"), sticky="w") 
+    tkgrid(tklabel(top, text="Alternative Hypothesis", fg="blue"), sticky="w") 
     tkgrid(tklabel(optionsFrame, text="rho >  0"), greaterButton, sticky="w")
     tkgrid(tklabel(optionsFrame, text="rho != 0"), notequalButton, sticky="w")
     tkgrid(tklabel(optionsFrame, text="rho <  0"), lessButton, sticky="w")
@@ -824,8 +845,8 @@ RESETtest <- function(){
         tkdestroy(top)  
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(reset)
@@ -840,12 +861,10 @@ RESETtest <- function(){
     regressorButton <- tkradiobutton(optionsFrame, variable=typeVariable, value="regressor")
     fittedButton <- tkradiobutton(optionsFrame, variable=typeVariable, value="fitted")
     princompButton <- tkradiobutton(optionsFrame, variable=typeVariable, value="princomp")
-    tkgrid(tklabel(optionsFrame, text="Powers to Include"), sticky="w")
-    tkgrid(tklabel(optionsFrame, text="2 (squares)"), squareCheckBox, sticky="e")
-    tkgrid(tklabel(optionsFrame, text="3 (cubes)   "), cubeCheckBox, sticky="e")
-    tkgrid.configure(squareCheckBox, sticky="w")
-    tkgrid.configure(cubeCheckBox, sticky="w")
-    tkgrid(tklabel(optionsFrame, text="Type of Test"), sticky="w") 
+    tkgrid(tklabel(optionsFrame, text="Powers to Include", fg="blue"), sticky="w")
+    tkgrid(tklabel(optionsFrame, text="2 (squares)"), squareCheckBox, sticky="w")
+    tkgrid(tklabel(optionsFrame, text="3 (cubes)   "), cubeCheckBox, sticky="w")
+    tkgrid(tklabel(optionsFrame, text="Type of Test", fg="blue"), sticky="w") 
     tkgrid(tklabel(optionsFrame, text="Explanatory variables"), regressorButton, sticky="w")
     tkgrid(tklabel(optionsFrame, text="Fitted values"), fittedButton, sticky="w")
     tkgrid(tklabel(optionsFrame, text="First principal component"), princompButton, sticky="w")
@@ -862,4 +881,8 @@ RESETtest <- function(){
     if (.grab.focus) tkgrab.set(top)
     tkfocus(top)
     tkwait.window(top)
+    }
+
+outlierTest <- function(){
+    doItAndPrint(paste("outlier.test(", .activeModel, ")", sep=""))
     }

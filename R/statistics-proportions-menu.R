@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 20 July 03 by J. Fox
+# last modified 27 Jan 04 by J. Fox
 
     # Proportions menu
     
@@ -49,8 +49,8 @@ singleProportionTest <- function(){
         tkdestroy(top)  
         }  
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(prop.test)
@@ -76,7 +76,7 @@ singleProportionTest <- function(){
     tkgrid(tklabel(top, text="Variable (pick one)"), sticky="w")
     tkgrid(xBox, xScroll, sticky="nw")
     tkgrid(xFrame, sticky="nw")    
-    tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis"), columnspan=2, sticky="w")
+    tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis", fg="blue"), columnspan=2, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Population proportion = p0"), twosidedButton, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Population proportion < p0"), lessButton, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Population proportion > p0"), greaterButton, sticky="w")
@@ -85,7 +85,7 @@ singleProportionTest <- function(){
     tkgrid(tklabel(confidenceFrame, text="Confidence Level: "), confidenceField, sticky="w")
     tkgrid(confidenceFrame, sticky="w")
     tkgrid(alternativeFrame, rightFrame, sticky="nw")
-    tkgrid(tklabel(testFrame, text="Type of Test"), columnspan=2, sticky="w")
+    tkgrid(tklabel(testFrame, text="Type of Test", fg="blue"), columnspan=2, sticky="w")
     tkgrid(tklabel(testFrame, text="Normal approximation"), normalButton, sticky="w")
     tkgrid(tklabel(testFrame, text="Normal approximation with\ncontinuity correction", justify="left"), 
         correctedButton, sticky="w")
@@ -169,8 +169,8 @@ twoSampleProportionsTest <- function(){
         tkdestroy(top)  
         }
     buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(prop.test)
@@ -194,14 +194,14 @@ twoSampleProportionsTest <- function(){
     tkgrid(xBox, xScroll, sticky="nw")
     tkgrid(groupsBox, groupsScroll, sticky="nw")
     tkgrid(groupsFrame, xFrame, sticky="nw")    
-    tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis"), columnspan=2, sticky="w")
+    tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis", fg="blue"), columnspan=2, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Two-sided"), twosidedButton, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Difference < 0"), lessButton, sticky="w")
     tkgrid(tklabel(alternativeFrame, text="Difference > 0"), greaterButton, sticky="w")
     tkgrid(tklabel(confidenceFrame, text="Confidence Level: "), confidenceField, sticky="w")
     tkgrid(confidenceFrame, sticky="w")
     tkgrid(alternativeFrame, rightFrame, sticky="nw")
-    tkgrid(tklabel(testFrame, text="Type of Test"), columnspan=2, sticky="w")
+    tkgrid(tklabel(testFrame, text="Type of Test", fg="blue"), columnspan=2, sticky="w")
     tkgrid(tklabel(testFrame, text="Normal approximation"), normalButton, sticky="w")
     tkgrid(tklabel(testFrame, text="Normal approximation with\ncontinuity correction", justify="left"), 
         correctedButton, sticky="w")
