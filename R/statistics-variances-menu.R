@@ -1,11 +1,26 @@
 # Statistics Menu dialogs
 
-# last modified 11 June 03 by J. Fox
+# last modified 19 July 03 by J. Fox
 
     # Variances menu
     
 twoVariancesFTest <- function(){
-    if (activeDataSet() == FALSE) return()
+    if (activeDataSet() == FALSE) {
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.numeric) == 0){
+        tkmessageBox(message="There are no numeric variables in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.twoLevelFactors) == 0){
+        tkmessageBox(message="There are no 2-level factors in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
     top <- tktoplevel()
     tkwm.title(top, "Two Variances F-Test")
     groupFrame <- tkframe(top)
@@ -27,7 +42,7 @@ twoVariancesFTest <- function(){
         response <- as.character(tkget(responseBox, "active"))
         alternative <- as.character(tclvalue(alternativeVariable))
         level <- tclvalue(confidenceLevel)
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         doItAndPrint(paste("tapply(", response, ", ", group, ",  var, na.rm=TRUE)", sep=""))
         doItAndPrint(paste("var.test(", response, " ~ ", group,
@@ -39,13 +54,13 @@ twoVariancesFTest <- function(){
     buttonsFrame <- tkframe(top)
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }    
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(var.test)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -81,14 +96,30 @@ twoVariancesFTest <- function(){
     tkselection.set(groupBox, 0)
     tkselection.set(responseBox, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(top)
     tkwait.window(top)
     }
 
 BartlettTest <- function(){
-    if (activeDataSet() == FALSE) return()
+    if (activeDataSet() == FALSE) {
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.numeric) == 0){
+        tkmessageBox(message="There are no numeric variables in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.factors) == 0){
+        tkmessageBox(message="There are no factors in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
     top <- tktoplevel()
     tkwm.title(top, "Bartlett's Test")
     groupFrame <- tkframe(top)
@@ -108,7 +139,7 @@ BartlettTest <- function(){
     onOK <- function(){
         group <- as.character(tkget(groupBox, "active"))
         response <- as.character(tkget(responseBox, "active"))
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         doItAndPrint(paste("tapply(", paste(.activeDataSet, "$", response, sep=""),
             ", ", paste(.activeDataSet, "$", group, sep=""), ", var, na.rm=TRUE)", sep=""))
@@ -119,13 +150,13 @@ BartlettTest <- function(){
     buttonsFrame <- tkframe(top)
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(bartlett.test)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -146,14 +177,30 @@ BartlettTest <- function(){
     tkselection.set(groupBox, 0)
     tkselection.set(responseBox, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(top)
     tkwait.window(top)
     }
 
 LeveneTest <- function(){
-    if (activeDataSet() == FALSE) return()
+    if (activeDataSet() == FALSE) {
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.numeric) == 0){
+        tkmessageBox(message="There are no numeric variables in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.factors) == 0){
+        tkmessageBox(message="There are no factors in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
     top <- tktoplevel()
     tkwm.title(top, "Levene's Test")
     groupFrame <- tkframe(top)
@@ -173,7 +220,7 @@ LeveneTest <- function(){
     onOK <- function(){
         group <- as.character(tkget(groupBox, "active"))
         response <- as.character(tkget(responseBox, "active"))
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         doItAndPrint(paste("tapply(", paste(.activeDataSet, "$", response, sep=""),
             ", ", paste(.activeDataSet, "$", group, sep=""), ", var, na.rm=TRUE)", sep=""))
@@ -184,13 +231,13 @@ LeveneTest <- function(){
     buttonsFrame <- tkframe(top)
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(levene.test)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -211,8 +258,9 @@ LeveneTest <- function(){
     tkselection.set(groupBox, 0)
     tkselection.set(responseBox, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(top)
     tkwait.window(top)
     }

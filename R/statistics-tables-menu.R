@@ -1,11 +1,20 @@
 # Statistics Menu dialogs
 
-# last modified 11 June 03 by J. Fox
+# last modified 20 July 03 by J. Fox
 
     # Tables menu
     
 twoWayTable <- function(){
-    if (activeDataSet() == FALSE) return()
+    if (activeDataSet() == FALSE) {
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.factors) < 2){
+        tkmessageBox(message="There fewer than 2 factors in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
     top <- tktoplevel()
     tkwm.title(top, "Two-Way Table")
     rowFrame <- tkframe(top)
@@ -26,7 +35,7 @@ twoWayTable <- function(){
     subsetFrame <- tkframe(top)
     subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable)
     subsetScroll <- tkscrollbar(subsetFrame, orient="horizontal",
-        repeatinterval=5, command=function(...) tkyview(subsetEntry, ...))
+        repeatinterval=5, command=function(...) tkxview(subsetEntry, ...))
     tkconfigure(subsetEntry, xscrollcommand=function(...) tkset(subsetScroll, ...))
     onOK <- function(){
         row <- as.character(tkget(rowBox, "active"))
@@ -36,17 +45,17 @@ twoWayTable <- function(){
         expected <- tclvalue(expFreq)
         fisher <- tclvalue(fisherTest)
         subset <- tclvalue(subsetVariable)
-        subset <- if (subset == "<all valid cases>") "" 
+        subset <- if (trim.blanks(subset) == "<all valid cases>") "" 
             else paste(", subset=", subset, sep="")
         if (row == column) {
             tkmessageBox(message="Row and column variables are the same.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             twoWayTable()
             return()
             }
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         command <- paste("xtabs(~", row, "+", column, ", data=", .activeDataSet, 
             subset, ")", sep="")
@@ -82,13 +91,13 @@ twoWayTable <- function(){
     buttonsFrame <- tkframe(top)
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(xtabs)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -136,14 +145,24 @@ twoWayTable <- function(){
     tkselection.set(rowBox, 0)
     tkselection.set(columnBox, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(top)
     tkwait.window(top)
     }
 
 multiWayTable <- function(){
-    if (activeDataSet() == FALSE) return()
+    if (activeDataSet() == FALSE) {
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.factors) < 3){
+        tkmessageBox(message="There fewer than 3 factors in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
     top <- tktoplevel()
     tkwm.title(top, "Multi-Way Table")
     rowFrame <- tkframe(top)
@@ -171,7 +190,7 @@ multiWayTable <- function(){
     subsetFrame <- tkframe(top)
     subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable)
     subsetScroll <- tkscrollbar(subsetFrame, orient="horizontal",
-        repeatinterval=5, command=function(...) tkyview(subsetEntry, ...))
+        repeatinterval=5, command=function(...) tkxview(subsetEntry, ...))
     tkconfigure(subsetEntry, xscrollcommand=function(...) tkset(subsetScroll, ...))
     onOK <- function(){
         row <- as.character(tkget(rowBox, "active"))
@@ -187,7 +206,7 @@ multiWayTable <- function(){
         if ((row == column) || is.element(row, controls) || is.element(column, controls)) {
             tkmessageBox(message="Row, column, and control variables must be different.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             multiWayTable()
             return()
@@ -195,9 +214,9 @@ multiWayTable <- function(){
 
         percents <- as.character(tclvalue(percentsVariable))
         subset <- tclvalue(subsetVariable)
-        subset <- if (subset == "<all valid cases>") "" 
+        subset <- if (trim.blanks(subset) == "<all valid cases>") "" 
             else paste(", subset=", subset, sep="")
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         command <- paste("xtabs(~", row, "+", column, "+", paste(controls, collapse="+"),
             ", data=", .activeDataSet, subset, ")", sep="")
@@ -215,13 +234,13 @@ multiWayTable <- function(){
     buttonsFrame <- tkframe(top)
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         } 
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(xtabs)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -259,8 +278,9 @@ multiWayTable <- function(){
     tkselection.set(rowBox, 0)
     tkselection.set(columnBox, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(top)
     tkwait.window(top)
     }

@@ -1,7 +1,7 @@
-# last modified 30 May 03 by J. Fox
+# last modified 9 July 03 by J. Fox
 
 .onAttach <- function(...){
-    cat("\nRcmdr Version 0.8-3\n")
+    cat("\nRcmdr Version 0.9-0\n")
     Commander()
     }
 

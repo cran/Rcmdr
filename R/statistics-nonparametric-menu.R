@@ -1,11 +1,26 @@
 # Statistics Menu dialogs
 
-# last modified 11 June 03 by J. Fox
+# last modified 20 July 03 by J. Fox
 
     # Nonparametric tests menu
     
 twoSampleWilcoxonTest <- function(){
-    if (activeDataSet() == FALSE) return()
+    if (activeDataSet() == FALSE) {
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.numeric) == 0){
+        tkmessageBox(message="There are no numeric variables in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.twoLevelFactors) == 0){
+        tkmessageBox(message="There are no 2-level factors in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
     top <- tktoplevel()
     tkwm.title(top, "Two-Sample Wilcoxon Test")
     groupFrame <- tkframe(top)
@@ -27,7 +42,7 @@ twoSampleWilcoxonTest <- function(){
         response <- as.character(tkget(responseBox, "active"))
         alternative <- as.character(tclvalue(alternativeVariable))
         test <- as.character(tclvalue(testVariable))
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         doItAndPrint(paste("tapply(", paste(.activeDataSet,"$", response, sep=""),
             ", ", paste(.activeDataSet,"$", group, sep=""), ", median, na.rm=TRUE)", sep=""))
@@ -43,13 +58,13 @@ twoSampleWilcoxonTest <- function(){
     buttonsFrame <- tkframe(top)
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }  
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(wilcox.test)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -92,14 +107,24 @@ twoSampleWilcoxonTest <- function(){
     tkselection.set(groupBox, 0)
     tkselection.set(responseBox, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(top)
     tkwait.window(top)
     }    
 
 pairedWilcoxonTest <- function(){
-    if (activeDataSet() == FALSE) return()
+    if (activeDataSet() == FALSE) {
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.numeric) < 2){
+        tkmessageBox(message="There fewer than 2 numeric variables in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
     top <- tktoplevel()
     tkwm.title(top, "Paired Wilcoxon Test")
     xFrame <- tkframe(top)
@@ -122,12 +147,12 @@ pairedWilcoxonTest <- function(){
         if (x == y) {
             tkmessageBox(message="Two variables must be different.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             pairedWilcoxonTest()
             return()
             }
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         if (test == "default"){
              doItAndPrint(paste("wilcox.test(", .activeDataSet, "$", x, ", ", 
@@ -151,7 +176,7 @@ pairedWilcoxonTest <- function(){
         tkfocus(.commander)
         }
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }  
@@ -159,7 +184,7 @@ pairedWilcoxonTest <- function(){
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(wilcox.test)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -202,14 +227,30 @@ pairedWilcoxonTest <- function(){
     tkselection.set(xBox, 0)
     tkselection.set(yBox, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(top)
     tkwait.window(top)
     }
     
 KruskalWallisTest <- function(){
-    if (activeDataSet() == FALSE) return()
+    if (activeDataSet() == FALSE) {
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.numeric) == 0){
+        tkmessageBox(message="There are no numeric variables in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.factors) == 0){
+        tkmessageBox(message="There are no factors in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
     top <- tktoplevel()
     tkwm.title(top, "Kruskal-Wallis Rank Sum Test")
     groupFrame <- tkframe(top)
@@ -229,7 +270,7 @@ KruskalWallisTest <- function(){
     onOK <- function(){
         group <- as.character(tkget(groupBox, "active"))
         response <- as.character(tkget(responseBox, "active"))
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         doItAndPrint(paste("tapply(", paste(.activeDataSet, "$", response, sep=""),
             ", ", paste(.activeDataSet, "$", group, sep=""), ", median, na.rm=TRUE)", sep=""))
@@ -240,13 +281,13 @@ KruskalWallisTest <- function(){
     buttonsFrame <- tkframe(top)
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(kruskal.test)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -267,8 +308,9 @@ KruskalWallisTest <- function(){
     tkselection.set(groupBox, 0)
     tkselection.set(responseBox, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(top)
     tkwait.window(top)
     }

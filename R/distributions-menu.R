@@ -1,6 +1,6 @@
 # Distributions menu dialogs
 
-# last modified 11 June 03 by J. Fox
+# last modified 29 July 03 by J. Fox
 
 normalQuantiles <- function(){
     top <- tktoplevel()
@@ -19,7 +19,7 @@ normalQuantiles <- function(){
         if ("" == quantiles) {
             tkmessageBox(message="No probabilities specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             normalQuantiles()
             return()
@@ -27,7 +27,7 @@ normalQuantiles <- function(){
         mu <- as.numeric(tclvalue(muVar))
         sigma <- as.numeric(tclvalue(sigmaVar))
         tail <- tclvalue(tailVar)
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         doItAndPrint(paste("qnorm(c(", quantiles, "), mean=", mu, 
             ", sd=", sigma, ", lower.tail=", tail == "lower",")", sep=""))
@@ -36,13 +36,13 @@ normalQuantiles <- function(){
     buttonsFrame <- tkframe(top)
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         } 
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(qnorm)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -64,8 +64,9 @@ normalQuantiles <- function(){
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(quantilesEntry)
     tkwait.window(top)
     }
@@ -87,7 +88,7 @@ normalProbabilities <- function(){
         if ("" == probabilities) {
             tkmessageBox(message="No values specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             normalProbabilities()
             return()
@@ -95,7 +96,7 @@ normalProbabilities <- function(){
         mu <- as.numeric(tclvalue(muVar))
         sigma <- as.numeric(tclvalue(sigmaVar))
         tail <- tclvalue(tailVar)
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         doItAndPrint(paste("pnorm(c(", probabilities, "), mean=", mu, 
             ", sd=", sigma, ", lower.tail=", tail == "lower",")", sep=""))
@@ -104,13 +105,13 @@ normalProbabilities <- function(){
     buttonsFrame <- tkframe(top)
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(pnorm)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -132,8 +133,9 @@ normalProbabilities <- function(){
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(probabilitiesEntry)
     tkwait.window(top)
     }
@@ -153,7 +155,7 @@ tQuantiles <- function(){
         if ("" == quantiles) {
             tkmessageBox(message="No probabilities specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             tQuantiles()
             return()
@@ -162,13 +164,13 @@ tQuantiles <- function(){
         if (is.na(df)) {
             tkmessageBox(message="Degrees of freedom not specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             tQuantiles()
             return()
             }
         tail <- tclvalue(tailVar)
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         doItAndPrint(paste("qt(c(", quantiles, "), df=", df, 
             ", lower.tail=", tail == "lower",")", sep=""))
@@ -177,13 +179,13 @@ tQuantiles <- function(){
     buttonsFrame <- tkframe(top)
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(qt)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -203,8 +205,9 @@ tQuantiles <- function(){
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(quantilesEntry)
     tkwait.window(top)
     }
@@ -225,7 +228,7 @@ tProbabilities <- function(){
         if ("" == probabilities) {
             tkmessageBox(message="No values specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             tProbabilities()
             return()
@@ -234,13 +237,13 @@ tProbabilities <- function(){
         if (is.na(df)) {
             tkmessageBox(message="Degrees of freedom not specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             tProbabilities()
             return()
             }
         tail <- tclvalue(tailVar)
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         doItAndPrint(paste("pt(c(", probabilities, "), df=", df, 
             ", lower.tail=", tail == "lower",")", sep=""))
@@ -249,13 +252,13 @@ tProbabilities <- function(){
     buttonsFrame <- tkframe(top)
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(pt)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -275,8 +278,9 @@ tProbabilities <- function(){
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(probabilitiesEntry)
     tkwait.window(top)
     }
@@ -296,7 +300,7 @@ chisqQuantiles <- function(){
         if ("" == quantiles) {
             tkmessageBox(message="No probabilities specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             chisqQuantiles()
             return()
@@ -305,13 +309,13 @@ chisqQuantiles <- function(){
         if (is.na(df)) {
             tkmessageBox(message="Degrees of freedom not specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             chisqQuantiles()
             return()
             }
         tail <- tclvalue(tailVar)
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         doItAndPrint(paste("qchisq(c(", quantiles, "), df=", df, 
             ", lower.tail=", tail == "lower",")", sep=""))
@@ -320,13 +324,13 @@ chisqQuantiles <- function(){
     buttonsFrame <- tkframe(top)
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(qchisq)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -346,8 +350,9 @@ chisqQuantiles <- function(){
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(quantilesEntry)
     tkwait.window(top)
     }
@@ -367,7 +372,7 @@ chisqProbabilities <- function(){
         if ("" == probabilities) {
             tkmessageBox(message="No values specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             chisqProbabilities()
             return()
@@ -376,13 +381,13 @@ chisqProbabilities <- function(){
         if (is.na(df)) {
             tkmessageBox(message="Degrees of freedom not specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             chisqProbabilities()
             return()
             }
         tail <- tclvalue(tailVar)
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         doItAndPrint(paste("pchisq(c(", probabilities, "), df=", df, 
             ", lower.tail=", tail == "lower",")", sep=""))
@@ -391,13 +396,13 @@ chisqProbabilities <- function(){
     buttonsFrame <- tkframe(top)
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(pchisq)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -417,8 +422,9 @@ chisqProbabilities <- function(){
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(probabilitiesEntry)
     tkwait.window(top)
     }
@@ -440,7 +446,7 @@ FQuantiles <- function(){
         if ("" == quantiles) {
             tkmessageBox(message="Probabilities not specified", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             FQuantiles()
             return()
@@ -450,13 +456,13 @@ FQuantiles <- function(){
         if (is.na(df1) || is.na(df2)) {
             tkmessageBox(message="Degrees of freedom not specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             FQuantiles()
             return()
             }
         tail <- tclvalue(tailVar)
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         doItAndPrint(paste("qf(c(", quantiles, "), df1=", df1, 
             ", df2=", df2, ", lower.tail=", tail == "lower",")", sep=""))
@@ -465,13 +471,13 @@ FQuantiles <- function(){
     buttonsFrame <- tkframe(top)
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(qf)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -493,8 +499,9 @@ FQuantiles <- function(){
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(quantilesEntry)
     tkwait.window(top)
     }
@@ -516,7 +523,7 @@ FProbabilities <- function(){
         if ("" == probabilities) {
             tkmessageBox(message="Values not specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             FProbabilities()
             return()
@@ -526,13 +533,13 @@ FProbabilities <- function(){
         if (is.na(df1) || is.na(df2)) {
             tkmessageBox(message="Degrees of freedom not specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             FProbabilities()
             return()
             }
         tail <- tclvalue(tailVar)
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         doItAndPrint(paste("pf(c(", probabilities, "), df1=", df1, 
             ", df2=", df2, ", lower.tail=", tail == "lower",")", sep=""))
@@ -541,13 +548,13 @@ FProbabilities <- function(){
     buttonsFrame <- tkframe(top)
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(pf)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -565,12 +572,13 @@ FProbabilities <- function(){
     tkgrid.configure(upperTailButton, sticky="w")
     tkgrid.configure(helpButton, sticky="e")
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     for (row in 0:5) tkgrid.rowconfigure(top, row, weight=0)
     for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(probabilitiesEntry)
     tkwait.window(top)
     }
@@ -594,7 +602,7 @@ binomialQuantiles <- function(){
         if ("" == quantiles) {
             tkmessageBox(message="Probabilities not specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             binomialQuantiles()
             return()
@@ -602,7 +610,7 @@ binomialQuantiles <- function(){
         if (is.na(trials)) {
             tkmessageBox(message="Binomial trials not specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             binomialQuantiles()
             return()
@@ -610,13 +618,13 @@ binomialQuantiles <- function(){
         if (is.na(prob)) {
             tkmessageBox(message="Probability of success not specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             binomialQuantiles()
             return()
             }
         tail <- tclvalue(tailVar)
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         doItAndPrint(paste("qbinom(c(", quantiles, "), size=", trials, 
             ", prob=", prob, ", lower.tail=", tail == "lower",")", sep=""))
@@ -625,13 +633,13 @@ binomialQuantiles <- function(){
     buttonsFrame <- tkframe(top)
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         } 
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(qbinom)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -653,8 +661,9 @@ binomialQuantiles <- function(){
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(quantilesEntry)
     tkwait.window(top)
     }
@@ -678,7 +687,7 @@ binomialProbabilities <- function(){
         if ("" == probabilities) {
             tkmessageBox(message="Values not specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             binomialProbabilities()
             return()
@@ -686,7 +695,7 @@ binomialProbabilities <- function(){
         if (is.na(trials)) {
             tkmessageBox(message="Binomial trials not specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             binomialProbabilities()
             return()
@@ -694,13 +703,13 @@ binomialProbabilities <- function(){
         if (is.na(prob)) {
             tkmessageBox(message="Probability of success not specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             binomialProbabilities()
             return()
             }
         tail <- tclvalue(tailVar)
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         doItAndPrint(paste("pbinom(c(", probabilities, "), size=", trials, 
             ", prob=", prob, ", lower.tail=", tail == "lower",")", sep=""))
@@ -709,13 +718,13 @@ binomialProbabilities <- function(){
     buttonsFrame <- tkframe(top)
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(pbinom)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -737,8 +746,9 @@ binomialProbabilities <- function(){
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(probabilitiesEntry)
     tkwait.window(top)
     }
@@ -759,14 +769,14 @@ binomialMass <- function(){
         if (is.na(trials)) {
             tkmessageBox(message="Binomial trials not specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             binomialMass()
             return()
             }
         if (trials > 50){
             if ("no" == tclvalue(checkTrials(trials))){
-                tkgrab.release(top)
+                if (.grab.focus) tkgrab.release(top)
                 tkdestroy(top)
                 binomialMass()
                 return()
@@ -776,12 +786,12 @@ binomialMass <- function(){
         if (is.na(prob)) {
             tkmessageBox(message="Probability of success not specified.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             binomialMass()
             return()
             }
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         command <- paste("data.frame(Pr=dbinom(0:", trials, ", size=", trials, 
             ", prob=", prob, "))", sep="")
@@ -797,13 +807,13 @@ binomialMass <- function(){
     buttonsFrame <- tkframe(top)
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(dbinom)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -819,8 +829,81 @@ binomialMass <- function(){
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(trialsEntry)
+    tkwait.window(top)
+    }
+
+PoissonMass <- function(){
+    checkRange <- function(range){
+        tkmessageBox(message=paste("Range of values over which to plot,", range, ", is large.\nCreate long output?"),
+            icon="warning", type="yesno", default="no")
+        }
+    top <- tktoplevel()
+    tkwm.title(top, "Poisson Probabilities")
+    meanVar <- tclVar("")
+    meanEntry <- tkentry(top, width="6", textvariable=meanVar)
+    onOK <- function(){
+        mean <- as.numeric(tclvalue(meanVar))
+        if (is.na(mean)) {
+            tkmessageBox(message="Poisson mean not specified.", 
+                icon="error", type="ok")
+            if (.grab.focus) tkgrab.release(top)
+            tkdestroy(top)
+            PoissonMass()
+            return()
+            }
+        min <- qpois(.00005, lambda=mean)
+        max <- qpois(.99995, lambda=mean)
+        range <- max - min
+        if (range > 50){
+            if ("no" == tclvalue(checkRange(range))){
+                if (.grab.focus) tkgrab.release(top)
+                tkdestroy(top)
+                PoissonMass()
+                return()
+                }
+            }
+        if (.grab.focus) tkgrab.release(top)
+        tkdestroy(top)
+        command <- paste("data.frame(Pr=round(dpois(", min, ":", max, ", lambda=", mean, "), 4))", sep="")
+        logger(paste(".Table <- ", command, sep=""))
+        assign(".Table", justDoIt(command), envir=.GlobalEnv)
+        logger(paste("rownames(.Table) <- ", min, ":", max, sep=""))
+        justDoIt(paste("rownames(.Table) <<- ", min, ":", max, sep=""))
+        justDoIt(paste("print(", logger(".Table"), ")", sep=""))
+        logger("remove(.Table)") 
+        remove(.Table, envir=.GlobalEnv)       
+        tkfocus(.commander)
+        }
+    buttonsFrame <- tkframe(top)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    onCancel <- function() {
+        if (.grab.focus) tkgrab.release(top)
+        tkfocus(.commander)
+        tkdestroy(top)  
+        }
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    onHelp <- function() {
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
+        help(dpois)
+        }
+    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    tkgrid(tklabel(top, text="Mean"), meanEntry, sticky="e")
+    tkgrid(OKbutton, cancelButton, sticky="w")
+    tkgrid(buttonsFrame, tklabel(top, text="    "), helpButton, sticky="w")
+    tkgrid.configure(meanEntry, sticky="w")
+    tkgrid.configure(helpButton, sticky="e")
+    for (row in 0:1) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
+    tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
+    tkwm.deiconify(top)
+    if (.grab.focus) tkgrab.set(top)
+    tkfocus(meanEntry)
     tkwait.window(top)
     }

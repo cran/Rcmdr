@@ -1,11 +1,20 @@
 # Statistics Menu dialogs
 
-# last modified 11 June 03 by J. Fox
+# last modified 20 July 03 by J. Fox
 
     # Proportions menu
     
 singleProportionTest <- function(){
-    if (activeDataSet() == FALSE) return()
+    if (activeDataSet() == FALSE) {
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.twoLevelFactors) == 0){
+        tkmessageBox(message="There are no 2-level factors in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
     top <- tktoplevel()
     tkwm.title(top, "Single-Sample Proportion Test")
     xFrame <- tkframe(top)
@@ -20,7 +29,7 @@ singleProportionTest <- function(){
         level <- tclvalue(confidenceLevel)
         test <- as.character(tclvalue(testVariable))
         p <- tclvalue(pVariable)
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         command <- paste("xtabs(~", x, ", data=", .activeDataSet, ")")
         logger(paste(".Table <-", command))
@@ -35,7 +44,7 @@ singleProportionTest <- function(){
         tkfocus(.commander)
         }
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }  
@@ -43,7 +52,7 @@ singleProportionTest <- function(){
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(prop.test)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -93,14 +102,24 @@ singleProportionTest <- function(){
     tkwm.resizable(top, 0, 0)
     tkselection.set(xBox, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(top)
     tkwait.window(top)
     }
 
 twoSampleProportionsTest <- function(){
-    if (activeDataSet() == FALSE) return()
+    if (activeDataSet() == FALSE) {
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.twoLevelFactors) < 2){
+        tkmessageBox(message="There are fewer than 2 two-level factors in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
     top <- tktoplevel()
     tkwm.title(top, "Two-Sample Proportions Test")
     xFrame <- tkframe(top)
@@ -124,13 +143,13 @@ twoSampleProportionsTest <- function(){
         if (x == groups) {
             tkmessageBox(message="Groups and response variables must be different.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             twoSampleProportionsTest()
             return()
             }
 
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         command <- paste("xtabs(~", groups, "+", x, ", data=", .activeDataSet, ")", sep="")
         logger(paste(".Table <-", command))
@@ -145,7 +164,7 @@ twoSampleProportionsTest <- function(){
         tkfocus(.commander)
         }
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
@@ -153,7 +172,7 @@ twoSampleProportionsTest <- function(){
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(prop.test)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -200,8 +219,9 @@ twoSampleProportionsTest <- function(){
     tkselection.set(xBox, 0)
     tkselection.set(groupsBox, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(top)
     tkwait.window(top)
     }

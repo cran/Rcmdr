@@ -1,12 +1,13 @@
 # Model menu dialogs
 
-# last modified 11 June 03 by J. Fox
+# last modified 20 July 03 by J. Fox
 
 selectActiveModel <- function(){
     models <- union(listLinearModels(), listGeneralizedLinearModels())
     if (length(models) == 0){
         tkmessageBox(message="There are no models from which to choose.", 
                 icon="error", type="ok")
+        tkfocus(.commander)
         return()
         }
     top <- tktoplevel()
@@ -22,13 +23,13 @@ selectActiveModel <- function(){
     buttonsFrame <- tkframe(top)
     onOK <- function(){
         activeModel(models[as.numeric(tkcurselection(modelsBox)) + 1])
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         tkfocus(.commander)
         }
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }    
@@ -45,8 +46,9 @@ selectActiveModel <- function(){
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(top)
     tkwait.window(top)
     }
@@ -54,6 +56,7 @@ selectActiveModel <- function(){
 summarizeModel <- function(){
     if (is.null(.activeModel)) {
         tkmessageBox(message="There is no active model.", icon="error", type="ok")
+        tkfocus(.commander)
         return()
         }
     doItAndPrint(paste("summary(", .activeModel, ")", sep=""))
@@ -62,6 +65,7 @@ summarizeModel <- function(){
 plotModel <- function(){
     if (is.null(.activeModel)) {
         tkmessageBox(message="There is no active model.", icon="error", type="ok")
+        tkfocus(.commander)
         return()
         }
     doItAndPrint("par(mfrow=c(2,2))")
@@ -72,6 +76,7 @@ plotModel <- function(){
 CRPlots <- function(){
     if (is.null(.activeModel)) {
         tkmessageBox(message="There is no active model.", icon="error", type="ok")
+        tkfocus(.commander)
         return()
         }
     doItAndPrint(paste("cr.plots(", .activeModel, ", ask=FALSE)", sep=""))
@@ -80,6 +85,7 @@ CRPlots <- function(){
 AVPlots <- function(){
     if (is.null(.activeModel)) {
         tkmessageBox(message="There is no active model.", icon="error", type="ok")
+        tkfocus(.commander)
         return()
         }
     response <- tclvalue(tkmessageBox(message="Identify points with mouse?", 
@@ -91,6 +97,7 @@ AVPlots <- function(){
 anovaTable <- function(){
     if (is.null(.activeModel)) {
         tkmessageBox(message="There is no active model.", icon="error", type="ok")
+        tkfocus(.commander)
         return()
         }
     doItAndPrint(paste("Anova(", .activeModel, ")", sep=""))
@@ -99,11 +106,13 @@ anovaTable <- function(){
 VIF <- function(){
     if (is.null(.activeModel)) {
         tkmessageBox(message="There is no active model.", icon="error", type="ok")
+        tkfocus(.commander)
         return()
         }
-    if (class(eval(parse(text=.activeModel)))[1] != "lm"){
+    if (class(get(.activeModel, envir=.GlobalEnv))[1] != "lm"){
         tkmessageBox(message="Variance-inflation factors available\nonly for linear models.", 
             icon="error", type="ok")
+        tkfocus(.commander)
         return()
         }
     doItAndPrint(paste("vif(", .activeModel, ")", sep=""))
@@ -112,6 +121,7 @@ VIF <- function(){
 influencePlot <- function(){
     if (is.null(.activeModel)) {
         tkmessageBox(message="There is no active model.", icon="error", type="ok")
+        tkfocus(.commander)
         return()
         }
     response <- tclvalue(tkmessageBox(message="Identify points with mouse?", 
@@ -137,12 +147,14 @@ addObservationStatistics <- function(){
         }
     if (is.null(.activeModel)){
             tkmessageBox(message="There is no active model.", icon="error", type="ok")
+            tkfocus(.commander)
             return()
             }
     if (.modelWithSubset){
         tkmessageBox(message=
             paste("Observation statistics not available\nfor a model fit to a subset of the data."),
             icon="error", type="ok")
+        tkfocus(.commander)
         return()
         }
     top <- tktoplevel()
@@ -165,20 +177,20 @@ addObservationStatistics <- function(){
         if (tclvalue(hatvaluesVariable) == 1) addVariable("hatvalues")
         if (tclvalue(cookdVariable) == 1) addVariable("cookd")
         activeDataSet(.activeDataSet)
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         tkfocus(.commander)
         }
     buttonsFrame <- tkframe(top)
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }    
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(influence.measures)
         }
     helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
@@ -196,8 +208,9 @@ addObservationStatistics <- function(){
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(top)
     tkwait.window(top)
     }

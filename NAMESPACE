@@ -1,2 +1,4 @@
-export(Commander, colPercents, rowPercents, levene.test, influence.plot, reliability, partial.cor, RcmdrPager)
+export(Commander, colPercents, rowPercents, levene.test, influence.plot, reliability,
+    partial.cor, RcmdrPager, listLinearModels, listGeneralizedLinearModels, doItAndPrint,
+    justDoIt, logger, listDataSets, activeDataSet, activeModel, is.valid.name, stem.leaf)
 

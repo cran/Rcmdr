@@ -1,0 +1,46 @@
+\name{Recode}
+\alias{Recode}
+
+\title{Rcmdr Recode Dialog}
+\description{
+  The recode dialog is normally used to recode numeric variables and factors
+  into factors, for example by combining values of numeric variables or levels
+  of factors. It may also be used to produce new numeric variables. The Rcmdr
+  recode dialog is based on the \code{\link[car]{recode}} function in the
+  \code{car} package.
+}
+
+\details{
+The name of the new variable must be
+a valid R object name (consisting only of upper and lower-case letters, numerals, and
+periods, and not starting with a numeral).
+
+Enter recode directives in the box at the right. Directives are normally entered one per line, 
+but may also be separated by semicolons. Each directive is of the form \code{input = output} 
+(see the examples below). If an input value satisfies more than one specification, then the 
+first (from top to bottom, and left to right) applies. If no specification is satisfied, then 
+the input value is carried over to the result. \code{NA} is allowed on input and output. Factor 
+levels are enclosed in double-quotes on both input and output.
+
+Several recode specifications are supported: 
+
+\describe{
+    \item{a single value}{For example, \code{"missing" = NA}.}
+    \item{several values separated by commas}{For example, \code{7,8,9 = "high"}.}
+    \item{a range of values indicated by a colon}{For example, \code{7:9 = "high"}. The
+        special values \code{low} and \code{high} may appear in a range. For example,
+        \code{low:10=1}. Note that these values are unquoted.}
+    \item{the special value \code{else}}{everything that does not fit a previous
+        specification. For example, \code{else=NA}. Note that \code{else} matches \emph{all}    
+        otherwise unspecified values on input, including \code{NA}.}
+    }
+
+If all of the output values are numeric, and the "Make new variable a factor" check box is 
+unchecked, then a numeric result is returned. 
+}
+
+\author{John Fox \email{jfox@mcmaster.ca}}
+
+\seealso{\code{\link[car]{recode}}}
+
+\keyword{manip}

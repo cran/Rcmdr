@@ -1,8 +1,15 @@
 aboutRcmdr              About the Rcmdr Package
 colPercents             Row and Column Percentage Tables
 Commander               R Commander
+Compute                 Rcmdr Compute Dialog
+generalizedLinearModel
+                        Rcmdr Generalized Linear Model Dialog
 influence.plot          Regression Influence Plot
 levene.test             Levene's Test
+linearModel             Rcmdr Linear Model Dialog
 partial.cor             Partial Correlations
+Rcmdr.Utilities         Rcmdr Utility Functions
 RcmdrPager              Pager for Text Files
+Recode                  Rcmdr Recode Dialog
 reliability             Reliability of a Composite Scale
+stem.leaf               Stem-and-Leaf Display

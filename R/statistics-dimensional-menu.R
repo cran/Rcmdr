@@ -1,11 +1,20 @@
 # Statistics Menu dialogs
 
-# last modified 11 June 03 by J. Fox
+# last modified 20 July 03 by J. Fox
 
     # Dimensional-analysis menu
     
 Reliability <- function(){
-    if (activeDataSet() == FALSE) return()
+    if (activeDataSet() == FALSE) {
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.numeric) < 3){
+        tkmessageBox(message="There fewer than 3 numeric variables in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
     top <- tktoplevel()
     tkwm.title(top, "Scale Reliability")
     xFrame <- tkframe(top)
@@ -19,12 +28,12 @@ Reliability <- function(){
         if (3 > length(x)) {
             tkmessageBox(message="Fewer than 3 variables selected.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             Reliability()
             return()
             }
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         x <- paste('"', x, '"', sep="")
         doItAndPrint(paste("reliability(cov(", .activeDataSet, "[,c(", paste(x, collapse=","),
@@ -32,7 +41,7 @@ Reliability <- function(){
         tkfocus(.commander)
         }
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
@@ -40,7 +49,7 @@ Reliability <- function(){
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(reliability)
         }
     helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
@@ -56,8 +65,9 @@ Reliability <- function(){
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(top)
     tkwait.window(top)
     }
@@ -67,7 +77,16 @@ principalComponents <- function(){
         tkmessageBox(message=paste("Variable", name, "already exists.\nOverwrite variable?"),
             icon="warning", type="yesno", default="no")
         }
-    if (activeDataSet() == FALSE) return()
+    if (activeDataSet() == FALSE) {
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.numeric) < 2){
+        tkmessageBox(message="There fewer than 2 numeric variables in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
     top <- tktoplevel()
     tkwm.title(top, "Principal Components Analysis")
     xFrame <- tkframe(top)
@@ -80,7 +99,7 @@ principalComponents <- function(){
     subsetFrame <- tkframe(top)
     subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable)
     subsetScroll <- tkscrollbar(subsetFrame, orient="horizontal",
-        repeatinterval=5, command=function(...) tkyview(subsetEntry, ...))
+        repeatinterval=5, command=function(...) tkxview(subsetEntry, ...))
     tkconfigure(subsetEntry, xscrollcommand=function(...) tkset(subsetScroll, ...))
     optionsFrame <- tkframe(top)
     correlationsVariable <- tclVar("1")
@@ -99,14 +118,14 @@ principalComponents <- function(){
         if (2 > length(x)) {
             tkmessageBox(message="Fewer than 2 variables selected.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             principalComponents()
             return()
             }
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
-        subset <- if (subset == "<all valid cases>") "" else paste(", subset=", subset, sep="")
+        subset <- if (trim.blanks(subset) == "<all valid cases>") "" else paste(", subset=", subset, sep="")
         correlations <- if (correlations == "1") "TRUE" else "FALSE"
         command <- paste("princomp(~", paste(x, collapse="+"), ", cor=", correlations,
             ", data=", .activeDataSet, subset, ")", sep="")
@@ -121,7 +140,7 @@ principalComponents <- function(){
         if (addPC == "1") {
             if (is.element("PC1", .variables)) {
                 if ("no" == tclvalue(checkReplace("PC1"))){
-                    tkgrab.release(top)
+                    if (.grab.focus) tkgrab.release(top)
                     tkdestroy(top)
                     remove(.PC, envir=.GlobalEnv)   
                     logger("remove(.PC)")
@@ -139,7 +158,7 @@ principalComponents <- function(){
         tkfocus(.commander)
         }
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
@@ -147,7 +166,7 @@ principalComponents <- function(){
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(princomp)
         }
     helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
@@ -176,8 +195,9 @@ principalComponents <- function(){
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(top)
     tkwait.window(top)
     }
@@ -187,7 +207,16 @@ factorAnalysis <- function(){
         tkmessageBox(message=paste("Variable", name, "already exists.\nOverwrite variable?"),
             icon="warning", type="yesno", default="no")
         }
-    if (activeDataSet() == FALSE) return()
+    if (activeDataSet() == FALSE) {
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.numeric) < 3){
+        tkmessageBox(message="There fewer than 3 numeric variables in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
     top <- tktoplevel()
     tkwm.title(top, "Factor Analysis")
     xFrame <- tkframe(top)
@@ -200,7 +229,7 @@ factorAnalysis <- function(){
     subsetFrame <- tkframe(top)
     subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable)
     subsetScroll <- tkscrollbar(subsetFrame, orient="horizontal",
-        repeatinterval=5, command=function(...) tkyview(subsetEntry, ...))
+        repeatinterval=5, command=function(...) tkxview(subsetEntry, ...))
     tkconfigure(subsetEntry, xscrollcommand=function(...) tkset(subsetScroll, ...))
     optionsFrame <- tkframe(top)
     nfactorVariable <- tclVar("1")
@@ -226,7 +255,7 @@ factorAnalysis <- function(){
         if (3 > length(x)) {
             tkmessageBox(message="Fewer than 3 variables selected.", 
                 icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             factorAnalysis()
             return()
@@ -241,14 +270,14 @@ factorAnalysis <- function(){
             else
                 tkmessageBox(message="Number of factors cannot exceed 1",
                     icon="error", type="ok")
-            tkgrab.release(top)
+            if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             factorAnalysis()
             return()
             }
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
-        subset <- if (subset == "<all valid cases>") "" else paste(", subset=", subset, sep="")
+        subset <- if (trim.blanks(subset) == "<all valid cases>") "" else paste(", subset=", subset, sep="")
         command <- paste("factanal(~", paste(x, collapse="+"), ", factors=", nfactor, ', rotation="', rotation,
             '", scores="', scores, '", data=', .activeDataSet, subset, ")", sep="")
         assign(".FA", justDoIt(command), envir=.GlobalEnv)
@@ -258,7 +287,7 @@ factorAnalysis <- function(){
         if (scores != "none") {
             if (is.element("F1", .variables)) {
                 if ("no" == tclvalue(checkReplace("F1"))){
-                    tkgrab.release(top)
+                    if (.grab.focus) tkgrab.release(top)
                     tkdestroy(top)
                     remove(.FA, envir=.GlobalEnv)   
                     logger("remove(.FA)")
@@ -276,7 +305,7 @@ factorAnalysis <- function(){
         tkfocus(.commander)
         }
     onCancel <- function() {
-        tkgrab.release(top)
+        if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
         }
@@ -284,7 +313,7 @@ factorAnalysis <- function(){
     OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",command=onCancel)
     onHelp <- function() {
-        if (.Platform$OS.type != "windows") tkgrab.release(top)
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
         help(factanal)
         }
     helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
@@ -317,8 +346,9 @@ factorAnalysis <- function(){
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)
     tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
-    tkgrab.set(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(top)
     tkwait.window(top)
     }
