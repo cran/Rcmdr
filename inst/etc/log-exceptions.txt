@@ -1,7 +1,7 @@
 # the following functions are prevented from creating
 # printed output when executed from the log window
 
-# last modified 28 June 03 by J. Fox
+# last modified 29 November 03 by J. Fox
 
 scatterplot.matrix
 barplot
@@ -12,3 +12,4 @@ print
 legend
 invisible
 fix 
+plot

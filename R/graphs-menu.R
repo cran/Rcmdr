@@ -1,8 +1,86 @@
 # Graphs menu dialogs
 
-# last modified 20 July 03 by J. Fox
+# last modified 9 Dec 03 by J. Fox
 
-histogram <- function(){
+indexPlot <- function(){
+    if (activeDataSet() == FALSE) {
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.numeric) == 0){
+        tkmessageBox(message="There no numeric variables in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
+    top <- tktoplevel()
+    tkwm.title(top, "Index Plot")
+    xFrame <- tkframe(top)
+    xBox <- tklistbox(xFrame, height=min(4, length(.numeric)),
+        selectmode="single", background="white", exportselection="FALSE")
+    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
+    tkconfigure(xBox, yscrollcommand=function(...) tkset(xScroll, ...))
+    for (x in .numeric) tkinsert(xBox, "end", x)
+    onOK <- function(){
+        x <- .numeric[as.numeric(tkcurselection(xBox)) + 1]
+        type <- if (tclvalue(typeVariable) == "spikes") "h" else "p"
+        identify <- tclvalue(identifyVariable) == "1"
+        if (.grab.focus) tkgrab.release(top)
+        tkdestroy(top)
+        command <- paste("plot(", .activeDataSet, "$", x, ', type="', type, '")', sep="")
+        doItAndPrint(command)
+        if (par("usr")[3] <= 0) doItAndPrint('abline(h=0, col="gray")')
+        if (identify) {
+            command <- paste("identify(", .activeDataSet, "$", x, 
+                ", labels=rownames(", .activeDataSet, "))", sep="")
+            doItAndPrint(command)
+            }        
+        tkfocus(.commander)
+        }
+    onCancel <- function() {
+        if (.grab.focus) tkgrab.release(top)
+        tkfocus(.commander)
+        tkdestroy(top)  
+        }
+    buttonsFrame <- tkframe(top)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    onHelp <- function() {
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
+        help(plot)
+        }
+    helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
+    optionsFrame <- tkframe(top)
+    typeVariable <- tclVar("spikes")
+    spikesButton <- tkradiobutton(optionsFrame, variable=typeVariable, value="spikes")
+    pointsButton <- tkradiobutton(optionsFrame, variable=typeVariable, value="points")
+    identifyVariable <- tclVar("0")
+    identifyCheckBox <- tkcheckbutton(optionsFrame, variable=identifyVariable)
+    tkgrid(tklabel(top, text="Variable"), sticky="w")
+    tkgrid(xBox, xScroll, sticky="nw")
+    tkgrid(xFrame, sticky="nw")    
+    tkgrid(tklabel(optionsFrame, text="Identify observations\nwith mouse", justify="left"), 
+        identifyCheckBox, sticky="w")
+    tkgrid(tklabel(optionsFrame, text="Spikes"), spikesButton, sticky="w")
+    tkgrid(tklabel(optionsFrame, text="Points"), pointsButton, sticky="w")
+    tkgrid(optionsFrame, sticky="w")
+    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="    "), helpButton, sticky="w")
+    tkgrid(buttonsFrame)
+    tkgrid.configure(xScroll, sticky="ns")
+    for (row in 0:1) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
+    tkselection.set(xBox, 0)
+    tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
+    tkwm.deiconify(top)
+    if (.grab.focus) tkgrab.set(top)
+    tkfocus(top)
+    tkwait.window(top)
+    }
+
+Histogram <- function(){
     if (activeDataSet() == FALSE) {
         tkfocus(.commander)
         return()
@@ -24,14 +102,13 @@ histogram <- function(){
     onOK <- function(){
         x <- .numeric[as.numeric(tkcurselection(xBox)) + 1]
         bins <- tclvalue(binsVariable)
-        bins <- if (bins == "auto") "'Sturges'" else as.numeric(bins)
-        scale <- tclvalue(scaleVariable) == "frequencies"
+        bins <- if (bins == "<auto>") "'Sturges'" else as.numeric(bins)
+        scale <- tclvalue(scaleVariable)
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
-        command <- paste("hist(", .activeDataSet, "$", x,
-            ", breaks=", bins, sep="")
-        logger(paste(command, ", freq=", scale, ")", sep=""))
-        justDoIt(paste("plot(", command, "), freq=", scale, ")", sep=""))
+        command <- paste("Hist(", .activeDataSet, "$", x, ', scale="',
+            scale, '", breaks=', bins, ")", sep="")
+        doItAndPrint(command)
         tkfocus(.commander)
         }
     onCancel <- function() {
@@ -44,21 +121,23 @@ histogram <- function(){
     cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
     onHelp <- function() {
         if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(hist)
+        help(Hist)
         }
     helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
     scaleFrame <- tkframe(top)
-    scaleVariable <- tclVar("frequencies")
-    frequenciesButton <- tkradiobutton(scaleFrame, variable=scaleVariable, value="frequencies")
-    densitiesButton <- tkradiobutton(scaleFrame, variable=scaleVariable, value="densities")
+    scaleVariable <- tclVar("frequency")
+    frequenciesButton <- tkradiobutton(scaleFrame, variable=scaleVariable, value="frequency")
+    percentsButton <- tkradiobutton(scaleFrame, variable=scaleVariable, value="percent")
+    densitiesButton <- tkradiobutton(scaleFrame, variable=scaleVariable, value="density")
     binsFrame <- tkframe(top)
-    binsVariable <- tclVar("auto")
+    binsVariable <- tclVar("<auto>")
     binsField <- tkentry(binsFrame, width="6", textvariable=binsVariable)
     tkgrid(tklabel(top, text="Variable"), sticky="w")
     tkgrid(xBox, xScroll, sticky="nw")
     tkgrid(xFrame, sticky="nw")    
     tkgrid(tklabel(scaleFrame, text="Axis Scaling"), columnspan=2, sticky="w")
     tkgrid(tklabel(scaleFrame, text="Frequency counts"), frequenciesButton, sticky="w")
+    tkgrid(tklabel(scaleFrame, text="Percentages"), percentsButton, sticky="w")
     tkgrid(tklabel(scaleFrame, text="Densities"), densitiesButton, sticky="w")
     tkgrid(tklabel(binsFrame, text="Number of bins: "), binsField, sticky="w")
     tkgrid(binsFrame, sticky="w")
@@ -999,6 +1078,162 @@ linePlot <- function(){
     if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
     tkwm.deiconify(top)
 #    if (.grab.focus) tkgrab.set(top)  # causes problem ?
+    tkfocus(top)
+    tkwait.window(top)
+    }
+    
+QQPlot <- function()
+# this function modified by Martin Maechler
+{
+    if (activeDataSet() == FALSE) {
+        tkfocus(.commander)
+        return()
+        }
+    if (length(.numeric) == 0){
+        tkmessageBox(message="There no numeric variables in the active data set.", 
+                icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
+    top <- tktoplevel()
+    tkwm.title(top, "Quantile-Comparison (QQ) Plot")
+    xFrame <- tkframe(top)
+    xBox <- tklistbox(xFrame, height=min(4, length(.numeric)),
+                      selectmode="single", background="white", exportselection="FALSE")
+    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
+    tkconfigure(xBox, yscrollcommand=function(...) tkset(xScroll, ...))
+    for (x in .numeric) tkinsert(xBox, "end", x)
+    onOK <- function(){
+        x <- .numeric[as.numeric(tkcurselection(xBox)) + 1]
+        dist <- tclvalue(distVariable)
+        save <- options(warn=-1)
+        on.exit(options=save)
+        retryMe <- function(msg) {
+            tkmessageBox(message= msg, icon="error", type="ok")
+            if (.grab.focus) tkgrab.release(top)
+            tkdestroy(top)
+            QQPlot()
+        }
+        switch(dist,
+               "norm" = { args <- 'dist= "norm"' },
+               "t" =  {
+                   df <- tclvalue(tDfVariable)
+                   df.num <- as.numeric(df)
+                   if (is.na(df.num) || df.num < 1) {
+                       retryMe("df for t must be a positive number.")
+                       return()
+                   }
+                   args <- paste('dist="t", df=', df, sep="")
+               },
+               "chisq" = {
+                   df <- tclvalue(chisqDfVariable)
+                   df.num <- as.numeric(df)
+                   if (is.na(df.num) || df.num < 1) {
+                       retryMe("df for chi-square must be a positive number.")
+                       return()
+                   }
+                   args <- paste('dist="chisq", df=', df, sep="")
+               },
+               "f" = {
+                   df1 <- tclvalue(FDf1Variable)
+                   df2 <- tclvalue(FDf2Variable)
+                   df.num1 <- as.numeric(df1)
+                   df.num2 <- as.numeric(df2)
+                   if (is.na(df.num1) || df.num1 < 1 ||
+                       is.na(df.num2) || df.num2 < 1) {
+                       retryMe("numerator and denominator \ndf for F must be positive numbers.")
+                       return()
+                   }
+                   args <- paste('dist="f", df1=', df1, ', df2=', df2, sep="")
+               },
+               ## else -- other `dist' :
+           {
+               dist <- tclvalue(otherNameVariable)
+               params <- tclvalue(otherParamsVariable)
+               args <- paste('dist="', dist,'", ', params, sep="")
+           }) # end{switch}
+        labels <-
+            if ("1" == tclvalue(identifyVariable))
+                paste("rownames(", .activeDataSet, ")", sep="")
+            else "FALSE"
+        if (.grab.focus) tkgrab.release(top)
+        tkdestroy(top)
+        command <- paste("qq.plot", "(", .activeDataSet, "$", x, ", ", args,
+                          ", labels=", labels, ")", sep="")
+        doItAndPrint(command)
+        tkfocus(.commander)
+    }
+    onCancel <- function() {
+        if (.grab.focus) tkgrab.release(top)
+        tkfocus(.commander)
+        tkdestroy(top)  
+        }
+    buttonsFrame <- tkframe(top)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",
+                             command=onCancel)
+    helpButton <- tkbutton(buttonsFrame, text="Help", width="12",
+                           command=function()help(qq.plot))
+    distFrame <- tkframe(top)
+    distVariable <- tclVar("norm")
+    normalButton <- tkradiobutton(distFrame, variable=distVariable, value="norm")
+    tButton <- tkradiobutton(distFrame, variable=distVariable, value="t")
+    chisqButton <- tkradiobutton(distFrame, variable=distVariable, value="chisq")
+    FButton <- tkradiobutton(distFrame, variable=distVariable, value="f")
+    otherButton <- tkradiobutton(distFrame, variable=distVariable, value="other")
+    tDfFrame <- tkframe(distFrame)
+    tDfVariable <- tclVar("")
+    tDfField <- tkentry(tDfFrame, width="6", textvariable=tDfVariable)
+    chisqDfFrame <- tkframe(distFrame)
+    chisqDfVariable <- tclVar("")
+    chisqDfField <- tkentry(chisqDfFrame, width="6", textvariable=chisqDfVariable)
+    FDfFrame <- tkframe(distFrame)
+    FDf1Variable <- tclVar("")
+    FDf1Field <- tkentry(FDfFrame, width="6", textvariable=FDf1Variable)
+    FDf2Variable <- tclVar("")
+    FDf2Field <- tkentry(FDfFrame, width="6", textvariable=FDf2Variable)
+    otherParamsFrame <- tkframe(distFrame)
+    otherParamsVariable <- tclVar("")
+    otherParamsField <- tkentry(otherParamsFrame, width="30", textvariable=otherParamsVariable)
+    otherNameVariable <- tclVar("")
+    otherNameField <- tkentry(otherParamsFrame, width="10", textvariable=otherNameVariable)
+    identifyVariable <- tclVar("0")
+    identifyFrame <- tkframe(top)
+    identifyCheckBox <- tkcheckbutton(identifyFrame, variable=identifyVariable)
+    tkgrid(tklabel(top, text="Variable"), sticky="w")
+    tkgrid(xBox, xScroll, sticky="nw")
+    tkgrid(xFrame, sticky="nw")
+    tkgrid(tklabel(distFrame, text="Distribution"), columnspan=6, sticky="w")
+    tkgrid(tklabel(distFrame, text="Normal"), normalButton, sticky="w")
+    tkgrid(tklabel(tDfFrame, text="df = "), tDfField, sticky="w")
+    tkgrid(tklabel(distFrame, text="t"), tButton, tDfFrame, sticky="w")
+    tkgrid(tklabel(chisqDfFrame, text="df = "), chisqDfField, sticky="w")
+    tkgrid(tklabel(distFrame, text="Chi-square"), chisqButton,
+           chisqDfFrame, sticky="w")
+    tkgrid(tklabel(FDfFrame, text="Numerator df = "), FDf1Field,
+           tklabel(FDfFrame, text="Denominator df = "), FDf2Field, sticky="w")
+    tkgrid(tklabel(distFrame, text="F"), FButton, FDfFrame, sticky="w")
+    tkgrid(tklabel(otherParamsFrame, text="Specify: "),
+           otherNameField, tklabel(otherParamsFrame, text="Parameters: "),
+           otherParamsField, sticky="w")
+    tkgrid(tklabel(distFrame, text="Other"), otherButton,
+           otherParamsFrame, sticky="w")
+    tkgrid(distFrame, sticky="w")
+    tkgrid(tklabel(identifyFrame, text="Identify observations\nwith mouse", justify="left"),
+           identifyCheckBox, sticky="w")
+    tkgrid(identifyFrame, sticky="w")
+    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="    "), helpButton, sticky="w")
+    tkgrid(buttonsFrame, sticky="w")
+    tkgrid.configure(xScroll, sticky="ns")
+    for (row in 0:4) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
+    tkselection.set(xBox, 0)
+    tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
+    tkwm.deiconify(top)
+    if (.grab.focus) tkgrab.set(top)
     tkfocus(top)
     tkwait.window(top)
     }

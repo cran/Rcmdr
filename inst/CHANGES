@@ -122,7 +122,7 @@ Version 0.9-0
 
     o Added "Subset active data set", "Remove cases with missing data", and "Set case names" to Data -> Active data set menu.
     
-    o Added many error check for adequate variables in the active data set.
+    o Added many error checks for adequate variables in the active data set.
     
     o Ensured that focus returns to the proper window after an error.
     
@@ -149,6 +149,34 @@ Version 0.9-0
     o Added distribution plots to the Distributions menu (suggested by Yan Wong).
     
     o Small interface changes and bug fixes.
+    
+Version 0.9-2
+
+    o Added Hist function, a wrapper to hist permitting percentage as well as frequency and density scaling.
+    
+    o Added "Data -> Manage variables in active data set -> Rename variables" menu and dialog, mostly to get around crashes due to changing names in the data editor.
+    
+    o Improved formatting of percentage tables; now require abind package.
+    
+    o Added "Statistics -> Contingency Tables -> Enter and analyze two-way table" menu and dialog (suggested by Aniko Szabo).
+    
+    o Added "Graphs -> Index plot" menu and dialog.
+    
+    o Added "Graphs -> Quantile-comparison plot" menu and dialog (suggested by and improved by Martin Maechler).
+    
+    o Added "Models -> Effect plots" menu; now require effects package.
+    
+    o Added "Models -> Residual quantile-comparison plot" menu and dialog.
+    
+    o Added option to suppress edit button in the Commander window (to avoid crashes in Windows).
+    
+    o Fixed problem that arose (associated with internal use of <<-) when using a data set exported from a package with a namespace (e.g, MASS).
+    
+    o Added Edit menu with Cut, Copy, Paste, Delete, Find, and Select all (suggested by Brian Ripley).
+    
+    o Added a right-click "context" menu to the log/script window.
+        
+    o Small changes.
 
     
     

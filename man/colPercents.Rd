@@ -8,18 +8,19 @@
   rows or columns.
 }
 \usage{
-colPercents(tab)
-rowPercents(tab)
+colPercents(tab, digits=2)
+rowPercents(tab, digits=2)
 }
 
 \arguments{
-  \item{tab}{a matrix or higher-dimensional array of frequency counts.}
+  \item{tab}{a matrix or higher-dimensional array of frequency counts.}\
+  \item{digits}{number of places to the right of the decimal place for percentages.}
 }
 
 }
 \value{
   Returns an array of the same size and shape as \code{tab} percentaged by
-  rows or columns.
+  rows or columns, plus rows or columns of totals and counts.
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}}

@@ -1,4 +1,4 @@
-# last modified 29 July 2003 by J. Fox
+# last modified 28 November 2003 by J. Fox
 
 # File menu dialogs
 
@@ -86,6 +86,7 @@ Options <- function(){
     contrasts <- if (is.null(current$contrasts)) c("contr.Treatment", "contr.poly") else current$contrasts
     grab.focus <- if (is.null(current$grab.focus)) TRUE else current$grab.focus
     double.click <- if (is.null(current$double.click)) FALSE else current$double.click
+    show.edit.button <- if (is.null(current$show.edit.button)) TRUE else current$show.edit.button
     scale.factor <- current$scale.factor
     default.font.size <- if (is.null(current$default.font.size)) 10 else current$default.font.size
     default.font <- if(is.null(current$default.font)) paste("*helvetica-medium-r-normal-*-",
@@ -108,6 +109,8 @@ Options <- function(){
     grabFocusCheckBox <- tkcheckbutton(top, variable=grabFocusVar)
     doubleClickVar <- tclVar(as.numeric(double.click))
     doubleClickCheckBox <- tkcheckbutton(top, variable=doubleClickVar)
+    showEditButtonVar <- tclVar(as.numeric(show.edit.button))
+    showEditButtonCheckBox <- tkcheckbutton(top, variable=showEditButtonVar)
     scaleFactorVar <- tclVar(if (is.null(scale.factor)) 1.0 else scale.factor)
     scaleFactorSlider <- tkscale(top, from=0.2, to=3.0, showvalue=TRUE, variable=scaleFactorVar,
         resolution=0.2, orient="horizontal")        
@@ -120,6 +123,7 @@ Options <- function(){
         contrasts <- c(tclvalue(contrasts1), tclvalue(contrasts2))
         grab.focus <- tclvalue(grabFocusVar) == 1
         double.click <- tclvalue(doubleClickVar) == 1
+        show.edit.button <- tclvalue(showEditButtonVar) == 1
         scale.factor <- round(as.numeric(tclvalue(scaleFactorVar)), 1)
         if (scale.factor == 1) scale.factor <- NULL
         default.font <- tclvalue(defaultFont)
@@ -129,7 +133,8 @@ Options <- function(){
             log.height=log.height,
             contrasts=contrasts,
             grab.focus=grab.focus,
-            double.click=double.click
+            double.click=double.click,
+            show.edit.button=show.edit.button
             )
         if (.Platform$OS.type == "windows") options$scale.factor <- scale.factor
         else options$default.font <- default.font
@@ -167,6 +172,8 @@ Options <- function(){
     tkgrid.configure(grabFocusCheckBox, sticky="w")
     tkgrid(tklabel(top, text="Double-click presses OK button"), doubleClickCheckBox, sticky="e")
     tkgrid.configure(doubleClickCheckBox, sticky="w")
+    tkgrid(tklabel(top, text="Show edit button"), showEditButtonCheckBox, sticky="e")
+    tkgrid.configure(showEditButtonCheckBox, sticky="w")
     if (.Platform$OS.type == "windows"){
         tkgrid(tklabel(top, text="Scale factor for Tk elements"), scaleFactorSlider, sticky="se")
         tkgrid.configure(scaleFactorSlider, sticky="w")

@@ -4,6 +4,7 @@ Commander               R Commander
 Compute                 Rcmdr Compute Dialog
 generalizedLinearModel
                         Rcmdr Generalized Linear Model Dialog
+Hist                    Plot a Histogram
 influence.plot          Regression Influence Plot
 levene.test             Levene's Test
 linearModel             Rcmdr Linear Model Dialog

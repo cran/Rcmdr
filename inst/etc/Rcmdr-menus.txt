@@ -1,6 +1,6 @@
 # R Commander Menu Definitions
 
-# last modified 29 July 03 by J. Fox
+# last modified 9 Dec 03 by J. Fox
 
 #   type    menu/item      operation/parent  label                                          command/menu
     
@@ -14,8 +14,16 @@
     item    exitMenu        command         "From Commander and R"                          closeCommanderAndR
     item    fileMenu        cascade         "Exit"                                          exitMenu
     item    topMenu         cascade         "File"                                          fileMenu
+    menu    editMenu        topMenu         ""                                              ""
+    item    editMenu        command         "Cut"                                           onCut
+    item    editMenu        command         "Copy"                                          onCopy
+    item    editMenu        command         "Paste"                                         onPaste
+    item    editMenu        command         "Delete"                                        onDelete
+    item    editMenu        command         "Find..."                                       onFind
+    item    editMenu        command         "Select all"                                    onSelectAll
+    item    topMenu         cascade         "Edit"                                          editMenu
     menu    dataMenu        topMenu         ""                                              ""
-    item    dataMenu        command         "New data set ..."                              newDataSet
+    item    dataMenu        command         "New data set..."                               newDataSet
     menu    importMenu      dataMenu        ""                                              ""
     item    importMenu      command         "from text file..."                             readDataSet
     item    importMenu      command         "from SPSS data set..."                         importSPSS
@@ -40,7 +48,8 @@
     item    variablesMenu   command         "Standardize variables..."                      standardize
     item    variablesMenu   command         "Convert numeric variable to factor..."         numericToFactor
     item    variablesMenu   command         "Reorder factor levels..."                      reorderFactor
-    item    variablesMenu   command         "Delete variables from data set ..."             deleteVariable
+    item    variablesMenu   command         "Rename variables..."                           renameVariables
+    item    variablesMenu   command         "Delete variables from data set ..."            deleteVariable
     item    dataMenu        cascade         "Manage variables in active data set"           variablesMenu
     item    topMenu         cascade         "Data"                                          dataMenu
     menu    statisticsMenu  topMenu         ""                                              ""  
@@ -53,6 +62,7 @@
     menu    tablesMenu      statisticsMenu  ""                                              ""  
     item    tablesMenu      command         "Two-way table..."                              twoWayTable
     item    tablesMenu      command         "Multi-way table..."                            multiWayTable
+    item    tablesMenu      command         "Enter and analyze two-way table..."            enterTable
     menu    meansMenu       statisticsMenu  ""                                              "" 
     item    meansMenu       command         "Single-sample t-test..."                       singleSampleTTest
     item    meansMenu       command         "Independent samples t-test..."                 independentSamplesTTest
@@ -88,9 +98,11 @@
     item    statisticsMenu  cascade         "Dimensional analysis"                          dimensionalMenu
     item    statisticsMenu  cascade         "Fit models"                                    modelsMenu
     menu    graphsMenu      topMenu         ""                                              ""
-    item    graphsMenu      command         "Histogram..."                                  histogram
+    item    graphsMenu      command         "Index plot..."                                 indexPlot
+    item    graphsMenu      command         "Histogram..."                                  Histogram
     item    graphsMenu      command         "Stem-and-leaf display..."                      stemAndLeaf
     item    graphsMenu      command         "Boxplot..."                                    boxPlot
+    item    graphsMenu      command         "Quantile-comparison plot..."                   QQPlot
     item    graphsMenu      command         "Scatterplot..."                                scatterPlot
     item    graphsMenu      command         "Scatterplot matrix..."                         scatterPlotMatrix
     item    graphsMenu      command         "Line graph..."                                 linePlot
@@ -108,9 +120,11 @@
     
     item    modelsMenu      command         "Variance-inflation factors"                    VIF
     item    modelsMenu      command         "Basic diagnostic plots"                        plotModel
+    item    modelsMenu      command         "Residual quantile-comparison plot..."          residualQQPlot
     item    modelsMenu      command         "Component+residual plots"                      CRPlots
     item    modelsMenu      command         "Added-variable plots"                          AVPlots
     item    modelsMenu      command         "Influence plot"                                influencePlot
+    item    modelsMenu      command         "Effect plots"                                  effectPlots
     item    modelsMenu      command         "Add observation statistics to data..."         addObservationStatistics
     item    topMenu         cascade         "Models"                                        modelsMenu
     menu    distributionsMenu topMenu       ""                                              ""  
@@ -147,5 +161,5 @@
     item    topMenu         cascade         "Distributions"                                 distributionsMenu
     menu    helpMenu        topMenu         ""                                              ""
     item    helpMenu        command         "Commander help"                                "function() help(Commander)"
-    item    helpMenu        command         "About Rcmdr"                                   "function() help(aboutRcmdr)"
+    item    helpMenu        command         "About Rcmdr"                                   "function() help('aboutRcmdr')"
     item    topMenu         cascade         "Help"                                          helpMenu            

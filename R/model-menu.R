@@ -1,6 +1,6 @@
 # Model menu dialogs
 
-# last modified 20 July 03 by J. Fox
+# last modified 8 December 03 by J. Fox
 
 selectActiveModel <- function(){
     models <- union(listLinearModels(), listGeneralizedLinearModels())
@@ -128,7 +128,19 @@ influencePlot <- function(){
         icon="question", type="yesno", default="no"))
     labels <- if (response == "no") ", labels=FALSE" else ""
     doItAndPrint(paste("influence.plot(", .activeModel, labels, ")", sep=""))
-    }    
+    }  
+    
+effectPlots <- function(){
+          if (is.null(.activeModel)) {
+        tkmessageBox(message="There is no active model.", icon="error", type="ok")
+        tkfocus(.commander)
+        return()
+        }
+    doItAndPrint('trellis.device(bg="white")')
+    command <- paste("plot(all.effects(", .activeModel, "), ask=FALSE)", sep="")
+    justDoIt(command)
+    logger(command)
+    }
 
 addObservationStatistics <- function(){
     checkReplace <- function(name){
@@ -142,7 +154,8 @@ addObservationStatistics <- function(){
             if (tclvalue(ans) == "no") return()
             }
         command <- paste(name, "(", .activeModel, ")", sep="")
-        justDoIt(paste(.activeDataSet, "$", variable, " <<- ", command, sep=""))
+#        justDoIt(paste(.activeDataSet, "$", variable, " <<- ", command, sep=""))
+        justDoIt(paste(.activeDataSet, "$", variable, " <- ", command, sep=""))
         logger(paste(.activeDataSet, "$", variable, " <- ", command, sep=""))
         }
     if (is.null(.activeModel)){
@@ -165,17 +178,28 @@ addObservationStatistics <- function(){
     rstudentVariable <- tclVar("1")
     hatvaluesVariable <- tclVar("1")
     cookdVariable <- tclVar("1")
+    obsNumberExists <- is.element("obsNumber", .variables)
+    obsNumberVariable <- tclVar(if(obsNumberExists) "0" else "1")
     fittedCheckBox <- tkcheckbutton(selectFrame, variable=fittedVariable)
     residualsCheckBox <- tkcheckbutton(selectFrame, variable=residualsVariable)
     rstudentCheckBox <- tkcheckbutton(selectFrame, variable=rstudentVariable)
     hatvaluesCheckBox <- tkcheckbutton(selectFrame, variable=hatvaluesVariable)
     cookdCheckBox <- tkcheckbutton(selectFrame, variable=cookdVariable)
+    obsNumberCheckBox <- tkcheckbutton(selectFrame, variable=obsNumberVariable)
     onOK <- function(){
         if (tclvalue(fittedVariable) == 1) addVariable("fitted")
         if (tclvalue(residualsVariable) == 1) addVariable("residuals")
         if (tclvalue(rstudentVariable) == 1) addVariable("rstudent")
         if (tclvalue(hatvaluesVariable) == 1) addVariable("hatvalues")
         if (tclvalue(cookdVariable) == 1) addVariable("cookd")
+        if (tclvalue(obsNumberVariable) == 1){
+            proceed <- if (obsNumberExists) tclvalue(checkReplace("obsNumber")) else "yes"
+            if (proceed == "yes") {
+                command <- paste(.activeDataSet, "$obsNumber <- 1:nrow(", .activeDataSet, ")", sep="")
+                justDoIt(command)
+                logger(command)
+                }
+            }
         activeDataSet(.activeDataSet)
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
@@ -199,11 +223,67 @@ addObservationStatistics <- function(){
     tkgrid(tklabel(selectFrame, text="Studentized residuals"), rstudentCheckBox, sticky="w")
     tkgrid(tklabel(selectFrame, text="Hat-values"), hatvaluesCheckBox, sticky="w")
     tkgrid(tklabel(selectFrame, text="Cook's distances"), cookdCheckBox, sticky="w")  
+    tkgrid(tklabel(selectFrame, text="Observation indices"), obsNumberCheckBox, sticky="w")
     tkgrid(selectFrame, sticky="w")  
         tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="            "), 
         helpButton, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
     for (row in 0:5) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
+    tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
+    tkwm.deiconify(top)
+    if (.grab.focus) tkgrab.set(top)
+    tkfocus(top)
+    tkwait.window(top)
+    }
+
+residualQQPlot <- function(){
+    if (is.null(.activeModel)){
+            tkmessageBox(message="There is no active model.", icon="error", type="ok")
+            tkfocus(.commander)
+            return()
+            }
+    top <- tktoplevel()
+    tkwm.title(top, "Residual Quantile-Comparison Plot")
+    selectFrame <- tkframe(top)
+    simulateVar <- tclVar("1")
+    identifyVar <- tclVar("0")
+    simulateCheckBox <- tkcheckbutton(selectFrame, variable=simulateVar)
+    identifyCheckBox <- tkcheckbutton(selectFrame, variable=identifyVar)
+    onOK <- function(){
+        tkdestroy(top)
+        simulate <- tclvalue(simulateVar) == 1
+        identify <- if (tclvalue(identifyVar) == 1) paste("names(residuals(", .activeModel, "))",
+            sep="") else "FALSE"
+        command <- paste("qq.plot(", .activeModel, ", simulate=", simulate, ", labels=", identify,
+            ")", sep="")
+        doItAndPrint(command)
+        if (.grab.focus) tkgrab.release(top)
+        tkfocus(.commander)
+        }
+    buttonsFrame <- tkframe(top)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    onCancel <- function() {
+        if (.grab.focus) tkgrab.release(top)
+        tkfocus(.commander)
+        tkdestroy(top)  
+        }    
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12", command=onCancel)
+    onHelp <- function() {
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
+        help(qq.plot.lm)
+        }
+    helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
+    tkgrid(tklabel(selectFrame, text="Simulated confidence envelope"), simulateCheckBox, sticky="w")
+    tkgrid(tklabel(selectFrame, text="Identify points with mouse"), identifyCheckBox, sticky="w")
+    tkgrid(selectFrame, sticky="w")  
+        tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="            "), 
+        helpButton, sticky="w")
+    tkgrid(buttonsFrame, sticky="w")
+    for (row in 0:1) tkgrid.rowconfigure(top, row, weight=0)
     for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
     .Tcl("update idletasks")
     tkwm.resizable(top, 0, 0)

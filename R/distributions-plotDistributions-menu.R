@@ -1,6 +1,6 @@
 # Distributions  -> Plot Distributions menu dialogs
 
-# last modified 29 July 03 by J. Fox
+# last modified 5 Dec 03 by J. Fox
 
 normalDistributionPlot <- function(){
     top <- tktoplevel()
@@ -28,6 +28,7 @@ normalDistributionPlot <- function(){
             ", sd=", sigma, '), xlab="x", ylab="', fun, 
             '", main=expression(paste("Normal Distribution: ", mu, " = ',
             mu, ', ", sigma, " = ', sigma, '")), type="l")', sep=""))
+        doItAndPrint('abline(h=0, col="gray")')
         remove(.x, envir=.GlobalEnv)
         logger("remove(.x)")
         tkfocus(.commander)
@@ -98,6 +99,7 @@ tDistributionPlot <- function(){
         doItAndPrint(paste("plot(.x, ", fn, "(.x, df=", df, 
             '), xlab="t", ylab="', fun, 
             '", main="t Distribution: df = ', df, '", type="l")', sep=""))
+        doItAndPrint('abline(h=0, col="gray")')
         remove(.x, envir=.GlobalEnv)
         logger("remove(.x)")
         tkfocus(.commander)
@@ -166,6 +168,7 @@ chisquareDistributionPlot <- function(){
         doItAndPrint(paste("plot(.x, ", fn, "(.x, df=", df, 
             '), xlab=expression(chi^2), ylab="', fun, 
             '", main="Chi-Squared Distribution: df = ', df, '", type="l")', sep=""))
+        doItAndPrint('abline(h=0, col="gray")')
         remove(.x, envir=.GlobalEnv)
         logger("remove(.x)")
         tkfocus(.commander)
@@ -246,6 +249,7 @@ FDistributionPlot <- function(){
             '), xlab="f", ylab="', fun, 
             '", main="F Distribution: Numerator df = ', df1, ', Denominator df = ', df2, 
             '", type="l")', sep=""))
+        doItAndPrint('abline(h=0, col="gray")')
         remove(.x, envir=.GlobalEnv)
         logger("remove(.x)")
         tkfocus(.commander)
@@ -338,6 +342,7 @@ binomialDistributionPlot <- function(){
                 ')[-length(.x)], xlab="Number of Successes", ylab="Cumulative Probability", main="Binomial Distribution: Trials = ', 
                 trials, ', Probability of success = ', prob, '", type="l")', sep=""))
             }
+        doItAndPrint('abline(h=0, col="gray")')
         remove(.x, envir=.GlobalEnv)
         logger("remove(.x)")
         tkfocus(.commander)
@@ -419,6 +424,7 @@ PoissonDistributionPlot <- function(){
                 ')[-length(.x)], xlab="x", ylab="Probability Mass", main="Poisson Distribution: Mean = ', 
                 mean, '", type="l")', sep=""))
             }
+        doItAndPrint('abline(h=0, col="gray")')
         remove(.x, envir=.GlobalEnv)
         logger("remove(.x)")
         tkfocus(.commander)

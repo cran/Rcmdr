@@ -1,9 +1,108 @@
 # The R Commander and command logger
 
-# last modified 7 August 03 by J. Fox
+# last modified 6 Dec 03 by J. Fox
 
 Commander <- function(){
     etc <- file.path(.path.package(package="Rcmdr")[1], "etc")
+    onCopy <- function(){
+        selection <- strsplit(tclvalue(tktag.ranges(.log, "sel")), " ")[[1]]
+        if (is.na(selection[1])) return()
+        text <- tclvalue(tkget(.log, selection[1], selection[2]))
+        tkclipboard.clear()
+        tkclipboard.append(text)
+        }    
+    onDelete <- function(){
+        selection <- strsplit(tclvalue(tktag.ranges(.log, "sel")), " ")[[1]]
+        if (is.na(selection[1])) return()
+        tkdelete(.log, selection[1], selection[2])
+        }        
+    onCut <- function(){
+        onCopy()
+        onDelete()
+        }        
+    onPaste <- function(){
+        text <- tclvalue(.Tcl("selection get -selection CLIPBOARD"))    
+        if (length(text) == 0) return()
+        tkinsert(.log, "insert", text)
+        }       
+    onFind <- function(){
+        top <- tktoplevel()
+        tkwm.title(top, "Find")
+        textFrame <- tkframe(top)
+        textVar <- tclVar("")
+        textEntry <- tkentry(textFrame, width="20", textvariable=textVar)
+        optionsFrame <- tkframe(top)
+        regexprVar <- tclVar("0")
+        regexprCheckBox <- tkcheckbutton(optionsFrame, variable=regexprVar)
+        caseVar <- tclVar("1")
+        caseCheckBox <- tkcheckbutton(optionsFrame, variable=caseVar)
+        directionVar <- tclVar("-forward")
+        forwardButton <- tkradiobutton(optionsFrame, variable=directionVar, value="-forward")
+        backwardButton <- tkradiobutton(optionsFrame, variable=directionVar, value="-backward")
+        onOK <- function(){
+            text <- tclvalue(textVar)
+            if (text == ""){
+                tkmessageBox(message="No search text specified.", 
+                    icon="error", type="ok")
+                if (.grab.focus) tkgrab.release(top)
+                tkdestroy(top)
+                onFind()
+                return()
+                }
+            type <- if (tclvalue(regexprVar) == 1) "-regexp" else "-exact"
+            case <- tclvalue(caseVar) == 1
+            direction <- tclvalue(directionVar)
+            stop <- if (direction == "-forward") "end" else "1.0"
+            where <- if (case) tksearch(.log, type, direction, "--", text, "insert", stop)
+                        else tksearch(.log, type, direction, "-nocase", "--", text, "insert", stop)
+            where <- tclvalue(where)
+            if (where == "") {
+                tkmessageBox(message="Text not found.",
+                    icon="info", type="ok")
+                if (.grab.focus) tkgrab.release(top)
+                tkdestroy(top)
+                tkfocus(.commander)
+                return()
+                }
+            if (.grab.focus) tkgrab.release(top)
+            tkfocus(.log)
+            tkmark.set(.log, "insert", where)  
+            tksee(.log, where)
+            tkdestroy(top)  
+            }
+        onCancel <- function() {
+            if (.grab.focus) tkgrab.release(top)
+            tkfocus(.commander)
+            tkdestroy(top)  
+            }
+        buttonsFrame <- tkframe(top)
+        OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+        cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",command=onCancel)  
+        tkgrid(tklabel(textFrame, text="Search for:"), textEntry, sticky="w") 
+        tkgrid(textFrame, sticky="w") 
+        tkgrid(tklabel(optionsFrame, text="Regular-expression search"), regexprCheckBox, sticky="w")
+        tkgrid(tklabel(optionsFrame, text="Case sensitive"), caseCheckBox, sticky="w")
+        tkgrid(tklabel(optionsFrame, text="Search Direction"), sticky="w")
+        tkgrid(tklabel(optionsFrame, text="Forward"), forwardButton, sticky="w")
+        tkgrid(tklabel(optionsFrame, text="Backward"), backwardButton, sticky="w")
+        tkgrid(optionsFrame, sticky="w")
+        tkgrid(OKbutton, tklabel(buttonsFrame, text="        "), cancelButton, sticky="w")
+        tkgrid(buttonsFrame, sticky="w")
+        for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
+        for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
+        .Tcl("update idletasks")
+        tkwm.resizable(top, 0, 0)
+        tkbind(top, "<Return>", onOK)
+        if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
+        tkwm.deiconify(top)
+        if (.grab.focus) tkgrab.set(top)
+        tkfocus(textEntry)
+        tkwait.window(top)
+        }    
+    onSelectAll <- function() {
+        tktag.add(.log, "sel", "1.0", "end")
+        tkfocus(.log)
+        }
     assign(".activeDataSet", NULL, envir=.GlobalEnv)
     assign(".activeModel", NULL, envir=.GlobalEnv)
     assign(".logFileName", NULL, envir=.GlobalEnv)
@@ -18,7 +117,7 @@ Commander <- function(){
     contrasts <- options("Rcmdr")[[1]]$contrasts
     contrasts <- if (is.null(contrasts)) c("contr.Treatment", "contr.poly") else contrasts
     assign(".saveOptions", options(warn=1, contrasts=contrasts, 
-        na.action="na.exclude"), envir=.GlobalEnv)
+        na.action="na.exclude", graphics.record=TRUE), envir=.GlobalEnv)
     log.height <- options("Rcmdr")[[1]]$log.height
     log.height <- if (is.null(log.height)) "15" else as.character(log.height)
     log.width <- options("Rcmdr")[[1]]$log.width
@@ -97,8 +196,11 @@ Commander <- function(){
                 var <- gsub(" ", "", var.value[1])
                 value <- var.value[2]
                 if ( (length(grep("\\$", var)) > 0) || (length(grep("\\[", var)) > 0) 
-                    || length(grep("row.names\\(", var) > 0) )
-                    justDoIt(paste(var, "<<-", value))
+                    || length(grep("row.names\\(", var) > 0) 
+                    || length(grep("rownames\\(", var) > 0)
+                    || length(grep("colnames\\(", var) > 0))
+#                    justDoIt(paste(var, "<<-", value))
+                    justDoIt(paste(var, "<-", value))
                 else assign(var, justDoIt(value), envir=.GlobalEnv)
                 }
             else if (length(grep("^remove\\(", line)) > 0){
@@ -118,6 +220,17 @@ Commander <- function(){
                 }
             }
         }
+    contextMenu <- function(){
+        contextMenu <- tkmenu(tkmenu(.log), tearoff=FALSE)
+        tkadd(contextMenu, "command", label="Submit", command=onSubmit)
+        tkadd(contextMenu, "command", label="Cut", command=onCut)
+        tkadd(contextMenu, "command", label="Copy", command=onCopy)
+        tkadd(contextMenu, "command", label="Paste", command=onPaste)
+        tkadd(contextMenu, "command", label="Detele", command=onDelete)
+        tkadd(contextMenu, "command", label="Find...", command=onFind)
+        tkadd(contextMenu, "command", label="Select all", command=onSelectAll)
+        tkpopup(contextMenu, tkwinfo("pointerx", .log), tkwinfo("pointery", .log))
+        }    
     controlsFrame <- tkframe(.commander)
     editButton <- tkbutton(controlsFrame, text="Edit data set", command=onEdit)
     viewButton <- tkbutton(controlsFrame, text="View data set", command=onView)
@@ -145,9 +258,11 @@ Commander <- function(){
     assign(".modelLabel", tkbutton(bottomLeftFrame, textvariable=.modelName, fg="red",
         relief="groove", command=selectActiveModel), 
         envir=.GlobalEnv)
+    show.edit.button <- options("Rcmdr")[[1]]$show.edit.button
+    show.edit.button <- if (is.null(show.edit.button)) TRUE else show.edit.button
     tkgrid(tklabel(controlsFrame, bitmap=paste("@", file.path(etc, "Rcmdr.xbm"), sep=""), fg="red"), 
         tklabel(controlsFrame, text="Data set:"), .dataSetLabel, 
-        tklabel(controlsFrame, text="  "), editButton, viewButton, 
+        tklabel(controlsFrame, text="  "), if(show.edit.button) editButton, viewButton, 
         tklabel(controlsFrame, text="  Log commands:"), logCheckBox, 
         tklabel(controlsFrame, text="  Attach active data set:"), attachCheckBox, sticky="w")
     tkgrid(controlsFrame, sticky="w", columnspan="2")
@@ -160,12 +275,15 @@ Commander <- function(){
     tkgrid.configure(logXscroll, sticky="ew")
     tkgrid.configure(submitButton, sticky="e")
     tkgrid.configure(bottomLeftFrame, sticky="w")
-    for (row in 0:3) tkgrid.rowconfigure(.commander, row, weight=0)
+    for (row in 0:4) tkgrid.rowconfigure(.commander, row, weight=0)
     for (col in 0:1) tkgrid.columnconfigure(.commander, col, weight=0)
     .Tcl("update idletasks")
     tkwm.resizable(.commander, 0, 0)
     tkbind(.commander, "<Control-r>", onSubmit)
     tkbind(.commander, "<Control-R>", onSubmit)
+    tkbind(.commander, "<Control-f>", onFind)
+    tkbind(.commander, "<Control-F>", onFind)
+    tkbind(.log, "<ButtonPress-3>", contextMenu)
     tkwm.deiconify(.commander)
     tkfocus(.commander)
     tkwait <- options("Rcmdr")[[1]]$tkwait  # to address problem in Debian Linux
@@ -191,7 +309,7 @@ doItAndPrint <- function(command) {
         tkfocus(.commander)
         return()
         }
-    print(result)
+    if (!is.null(result)) print(result)
     }
 
 justDoIt <- function(command) {
@@ -205,3 +323,107 @@ justDoIt <- function(command) {
     result
     }
     
+    onCopy <- function(){
+        selection <- strsplit(tclvalue(tktag.ranges(.log, "sel")), " ")[[1]]
+        if (is.na(selection[1])) return()
+        text <- tclvalue(tkget(.log, selection[1], selection[2]))
+        tkclipboard.clear()
+        tkclipboard.append(text)
+        }
+    
+    onDelete <- function(){
+        selection <- strsplit(tclvalue(tktag.ranges(.log, "sel")), " ")[[1]]
+        if (is.na(selection[1])) return()
+        tkdelete(.log, selection[1], selection[2])
+        }
+        
+    onCut <- function(){
+        onCopy()
+        onDelete()
+        }
+        
+    onPaste <- function(){
+        text <- tclvalue(.Tcl("selection get -selection CLIPBOARD"))    
+        if (length(text) == 0) return()
+        tkinsert(.log, "insert", text)
+        }
+        
+    onFind <- function(){
+        top <- tktoplevel()
+        tkwm.title(top, "Find")
+        textFrame <- tkframe(top)
+        textVar <- tclVar("")
+        textEntry <- tkentry(textFrame, width="20", textvariable=textVar)
+        optionsFrame <- tkframe(top)
+        regexprVar <- tclVar("0")
+        regexprCheckBox <- tkcheckbutton(optionsFrame, variable=regexprVar)
+        caseVar <- tclVar("1")
+        caseCheckBox <- tkcheckbutton(optionsFrame, variable=caseVar)
+        directionVar <- tclVar("-forward")
+        forwardButton <- tkradiobutton(optionsFrame, variable=directionVar, value="-forward")
+        backwardButton <- tkradiobutton(optionsFrame, variable=directionVar, value="-backward")
+        onOK <- function(){
+            text <- tclvalue(textVar)
+            if (text == ""){
+                tkmessageBox(message="No search text specified.", 
+                    icon="error", type="ok")
+                if (.grab.focus) tkgrab.release(top)
+                tkdestroy(top)
+                onFind()
+                return()
+                }
+            type <- if (tclvalue(regexprVar) == 1) "-regexp" else "-exact"
+            case <- tclvalue(caseVar) == 1
+            direction <- tclvalue(directionVar)
+            stop <- if (direction == "-forward") "end" else "1.0"
+            where <- if (case) tksearch(.log, type, direction, "--", text, "insert", stop)
+                        else tksearch(.log, type, direction, "-nocase", "--", text, "insert", stop)
+            where <- tclvalue(where)
+            if (where == "") {
+                tkmessageBox(message="Text not found.",
+                    icon="info", type="ok")
+                if (.grab.focus) tkgrab.release(top)
+                tkdestroy(top)
+                tkfocus(.commander)
+                return()
+                }
+            if (.grab.focus) tkgrab.release(top)
+            tkfocus(.log)
+            tkmark.set(.log, "insert", where)  
+            tksee(.log, where)
+            tkdestroy(top)  
+            }
+        onCancel <- function() {
+            if (.grab.focus) tkgrab.release(top)
+            tkfocus(.commander)
+            tkdestroy(top)  
+            }
+        buttonsFrame <- tkframe(top)
+        OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+        cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",command=onCancel)  
+        tkgrid(tklabel(textFrame, text="Search for:"), textEntry, sticky="w") 
+        tkgrid(textFrame, sticky="w") 
+        tkgrid(tklabel(optionsFrame, text="Regular-expression search"), regexprCheckBox, sticky="w")
+        tkgrid(tklabel(optionsFrame, text="Case sensitive"), caseCheckBox, sticky="w")
+        tkgrid(tklabel(optionsFrame, text="Search Direction"), sticky="w")
+        tkgrid(tklabel(optionsFrame, text="Forward"), forwardButton, sticky="w")
+        tkgrid(tklabel(optionsFrame, text="Backward"), backwardButton, sticky="w")
+        tkgrid(optionsFrame, sticky="w")
+        tkgrid(OKbutton, tklabel(buttonsFrame, text="        "), cancelButton, sticky="w")
+        tkgrid(buttonsFrame, sticky="w")
+        for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
+        for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
+        .Tcl("update idletasks")
+        tkwm.resizable(top, 0, 0)
+        tkbind(top, "<Return>", onOK)
+        if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
+        tkwm.deiconify(top)
+        if (.grab.focus) tkgrab.set(top)
+        tkfocus(textEntry)
+        tkwait.window(top)
+        }
+    
+    onSelectAll <- function() {
+        tktag.add(.log, "sel", "1.0", "end")
+        tkfocus(.log)
+        }

@@ -1,4 +1,4 @@
-# last modified 22 July 2003 by J. Fox
+# last modified 29 November 2003 by J. Fox
 
 # utility functions
 
@@ -103,22 +103,28 @@ is.valid.name <- function(x){
     
     # statistical
     
-colPercents <- function(tab){
+colPercents <- function(tab, digits=2){
     dim <- length(dim(tab))
+    if (is.null(dimnames(tab))){
+        dims <- dim(tab)
+        dimnames(tab) <- lapply(1:dim, function(i) 1:dims[i])
+        }
     sums <- apply(tab, 2:dim, sum)
     per <- apply(tab, 1, function(x) x/sums)
     dim(per) <- dim(tab)[c(2:dim,1)]
     per <- aperm(per, c(dim, 1:(dim-1)))
     dimnames(per) <- dimnames(tab)
-    100*per
+    per <- round(100*per, digits)
+    result <- abind(per, Total=apply(per, 2:dim, sum), Count=sums, along=1)
+    names(dimnames(result)) <- names(dimnames(tab))
+    result
     }
 
-
-rowPercents <- function(tab){
+rowPercents <- function(tab, digits=2){
     dim <- length(dim(tab))
-    if (dim == 2) return(t(colPercents(t(tab))))
+    if (dim == 2) return(t(colPercents(t(tab), digits=digits)))
     tab <- aperm(tab, c(2,1,3:dim))
-    aperm(colPercents(tab), c(2,1,3:dim))
+    aperm(colPercents(tab, digits=digits), c(2,1,3:dim))
     }
 
 # the following function slightly modified from Brian Ripley via R-help
@@ -195,6 +201,29 @@ partial.cor <- function(X, ...){
     diag(R) <- 0
     rownames(R) <- colnames(R) <- colnames(X)
     R
+    }
+
+
+    # wrapper function for histograms
+
+Hist <- function(x, scale=c("frequency", "percent", "density"), ...){
+    xlab <- deparse(substitute(x))
+    x <- na.omit(x)
+    scale <- match.arg(scale)
+    if (scale == "frequency") hist(x, xlab=xlab, main="",  ...)
+    else if (scale == "density") hist(x, freq=FALSE, xlab=xlab, main="", ...)
+    else {
+        n <- length(x)
+        hist(x, axes=FALSE, xlab=xlab, ylab="Percent", main="", ...)
+        axis(1)
+        max <- ceiling(10*par("usr")[4]/n)
+        at <- if (max <= 3) (0:(2*max))/20
+                else (0:max)/10
+        axis(2, at=at*n, labels=at*100)
+        }  
+    box()   
+    abline(h=0, col="gray") 
+    invisible(NULL)
     }
 
 stem.leaf <- function(data, unit, m, Min, Max, rule.line=c("Dixon", "Velleman", "Sturges"),

@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 20 July 03 by J. Fox
+# last modified 2 December 03 by J. Fox
 
     # Tables menu
     
@@ -72,7 +72,7 @@ twoWayTable <- function(){
             logger(paste(".Test <- ", command, sep=""))
             assign(".Test", justDoIt(command), envir=.GlobalEnv)
             doItAndPrint(".Test")
-            if (expected == 1) doItAndPrint(".Test$expected")
+            if (expected == 1) doItAndPrint(".Test$expected # Expected Counts")
             warnText <- NULL
             if (0 < (nlt1 <- sum(.Test$expected < 1))) warnText <- paste(nlt1,
                 "expected frequencies are less than 1")
@@ -284,3 +284,196 @@ multiWayTable <- function(){
     tkfocus(top)
     tkwait.window(top)
     }
+
+enterTable <- function(){
+    top <- tktoplevel()
+    tkwm.title(top, "Enter and Analyze Two-Way Table")
+    outerTableFrame <- tkframe(top)
+    assign(".tableFrame", tkframe(outerTableFrame), envir=.GlobalEnv)
+    setUpTable <- function(...){
+        tkdestroy(get(".tableFrame", envir=.GlobalEnv))
+        assign(".tableFrame", tkframe(outerTableFrame), envir=.GlobalEnv)
+        nrows <- as.numeric(tclvalue(rowsValue))
+        ncols <- as.numeric(tclvalue(colsValue))
+        make.col.names <- "tklabel(.tableFrame, text='')"
+        for (j in 1:ncols) {
+            col.varname <- paste(".colname.", j, sep="")
+            assign(col.varname, tclVar(j), envir=.GlobalEnv)
+            make.col.names <- paste(make.col.names, ", ", "tkentry(.tableFrame, width='5', textvariable=", 
+                    col.varname, ")", sep="")
+            }
+        eval(parse(text=paste("tkgrid(", make.col.names, ")", sep="")), envir=.GlobalEnv)
+        for (i in 1:nrows){   
+            varname <- paste(".tab.", i, ".1", sep="") 
+            assign(varname, tclVar("") , envir=.GlobalEnv)
+            row.varname <- paste(".rowname.", i, sep="")
+            assign(row.varname, tclVar(i), envir=.GlobalEnv)
+            make.row <- paste("tkentry(.tableFrame, width='5', textvariable=",
+                row.varname, ")", sep="")
+            make.row <- paste(make.row, ", ", "tkentry(.tableFrame, width='5', textvariable=", 
+                varname, ")", sep="")
+            for (j in 2:ncols){
+                varname <- paste(".tab.", i, ".", j, sep="")
+                assign(varname, tclVar(""), envir=.GlobalEnv)
+                make.row <- paste(make.row, ", ", "tkentry(.tableFrame, width='5', textvariable=", 
+                    varname, ")", sep="")
+                }
+            eval(parse(text=paste("tkgrid(", make.row, ")", sep="")), envir=.GlobalEnv)
+            }
+        tkgrid(get(".tableFrame", envir=.GlobalEnv), sticky="w")
+        }
+    rowColFrame <- tkframe(top)
+    rowsValue <- tclVar("2")
+    rowsSlider <- tkscale(rowColFrame, from=2, to=10, showvalue=FALSE, variable=rowsValue,
+        resolution=1, orient="horizontal", command=setUpTable)
+    rowsShow <- tklabel(rowColFrame, textvariable=rowsValue, width=2, justify="right")
+    colsValue <- tclVar("2")
+    colsSlider <- tkscale(rowColFrame, from=2, to=10, showvalue=FALSE, variable=colsValue,
+        resolution=1, orient="horizontal", command=setUpTable)
+    colsShow <- tklabel(rowColFrame, textvariable=colsValue, width=2, justify="right")
+    onOK <- function(){
+        nrows <- as.numeric(tclvalue(rowsValue))
+        ncols <- as.numeric(tclvalue(colsValue))
+        cell <- 0
+        counts <- rep(NA, nrows*ncols)
+        row.names <- rep("", nrows)
+        col.names <- rep("", ncols)
+        for (i in 1:nrows) row.names[i] <- 
+            eval(parse(text=paste("tclvalue(", paste(".rowname.", i, sep=""),")", sep="")))
+        for (j in 1:ncols) col.names[j] <- 
+            eval(parse(text=paste("tclvalue(", paste(".colname.", j, sep=""),")", sep="")))
+        for (i in 1:nrows){
+            for (j in 1:ncols){
+                cell <- cell+1
+                varname <- paste(".tab.", i, ".", j, sep="")
+                counts[cell] <- as.numeric(eval(parse(text=paste("tclvalue(", varname,")", sep=""))))
+                }
+            }
+        counts <- na.omit(counts)
+        if (length(counts) != nrows*ncols){
+            tkmessageBox(message=paste("Number of valid entries (", length(counts), ")\n",
+                "not equal to number of rows (", nrows,") * number of columns (", ncols,").", 
+                sep=""), icon="error", type="ok")
+            if (.grab.focus) tkgrab.release(top)
+            tkdestroy(top)
+            enterTable()
+            return()
+            }
+        if (length(unique(row.names)) != nrows){
+            tkmessageBox(message="Row names are not unique.", icon="error", type="ok")
+            if (.grab.focus) tkgrab.release(top)
+            tkdestroy(top)
+            enterTable()
+            return()
+            }     
+        if (length(unique(col.names)) != ncols){
+            tkmessageBox(message="Column names are not unique.", icon="error", type="ok")
+            if (.grab.focus) tkgrab.release(top)
+            tkdestroy(top)
+            enterTable()
+            return()
+            }     
+        percents <- as.character(tclvalue(percentsVariable))
+        chisq <- tclvalue(chisqTest)
+        expected <- tclvalue(expFreq)
+        fisher <- tclvalue(fisherTest)
+        if (.grab.focus) tkgrab.release(top)
+        tkdestroy(top)
+        remove(.tableFrame, envir=.GlobalEnv)
+        remove(list=ls(pattern="\\.tab\\.", all.names=TRUE, envir=.GlobalEnv), envir=.GlobalEnv)
+        remove(list=ls(pattern="\\.rowname\\.", all.names=TRUE, envir=.GlobalEnv), envir=.GlobalEnv)
+        remove(list=ls(pattern="\\.colname\\.", all.names=TRUE, envir=.GlobalEnv), envir=.GlobalEnv)
+        command <- paste("matrix(c(", paste(counts, collapse=","), "), ", nrows, ", ", ncols,
+            ", byrow=TRUE)", sep="")
+        assign(".Table", justDoIt(command), envir=.GlobalEnv)
+        logger(paste(".Table <- ", command, sep=""))
+        command <- paste("c(",paste(paste("'", row.names, "'", sep=""), collapse=", "), ")", sep="")
+#        justDoIt(paste("rownames(.Table) <<- ", command, sep=""))
+        justDoIt(paste("rownames(.Table) <- ", command, sep=""))
+        logger(paste("rownames(.Table) <- ", command, sep=""))
+        command <- paste("c(",paste(paste("'", col.names, "'", sep=""), collapse=", "), ")", sep="")
+#        justDoIt(paste("colnames(.Table) <<- ", command, sep=""))
+        justDoIt(paste("colnames(.Table) <- ", command, sep=""))
+        logger(paste("colnames(.Table) <- ", command, sep=""))
+        logger(".Table  # Counts")
+        print(.Table)
+        cat("\n")
+        if (percents == "row") doItAndPrint("rowPercents(.Table) # Row Percentages")
+        if (percents == "column") doItAndPrint("colPercents(.Table) # Column Percentages")
+        cat("\n")
+        if (chisq == 1) {
+            command <- "chisq.test(.Table, correct=FALSE)"
+            logger(paste(".Test <- ", command, sep=""))
+            assign(".Test", justDoIt(command), envir=.GlobalEnv)
+            doItAndPrint(".Test")
+            if (expected == 1) doItAndPrint(".Test$expected # Expected Counts")
+            warnText <- NULL
+            if (0 < (nlt1 <- sum(.Test$expected < 1))) warnText <- paste(nlt1,
+                "expected frequencies are less than 1")
+            if (0 < (nlt5 <- sum(.Test$expected < 1))) warnText <- paste(warnText, "\n", nlt5,
+                " expected frequencies are less than 5", sep="")
+            if (!is.null(warnText)) tkmessageBox(message=warnText,
+                icon="warning", type="ok")
+            logger("remove(.Test)") 
+            remove(.Test, envir=.GlobalEnv) 
+            }
+        if (fisher == 1) doItAndPrint("fisher.test(.Table)")
+        logger("remove(.Table)") 
+        remove(.Table, envir=.GlobalEnv)                                                      
+        tkfocus(.commander)
+        }
+    buttonsFrame <- tkframe(top)
+    OKbutton <- tkbutton(buttonsFrame, text="OK", width="12", command=onOK, default="active")
+    onCancel <- function() {
+        if (.grab.focus) tkgrab.release(top)
+        tkfocus(.commander)
+        tkdestroy(top)  
+        }
+    cancelButton <- tkbutton(buttonsFrame, text="Cancel", width="12",command=onCancel)
+    onHelp <- function() {
+        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
+        help(chisq.test)
+        }
+    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    percentsVariable <- tclVar("none")
+    percentsFrame <- tkframe(top)
+    rowPercentsButton <- tkradiobutton(percentsFrame, variable=percentsVariable, value="row")
+    columnPercentsButton <- tkradiobutton(percentsFrame, variable=percentsVariable, value="column")
+    nonePercentsButton <- tkradiobutton(percentsFrame, variable=percentsVariable, value="none")
+    chisqTest <- tclVar("1")
+    expFreq <- tclVar("0")
+    fisherTest <- tclVar("0")
+    testsFrame <- tkframe(top)
+    chisqCheckBox <- tkcheckbutton(testsFrame, variable=chisqTest)
+    expFreqCheckBox <- tkcheckbutton(testsFrame, variable=expFreq)
+    fisherCheckBox <- tkcheckbutton(testsFrame, variable=fisherTest)
+    tkgrid(tklabel(rowColFrame, text="Number of Rows:"), rowsSlider, rowsShow, sticky="w")
+    tkgrid(tklabel(rowColFrame, text="Number of Columns:"), colsSlider, colsShow, sticky="w")
+    tkgrid(rowColFrame, sticky="w")
+    tkgrid(tklabel(top, text="Enter counts:"), sticky="w")
+    tkgrid(outerTableFrame, sticky="w")
+    tkgrid(tklabel(percentsFrame, text="Compute Percentages"), columnspan=2, sticky="w")
+    tkgrid(tklabel(percentsFrame, text="Row percentages"), rowPercentsButton, sticky="w")
+    tkgrid(tklabel(percentsFrame, text="Column percentages"), columnPercentsButton, sticky="w")
+    tkgrid(tklabel(percentsFrame, text="No percentages"), nonePercentsButton, sticky="w")
+    tkgrid(percentsFrame, sticky="w")
+    tkgrid(tklabel(testsFrame, text="Chisquare test of independence"), chisqCheckBox, sticky="e")
+    tkgrid(tklabel(testsFrame, text="Print expected frequencies"), expFreqCheckBox, sticky="e")
+    tkgrid(tklabel(testsFrame, text="Fisher's exact test"), fisherCheckBox, sticky="e")
+    tkgrid(testsFrame, sticky="w")
+    tkgrid(OKbutton, cancelButton, sticky="w")
+    tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid.configure(chisqCheckBox, sticky="w")
+    tkgrid.configure(fisherCheckBox, sticky="w")
+    tkgrid.configure(helpButton, sticky="e")
+    for (row in 0:5) tkgrid.rowconfigure(top, row, weight=0)
+    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
+    .Tcl("update idletasks")
+    tkwm.resizable(top, 0, 0)
+    tkbind(top, "<Return>", onOK)
+    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
+    tkwm.deiconify(top)
+    if (.grab.focus) tkgrab.set(top)
+    tkfocus(top)
+    tkwait.window(top)        
+    } 

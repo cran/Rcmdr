@@ -55,6 +55,12 @@ the mouse and press the \emph{Submit} button at the lower-right of the \emph{Com
 (or \emph{Control-R}, for "run"). If no text is selected, the \emph{Submit} button (or \emph{Control-R}) 
 submits the line containing the text-insertion cursor. 
 
+Pressing \emph{Control-F} brings up a find-text dialog box (which may also be accessed via 
+\emph{Edit -> Find}) to search for text in the log/script window.
+
+Right-clicking the mouse (clicking button 3 in a three-button mouse) in the log/script window brings up
+a "context" menu with the \emph{Edit}-menu items, plus a \emph{Submit} item.
+
 When you
 execute commands from the \emph{Commander} window, you must ensure that the sequence of commands
 is logical. For example, it makes no sense to fit a statistical model to a data set that has
@@ -114,6 +120,10 @@ set none, one, several, or all options. The available options are as follows:
     
     \item{\code{double.click}}{Set to \code{TRUE} if you want a double-click of the left mouse
     button to press the default button in all dialogs. The default is \code{FALSE}.}
+    
+    \item{\code{show.edit.button}}{Set to \code{TRUE} (the default) if you want an Edit button in the Commander
+    window, permitting you to edit the active data set. Windows users may wish to set this option to \code{FALSE}
+    to suppress the Edit button because changing variable names in the data editor can cause R to crash.}
     
     \item{\code{scale.factor}}{A scaling factor to be applied to all Tk elements, such as fonts. This works well
     only in Windows. The default is \code{NULL}.}

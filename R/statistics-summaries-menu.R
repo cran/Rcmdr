@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 20 July 03 by J. Fox
+# last modified 3 November 03 by J. Fox
 
     # Summaries menu
     
@@ -187,12 +187,13 @@ frequencyDistribution <- function(){
         x <- as.character(tkget(xBox, "active"))
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
-        command <- paste("table(", x, ")", sep="")
+        command <- paste("table(", .activeDataSet, "$", x, ")", sep="")
         logger(paste(".Table <-", command))
         assign(".Table", justDoIt(command), envir=.GlobalEnv)
-        logger(".Table")
-        print(.Table)
-        doItAndPrint("100*.Table/sum(.Table)")
+        doItAndPrint(".Table  # counts")
+       # logger(".Table")
+       # print(.Table)
+        doItAndPrint("100*.Table/sum(.Table)  # percentages")
         logger("remove(.Table)") 
         remove(.Table, envir=.GlobalEnv)  
         tkfocus(.commander)

@@ -1,6 +1,6 @@
 # Distributions menu dialogs
 
-# last modified 29 July 03 by J. Fox
+# last modified 5 Dec 03 by J. Fox
 
 normalQuantiles <- function(){
     top <- tktoplevel()
@@ -292,7 +292,7 @@ chisqQuantiles <- function(){
     quantilesEntry <- tkentry(top, width="30", textvariable=quantilesVar)
     dfVar <- tclVar("")
     dfEntry <- tkentry(top, width="6", textvariable=dfVar)
-    tailVar <- tclVar("upper")
+    tailVar <- tclVar("lower")
     lowerTailButton <- tkradiobutton(top, variable=tailVar, value="lower")
     upperTailButton <- tkradiobutton(top, variable=tailVar, value="upper")
     onOK <- function(){
@@ -364,7 +364,7 @@ chisqProbabilities <- function(){
     probabilitiesEntry <- tkentry(top, width="30", textvariable=probabilitiesVar)
     dfVar <- tclVar("")
     dfEntry <- tkentry(top, width="6", textvariable=dfVar)
-    tailVar <- tclVar("upper")
+    tailVar <- tclVar("lower")
     lowerTailButton <- tkradiobutton(top, variable=tailVar, value="lower")
     upperTailButton <- tkradiobutton(top, variable=tailVar, value="upper")
     onOK <- function(){
@@ -438,7 +438,7 @@ FQuantiles <- function(){
     df1Entry <- tkentry(top, width="6", textvariable=df1Var)
     df2Var <- tclVar("")
     df2Entry <- tkentry(top, width="6", textvariable=df2Var)
-    tailVar <- tclVar("upper")
+    tailVar <- tclVar("lower")
     lowerTailButton <- tkradiobutton(top, variable=tailVar, value="lower")
     upperTailButton <- tkradiobutton(top, variable=tailVar, value="upper")
     onOK <- function(){
@@ -515,7 +515,7 @@ FProbabilities <- function(){
     df1Entry <- tkentry(top, width="6", textvariable=df1Var)
     df2Var <- tclVar("")
     df2Entry <- tkentry(top, width="6", textvariable=df2Var)
-    tailVar <- tclVar("upper")
+    tailVar <- tclVar("lower")
     lowerTailButton <- tkradiobutton(top, variable=tailVar, value="lower")
     upperTailButton <- tkradiobutton(top, variable=tailVar, value="upper")
     onOK <- function(){
@@ -592,7 +592,7 @@ binomialQuantiles <- function(){
     trialsEntry <- tkentry(top, width="6", textvariable=trialsVar)
     probVar <- tclVar(".5")
     probEntry <- tkentry(top, width="6", textvariable=probVar)
-    tailVar <- tclVar("upper")
+    tailVar <- tclVar("lower")
     lowerTailButton <- tkradiobutton(top, variable=tailVar, value="lower")
     upperTailButton <- tkradiobutton(top, variable=tailVar, value="upper")
     onOK <- function(){
@@ -677,7 +677,7 @@ binomialProbabilities <- function(){
     trialsEntry <- tkentry(top, width="6", textvariable=trialsVar)
     probVar <- tclVar(".5")
     probEntry <- tkentry(top, width="6", textvariable=probVar)
-    tailVar <- tclVar("upper")
+    tailVar <- tclVar("lower")
     lowerTailButton <- tkradiobutton(top, variable=tailVar, value="lower")
     upperTailButton <- tkradiobutton(top, variable=tailVar, value="upper")
     onOK <- function(){
@@ -798,7 +798,8 @@ binomialMass <- function(){
         logger(paste(".Table <- ", command, sep=""))
         assign(".Table", justDoIt(command), envir=.GlobalEnv)
         logger(paste("rownames(.Table) <- 0:", trials, sep=""))
-        justDoIt(paste("rownames(.Table) <<- 0:", trials, sep=""))
+#        justDoIt(paste("rownames(.Table) <<- 0:", trials, sep=""))
+        justDoIt(paste("rownames(.Table) <- 0:", trials, sep=""))
         justDoIt(paste("print(", logger(".Table"), ")", sep=""))
         logger("remove(.Table)") 
         remove(.Table, envir=.GlobalEnv)       
@@ -872,7 +873,8 @@ PoissonMass <- function(){
         logger(paste(".Table <- ", command, sep=""))
         assign(".Table", justDoIt(command), envir=.GlobalEnv)
         logger(paste("rownames(.Table) <- ", min, ":", max, sep=""))
-        justDoIt(paste("rownames(.Table) <<- ", min, ":", max, sep=""))
+#        justDoIt(paste("rownames(.Table) <<- ", min, ":", max, sep=""))
+        justDoIt(paste("rownames(.Table) <- ", min, ":", max, sep=""))
         justDoIt(paste("print(", logger(".Table"), ")", sep=""))
         logger("remove(.Table)") 
         remove(.Table, envir=.GlobalEnv)       

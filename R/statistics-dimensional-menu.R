@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 20 July 03 by J. Fox
+# last modified 1 Dec 03 by J. Fox
 
     # Dimensional-analysis menu
     
@@ -148,7 +148,8 @@ principalComponents <- function(){
                     }
                 }
             for(i in 1:nvar){
-                justDoIt(paste(.activeDataSet, "$PC", i, " <<- .PC$scores[,", i, "]", sep=""))
+#                justDoIt(paste(.activeDataSet, "$PC", i, " <<- .PC$scores[,", i, "]", sep=""))
+                justDoIt(paste(.activeDataSet, "$PC", i, " <- .PC$scores[,", i, "]", sep=""))
                 logger(paste(.activeDataSet, "$PC", i, " <- .PC$scores[,", i, "]", sep=""))
                 }
             activeDataSet(.activeDataSet)
@@ -295,7 +296,8 @@ factorAnalysis <- function(){
                     }
                 }
             for(i in 1:nfactor){
-                justDoIt(paste(.activeDataSet, "$F", i, " <<- .FA$scores[,", i, "]", sep=""))
+#                justDoIt(paste(.activeDataSet, "$F", i, " <<- .FA$scores[,", i, "]", sep=""))
+                justDoIt(paste(.activeDataSet, "$F", i, " <- .FA$scores[,", i, "]", sep=""))
                 logger(paste(.activeDataSet, "$F", i, " <- .FA$scores[,", i, "]", sep=""))
                 }
             activeDataSet(.activeDataSet)
