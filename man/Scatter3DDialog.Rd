@@ -31,11 +31,6 @@ surfaces can be constrained to be parallel.
   
 The completed plot can be manipulated with the mouse: Click, hold, drag the left mouse button to rotate
 the display; click, hold, and drag the right button to zoom in and out.
-
-You have to install the \code{rgl} and \code{mgcv} packages to produce 3D plots. The \code{rgl}
-package is not yet available on CRAN,
-but can be obtained at \url{http://wsopuppenkiste.wiso.uni-goettingen.de/~dadler/rgl/};
-the \code{mgcv} package is one of the recommended R packages.
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}}

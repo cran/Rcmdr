@@ -1,4 +1,4 @@
-# last modified 27 Jan 2004 by J. Fox
+# last modified 20 Mar 2004 by J. Fox
 
 # Data menu dialogs
 
@@ -638,7 +638,7 @@ readDataFromPackage <- function() {
                         return()
                         }
                     }
-                command <- paste("data(", dsnameValue, ", package=", packageName, ")", sep="")
+                command <- paste("data(", dsnameValue, ', package="', packageName, '")', sep="")
                 justDoIt(command)
                 logger(command)
                 activeDataSet(dsnameValue)                
@@ -1723,7 +1723,7 @@ renameVariables <- function(){
     top <- tktoplevel()
     tkwm.title(top, "Rename Variables")
     variableFrame <- tkframe(top)
-    variableBox <- tklistbox(variableFrame, height=min(4, length(.numeric)),
+    variableBox <- tklistbox(variableFrame, height=min(4, length(.variables)),
         selectmode="multiple", background="white", exportselection="FALSE")
     variableScroll <- tkscrollbar(variableFrame, repeatinterval=5, 
         command=function(...) tkyview(variableBox, ...))

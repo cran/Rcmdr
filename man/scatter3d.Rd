@@ -12,17 +12,15 @@ scatter3d(x, y, z, xlab=deparse(substitute(x)), ylab=deparse(substitute(y)),
     zlab=deparse(substitute(z)), revolutions=0, bg.col=c("black", "white"), axis.col=NULL,
     surface.col=c("blue", "green", "orange", "magenta", "cyan", "red", "yellow", "gray"), 
     neg.res.col="red", pos.res.col="green", point.col="yellow",
-    text.col=axis.col, fogtype=c("exp2", "linear", "exp", "none"), 
-    residuals=(length(fit) == 1), surface=TRUE, df.smooth=NULL, df.additive=NULL,
+    text.col=axis.col, grid.col=if (bg.col == "white") "black" else "gray", 
+    fogtype=c("exp2", "linear", "exp", "none"), 
+    residuals=(length(fit) == 1), surface=TRUE, grid=TRUE, df.smooth=NULL, df.additive=NULL,
     sphere.size=1, threshold=0.01, speed=1, fov=60, 
     fit="linear", groups=NULL, parallel=TRUE, model.summary=FALSE)
 }
 
 \note{
-You have to install the \code{rgl} and \code{mgcv} packages to produce 3D plots. The \code{rgl}
-package is not yet available on CRAN,
-but can be obtained at \url{http://wsopuppenkiste.wiso.uni-goettingen.de/~dadler/rgl/};
-the \code{mgcv} package is one of the recommended R packages.
+You have to install the \code{rgl} and \code{mgcv} packages to produce 3D plots. 
 }
 
 \arguments{
@@ -40,11 +38,13 @@ the \code{mgcv} package is one of the recommended R packages.
     and positive residuals.}
   \item{point.col}{colour of points.}
   \item{text.col}{colour of axis labels.}
+  \item{grid.col}{colour of grid lines on the regression surface(s).}
   \item{fogtype}{type of fog effect; one of \code{"exp2"}, \code{"linear"}, 
     \code{"exp"}, \code{"none".}}
   \item{residuals}{plot residuals (\code{TRUE} or \code{FALSE}); available only 
     when there is one surface plotted.}
   \item{surface}{plot surface(s) (\code{TRUE} or \code{FALSE}).}
+  \item{grid}{plot grid lines on the regression surface(s) (\code{TRUE} or \code{FALSE}).}
   \item{df.smooth}{degrees of freedom for the two-dimensional smooth regression surface;
     if \code{NULL} (the default), the \code{\link[mgcv]{gam}} function will select the degrees of freedom
     for a smoothing spline by generalized cross-validation; if a positive number, a fixed

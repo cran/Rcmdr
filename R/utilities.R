@@ -1,4 +1,4 @@
-# last modified 7 Feb 04 by J. Fox
+# last modified 28 Mar 04 by J. Fox
 
 # utility functions
 
@@ -419,8 +419,9 @@ scatter3d <- function(x, y, z, xlab=deparse(substitute(x)), ylab=deparse(substit
                       zlab=deparse(substitute(z)), revolutions=0, bg.col=c("black", "white"), axis.col=NULL,
                       surface.col=c("blue", "green", "orange", "magenta", "cyan", "red", "yellow", "gray"), 
                       neg.res.col="red", pos.res.col="green", point.col="yellow",
-                      text.col=axis.col, fogtype=c("exp2", "linear", "exp", "none"), 
-                      residuals=(length(fit) == 1), surface=TRUE, df.smooth=NULL, df.additive=NULL,
+                      text.col=axis.col, grid.col=if (bg.col == "white") "black" else "gray", 
+                      fogtype=c("exp2", "linear", "exp", "none"), 
+                      residuals=(length(fit) == 1), surface=TRUE, grid=TRUE, df.smooth=NULL, df.additive=NULL,
                       sphere.size=1, threshold=0.01, speed=1, fov=60, 
                       fit="linear", groups=NULL, parallel=TRUE, model.summary=FALSE){
     require(rgl)
@@ -466,7 +467,7 @@ scatter3d <- function(x, y, z, xlab=deparse(substitute(x)), ylab=deparse(substit
     if (surface){
         for (i in 1:length(fit)){
             f <- match.arg(fit[i], c("linear", "quadratic", "smooth", "additive"))
-            vals <- seq(0, 1, length=25)
+            vals <- seq(0, 1, length=26)
             dat <- expand.grid(x=vals, z=vals)
             if (is.null(groups)){
                 mod <- switch(f,
@@ -479,8 +480,9 @@ scatter3d <- function(x, y, z, xlab=deparse(substitute(x)), ylab=deparse(substit
                             s(z, fx=TRUE, k=(rev(df.additive+1)[1]+1)))
                     )
                 if (model.summary) print(summary(mod))
-                yhat <- predict(mod, newdata=dat)
-                rgl.surface(vals, vals, matrix(yhat, 25, 25), color=surface.col[i], alpha=0.5, lit=FALSE)
+                yhat <- matrix(predict(mod, newdata=dat), 26, 26)
+                rgl.surface(vals, vals, yhat, color=surface.col[i], alpha=0.5, lit=FALSE)
+                if(grid) rgl.surface(vals, vals, yhat, color=grid.col, alpha=0.5, lit=FALSE, front="lines", back="lines")
                 if (residuals){
                     n <- length(y)
                     fitted <- fitted(mod)
@@ -505,8 +507,9 @@ scatter3d <- function(x, y, z, xlab=deparse(substitute(x)), ylab=deparse(substit
                     for (j in 1:length(levs)){
                         group <- levs[j]
                         select.obs <- groups == group
-                        yhat <- predict(mod, newdata=cbind(dat, groups=group))
-                        rgl.surface(vals, vals, matrix(yhat, 25, 25), color=surface.col[j], alpha=0.5, lit=FALSE)
+                        yhat <- matrix(predict(mod, newdata=cbind(dat, groups=group)), 26, 26)
+                        rgl.surface(vals, vals, yhat, color=surface.col[j], alpha=0.5, lit=FALSE)
+                        if (grid) rgl.surface(vals, vals, yhat, color=grid.col, alpha=0.5, lit=FALSE, front="lines", back="lines")
                         rgl.texts(0, predict(mod, newdata=data.frame(x=0, z=0, groups=group)), 0, 
                             paste(group, " "), justify="right", color=surface.col[j])
                         if (residuals){
@@ -534,8 +537,9 @@ scatter3d <- function(x, y, z, xlab=deparse(substitute(x)), ylab=deparse(substit
                                     s(z, fx=TRUE, k=(rev(df.additive+1)[1]+1)), subset=select.obs)
                             )
                         if (model.summary) print(summary(mod))
-                        yhat <- predict(mod, newdata=dat)
-                        rgl.surface(vals, vals, matrix(yhat, 25, 25), color=surface.col[j], alpha=0.5, lit=FALSE)
+                        yhat <- matrix(predict(mod, newdata=dat), 26, 26)
+                        rgl.surface(vals, vals, yhat, color=surface.col[j], alpha=0.5, lit=FALSE)
+                        rgl.surface(vals, vals, yhat, color=grid.col, alpha=0.5, lit=FALSE, front="lines", back="lines")
                         rgl.texts(0, predict(mod, newdata=data.frame(x=0, z=0, groups=group)), 0, 
                             paste(group, " "), justify="right", color=surface.col[j])
                         if (residuals){

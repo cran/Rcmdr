@@ -210,3 +210,13 @@ Version 0.9-4
     o Small changes to handling lines executed from the log.
     
     o Small bug fixes and interface improvements. 
+    
+Version 0.9-5
+
+    o Small bug fixes.
+    
+Version 0.9-6
+
+    o Small changes to scatter3d; rgl and mgcv packages now required.
+    
+    o Calls to data() now quote package in package= argument, necessary for R 1.9.0 (thanks to Erich Neuwirth for pointing this out). 

@@ -1,6 +1,6 @@
 # Graphs menu dialogs
 
-# last modified 4 Feb 04 by J. Fox
+# last modified 20 Mar 04 by J. Fox
 
 indexPlot <- function(){
     if (activeDataSet() == FALSE) {
@@ -1421,6 +1421,8 @@ Scatter3D <- function(){
     tkconfigure(yBox, yscrollcommand=function(...) tkset(yScroll, ...))
     for (y in .numeric) tkinsert(yBox, "end", y)
     surfacesFrame <- tkframe(top)
+    gridLines <- tclVar("1")
+    gridLinesCheckBox <- tkcheckbutton(surfacesFrame, variable=gridLines)
     linearLSSurface <- tclVar("1")
     linearLSCheckBox <- tkcheckbutton(surfacesFrame, variable=linearLSSurface)
     quadLSSurface <- tclVar("0")
@@ -1459,6 +1461,7 @@ Scatter3D <- function(){
             }
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
+        grid <- if (tclvalue(gridLines) == 1) "TRUE" else "FALSE"
         lin <- if(tclvalue(linearLSSurface) == 1) '"linear"'
         quad <- if(tclvalue(quadLSSurface) == 1) '"quadratic"'
         nonpar <- if (tclvalue(nonparSurface) == 1) '"smooth"'
@@ -1479,7 +1482,7 @@ Scatter3D <- function(){
             }
         else groups <- parallel <- ""                   
         command <- paste("scatter3d(", x[1], ", ", y, ", ", x[2], fit, dfNonpar, 
-            dfAdd, groups, parallel, ', bg="', bg, '")', sep="")
+            dfAdd, groups, parallel, ', bg="', bg, '", grid=', grid, ')', sep="")
         doItAndPrint(command)
         assign(".rgl", TRUE, envir=.GlobalEnv)
         tkfocus(.commander)
@@ -1574,6 +1577,7 @@ Scatter3D <- function(){
     tkgrid(xBox, xScroll, sticky="nw")
     tkgrid(yFrame, tklabel(variablesFrame, text="    "), xFrame, sticky="nw")
     tkgrid(variablesFrame, sticky="w")   
+    tkgrid(tklabel(surfacesFrame, text="Show surface grid lines"), gridLinesCheckBox, sticky="w")
     tkgrid(tklabel(surfacesFrame, text="Surfaces to Fit", fg="blue"), sticky="w")
     tkgrid(tklabel(surfacesFrame, text="Linear least-squares"), linearLSCheckBox, sticky="w")
     tkgrid(tklabel(surfacesFrame, text="Quadratic least-squares"), quadLSCheckBox, sticky="w")
