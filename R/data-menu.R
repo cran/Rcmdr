@@ -1,36 +1,25 @@
-# last modified 21 May 2004 by J. Fox
+# last modified 1 Aug 2004 by J. Fox
 
 # Data menu dialogs
 
 newDataSet <- function() {
-    checkReplace <- function(name){
-        tkmessageBox(message=paste("Data set", name, "already exists.\nOverwrite data set?"),
-            icon="warning", type="yesno", default="no")
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "New Data Set")
+    initializeDialog(title="New Data Set")
     dsname <- tclVar("Dataset")
     entryDsname <- tkentry(top, width="20", textvariable=dsname)
     onOK <- function(){
         dsnameValue <- trim.blanks(tclvalue(dsname))
-        if (dsnameValue == ""){
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            tkmessageBox(message=paste("You must enter the name of a data set."),
-                icon="error", type="ok", default="ok")
-                newDataSet()
-                return()
-                }     
-        if (!is.valid.name(dsnameValue)){
-            tkmessageBox(message=paste('"', dsnameValue, '" is not a valid name.', 
-                sep=""), icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            newDataSet()
+        if (dsnameValue == "") {
+            errorCondition(recall=newDataSet, 
+                message="You must enter the name of a data set.")  
+            return()
+            }  
+        if (!is.valid.name(dsnameValue)) {
+            errorCondition(recall=newDataSet,
+                message=paste('"', dsnameValue, '" is not a valid name.', sep=""))
             return()
             }
         if (is.element(dsnameValue, listDataSets())) {
-            if ("no" == tclvalue(checkReplace(dsnameValue))){
+            if ("no" == tclvalue(checkReplace(dsnameValue, "Data set"))){
                 if (.grab.focus) tkgrab.release(top)
                 tkdestroy(top)
                 newDataSet()
@@ -45,34 +34,11 @@ newDataSet <- function() {
         tkdestroy(top)
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12" ,command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(edit.data.frame)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="edit.data.frame")
     tkgrid(tklabel(top, text="Enter name for data set:"), entryDsname, sticky="e")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="    "), helpButton, sticky="w")
     tkgrid(buttonsFrame, columnspan="2", sticky="w")
     tkgrid.configure(entryDsname, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")    
-    for (row in 0:1) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(entryDsname, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(entryDsname)
-    tkwait.window(top)
+    dialogSuffix(rows=2, columns=2, focus=entryDsname)
     }
 
 selectActiveDataSet <- function(){
@@ -83,83 +49,34 @@ selectActiveDataSet <- function(){
         tkfocus(.commander)
         return()
         }
-    top <- tktoplevel()
-    tkwm.title(top, "Select Data Set")
-    dataSetsFrame <- tkframe(top)
-    dataSetsBox <- tklistbox(dataSetsFrame, height=min(4, length(dataSets)),
-        selectmode="single", background="white")
-    dataSetsScroll <- tkscrollbar(dataSetsFrame, repeatinterval=5, 
-        command=function(...) tkyview(dataSetsBox, ...))
-    tkconfigure(dataSetsBox, yscrollcommand=function(...) tkset(dataSetsScroll, ...))
-    for (ds in dataSets) tkinsert(dataSetsBox, "end", ds)
-    tkselection.set(dataSetsBox, if (is.null(.activeDataSet)) 0 else which(.activeDataSet == dataSets) - 1)
+    initializeDialog(title="Select Data Set")   
+    dataSetsBox <- variableListBox(top, dataSets, title="Data Sets (pick one)", 
+        initialSelection=if (is.null(.activeDataSet)) NULL else which(.activeDataSet == dataSets) - 1)
     onOK <- function(){
-        activeDataSet(dataSets[as.numeric(tkcurselection(dataSetsBox)) + 1])
+        activeDataSet(getSelection(dataSetsBox))
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }  
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(attach)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
-    tkgrid(tklabel(top, text="Data Sets (pick one)"), sticky="w")
-    tkgrid(dataSetsBox, dataSetsScroll, sticky="nw")
-    tkgrid(dataSetsFrame, sticky="w")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, tklabel(top, text="    "), helpButton, sticky="w")
-    for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkgrid.configure(dataSetsScroll, sticky="ns")
-    tkgrid.configure(helpButton, sticky="e")
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkbind(dataSetsBox, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(top)
-    tkwait.window(top)
+    OKCancelHelp(helpSubject="attach")
+    tkgrid(getFrame(dataSetsBox), sticky="nw")
+    tkgrid(buttonsFrame, sticky="w")
+    dialogSuffix(rows=2, columns=1)
     }
     
 listDataSetsInPackages <- function() doItAndPrint("data()")
 
 Recode <- function(){
-    checkReplace <- function(name){
-        tkmessageBox(message=paste("Variable", name, "already exists.\nOverwrite variable?"),
-            icon="warning", type="yesno", default="no")
-        }
     processRecode <- function(recode){
         parts <- strsplit(recode, "=")[[1]]
         if (length(grep(",", parts[1])) > 0) paste("c(", parts[1], ") = ", parts[2], sep="")
             else paste(parts, collapse="=")
         }
+    if (!checkActiveDataSet()) return(invisible())
     dataSet <- activeDataSet()
-    if (dataSet == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Recode Variable")
+    initializeDialog(title="Recode Variable")
+    variablesBox <- variableListBox(top, .variables, title="Variable to recode (pick one)")
     variablesFrame <- tkframe(top)
-    variablesListFrame <- tkframe(variablesFrame)
-    variablesBox <- tklistbox(variablesListFrame, height=min(4, length(.variables)),
-        selectmode="single", background="white", exportselection="FALSE")
-    variablesScroll <- tkscrollbar(variablesListFrame, repeatinterval=5, 
-        command=function(...) tkyview(variablesBox, ...))
-    tkconfigure(variablesBox, yscrollcommand=function(...) tkset(variablesScroll, ...))
-    for (variable in .variables) tkinsert(variablesBox, "end", variable)
-    tkselection.set(variablesBox, 0)
     newVariableName <- tclVar("variable")
     newVariable <- tkentry(variablesFrame, width="20", textvariable=newVariableName)
     recodesFrame <- tkframe(top)
@@ -175,33 +92,28 @@ Recode <- function(){
     asFactorVariable <- tclVar("1")
     asFactorCheckBox <- tkcheckbutton(asFactorFrame, variable=asFactorVariable)
     onOK <- function(){
-        variable <- as.character(tkget(variablesBox, "active"))
+        variable <- getSelection(variablesBox)
+        if (length(variable) == 0) {
+            errorCondition(recall=Recode, message="You must select a variable.")
+            return()
+            }
         newVar <- trim.blanks(tclvalue(newVariableName))
         if (!is.valid.name(newVar)){
-            tkmessageBox(message=paste('"', newVar, '" is not a valid name.', 
-                sep=""), icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            Recode()
+            errorCondition(recall=Recode,
+                message=paste('"', newVar, '" is not a valid name.', sep=""))
             return()
             }
         asFactor <- tclvalue(asFactorVariable) == "1"
         recode.directives <- gsub("\n", "; ", tclvalue(tkget(recodes, "1.0", "end")))
         check.empty <- gsub(";", "", gsub(" ", "", recode.directives))
         if ("" == check.empty) {
-            tkmessageBox(message="No recode directives specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            Recode()
+            errorCondition(recall=Recode,
+                message="No recode directives specified.")
             return()
             }
         if (0 != length(grep("'", recode.directives))) {
-            tkmessageBox(message='Use only double-quotes (" ") in recode directives', 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            Recode()
+            errorCondition(recall=Recode,
+                message='Use only double-quotes (" ") in recode directives')
             return()
             }
         if (is.element(newVar, .variables)) {
@@ -219,28 +131,12 @@ Recode <- function(){
         cmd <- paste("recode(", dataSet,"$",variable, ", '", recode.directives, 
             "', as.factor.result=", asFactor, ")", sep="")
         logger(paste(dataSet,"$",newVar, " <- ", cmd, sep=""))
-#        justDoIt(paste(dataSet,"$",newVar, " <<- ", cmd, sep=""))
         justDoIt(paste(dataSet,"$",newVar, " <- ", cmd, sep=""))
         activeDataSet(dataSet)
         tkfocus(.commander)
         }
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    OKCancelFrame <- tkframe(top)
-    OKbutton <- tkbutton(OKCancelFrame, text="OK", fg="darkgreen", width="12",command=onOK)
-    cancelButton <- tkbutton(OKCancelFrame, text="Cancel", fg="red", width="12",command=onCancel)    
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(Recode)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)       
-    tkgrid(tklabel(top, text="Variable to recode (pick one)"), 
-        tklabel(top, text="Recode directives"), sticky="w")
-    tkgrid(variablesBox, variablesScroll, sticky="nw")
-    tkgrid(variablesListFrame, sticky="nw")
+    OKCancelHelp(helpSubject="Recode")    
+    tkgrid(getFrame(variablesBox), sticky="nw")
     tkgrid(tklabel(variablesFrame, text="New variable name"), sticky="w")
     tkgrid(newVariable, sticky="w")
     tkgrid(recodes, recodesYscroll, sticky="nw")
@@ -249,43 +145,19 @@ Recode <- function(){
     tkgrid(tklabel(asFactorFrame, text="Make new variable a factor"), asFactorCheckBox, 
         sticky="w")
     tkgrid(asFactorFrame, sticky="w")
-    tkgrid(OKbutton, cancelButton, sticky="w") 
-    tkgrid(OKCancelFrame, helpButton, sticky="w")
-    tkgrid.configure(variablesScroll, sticky="ns")
+    tkgrid(buttonsFrame, sticky="w", columnspan=2)
     tkgrid.configure(recodesXscroll, sticky="ew")
     tkgrid.configure(recodesYscroll, sticky="ns")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(recodes)
-    tkwait.window(top)             
+    dialogSuffix(rows=4, columns=2, bindReturn=FALSE)        
     }
 
 Compute <- function(){
-    checkReplace <- function(name){
-        tkmessageBox(message=paste("Variable", name, "already exists.\nOverwrite variable?"),
-            icon="warning", type="yesno", default="no")
-        }
+    if (!checkActiveDataSet()) return(invisible())
     dataSet <- activeDataSet()
-    if (dataSet == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Compute New Variable")
+    initializeDialog(title="Compute New Variable")
+    variablesBox <- variableListBox(top, .variables, 
+        title="Current variables (list only)", bg="gray", selectmode="browse")
     variablesFrame <- tkframe(top)
-    variablesListFrame <- tkframe(variablesFrame)
-    variablesBox <- tklistbox(variablesListFrame, height=min(4, length(.variables)),
-        selectmode="browse", background="white")
-    variablesScroll <- tkscrollbar(variablesListFrame, repeatinterval=5, 
-        command=function(...) tkyview(variablesBox, ...))
-    tkconfigure(variablesBox, yscrollcommand=function(...) tkset(variablesScroll, ...))
-    for (variable in .variables) tkinsert(variablesBox, "end", variable)
     newVariableName <- tclVar("variable")
     newVariable <- tkentry(variablesFrame, width="20", textvariable=newVariableName)
     computeFrame <- tkframe(top)
@@ -297,25 +169,19 @@ Compute <- function(){
     onOK <- function(){
         newVar <- trim.blanks(tclvalue(newVariableName))
         if (!is.valid.name(newVar)){
-            tkmessageBox(message=paste('"', newVar, '" is not a valid name.', 
-                sep=""), icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            Compute()
+            errorCondition(recall=Compute,
+                message=paste('"', newVar, '" is not a valid name.', sep=""))
             return()
             }
         express <- tclvalue(computeVar)
         check.empty <- gsub(";", "", gsub(" ", "", express))
         if ("" == check.empty) {
-            tkmessageBox(message="No expression specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            Compute()
+            errorCondition(recall=Compute,
+                message="No expression specified.")
             return()
             }
         if (is.element(newVar, .variables)) {
-            if ("no" == tclvalue(checkReplace(newVar))){
+            if ("no" == tclvalue(checkReplace(newVar, "Variable"))){
                 if (.grab.focus) tkgrab.release(top)
                 tkdestroy(top)
                 Compute()
@@ -325,67 +191,36 @@ Compute <- function(){
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         logger(paste(dataSet,"$",newVar, " <- ", express, sep=""))
-#        justDoIt(paste(dataSet,"$",newVar, " <<- with(", .activeDataSet,
         justDoIt(paste(dataSet,"$",newVar, " <- with(", .activeDataSet,
             " ,", express, ")"))
         activeDataSet(dataSet)
         tkfocus(.commander)
         }
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    OKCancelFrame <- tkframe(top)
-    OKbutton <- tkbutton(OKCancelFrame, text="OK", fg="darkgreen", width="12", command=onOK)
-    cancelButton <- tkbutton(OKCancelFrame, text="Cancel", fg="red", width="12",command=onCancel)  
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help("Compute")
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)         
-    tkgrid(tklabel(variablesFrame, text="Current variables (list only)"), sticky="w")
-    tkgrid(variablesBox, variablesScroll, sticky="w")
-    tkgrid(variablesListFrame, sticky="w")
+    OKCancelHelp(helpSubject="Compute")
+    tkgrid(getFrame(variablesBox), sticky="nw")       
     tkgrid(tklabel(variablesFrame, text="New variable name"), sticky="w")
     tkgrid(newVariable, sticky="w")
     tkgrid(tklabel(computeFrame, text="Expression to compute"), sticky="w")
     tkgrid(compute, sticky="w")
     tkgrid(computeXscroll, sticky="ew")
     tkgrid(variablesFrame, computeFrame, sticky="nw")
-    tkgrid(OKbutton, cancelButton, sticky="w") 
-    tkgrid(OKCancelFrame, helpButton, sticky="w")
-    tkgrid.configure(variablesScroll, sticky="ns")
-    tkgrid.configure(helpButton, sticky="e") 
-    for (row in 0:1) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)   
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(compute)
-    tkwait.window(top)
+    tkgrid(buttonsFrame, sticky="w", columnspan=2)
+    dialogSuffix(rows=3, columns=2)
     }
 
 deleteVariable <- function(){
+    if (!checkActiveDataSet()) return(invisible())
     dataSet <- activeDataSet()
-    if (dataSet == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Delete Variables")
-    variablesListFrame <- tkframe(top)
-    variablesBox <- tklistbox(variablesListFrame, height=min(4, length(.variables)),
-        selectmode="multiple", background="white")
-    variablesScroll <- tkscrollbar(variablesListFrame, repeatinterval=5, 
-        command=function(...) tkyview(variablesBox, ...))
-    tkconfigure(variablesBox, yscrollcommand=function(...) tkset(variablesScroll, ...))
-    for (variable in .variables) tkinsert(variablesBox, "end", variable)
+    initializeDialog(title="Delete Variables")
+    variablesBox <- variableListBox(top, .variables,
+        title="Variable(s) to delete (pick one or more)", selectmode="multiple",
+        initialSelection=NULL)
     onOK <- function(){
-        variables <- .variables[as.numeric(tkcurselection(variablesBox)) + 1]
+        variables <- getSelection(variablesBox)
+        if (length(variables) == 0) {
+            errorCondition(recall=deleteVariable, message="You must select one or more variables.")
+            return()
+            }
         if (length(variables) == 1){
             response <- tclvalue(tkmessageBox(message=paste("Delete ", variables,
                 "?\nPlease confirm.", sep=""), icon="warning", type="okcancel", default="cancel"))
@@ -404,7 +239,6 @@ deleteVariable <- function(){
                 }
             }  
         for (variable in variables){              
-#            eval(parse(text=paste(dataSet, "$", variable, "<<- NULL", sep="")), envir=.GlobalEnv)
             eval(parse(text=paste(dataSet, "$", variable, "<- NULL", sep="")), envir=.GlobalEnv)
             logger(paste(dataSet, "$", variable, " <- NULL", sep=""))
             }
@@ -413,89 +247,50 @@ deleteVariable <- function(){
         tkfocus(.commander)
         tkdestroy(top)  
         }
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12",command=onOK)
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)    
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help("NULL")
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)       
-    tkgrid(tklabel(top, text="Variable(s) to delete (pick one or more)"), sticky="w")
-    tkgrid(variablesBox, variablesScroll, sticky="nw")
-    tkgrid(variablesListFrame, sticky="nw")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="    "), helpButton, sticky="w")
+    OKCancelHelp(helpSubject="NULL")  
+    tkgrid(getFrame(variablesBox), sticky="nw")
     tkgrid(buttonsFrame, sticky="w")
-    tkgrid.configure(variablesScroll, sticky="ns")
-    for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)   
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(top)
-    tkwait.window(top)
+    dialogSuffix(rows=2, columns=1)
     }
 
 readDataSet <- function() {
-    checkReplace <- function(name){
-        tkmessageBox(message=paste("Data set", name, "already exists.\nOverwrite data set?"),
-            icon="warning", type="yesno", default="no")
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Read Data From Text File")
+    initializeDialog(title="Read Data From Text File")
     optionsFrame <- tkframe(top)
     dsname <- tclVar("Dataset")
     entryDsname <- tkentry(optionsFrame, width="20", textvariable=dsname)
     headerVariable <- tclVar("1")
     headerCheckBox <- tkcheckbutton(optionsFrame, variable=headerVariable)
-    delimiterFrame <- tkframe(optionsFrame)
-    delimiterVariable <- tclVar("whitespace")
-    whitespaceButton <- tkradiobutton(delimiterFrame, variable=delimiterVariable, value="whitespace")
-    commasButton <- tkradiobutton(delimiterFrame, variable=delimiterVariable, value="commas")
+    radioButtons(optionsFrame, "delimiter", buttons=c("whitespace", "commas", "tabs"),
+        labels=c("White space", "Commas", "Tabs"), title="Field Separator")
     otherButton <- tkradiobutton(delimiterFrame, variable=delimiterVariable, value="other")
     otherVariable <- tclVar("")
     otherEntry <- tkentry(delimiterFrame, width="4", textvariable=otherVariable) 
-    decimalFrame <- tkframe(optionsFrame)
-    decimalVariable <- tclVar("period")
-    periodButton <- tkradiobutton(decimalFrame, variable=decimalVariable, value="period")
-    commaButton <- tkradiobutton(decimalFrame, variable=decimalVariable, value="comma")  
+    radioButtons(optionsFrame, "decimal", buttons=c("period", "comma"),
+        labels=c("Period [.]", "Comma [,]"), title="Decimal-Point Character")
     missingVariable <- tclVar("NA")
     missingEntry <- tkentry(optionsFrame, width="8", textvariable=missingVariable)    
     onOK <- function(){
         dsnameValue <- trim.blanks(tclvalue(dsname))
         if (dsnameValue == ""){
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            tkmessageBox(message=paste("You must enter a name for the data set."),
-                icon="error", type="ok", default="ok")
-                readDataSet()
+            errorCondition(recall=readDataSet,
+                message="You must enter a name for the data set.")
                 return()
                 }
         if (!is.valid.name(dsnameValue)){
-            tkmessageBox(message=paste('"', dsnameValue, '" is not a valid name.', 
-                sep=""), icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            readDataSet()
+            errorCondition(recall=readDataSet,
+                message=paste('"', dsnameValue, '" is not a valid name.', sep=""))
             return()
             }
         if (is.element(dsnameValue, listDataSets())) {
-            if ("no" == tclvalue(checkReplace(dsnameValue))){
+            if ("no" == tclvalue(checkReplace(dsnameValue, "Data set"))){
                 if (.grab.focus) tkgrab.release(top)
                 tkdestroy(top)
                 readDataSet()
                 return()
                 }
             }
-        file <- tclvalue(tkgetOpenFile(filetypes='{"Text Files" {".txt" ".TXT" ".dat" ".DAT" ".csv" ".CSV"}} {"All Files" {"*"}}'))
+        file <- tclvalue(tkgetOpenFile(filetypes=
+            '{"Text Files" {".txt" ".TXT" ".dat" ".DAT" ".csv" ".CSV"}} {"All Files" {"*"}}'))
         if (file == "") {
             if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
@@ -505,6 +300,7 @@ readDataSet <- function() {
         delimiter <- tclvalue(delimiterVariable)
         del <- if (delimiter == "whitespace") ""
             else if (delimiter == "commas") ","
+            else if (delimiter == "tabs") "\\t"
             else tclvalue(otherVariable)
         miss <- tclvalue(missingVariable)
         dec <- if (tclvalue(decimalVariable) == "period") "." else ","
@@ -517,71 +313,31 @@ readDataSet <- function() {
         tkdestroy(top)
         tkfocus(.commander)
         }
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }    
-    buttonsFrame <- tkframe(top)  
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", default="active", command=onOK)
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(read.table)
-        }
-    helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="read.table")
     tkgrid(tklabel(optionsFrame, text="Enter name for data set:"), entryDsname, sticky="w")
     tkgrid(tklabel(optionsFrame, text="Variable names in file:"), headerCheckBox, sticky="w")
     tkgrid(tklabel(optionsFrame, text="Missing data indicator:"), missingEntry, sticky="w")
-    tkgrid(tklabel(delimiterFrame, text="Field Separator", fg="blue"), sticky="w")
-    tkgrid(tklabel(delimiterFrame, text="White space"), whitespaceButton, sticky="w")
-    tkgrid(tklabel(delimiterFrame, text="Commas"), commasButton, sticky="w")
     tkgrid(tklabel(delimiterFrame, text="Other"), otherButton, 
         tklabel(delimiterFrame, text="  Specify:"), otherEntry, sticky="w")
     tkgrid(delimiterFrame, sticky="w", columnspan=2)
-    tkgrid(tklabel(decimalFrame, text="Decimal-Point Character", fg="blue"), sticky="w", columnspan=2)
-    tkgrid(tklabel(decimalFrame, text="Period [.]"), periodButton, sticky="w")
-    tkgrid(tklabel(decimalFrame, text="Comma [,]"), commaButton, sticky="w")
     tkgrid(decimalFrame, sticky="w")
     tkgrid(optionsFrame, sticky="w")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="    "), helpButton, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")   
-    for (row in 0:3) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK) 
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(entryDsname)
-    tkwait.window(top)
+    dialogSuffix(rows=4, columns=1)
     }
     
 readDataFromPackage <- function() {
-    checkReplace <- function(name){
-        tkmessageBox(message=paste("Data set", name, "already exists.\nOverwrite data set?"),
-            icon="warning", type="yesno", default="no")
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Read Data From Package")
+    initializeDialog(title="Read Data From Package")
     dsname <- tclVar("")
     enterFrame <- tkframe(top)
-    entryDsname <- tkentry(top, width="20", textvariable=dsname)
+    entryDsname <- tkentry(enterFrame, width="20", textvariable=dsname)
     packages <- .packages()
-    packagesFrame <- tkframe(top)
-    packagesBox <- tklistbox(packagesFrame, height=min(4, length(packages)),
-        selectmode="single", background="white", exportselection="FALSE")
-    packagesScroll <- tkscrollbar(packagesFrame, repeatinterval=5, 
-        command=function(...) tkyview(packagesBox, ...))
-    tkconfigure(packagesBox, yscrollcommand=function(...) tkset(packagesScroll, ...))
-    for (pack in packages) tkinsert(packagesBox, "end", pack)
+    packagesBox <- variableListBox(top, packages, title="Select package:")
     onOK <- function(){
         dsnameValue <- tclvalue(dsname)
         if (dsnameValue != ""){
             if (is.element(dsnameValue, listDataSets())) {
-                if ("no" == tclvalue(checkReplace(dsnameValue))){
+                if ("no" == tclvalue(checkReplace(dsnameValue, "Data set"))){
                     if (.grab.focus) tkgrab.release(top)
                     tkdestroy(top)
                     readDataFromPackage()
@@ -593,11 +349,8 @@ readDataFromPackage <- function() {
                 envir=.GlobalEnv), silent=TRUE)
             options(save.options)
             if (class(check) == "try-error"){
-                tkmessageBox(message=paste("Data set", dsnameValue, "does not exist."),
-                    icon="error", type="ok")
-                if (.grab.focus) tkgrab.release(top)
-                tkdestroy(top)
-                readDataFromPackage()
+                errorCondition(recall=readDataFromPackage,
+                    message=paste("Data set", dsnameValue, "does not exist."))
                 return()
                 }
             activeDataSet(dsnameValue)
@@ -606,34 +359,35 @@ readDataFromPackage <- function() {
             tkfocus(.commander)
             }
         else{
-            packageName <- as.character(tkget(packagesBox, "active")) 
+            packageName <- getSelection(packagesBox)
+            if (length(packageName) == 0) {
+                errorCondition(recall=readDataFromPackage, message="You must select a package.")
+                return()
+                }
             save.options <- options(warn=-1)
             dataSets <- data(package=parse(text=packageName))$results[,3] 
             options(save.options)
+            if (.grab.focus) tkgrab.release(top)
+            tkdestroy(top)
             if (length(dataSets) == 0){
-                if (.grab.focus) tkgrab.release(top)
-                tkdestroy(top)
-                tkmessageBox(message=paste("There are no data sets in package", packageName),
-                    icon="error", type="ok", default="ok")
-                    readDataFromPackage()
+                errorCondition(recall=readDataFromPackage,
+                    message=paste("There are no data sets in package", packageName))
                     return()
                 }
-            subdialog <- tktoplevel()
-            tkwm.title(subdialog, "Select Data Set")
-            dsFrame <- tkframe(subdialog)
-            dsBox <- tklistbox(dsFrame, height=min(4, length(dataSets)),
-                selectmode="single", background="white", exportselection="FALSE")
-            dsScroll <- tkscrollbar(dsFrame, repeatinterval=5, 
-                command=function(...) tkyview(dsBox, ...))
-            tkconfigure(dsBox, yscrollcommand=function(...) tkset(dsScroll, ...))
-            for (ds in dataSets) tkinsert(dsBox, "end", ds)
+            initializeDialog(subdialog, title="Select Data Set")
+            dsBox <- variableListBox(subdialog, dataSets, title="Select data set")
             onOKsub <- function() {
-                dsnameValue <- as.character(tkget(dsBox, "active"))
+                dsnameValue <- getSelection(dsBox)
+                if (length(dsnameValue) == 0) {
+                    if (.grab.focus) tkgrab.release(subdialog)
+                    tkdestroy(subdialog)
+                    errorCondition(recall=readDataFromPackage, message="You must select a data set")
+                    return()
+                    }
                 if (is.element(dsnameValue, listDataSets())) {
-                    if ("no" == tclvalue(checkReplace(dsnameValue))){
+                    if ("no" == tclvalue(checkReplace(dsnameValue, "Data set"))){
                         if (.grab.focus) tkgrab.release(subdialog)
                         tkdestroy(subdialog)
-                        tkdestroy(top)
                         readDataFromPackage()
                         return()
                         }
@@ -646,82 +400,25 @@ readDataFromPackage <- function() {
                 tkfocus(.commander)
                 tkdestroy(subdialog)
                 }
-            onCancelSub <- function() {
-                if (.grab.focus) tkgrab.release(subdialog)  
-                tkfocus(.commander)
-                tkdestroy(subdialog)
-                }
-            subButtonFrame <- tkframe(subdialog)
-            OKSubButton <- tkbutton(subButtonFrame, text="OK", fg="darkgreen", width="12", command=onOKsub, default="active")
-            cancelSubButton <- tkbutton(subButtonFrame, text="Cancel", fg="red", width="12",command=onCancelSub)
-            labelFrame <- tkframe(subdialog)
-            tkgrid(dsBox, dsScroll, sticky="nw")
-            tkgrid(tklabel(labelFrame, text="Package: "), tklabel(labelFrame, text=packageName, fg="red"),
-                sticky="w")
-            tkgrid(labelFrame, sticky="w")
-            tkgrid(tklabel(subdialog, text="Select data set"), sticky="w")
-            tkgrid(dsFrame, sticky="w")
-            tkgrid(OKSubButton, cancelSubButton, sticky="w")
-            tkgrid(subButtonFrame, sticky="w")
-            tkgrid.configure(dsScroll, sticky="ns")
-            for (row in 0:3) tkgrid.rowconfigure(subdialog, row, weight=0)
-            for (col in 0:1) tkgrid.columnconfigure(subdialog, col, weight=0)
-            .Tcl("update idletasks")
-            tkwm.resizable(subdialog, 0, 0)
-            tkbind(subdialog, "<Return>", onOKsub)
-            if (.double.click) tkbind(subdialog, "<Double-ButtonPress-1>", onOKsub)
-            tkbind(dsBox, "<Double-ButtonPress-1>", onOKsub)
-            tkselection.set(dsBox, 0)
-            if (.grab.focus) tkgrab.release(top)
-            tkwm.deiconify(subdialog)
-            if (.grab.focus) tkgrab.set(subdialog)
-            tkfocus(subdialog)
-            tkwait.window(subdialog)
-            tkdestroy(top)           
+            subOKCancelHelp()         
+            tkgrid(getFrame(dsBox), sticky="nw")
+            tkgrid(subButtonsFrame, sticky="w")
+            tkbind(dsBox$listbox, "<Double-ButtonPress-1>", onOKsub)
+            dialogSuffix(subdialog, onOK=onOKsub, rows=4, columns=2, focus=subdialog)
             }
         }
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        } 
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", default="active", command=onOK)
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(data)
-        }
-    helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
-    tkgrid(packagesBox, packagesScroll, sticky="nw")
-    tkgrid(tklabel(top, text="Enter name of data set:"), entryDsname, sticky="w")
+    OKCancelHelp(helpSubject="data")
+    tkgrid(tklabel(enterFrame, text="Enter name of data set:  ", fg="blue"), entryDsname, sticky="w")
+    tkgrid(enterFrame, sticky="w")
     tkgrid(tklabel(top, text="OR", fg="red"), sticky="w")
-    tkgrid(tklabel(top, text="Select package:"), packagesFrame, sticky="nw")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="    "), helpButton, sticky="w")
+    tkgrid(getFrame(packagesBox), sticky="nw")
+    tkbind(packagesBox$listbox, "<Double-ButtonPress-1>", onOK)
     tkgrid(buttonsFrame, columnspan="2", sticky="w")
-    tkgrid.configure(packagesScroll, sticky="ns")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:3) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(entryDsname, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkbind(packagesBox, "<Double-ButtonPress-1>", onOK)
-    tkselection.set(packagesBox, 0)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(entryDsname)
-    tkwait.window(top)
+    dialogSuffix(rows=4, columns=1, focus=entryDsname)
     }
-
+    
 importSPSS <- function() {
-    checkReplace <- function(name){
-        tkmessageBox(message=paste("Data set", name, "already exists.\nOverwrite data set?"),
-            icon="warning", type="yesno", default="no")
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Import SPSS Data Set")
+    initializeDialog(title="Import SPSS Data Set")
     dsname <- tclVar("Dataset")
     entryDsname <- tkentry(top, width="20", textvariable=dsname)
     asFactor <- tclVar("1")
@@ -731,24 +428,17 @@ importSPSS <- function() {
     onOK <- function(){
         dsnameValue <- trim.blanks(tclvalue(dsname))
         if (dsnameValue == ""){
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            tkmessageBox(message=paste("You must enter the name of a data set."),
-                icon="error", type="ok", default="ok")
-                importSPSS()
+            errorCondition(recall=importSPSS,
+                message="You must enter the name of a data set.")
                 return()
                 }
         if (!is.valid.name(dsnameValue)){
-            tkmessageBox(message=paste('"', dsnameValue, '" is not a valid name.', 
-                sep=""), icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            importSPSS()
+            errorCondition(recall=importSPSS,
+                message=paste('"', dsnameValue, '" is not a valid name.', sep=""))
             return()
-            }
-                     
+            }                     
         if (is.element(dsnameValue, listDataSets())) {
-            if ("no" == tclvalue(checkReplace(dsnameValue))){
+            if ("no" == tclvalue(checkReplace(dsnameValue, "Data set"))){
                 if (.grab.focus) tkgrab.release(top)
                 tkdestroy(top)
                 importSPSS()
@@ -773,71 +463,37 @@ importSPSS <- function() {
         tkdestroy(top)
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", default="active", command=onOK)
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(read.spss)
-        }
-    helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="read.spss")
     tkgrid(tklabel(top, text="Enter name for data set:"), entryDsname, sticky="w")
     tkgrid(tklabel(top, text="Convert value labels\nto factor levels", justify="left"), 
         asFactorCheckBox, sticky="w")
     tkgrid(tklabel(top, text="Maximum number\nof value labels\nfor factor conversion", justify="left"), 
         entryMaxLevels, sticky="w")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="    "), helpButton, sticky="w")
     tkgrid(buttonsFrame, columnspan="2", sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
     tkgrid.configure(entryDsname, sticky="w")
     tkgrid.configure(asFactorCheckBox, sticky="w")
     tkgrid.configure(entryMaxLevels, sticky="w")
-    for (row in 0:3) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(entryDsname, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(entryDsname)
-    tkwait.window(top)
+    dialogSuffix(rows=4, columns=2, focus=entryDsname)
     }
 
 importMinitab <- function() {
-    checkReplace <- function(name){
-        tkmessageBox(message=paste("Data set", name, "already exists.\nOverwrite data set?"),
-            icon="warning", type="yesno", default="no")
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Import Minitab Data Set")
+    initializeDialog(title="Import Minitab Data Set")
     dsname <- tclVar("Dataset")
     entryDsname <- tkentry(top, width="20", textvariable=dsname)
     onOK <- function(){
         dsnameValue <- trim.blanks(tclvalue(dsname))
         if (dsnameValue == ""){
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            tkmessageBox(message=paste("You must enter the name of a data set."),
-                icon="error", type="ok", default="ok")
-                importMinitab()
+            errorCondition(recall=importMinitab,
+                message="You must enter the name of a data set.")
                 return()
                 }     
         if (!is.valid.name(dsnameValue)){
-            tkmessageBox(message=paste('"', dsnameValue, '" is not a valid name.', 
-                sep=""), icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            importMinitab()
+            errorCondition(recall=importMinitab,
+                message=paste('"', dsnameValue, '" is not a valid name.', sep=""))
             return()
             }
         if (is.element(dsnameValue, listDataSets())) {
-            if ("no" == tclvalue(checkReplace(dsnameValue))){
+            if ("no" == tclvalue(checkReplace(dsnameValue, "Data set"))){
                 if (.grab.focus) tkgrab.release(top)
                 tkdestroy(top)
                 importMinitab()
@@ -871,76 +527,33 @@ importMinitab <- function() {
         tkdestroy(top)
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12" ,command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(read.mtp)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="read.mtp")
     tkgrid(tklabel(top, text="Enter name for data set:"), entryDsname, sticky="e")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="    "), helpButton, sticky="w")
     tkgrid(buttonsFrame, columnspan="2", sticky="w")
     tkgrid.configure(entryDsname, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")    
-    for (row in 0:1) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(entryDsname, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(entryDsname)
-    tkwait.window(top)
+    dialogSuffix(rows=2, columns=2, focus=entryDsname)
     }
 
 numericToFactor <- function(){
-    checkReplace <- function(name){
-        tkmessageBox(message=paste("Variable", name, "already exists.\nOverwrite variable?"),
-            icon="warning", type="yesno", default="no")
-        }
-    if (activeDataSet() == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    if (length(.numeric) == 0){
-        tkmessageBox(message="There no numeric variables in the active data set.", 
-                icon="error", type="ok")
-        tkfocus(.commander)
-        return()
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Convert Numeric Variable to Factor")
-    variableFrame <- tkframe(top)
-    variableBox <- tklistbox(variableFrame, height=min(4, length(.numeric)),
-        selectmode="single", background="white", exportselection="FALSE")
-    variableScroll <- tkscrollbar(variableFrame, repeatinterval=5, 
-        command=function(...) tkyview(variableBox, ...))
-    tkconfigure(variableBox, yscrollcommand=function(...) tkset(variableScroll, ...))
-    for (var in .numeric) tkinsert(variableBox, "end", var)
-    levelsFrame <- tkframe(top)
-    levelsVariable <- tclVar("names")
-    numbersButton <- tkradiobutton(levelsFrame, variable=levelsVariable, value="numbers")
-    namesButton <- tkradiobutton(levelsFrame, variable=levelsVariable, value="names")
+    if (!checkActiveDataSet()) return()
+    if (!checkNumeric()) return()
+    initializeDialog(title="Convert Numeric Variable to Factor")
+    variableBox <- variableListBox(top, .numeric, title="Variable (pick one)")
+    radioButtons(name="levels", buttons=c("names", "numbers"), 
+        labels=c("Supply level names", "Use numbers"), title="Factor Levels")
     factorName <- tclVar("<same as variable>")
     factorNameField <- tkentry(top, width="20", textvariable=factorName)
     onOK <- function(){
-        variable <- as.character(tkget(variableBox, "active"))
+        variable <- getSelection(variableBox)
+        if (length(variable) == 0) {
+            errorCondition(recall=numericToFactor, message="You must select a variable.")
+            return()
+            }
         name <- trim.blanks(tclvalue(factorName))
         if (name == "<same as variable>") name <- variable
         if (!is.valid.name(name)){
-            tkmessageBox(message=paste('"', name, '" is not a valid name.', 
-                sep=""), icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            numericToFactor()
+            errorCondition(recall=numericToFactor,
+                message=paste('"', name, '" is not a valid name.', sep=""))
             return()
             }
         if (is.element(name, .variables)) {
@@ -957,39 +570,28 @@ numericToFactor <- function(){
                 envir=.GlobalEnv)))
             nvalues <- length(values)
             if (nvalues > 30) {
-                tkmessageBox(message=paste("Number of levels (", nvalues, ") too large.", sep=""),
-                    icon="error", type="ok")
-                if (.grab.focus) tkgrab.release(top)
-                tkdestroy(top)
-                numericToFactor()
+                errorCondition(recall=numericToFactor,
+                    message=paste("Number of levels (", nvalues, ") too large.", sep=""))
                 return()
                 }
-            subdialog <- tktoplevel()
-            tkwm.title(subdialog, "Level Names")
+            initializeDialog(subdialog, title="Level Names")
             names <- rep("", nvalues)
             onOKsub <- function() {
                 for (i in 1:nvalues){
                     names[i] <- eval(parse(text=paste("tclvalue(levelName", i, ")", sep="")))
                     }
                 if (length(unique(names)) != nvalues){
-                    tkmessageBox(message="Levels names are not unique.",
-                        icon="error", type="ok")
-                    if (.grab.focus) tkgrab.release(subdialog)
-                    tkdestroy(subdialog)
-                    numericToFactor()
+                    errorCondition(recall=numericToFactor,
+                        message="Levels names are not unique.")
                     return()
                     }
                 if (any(names == "")){
-                    tkmessageBox(message="A level name is empty.",
-                        icon="error", type="ok")
-                    if (.grab.focus) tkgrab.release(subdialog)
-                    tkdestroy(subdialog)
-                    numericToFactor()
+                    errorCondition(recall=numericToFactor,
+                        message="A level name is empty.")
                     return()
                     }
                 command <- paste("factor(", .activeDataSet, "$", variable,
                     ", labels=c(", paste(paste("'", names, "'", sep=""), collapse=","), "))", sep="")
-#                justDoIt(paste(.activeDataSet, "$", name, " <<- ", command, sep=""))
                 justDoIt(paste(.activeDataSet, "$", name, " <- ", command, sep=""))
                 logger(paste(.activeDataSet,"$", name," <- ", command, sep=""))
                 activeDataSet(.activeDataSet)
@@ -997,13 +599,7 @@ numericToFactor <- function(){
                 tkfocus(.commander)
                 tkdestroy(subdialog)
                 }
-            onCancelSub <- function() {
-                if (.grab.focus) tkgrab.release(subdialog)  
-                tkfocus(.commander)
-                tkdestroy(subdialog)
-                }
-            OKSubButton <- tkbutton(subdialog, text="OK", fg="darkgreen", width="12", command=onOKsub, default="active")
-            cancelSubButton <- tkbutton(subdialog, text="Cancel", fg="red", width="12",command=onCancelSub)
+            subOKCancelHelp()
             tkgrid(tklabel(subdialog, text="Numeric value"), tklabel(subdialog, text="Level name"), sticky="w")
             for (i in 1:nvalues){
                 valVar <- paste("levelName", i, sep="")
@@ -1012,23 +608,13 @@ numericToFactor <- function(){
                     textvariable=eval(parse(text=valVar))))
                 tkgrid(tklabel(subdialog, text=values[i]), eval(parse(text=paste("entry", i, sep=""))), sticky="w")
                 }
-            tkgrid(OKSubButton, cancelSubButton, sticky="w")
-            for (row in 0:(nvalues + 1)) tkgrid.rowconfigure(subdialog, row, weight=0)
-            for (col in 0:1) tkgrid.columnconfigure(subdialog, col, weight=0)
-            .Tcl("update idletasks")
-            tkwm.resizable(subdialog, 0, 0)
-            tkbind(subdialog, "<Return>", onOKsub)
-            if (.double.click) tkbind(subdialog, "<Double-ButtonPress-1>", onOKsub)
+            tkgrid(subButtonsFrame, sticky="w", columnspan=2)
             if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)           
-            tkwm.deiconify(subdialog)
-            if (.grab.focus) tkgrab.set(subdialog)
-            tkfocus(entry1)
-            tkwait.window(subdialog)
+            tkdestroy(top)        
+            dialogSuffix(subdialog, rows=nvalues+2, columns=2, focus=entry1, onOK=onOKsub)   
             }
         else{
             command <- paste("as.factor(", .activeDataSet, "$", variable, ")", sep="")
-#            justDoIt(paste(.activeDataSet, "$", name, " <<- ", command, sep=""))
             justDoIt(paste(.activeDataSet, "$", name, " <- ", command, sep=""))
             logger(paste(.activeDataSet, "$", name," <- ", command, sep=""))
             activeDataSet(.activeDataSet)
@@ -1037,85 +623,145 @@ numericToFactor <- function(){
             tkfocus(.commander)
             }
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(factor)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
-    tkgrid(tklabel(top, text="Variable (pick one)"), 
-        tklabel(top, text="Factor Levels", fg="blue"), sticky="w")
-    tkgrid(variableBox, variableScroll, sticky="nw")
-    tkgrid(tklabel(levelsFrame, text="Supply level names"), namesButton, sticky="w")
-    tkgrid(tklabel(levelsFrame, text="Use numbers"), numbersButton, sticky="w")
-    tkgrid(variableFrame, levelsFrame, sticky="nw")
+    OKCancelHelp(helpSubject="factor")
+    tkgrid(getFrame(variableBox), levelsFrame, sticky="nw")
     tkgrid(tklabel(top, text="Name for factor"), sticky="w")
     tkgrid(factorNameField, sticky="w")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
-    tkgrid.configure(variableScroll, sticky="ns")
+    tkgrid(buttonsFrame, sticky="w", columnspan=2)
     tkgrid.configure(numbersButton, sticky="w")
     tkgrid.configure(namesButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:4) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkselection.set(variableBox, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-#    if (.grab.focus) tkgrab.set(top)   # causes problems ?
-    tkfocus(top)
-    tkwait.window(top)
+    dialogSuffix(rows=4, columns=2, preventGrabFocus=TRUE)
+    }
+
+binVariable <- function(){
+# Author: Dan Putler (revision by J. Fox, 24 July 04)
+    if (!checkActiveDataSet()) return()
+    if (!checkNumeric()) return()
+    env <- environment()
+    initializeDialog(title="Bin a Numeric Variable")
+    variableFrame <- tkframe(top)
+    variableBox <- variableListBox(variableFrame, .numeric, title="Variable to bin (pick one)")
+    newVariableFrame <- tkframe(variableFrame)
+    newVariableName <- tclVar("variable")
+    newVariable <- tkentry(newVariableFrame, width="18", textvariable=newVariableName)
+    binsFrame <- tkframe(top)
+    binsVariable <- tclVar("3")
+    slider <- tkscale(binsFrame, from=2, to=10, showvalue=TRUE, variable=binsVariable,
+        resolution=1, orient="horizontal")
+    optionsFrame <- tkframe(top)
+    radioButtons(optionsFrame, name="levels", buttons=c("specify", "numbers", "ranges"),
+        labels=c("Specify names", "Numbers", "Ranges"), title="Level Names")    
+    radioButtons(optionsFrame, name="method", buttons=c("intervals", "proportions", "natural"),
+        labels=c("Equal-width bins", "Equal-count bins", "Natural breaks\n(from K-means clustering)"),
+        title="Binning Method")
+    onOK <- function(){
+        if (.grab.focus) tkgrab.release(top)
+        levels <- tclvalue(levelsVariable)
+        bins <- as.numeric(tclvalue(binsVariable))
+        varName <- getSelection(variableBox)
+        if (length(varName) == 0){
+            errorCondition(recall=binVariable, message="You must select a variable.")
+            return()
+            }
+        newVar <- tclvalue(newVariableName)
+        if (is.element(newVar, .variables)) {
+                if ("no" == tclvalue(checkReplace(newVar))){
+                    if (.grab.focus) tkgrab.release(top)
+                    tkdestroy(top)
+                    binVariable()
+                    return()
+                    }
+                }
+        if (!is.valid.name(newVar)){
+            errorCondition(message=paste('"', newVar, '" is not a valid name.', sep=""),
+                recall=binVariable)
+            return()
+            }
+        method <- tclvalue(methodVariable)
+        if (levels == "specify"){
+            if (.grab.focus) tkgrab.release(top)
+            initializeDialog(subdialog, title="Bin Names")
+            onOKsub <- function() {
+                level <- character(bins)
+                for (i in 1:bins){
+                    level[i] <- eval(parse(text=paste("tclvalue(levelName", i, ")", sep="")))
+                    }
+                if (length(unique(level)) != length(level)){
+                    errorCondition(window=subdialog, message="Level names must be unique.",
+                        recall=onOK)
+                    return()
+                    }
+                assign("levelNames", level, envir=env)
+                if (.grab.focus) tkgrab.release(subdialog)
+                tkdestroy(subdialog)
+                }
+            subOKCancelHelp()
+            tkgrid(tklabel(subdialog, text="Bin", fg="blue"), 
+                tklabel(subdialog, text="Name", fg="blue"), sticky="w")
+            for (i in 1:bins){
+                valVar <- paste("levelName", i, sep="")
+                assign(valVar, tclVar(i))
+                assign(paste("entry", i, sep=""), tkentry(subdialog, width="20", 
+                    textvariable=eval(parse(text=valVar))))
+                tkgrid(tklabel(subdialog, text=as.character(i)), eval(parse(text=paste("entry", i, sep=""))), sticky="w")
+                }
+            tkgrid(subButtonsFrame, sticky="w", columnspan=2)
+            dialogSuffix(subdialog, focus=entry1, rows=bins+1, columns=2, bindReturn=FALSE)
+            }
+        labels <- if (levels == "numbers") "FALSE"
+            else if (levels == "ranges") "NULL"
+            else {
+                if (!exists("levelNames")){
+                    onCancel()
+                    binVariable()
+                    return()
+                    }
+                paste("c('", paste(levelNames,  collapse="','"), "')", sep="")
+                }
+        if (.grab.focus) tkgrab.release(top)
+        tkdestroy(top)
+        command <- paste(.activeDataSet,"$",newVar, " <- ",
+            "bin.var(", .activeDataSet,"$", varName, ", bins=", bins,
+            ", method=", "'", method, "', labels=", labels, ")", sep="")
+        logger(command)
+        justDoIt(command)
+        activeDataSet(.activeDataSet)
+        tkfocus(.commander)
+        }
+    OKCancelHelp(helpSubject="bin.var")
+    tkgrid(tklabel(newVariableFrame, text="New variable name", fg="blue"), sticky="w") 
+    tkgrid(newVariable, sticky="w")
+    tkgrid(getFrame(variableBox), tklabel(variableFrame, text="    "), newVariableFrame, sticky="nw")
+    tkgrid(variableFrame, sticky="w")
+    tkgrid(tklabel(binsFrame, text="Number of bins:"), slider, sticky="s")
+    tkgrid(binsFrame, sticky="w")
+    tkgrid(levelsFrame, tklabel(optionsFrame, text="    "), methodFrame, sticky="nw")
+    tkgrid(optionsFrame, sticky="w")
+    tkgrid(buttonsFrame, sticky="w")
+    dialogSuffix(rows=4, columns=1)
     }
 
 reorderFactor <- function(){
-    checkReplace <- function(name){
-        tkmessageBox(message=paste("Variable", name, "already exists.\nOverwrite variable?"),
-            icon="warning", type="yesno", default="no")
-        }
-    if (activeDataSet() == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    if (length(.factors) == 0){
-        tkmessageBox(message="There no factors in the active data set.", 
-                icon="error", type="ok")
-        tkfocus(.commander)
-        return()
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Reorder Factor Levels")
-    variableFrame <- tkframe(top)
-    variableBox <- tklistbox(variableFrame, height=min(4, length(.factors)),
-        selectmode="single", background="white", exportselection="FALSE")
-    variableScroll <- tkscrollbar(variableFrame, repeatinterval=5, 
-        command=function(...) tkyview(variableBox, ...))
-    tkconfigure(variableBox, yscrollcommand=function(...) tkset(variableScroll, ...))
-    for (var in .factors) tkinsert(variableBox, "end", var)
+    if (!checkActiveDataSet()) return()
+    if (!checkFactors()) return()
+    initializeDialog(title="Reorder Factor Levels")
+    variableBox <- variableListBox(top, .factors, title="Factor (pick one)")
     orderedFrame <- tkframe(top)
     orderedVariable <- tclVar("0")
     orderedCheckBox <- tkcheckbutton(orderedFrame, variable=orderedVariable)
     factorName <- tclVar("<same as original>")
     factorNameField <- tkentry(top, width="20", textvariable=factorName)
     onOK <- function(){
-        variable <- as.character(tkget(variableBox, "active"))
+        variable <- getSelection(variableBox)
+        if (length(variable) == 0) {
+            errorCondition(recall=reorderFactor, message="You must select a variable.")
+            return()
+            }
         name <- trim.blanks(tclvalue(factorName))
         if (name == "<same as original>") name <- variable
         if (!is.valid.name(name)){
-            tkmessageBox(message=paste('"', name, '" is not a valid name.', 
-                sep=""), icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            reorderFactor()
+            errorCondition(recall=reorderFactor,
+                message=paste('"', name, '" is not a valid name.', sep=""))
             return()
             }
         if (is.element(name, .variables)) {
@@ -1131,26 +777,21 @@ reorderFactor <- function(){
         nvalues <- length(old.levels)
         ordered <- tclvalue(orderedVariable)
         if (nvalues > 30) {
-            tkmessageBox(message=paste("Number of levels (", nvalues, ") too large.", sep=""),
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            reorderFactor()
+            errorCondition(recall=reorderFactor,
+                message=paste("Number of levels (", nvalues, ") too large.", sep=""))
             return()
             }
-        subdialog <- tktoplevel()
-        tkwm.title(subdialog, "Reorder Levels")
+        initializeDialog(subdialog, title="Reorder Levels")
         order <- 1:nvalues
         onOKsub <- function() {
+            if (.grab.focus) tkgrab.release(top)
+            tkdestroy(top)
             for (i in 1:nvalues){
                 order[i] <- as.numeric(eval(parse(text=paste("tclvalue(levelOrder", i, ")", sep=""))))
                 }
             if (any(sort(order) != 1:nvalues)){
-                tkmessageBox(message=paste("Order of levels must include all integers from 1 to ",
-                    nvalues, sep=""), icon="error", type="ok")
-                if (.grab.focus) tkgrab.release(subdialog)
-                tkdestroy(subdialog)
-                reorderFactor()
+                errorCondition(recall=reorderFactor,
+                    message=paste("Order of levels must include all integers from 1 to ", nvalues, sep=""))
                 return()
                 }
             levels <- old.levels[order(order)]
@@ -1158,20 +799,13 @@ reorderFactor <- function(){
             command <- paste("factor(", .activeDataSet, "$", variable,
                 ", levels=c(", paste(paste("'", levels, "'", sep=""), collapse=","), ")",
                 ordered, ")", sep="")
-#            justDoIt(paste(.activeDataSet, "$", name, " <<- ", command, sep=""))
             justDoIt(paste(.activeDataSet, "$", name, " <- ", command, sep=""))
             logger(paste(.activeDataSet,"$", name," <- ", command, sep=""))
             activeDataSet(.activeDataSet)
             if (.grab.focus) tkgrab.release(subdialog)
             tkdestroy(subdialog)
             }
-        onCancelSub <- function() {
-            if (.grab.focus) tkgrab.release(subdialog)  
-            tkfocus(.commander)
-            tkdestroy(subdialog)
-            }
-        OKSubButton <- tkbutton(subdialog, text="OK", fg="darkgreen", width="12", command=onOKsub, default="active")
-        cancelSubButton <- tkbutton(subdialog, text="Cancel", fg="red", width="12",command=onCancelSub)
+        subOKCancelHelp()
         tkgrid(tklabel(subdialog, text="Old Levels", fg="blue"), 
             tklabel(subdialog, text="New order", fg="blue"), sticky="w")
         for (i in 1:nvalues){
@@ -1181,80 +815,31 @@ reorderFactor <- function(){
                 textvariable=eval(parse(text=valVar))))
             tkgrid(tklabel(subdialog, text=old.levels[i]), eval(parse(text=paste("entry", i, sep=""))), sticky="w")
             }
-        tkgrid(OKSubButton, cancelSubButton, sticky="w")
-        for (row in 0:(nvalues + 1)) tkgrid.rowconfigure(subdialog, row, weight=0)
-        for (col in 0:1) tkgrid.columnconfigure(subdialog, col, weight=0)
-        .Tcl("update idletasks")
-        tkwm.resizable(subdialog, 0, 0)
-        tkbind(subdialog, "<Return>", onOKsub)
-        if (.double.click) tkbind(subdialog, "<Double-ButtonPress-1>", onOKsub)
-        tkdestroy(top)           
-        tkwm.deiconify(subdialog)
-        if (.grab.focus) tkgrab.set(subdialog)
-        tkfocus(subdialog)
-        tkwait.window(subdialog)
+        tkgrid(subButtonsFrame, sticky="w", columnspan=2)
+        dialogSuffix(subdialog, focus=entry1, rows=nvalues+1, columns=2)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(factor)
-        }
-    helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
-    tkgrid(tklabel(top, text="Factor (pick one)"), sticky="w")
-    tkgrid(variableBox, variableScroll, sticky="nw")
-    tkgrid(variableFrame, sticky="nw")
+    OKCancelHelp(helpSubject="factor")
+    tkgrid(getFrame(variableBox), sticky="nw")
     tkgrid(tklabel(top, text="Name for factor"), sticky="w")
     tkgrid(factorNameField, sticky="w")
     tkgrid(tklabel(orderedFrame, text="Make ordered factor"), orderedCheckBox, sticky="w")
     tkgrid(orderedFrame, sticky="w")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="    "), helpButton, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
-    tkgrid.configure(variableScroll, sticky="ns")
-    for (row in 0:5) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkselection.set(variableBox, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-#    if (.grab.focus) tkgrab.set(top)  # causes problems ?
-    tkfocus(top)
-    tkwait.window(top)
+    dialogSuffix(rows=5, columns=1, preventGrabFocus=TRUE)
     }
 
 standardize <- function(X){
-    checkReplace <- function(name){
-        tkmessageBox(message=paste("Variable", name, "already exists.\nOverwrite variable?"),
-            icon="warning", type="yesno", default="no")
-        }
-    if (activeDataSet() == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    if (length(.numeric) == 0){
-        tkmessageBox(message="There no numeric variables in the active data set.", 
-                icon="error", type="ok")
-        tkfocus(.commander)
-        return()
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Standardize Variables")
-    xFrame <- tkframe(top)
-    xBox <- tklistbox(xFrame, height=min(4, length(.numeric)),
-        selectmode="multiple", background="white", exportselection="FALSE")
-    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
-    tkconfigure(xBox, yscrollcommand=function(...) tkset(xScroll, ...))
-    for (x in .numeric) tkinsert(xBox, "end", x)
+    if (!checkActiveDataSet()) return()
+    if (!checkNumeric()) return()
+    initializeDialog(title="Standardize Variables")
+    xBox <- variableListBox(top, .numeric, title="Variables (pick one or more)",
+        selectmode="multiple")
     onOK <- function(){
-        x <- .numeric[as.numeric(tkcurselection(xBox)) + 1]
+        x <- getSelection(xBox)
+        if (length(x) == 0) {
+            errorCondition(recall=standardize, message="You must select one or more variables.")
+            return()
+            }
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         xx <- paste('"', x, '"', sep="")
@@ -1271,7 +856,6 @@ standardize <- function(X){
                     next
                     }
                 }
-#            justDoIt(paste(.activeDataSet, "$", Z, " <<- .Z[,", i, "]", sep=""))
             justDoIt(paste(.activeDataSet, "$", Z, " <- .Z[,", i, "]", sep=""))
             logger(paste(.activeDataSet, "$", Z, " <- .Z[,", i, "]", sep=""))
             }
@@ -1280,80 +864,39 @@ standardize <- function(X){
         activeDataSet(.activeDataSet)
         tkfocus(.commander)
         }
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(scale)
-        }
-    helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
-    tkgrid(tklabel(top, text="Variables (pick one or more)"), sticky="w")
-    tkgrid(xBox, xScroll, sticky="nw")
-    tkgrid(xFrame, sticky="w")
-    tkgrid(OKbutton, cancelButton, tklabel(top, text="    "), helpButton, sticky="w")
+    OKCancelHelp(helpSubject="scale")
+    tkgrid(getFrame(xBox), sticky="w")
     tkgrid(buttonsFrame, sticky="w")
-    tkgrid.configure(xScroll, sticky="ns")
-    for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(top)
-    tkwait.window(top)
+    dialogSuffix(rows=2, columns=1)
     }
 
 helpDataSet <- function(){
-    if (activeDataSet() == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
+    if (!checkActiveDataSet()) return()
     justDoIt(paste("help(", .activeDataSet, ")", sep=""))
     logger(paste("help(", .activeDataSet, ")", sep=""))
+    NULL
     }
     
 variablesDataSet <- function(){
-    if (activeDataSet() == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
+    if (!checkActiveDataSet()) return()
     doItAndPrint(paste("names(", .activeDataSet, ")", sep=""))
     }
 
 exportDataSet <- function() {
+    if (!checkActiveDataSet()) return()
     dsname <- activeDataSet()
-    if (dsname == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Export Active Data Set")
-    optionsFrame <- tkframe(top)
-    colnames <- tclVar("1")
-    colnamesCheckBox <- tkcheckbutton(optionsFrame, variable=colnames)
-    rownames <- tclVar("1")
-    rownamesCheckBox <- tkcheckbutton(optionsFrame, variable=rownames)
-    quotes <- tclVar("1")
-    quotesCheckBox <- tkcheckbutton(optionsFrame, variable=quotes)
-    delimiter <- tclVar("spaces")
-    spacesButton <- tkradiobutton(optionsFrame, variable=delimiter, value="spaces")
-    tabsButton <- tkradiobutton(optionsFrame, variable=delimiter, value="tabs")
-    commasButton <- tkradiobutton(optionsFrame, variable=delimiter, value="commas")
+    initializeDialog(title="Export Active Data Set")
+    checkBoxes(frame="optionsFrame", boxes=c("colnames", "rownames", "quotes"),
+        initialValues=rep(1,3), labels=c("Write variable names:", "Write row names:", "Quotes around character values:"))
     missingVariable <- tclVar("NA")
     missingEntry <- tkentry(optionsFrame, width="8", textvariable=missingVariable)
+    radioButtons(name="delimiter", buttons=c("spaces", "tabs", "commas"), labels=c("Spaces", "Tabs", "Commas"),
+        title="Field Separator")
     onOK <- function(){
-        col <- tclvalue(colnames) == 1
-        row <- tclvalue(rownames) == 1
-        quote <- tclvalue(quotes) == 1
-        delim <- tclvalue(delimiter)
+        col <- tclvalue(colnamesVariable) == 1
+        row <- tclvalue(rownamesVariable) == 1
+        quote <- tclvalue(quotesVariable) == 1
+        delim <- tclvalue(delimiterVariable)
         missing <- tclvalue(missingVariable)
         sep <- if (delim == "tabs") "\\t"
             else if (delim == "spaces") " "
@@ -1375,64 +918,23 @@ exportDataSet <- function() {
         tkdestroy(top)
         tkfocus(.commander)
         }
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }    
-    buttonsFrame <- tkframe(top)  
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", default="active", command=onOK)
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(write.table)
-        }
-    helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
-    tkgrid(tklabel(optionsFrame, text="Write variable names:"), colnamesCheckBox, sticky="w")
-    tkgrid(tklabel(optionsFrame, text="Write row names:"), rownamesCheckBox, sticky="w")
-    tkgrid(tklabel(optionsFrame, text="Quotes around character values:"), quotesCheckBox, sticky="w")
+    OKCancelHelp(helpSubject="write.table")
     tkgrid(tklabel(optionsFrame, text="Missing values:"), missingEntry, sticky="w")
-    tkgrid(tklabel(optionsFrame, text="Field Separator", fg="blue"), sticky="w", columnspan=2)
-    tkgrid(tklabel(optionsFrame, text="Spaces"), spacesButton, sticky="w")
-    tkgrid(tklabel(optionsFrame, text="Tabs"), tabsButton, sticky="w")
-    tkgrid(tklabel(optionsFrame, text="Commas"), commasButton, sticky="w")
     tkgrid(optionsFrame, sticky="w")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="    "), helpButton, sticky="w")
+    tkgrid(delimiterFrame, stick="w")
     tkgrid(buttonsFrame, sticky="w")
-    tkgrid.configure(helpButton, sticky="e") 
-    for (row in 0:1) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)  
-    tkbind(top, "<Return>", onOK) 
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(top)
-    tkwait.window(top)
+    dialogSuffix(rows=3, columns=1)
     }
 
 filterNA <- function(){
-    checkReplace <- function(name){
-        tkmessageBox(message=paste("Data set", name, "already exists.\nOverwrite data set?"),
-            icon="warning", type="yesno", default="no")
-        }
+    if (!checkActiveDataSet()) return()
     dataSet <- activeDataSet()
-    if (dataSet == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Remove Missing Data")
+    initializeDialog(title="Remove Missing Data")
     allVariablesFrame <- tkframe(top)
     allVariables <- tclVar("1")
     allVariablesCheckBox <- tkcheckbutton(allVariablesFrame, variable=allVariables)
-    variablesFrame <- tkframe(top)
-    variablesBox <- tklistbox(variablesFrame, height=min(4, length(.variables)),
-        selectmode="multiple", background="white", exportselection="FALSE")
-    variablesScroll <- tkscrollbar(variablesFrame, repeatinterval=5, command=function(...) tkyview(variablesBox, ...))
-    tkconfigure(variablesBox, yscrollcommand=function(...) tkset(variablesScroll, ...))
-    for (var in .variables) tkinsert(variablesBox, "end", var)
+    variablesBox <- variableListBox(top, .variables, selectmode="multiple", initialSelection=NULL,
+        title="Variables (select one or more)")
     newDataSetName <- tclVar("<same as active data set>")
     dataSetNameFrame <- tkframe(top)
     dataSetNameEntry <- tkentry(dataSetNameFrame, width="25", textvariable=newDataSetName)
@@ -1440,15 +942,12 @@ filterNA <- function(){
         newName <- trim.blanks(tclvalue(newDataSetName))
         if (newName == "<same as active data set>") newName <- .activeDataSet
         if (!is.valid.name(newName)){
-            tkmessageBox(message=paste('"', newName, '" is not a valid name.', 
-                sep=""), icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            filterNA()
+            errorCondition(recall=filterNA,
+                message=paste('"', newName, '" is not a valid name.', sep=""))
             return()
             }
         if (is.element(newName, listDataSets())) {
-            if ("no" == tclvalue(checkReplace(newName))){
+            if ("no" == tclvalue(checkReplace(newName, "Data set"))){
                 if (.grab.focus) tkgrab.release(top)
                 tkdestroy(top)
                 filterNA()
@@ -1465,13 +964,9 @@ filterNA <- function(){
             tkfocus(.commander)
             }
         else {
-            x <- .variables[as.numeric(tkcurselection(variablesBox)) + 1]
+            x <- getSelection(variablesBox)
             if (0 > length(x)) {
-                tkmessageBox(message="No variables were selected.", 
-                    icon="error", type="ok")
-                if (.grab.focus) tkgrab.release(top)
-                tkdestroy(top)
-                filterNA()
+                errorCondition(recall=filterNA, message="No variables were selected.")
                 return()
                 }
             if (.grab.focus) tkgrab.release(top)
@@ -1485,65 +980,28 @@ filterNA <- function(){
             tkfocus(.commander)
             }
         }
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK)
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)  
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help("na.omit")
-        }
-    helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)    
+    OKCancelHelp(helpSubject="na.omit")
     tkgrid(tklabel(allVariablesFrame, text="Include all variables"), 
         allVariablesCheckBox, sticky="w")
     tkgrid(allVariablesFrame, sticky="w")
     tkgrid(tklabel(top, text="   OR", fg="red"), sticky="w")
-    tkgrid(tklabel(variablesFrame, text="Variables (select one or more)"), sticky="w")
-    tkgrid(variablesBox, variablesScroll, sticky="nw")
-    tkgrid(variablesFrame, sticky="nw")
+    tkgrid(getFrame(variablesBox), sticky="nw")
     tkgrid(tklabel(dataSetNameFrame, text="Name for new data set"), sticky="w")
     tkgrid(dataSetNameEntry, sticky="w")
     tkgrid(dataSetNameFrame, sticky="w")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="    "), helpButton, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
-    tkgrid.configure(variablesScroll, sticky="ns")
-    for (row in 0:3) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-#    if (.grab.focus) tkgrab.set(top)  # causes problems ?
-    tkfocus(top)
-    tkwait.window(top)
+    dialogSuffix(rows=4, columns=1)
     }
 
 subsetDataSet <- function(){
-    checkReplace <- function(name){
-        tkmessageBox(message=paste("Data set", name, "already exists.\nOverwrite data set?"),
-            icon="warning", type="yesno", default="no")
-        }
+    if (!checkActiveDataSet()) return()
     dataSet <- activeDataSet()
-    if (dataSet == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Subset Data Set")
+    initializeDialog(title="Subset Data Set")
     allVariablesFrame <- tkframe(top)
     allVariables <- tclVar("1")
     allVariablesCheckBox <- tkcheckbutton(allVariablesFrame, variable=allVariables)
-    variablesFrame <- tkframe(top)
-    variablesBox <- tklistbox(variablesFrame, height=min(4, length(.variables)),
-        selectmode="multiple", background="white", exportselection="FALSE")
-    variablesScroll <- tkscrollbar(variablesFrame, repeatinterval=5, command=function(...) tkyview(variablesBox, ...))
-    tkconfigure(variablesBox, yscrollcommand=function(...) tkset(variablesScroll, ...))
-    for (var in .variables) tkinsert(variablesBox, "end", var)
+    variablesBox <- variableListBox(top, .variables, selectmode="multiple",
+        initialSelection=NULL, title="Variables (select one or more)")
     subsetVariable <- tclVar("<all cases>")
     subsetFrame <- tkframe(top)
     subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable)
@@ -1557,11 +1015,8 @@ subsetDataSet <- function(){
         newName <- trim.blanks(tclvalue(newDataSetName))
         if (newName == "<same as active data set>") newName <- .activeDataSet
         if (!is.valid.name(newName)){
-            tkmessageBox(message=paste('"', newName, '" is not a valid name.', 
-                sep=""), icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            subsetDataSet()
+            errorCondition(recall=subsetDataSet,
+                message=paste('"', newName, '" is not a valid name.', sep=""))
             return()
             }
         if (is.element(newName, listDataSets())) {
@@ -1574,13 +1029,10 @@ subsetDataSet <- function(){
             }
         selectVars <- if (tclvalue(allVariables) == "1") ""
             else {
-                x <- .variables[as.numeric(tkcurselection(variablesBox)) + 1]
+                x <- getSelection(variablesBox)
                 if (0 > length(x)) {
-                    tkmessageBox(message="No variables were selected.", 
-                        icon="error", type="ok")
-                    if (.grab.focus) tkgrab.release(top)
-                    tkdestroy(top)
-                    subsetDataSet()
+                    errorCondition(recall=subsetDataSet,
+                        message="No variables were selected.")
                     return()
                     }
                 paste(", select=c(", paste(x, collapse=","), ")", sep="")
@@ -1589,11 +1041,8 @@ subsetDataSet <- function(){
         selectCases <- if (cases == "<all cases>") ""
             else paste(", subset=", cases, sep="")
         if (selectVars == "" && selectCases ==""){
-            tkmessageBox(message="New data set same as active data set.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            subsetDataSet()
+            errorCondition(recall=subsetDataSet,
+                message="New data set same as active data set.")
             return()
             }
         if (.grab.focus) tkgrab.release(top)
@@ -1605,26 +1054,12 @@ subsetDataSet <- function(){
         activeDataSet(newName)
         tkfocus(.commander)
         }
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK)
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)  
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help("subset")
-        }
-    helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)    
+    OKCancelHelp(helpSubject="subset")
     tkgrid(tklabel(allVariablesFrame, text="Include all variables"), 
         allVariablesCheckBox, sticky="w")
     tkgrid(allVariablesFrame, sticky="w")
     tkgrid(tklabel(top, text="   OR", fg="red"), sticky="w")
-    tkgrid(tklabel(variablesFrame, text="Variables (select one or more)"), sticky="w")
-    tkgrid(variablesBox, variablesScroll, sticky="nw")
-    tkgrid(variablesFrame, sticky="nw")
+    tkgrid(getFrame(variablesBox), sticky="nw")
     tkgrid(tklabel(subsetFrame, text="Subset expression"), sticky="w")
     tkgrid(subsetEntry, sticky="w")
     tkgrid(subsetScroll, sticky="ew")
@@ -1632,50 +1067,30 @@ subsetDataSet <- function(){
     tkgrid(tklabel(dataSetNameFrame, text="Name for new data set"), sticky="w")
     tkgrid(dataSetNameEntry, sticky="w")
     tkgrid(dataSetNameFrame, sticky="w")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="    "), helpButton, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
-    tkgrid.configure(variablesScroll, sticky="ns")
-    for (row in 0:4) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-#    if (.grab.focus) tkgrab.set(top)  # causes problems ?
-    tkfocus(top)
-    tkwait.window(top)
+    dialogSuffix(rows=6, columns=1)
     }
 
 setCaseNames <- function(){
+    if (!checkActiveDataSet()) return()
     dataSet <- activeDataSet()
-    if (dataSet == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Set Case Names")
-    variablesListFrame <- tkframe(top)
-    variablesBox <- tklistbox(variablesListFrame, height=min(4, length(.variables)),
-        selectmode="single", background="white")
-    variablesScroll <- tkscrollbar(variablesListFrame, repeatinterval=5, 
-        command=function(...) tkyview(variablesBox, ...))
-    tkconfigure(variablesBox, yscrollcommand=function(...) tkset(variablesScroll, ...))
-    for (variable in .variables) tkinsert(variablesBox, "end", variable)
+    initializeDialog(title="Set Case Names")
+    variablesBox <- variableListBox(top, .variables, title="Select variable containing row names",
+        initialSelection=NULL)
     onOK <- function(){
-        variable <- as.character(tkget(variablesBox, "active"))
+        variable <- getSelection(variablesBox)
+        if (length(variable) == 0) {
+            errorCondition(recall=setCaseNames, message="You must select a variable.")
+            return()
+            }
         var <- eval(parse(text=paste(dataSet, "$", variable, sep="")), envir=.GlobalEnv)
         if (length(var) != length(unique(var))){
-            tkmessageBox(message="Case names must be unique.", icon="error", type="ok", default="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            setCaseNames()
+            errorCondition(recall=setCaseNames, message="Case names must be unique.")
             return()
             }
         command <- paste("row.names(", dataSet, ") <- as.character(", dataSet, "$", variable, ")", sep="")
         justDoIt(command)
         logger(command)
-#        eval(parse(text=paste(dataSet, "$", variable, "<<- NULL", sep="")), envir=.GlobalEnv)
         eval(parse(text=paste(dataSet, "$", variable, "<- NULL", sep="")), envir=.GlobalEnv)
         logger(paste(dataSet, "$", variable, " <- NULL", sep=""))
         activeDataSet(dataSet)
@@ -1683,94 +1098,47 @@ setCaseNames <- function(){
         tkfocus(.commander)
         tkdestroy(top)  
         }
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12",command=onOK)
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)    
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(row.names)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)       
-    tkgrid(tklabel(top, text="Select variable containing row names"), sticky="w")
-    tkgrid(variablesBox, variablesScroll, sticky="nw")
-    tkgrid(variablesListFrame, sticky="nw")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="    "), helpButton, sticky="w")
+    OKCancelHelp(helpSubject="row.names")  
+    tkgrid(getFrame(variablesBox), sticky="nw")
     tkgrid(buttonsFrame, sticky="w")
-    tkgrid.configure(variablesScroll, sticky="ns")
-    for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)   
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkbind(variablesBox, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(top)
-    tkwait.window(top)
+    dialogSuffix(rows=3, columns=1)
     }
     
 renameVariables <- function(){
-    if (activeDataSet() == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Rename Variables")
-    variableFrame <- tkframe(top)
-    variableBox <- tklistbox(variableFrame, height=min(4, length(.variables)),
-        selectmode="multiple", background="white", exportselection="FALSE")
-    variableScroll <- tkscrollbar(variableFrame, repeatinterval=5, 
-        command=function(...) tkyview(variableBox, ...))
-    tkconfigure(variableBox, yscrollcommand=function(...) tkset(variableScroll, ...))
-    for (var in .variables) tkinsert(variableBox, "end", var)
+    if (!checkActiveDataSet()) return()
+    initializeDialog(title="Rename Variables")
+    variableBox <- variableListBox(top, .variables, title="Variables (pick one or more)",
+        selectmode="multiple", initialSelection=NULL)
     onOK <- function(){
-        which.variables <- as.numeric(tkcurselection(variableBox)) + 1
-        variables <- .variables[which.variables]
+        variables <- getSelection(variableBox)
         nvariables <- length(variables)
         if (nvariables < 1) {
-            tkmessageBox(message="No variables selected.", icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top) 
-            renameVariables()
+            errorCondition(recall=renameVariables, message="No variables selected.")
+            return()
             }
-        subdialog <- tktoplevel()
-        tkwm.title(subdialog, "Variable Names")
+        unordered.names <- names(eval(parse(text=.activeDataSet)))
+        which.variables <- match(variables, unordered.names)
+        initializeDialog(subdialog, title="Variable Names")
         newnames <- rep("", nvariables)
         onOKsub <- function() {
             for (i in 1:nvariables){
                 newnames[i] <- eval(parse(text=paste("tclvalue(newName", i, ")", sep="")))
                 }
             if (any(newnames == "")){
-                tkmessageBox(message="A variable name is empty.",
-                    icon="error", type="ok")
-                if (.grab.focus) tkgrab.release(subdialog)
-                tkdestroy(subdialog)
-                renameVariables()
+                errorCondition(recall=renameVariables, message="A variable name is empty.")
                 return()
                 }
             test.names <- newnames == make.names(newnames)
             if (!all(test.names)){
-                tkmessageBox(message=paste("The following variable names are not legal:\n",
-                    paste(newnames[!test.names], collapse=", ")), icon="error", type="ok")
-                if (.grab.focus) tkgrab.release(subdialog)
-                tkdestroy(subdialog)
-                renameVariables()
+                errorCondition(recall=renameVariables,
+                    message=paste("The following variable names are not valid:\n",
+                    paste(newnames[!test.names], collapse=", ")))
                 return()
                 }                
             all.names <- eval(parse(text=paste("names(", .activeDataSet, ")")))
             all.names[which.variables] <- newnames
             if (length(unique(all.names)) != length(all.names)){
-                tkmessageBox(message="Variable names are not unique",
-                    icon="error", type="ok")
-                if (.grab.focus) tkgrab.release(subdialog)
-                tkdestroy(subdialog)
-                renameVariables()
+                errorCondition(recall=renameVariables, message="Variable names are not unique")
                 return()
                 }
             command <- paste("names(", .activeDataSet, ")[c(", paste(which.variables, collapse=","),
@@ -1782,13 +1150,7 @@ renameVariables <- function(){
             tkfocus(.commander)
             tkdestroy(subdialog)
             }
-        onCancelSub <- function() {
-            if (.grab.focus) tkgrab.release(subdialog)  
-            tkfocus(.commander)
-            tkdestroy(subdialog)
-            }
-        OKSubButton <- tkbutton(subdialog, text="OK", fg="darkgreen", width="12", command=onOKsub, default="active")
-        cancelSubButton <- tkbutton(subdialog, text="Cancel", fg="red", width="12",command=onCancelSub)
+        subOKCancelHelp()
         tkgrid(tklabel(subdialog, text="Old Name", fg="blue"), 
             tklabel(subdialog, text="New name", fg="blue"), sticky="w")
         for (i in 1:nvariables){
@@ -1798,80 +1160,32 @@ renameVariables <- function(){
                 textvariable=eval(parse(text=valVar))))
             tkgrid(tklabel(subdialog, text=variables[i]), eval(parse(text=paste("entry", i, sep=""))), sticky="w")
             }
-        tkgrid(OKSubButton, cancelSubButton, sticky="w")
-        for (row in 0:(nvariables + 1)) tkgrid.rowconfigure(subdialog, row, weight=0)
-        for (col in 0:1) tkgrid.columnconfigure(subdialog, col, weight=0)
-        .Tcl("update idletasks")
-        tkwm.resizable(subdialog, 0, 0)
-        tkbind(subdialog, "<Return>", onOKsub)
-        if (.double.click) tkbind(subdialog, "<Double-ButtonPress-1>", onOKsub)
+        tkgrid(subButtonsFrame, sticky="w", columnspan=2)
         if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)           
-        tkwm.deiconify(subdialog)
-        if (.grab.focus) tkgrab.set(subdialog)
-        tkfocus(entry1)
-        tkwait.window(subdialog)
+        tkdestroy(top)
+        dialogSuffix(subdialog, rows=nvariables+2, columns=2, focus=entry1, onOK=onOKsub)                 
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(names)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
-    tkgrid(tklabel(top, text="Variables (pick one or more)"), sticky="w")
-    tkgrid(variableBox, variableScroll, sticky="nw")
-    tkgrid(variableFrame, sticky="nw")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="      "), helpButton, sticky="w")
+    OKCancelHelp(helpSubject="names")
+    tkgrid(getFrame(variableBox), sticky="nw")
     tkgrid(buttonsFrame, sticky="w")
-    tkgrid.configure(variableScroll, sticky="ns")
-    for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-#    if (.grab.focus) tkgrab.set(top)   # causes problems ?
-    tkfocus(top)
-    tkwait.window(top)
+    dialogSuffix(rows=2, columns=1)
     }
 
 setContrasts <- function(){
-    if (activeDataSet() == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    if (length(.factors) == 0){
-        tkmessageBox(message="There no factors in the active data set.", 
-                icon="error", type="ok")
-        tkfocus(.commander)
-        return()
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Set Contrasts for Factor")
-    variableFrame <- tkframe(top)
-    variableBox <- tklistbox(variableFrame, height=min(4, length(.factors)),
-        selectmode="single", background="white", exportselection="FALSE")
-    variableScroll <- tkscrollbar(variableFrame, repeatinterval=5, 
-        command=function(...) tkyview(variableBox, ...))
-    tkconfigure(variableBox, yscrollcommand=function(...) tkset(variableScroll, ...))
-    for (var in .factors) tkinsert(variableBox, "end", var)
-    contrastsFrame <- tkframe(top)
-    contrastsVariable <- tclVar(getOption("contrasts")[1])
-    treatmentButton <- tkradiobutton(contrastsFrame, variable=contrastsVariable, value="contr.Treatment")
-    sumButton <- tkradiobutton(contrastsFrame, variable=contrastsVariable, value="contr.Sum")
-    helmertButton <- tkradiobutton(contrastsFrame, variable=contrastsVariable, value="contr.helmert")
-    polyButton <- tkradiobutton(contrastsFrame, variable=contrastsVariable, value="contr.poly")
-    specifyButton <- tkradiobutton(contrastsFrame, variable=contrastsVariable, value="specify")
+    if (!checkActiveDataSet()) return()
+    if (!checkFactors()) return()
+    initializeDialog(title="Set Contrasts for Factor")
+    variableBox <- variableListBox(top, .factors, title="Factor (pick one)")
+    radioButtons(name="contrasts", buttons=c("treatment", "sum", "helmert", "poly", "specify"), 
+        values=c("contr.Treatment", "contr.Sum", "contr.helmert", "contr.poly", "specify"),
+        labels=c("Treatment (dummy) contrasts", "Sum (deviation) contrasts", "Helmert contrasts",
+            "Polynomial contrasts", "Other (specify)"), title="Contrasts")
     onOK <- function(){
-        variable <- as.character(tkget(variableBox, "active"))
+        variable <- getSelection(variableBox)
+        if (length(variable) == 0) {
+            errorCondition(recall=setContrasts, message="You must select a variable.")
+            return()
+            }
         contrasts <- tclvalue(contrastsVariable)
         if (contrasts != "specify"){
             command <- paste("contrasts(", .activeDataSet, "$", variable, ') <- "', contrasts, '"', sep="")
@@ -1883,8 +1197,7 @@ setContrasts <- function(){
             tkfocus(.commander)
             }
         else{
-            subdialog <- tktoplevel()
-            tkwm.title(subdialog, "Specify Contrasts")
+            initializeDialog(subdialog, title="Specify Contrasts")
             tkgrid(tklabel(subdialog, text="Enter Contrast Coefficients", fg="blue"), sticky="w")
             env <- environment()
             tableFrame <- tkframe(subdialog)
@@ -1912,6 +1225,7 @@ setContrasts <- function(){
                 }
             tkgrid(tableFrame, sticky="w")
             onOKsub <- function(){
+                if (.grab.focus) tkgrab.release(top)
                 tkdestroy(top)
                 cell <- 0
                 values <- rep(NA, nrows*ncols)
@@ -1924,20 +1238,14 @@ setContrasts <- function(){
                     }
                 values <- na.omit(values)
                 if (length(values) != nrows*ncols){
-                    tkmessageBox(message=paste("Number of valid entries in contrast matrix(", length(values), ")\n",
-                        "not equal to number of levels (", nrows,") * number of contrasts (", ncols,").", 
-                        sep=""), icon="error", type="ok")
-                    if (.grab.focus) tkgrab.release(subdialog)
-                    tkdestroy(subdialog)
-                    setContrasts()
+                    errorCondition(subdialog, recall=setContrasts,
+                        message=paste("Number of valid entries in contrast matrix(", length(values), ")\n",
+                            "not equal to number of levels (", nrows,") * number of contrasts (", ncols,").", 
+                            sep=""))
                     return()
                     }
                 if (qr(matrix(values, nrows, ncols))$rank < ncols) {
-                    tkmessageBox(message="Contrast matrix is not of full column rank", 
-                        icon="error", type="ok")
-                    if (.grab.focus) tkgrab.release(subdialog)
-                    tkdestroy(subdialog)
-                    setContrasts()
+                    errorCondition(subdialog, recall=setContrasts, message="Contrast matrix is not of full column rank")
                     return()
                     }  
                 contrast.names <- rep("", ncols)
@@ -1946,11 +1254,7 @@ setContrasts <- function(){
                     contrast.names[j] <- eval(parse(text=paste("tclvalue(", varname,")", sep="")))
                     }
                 if (length(unique(contrast.names)) < ncols) {
-                    tkmessageBox(message="Contrast names must be unique", 
-                        icon="error", type="ok")
-                    if (.grab.focus) tkgrab.release(subdialog)
-                    tkdestroy(subdialog)
-                    setContrasts()
+                    errorCondition(subdialog, recall=setContrasts, message="Contrast names must be unique") 
                     return()
                     }                    
                 if (.grab.focus) tkgrab.release(subdialog)
@@ -1971,71 +1275,16 @@ setContrasts <- function(){
                 activeDataSet(.activeDataSet)                                      
                 tkfocus(.commander)
                 }
-            subButtonsFrame <- tkframe(subdialog)
-            OKSubButton <- tkbutton(subButtonsFrame, text="OK", fg="darkgreen", width="12", command=onOKsub, default="active")
-            onCancelSub <- function() {
-                if (.grab.focus) tkgrab.release(subdialog)
-                tkfocus(.commander)
-                tkdestroy(subdialog) 
-                tkdestroy(top) 
-                }
-            cancelSubButton <- tkbutton(subButtonsFrame, text="Cancel", fg="red", width="12",command=onCancelSub)
-            onHelpSub <- function() {
-                if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(subdialog)
-                help("contrasts")
-                }
-            helpSubButton <- tkbutton(subButtonsFrame, text="Help", width="12", command=onHelpSub)
+            subOKCancelHelp(helpSubject="contrasts")
             tkgrid(tableFrame, sticky="w")
             tkgrid(tklabel(subdialog, text=""))
-            tkgrid(OKSubButton, cancelSubButton, tklabel(subButtonsFrame, text="        "), helpSubButton, sticky="w")
             tkgrid(subButtonsFrame, sticky="w")
-            for (row in 0:4) tkgrid.rowconfigure(subdialog, row, weight=0)
-            for (col in 0:0) tkgrid.columnconfigure(subdialog, col, weight=0)
-            .Tcl("update idletasks")
-            tkwm.resizable(subdialog, 0, 0)
-            tkbind(subdialog, "<Return>", onOK)
-            if (.double.click) tkbind(subdialog, "<Double-ButtonPress-1>", onOK)
-            tkwm.deiconify(subdialog)
-            if (.grab.focus) tkgrab.set(subdialog)
-            tkfocus(subdialog)
-            tkwait.window(subdialog)        
+            dialogSuffix(subdialog, rows=5, columns=1, focus=subdialog)  
             }
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(contrasts)
-        }
-    helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
-    tkgrid(tklabel(top, text="Factor (pick one)"), sticky="w")
-    tkgrid(variableBox, variableScroll, sticky="nw")
-    tkgrid(variableFrame, sticky="nw")
-    tkgrid(tklabel(top, text="Contrasts", fg="blue"), sticky="w")
-    tkgrid(tklabel(contrastsFrame, text="Treatment (dummy) contrasts"), treatmentButton, sticky="w")
-    tkgrid(tklabel(contrastsFrame, text="Sum (deviation) contrasts"), sumButton, sticky="w")
-    tkgrid(tklabel(contrastsFrame, text="Helmert contrasts"), helmertButton, sticky="w")
-    tkgrid(tklabel(contrastsFrame, text="Polynomial contrasts"), polyButton, sticky="w")
-    tkgrid(tklabel(contrastsFrame, text="Other (specify)"), specifyButton, sticky="w")
+    OKCancelHelp(helpSubject="contrasts")
+    tkgrid(getFrame(variableBox), sticky="nw")
     tkgrid(contrastsFrame, sticky="w")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="    "), helpButton, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
-    tkgrid.configure(variableScroll, sticky="ns")
-    for (row in 0:5) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkselection.set(variableBox, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top) 
-    tkfocus(top)
-    tkwait.window(top)
+    dialogSuffix(rows=4, columns=1) 
     }

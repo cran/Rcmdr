@@ -1,36 +1,18 @@
 # Statistics Menu dialogs
 
-# last modified 27 Jan 04 by J. Fox
+# last modified 1 July 04 by J. Fox
 
     # Dimensional-analysis menu
     
 Reliability <- function(){
-    if (activeDataSet() == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    if (length(.numeric) < 3){
-        tkmessageBox(message="There fewer than 3 numeric variables in the active data set.", 
-                icon="error", type="ok")
-        tkfocus(.commander)
-        return()
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Scale Reliability")
-    xFrame <- tkframe(top)
-    xBox <- tklistbox(xFrame, height=min(4, length(.numeric)),
-        selectmode="multiple", background="white", exportselection="FALSE")
-    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
-    tkconfigure(xBox, yscrollcommand=function(...) tkset(xScroll, ...))
-    for (x in .numeric) tkinsert(xBox, "end", x)
+    if(!checkActiveDataSet()) return()
+    if (!checkNumeric(3)) return()
+    initializeDialog(title="Scale Reliability")
+    xBox <- variableListBox(top, .numeric, selectmode="multiple", title="Variables (pick three or more)")
     onOK <- function(){
-        x <- .numeric[as.numeric(tkcurselection(xBox)) + 1]
+        x <- getSelection(xBox)
         if (3 > length(x)) {
-            tkmessageBox(message="Fewer than 3 variables selected.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            Reliability()
+            errorCondition(recall=Reliability, message="Fewer than 3 variables selected.")
             return()
             }
         if (.grab.focus) tkgrab.release(top)
@@ -40,87 +22,29 @@ Reliability <- function(){
             ')], use="complete.obs"))', sep=""))
         tkfocus(.commander)
         }
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(reliability)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
-    tkgrid(tklabel(top, text="Variables (pick three or more)"), sticky="w")
-    tkgrid(xBox, xScroll, sticky="nw")
-    tkgrid(xFrame, sticky="w")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, tklabel(top, text="    "), helpButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    tkgrid.configure(xScroll, sticky="ns")
-    for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(top)
-    tkwait.window(top)
+    OKCancelHelp(helpSubject="reliability")
+    tkgrid(getFrame(xBox), sticky="nw")
+    tkgrid(buttonsFrame, sticky="w")
+    dialogSuffix(rows=2, columns=1)
     }
 
 principalComponents <- function(){
-    checkReplace <- function(name){
-        tkmessageBox(message=paste("Variable", name, "already exists.\nOverwrite variable?"),
-            icon="warning", type="yesno", default="no")
-        }
-    if (activeDataSet() == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    if (length(.numeric) < 2){
-        tkmessageBox(message="There fewer than 2 numeric variables in the active data set.", 
-                icon="error", type="ok")
-        tkfocus(.commander)
-        return()
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Principal Components Analysis")
-    xFrame <- tkframe(top)
-    xBox <- tklistbox(xFrame, height=min(4, length(.numeric)),
-        selectmode="multiple", background="white", exportselection="FALSE")
-    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
-    tkconfigure(xBox, yscrollcommand=function(...) tkset(xScroll, ...))
-    for (x in .numeric) tkinsert(xBox, "end", x)
-    subsetVariable <- tclVar("<all valid cases>")
-    subsetFrame <- tkframe(top)
-    subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable)
-    subsetScroll <- tkscrollbar(subsetFrame, orient="horizontal",
-        repeatinterval=5, command=function(...) tkxview(subsetEntry, ...))
-    tkconfigure(subsetEntry, xscrollcommand=function(...) tkset(subsetScroll, ...))
-    optionsFrame <- tkframe(top)
-    correlationsVariable <- tclVar("1")
-    correlationsCheckBox <- tkcheckbutton(optionsFrame, variable=correlationsVariable)
-    screeplotVariable <- tclVar("0")
-    screeplotCheckBox <- tkcheckbutton(optionsFrame, variable=screeplotVariable)
-    addPCVariable <- tclVar("0")
-    addPCCheckBox <- tkcheckbutton(optionsFrame, variable=addPCVariable)
+    if(!checkActiveDataSet()) return()
+    if(!checkNumeric(2)) return()
+    initializeDialog(title="Principal Components Analysis")
+    xBox <- variableListBox(top, .numeric, selectmode="multiple", title="Variables (pick two or more)")
+    subsetBox()
+    checkBoxes(frame="optionsFrame", boxes=c("correlations", "screeplot", "addPC"), initialValues=c("1", "0", "0"),
+        labels=c("Analyze correlation matrix", "Screeplot", "Add principal components to data set"))
     onOK <- function(){
-        x <- .numeric[as.numeric(tkcurselection(xBox)) + 1]
+        x <- getSelection(xBox)
         nvar <- length(x)
         correlations <- tclvalue(correlationsVariable)
         subset <- tclvalue(subsetVariable)
         screeplot <- tclvalue(screeplotVariable)
         addPC <- tclvalue(addPCVariable)
         if (2 > length(x)) {
-            tkmessageBox(message="Fewer than 2 variables selected.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            principalComponents()
+            errorCondition(recall=principalComponents, message="Fewer than 2 variables selected.")
             return()
             }
         if (.grab.focus) tkgrab.release(top)
@@ -138,17 +62,11 @@ principalComponents <- function(){
             logger("screeplot(.PC)")
             }
         if (addPC == "1") {
-            if (is.element("PC1", .variables)) {
-                if ("no" == tclvalue(checkReplace("PC1"))){
-                    if (.grab.focus) tkgrab.release(top)
-                    tkdestroy(top)
-                    remove(.PC, envir=.GlobalEnv)   
-                    logger("remove(.PC)")
-                    return()
-                    }
-                }
             for(i in 1:nvar){
-#                justDoIt(paste(.activeDataSet, "$PC", i, " <<- .PC$scores[,", i, "]", sep=""))
+                var <- paste("PC", i, sep="")
+                if (is.element(var, .variables)) {
+                    if ("no" == tclvalue(checkReplace(var))) next
+                    }
                 justDoIt(paste(.activeDataSet, "$PC", i, " <- .PC$scores[,", i, "]", sep=""))
                 logger(paste(.activeDataSet, "$PC", i, " <- .PC$scores[,", i, "]", sep=""))
                 }
@@ -158,122 +76,47 @@ principalComponents <- function(){
         logger("remove(.PC)")
         tkfocus(.commander)
         }
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(princomp)
-        }
-    helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
-    tkgrid(tklabel(top, text="Variables (pick two or more)"), sticky="w")
-    tkgrid(xBox, xScroll, sticky="nw")
-    tkgrid(xFrame, sticky="w")
-    tkgrid(tklabel(subsetFrame, text="Subset expression"), sticky="w")
-    tkgrid(subsetEntry, sticky="w")
-    tkgrid(subsetScroll, sticky="ew")
+    OKCancelHelp(helpSubject="princomp")
+    tkgrid(getFrame(xBox), sticky="nw")
     tkgrid(subsetFrame, sticky="w")
-    tkgrid(tklabel(optionsFrame, text="Analyze correlation matrix"), 
-        correlationsCheckBox, sticky="e")
-    tkgrid(tklabel(optionsFrame, text="Screeplot"), screeplotCheckBox, sticky="e")
-    tkgrid(tklabel(optionsFrame, text="Add principal components\nto data set", justify="left"),
-        addPCCheckBox, sticky="ne")
     tkgrid(optionsFrame, sticky="w")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="    "), helpButton, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
-    tkgrid.configure(correlationsCheckBox, sticky="w")
-    tkgrid.configure(screeplotCheckBox, sticky="w")
-    tkgrid.configure(addPCCheckBox, sticky="w")   
-    tkgrid.configure(helpButton, sticky="e")
-    tkgrid.configure(xScroll, sticky="ns")
-    for (row in 0:4) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(top)
-    tkwait.window(top)
+    dialogSuffix(rows=4, columns=1)
     }
 
 factorAnalysis <- function(){
-    checkReplace <- function(name){
-        tkmessageBox(message=paste("Variable", name, "already exists.\nOverwrite variable?"),
-            icon="warning", type="yesno", default="no")
-        }
-    if (activeDataSet() == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    if (length(.numeric) < 3){
-        tkmessageBox(message="There fewer than 3 numeric variables in the active data set.", 
-                icon="error", type="ok")
-        tkfocus(.commander)
-        return()
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Factor Analysis")
-    xFrame <- tkframe(top)
-    xBox <- tklistbox(xFrame, height=min(4, length(.numeric)),
-        selectmode="multiple", background="white", exportselection="FALSE")
-    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
-    tkconfigure(xBox, yscrollcommand=function(...) tkset(xScroll, ...))
-    for (x in .numeric) tkinsert(xBox, "end", x)
-    subsetVariable <- tclVar("<all valid cases>")
-    subsetFrame <- tkframe(top)
-    subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable)
-    subsetScroll <- tkscrollbar(subsetFrame, orient="horizontal",
-        repeatinterval=5, command=function(...) tkxview(subsetEntry, ...))
-    tkconfigure(subsetEntry, xscrollcommand=function(...) tkset(subsetScroll, ...))
+    if(!checkActiveDataSet()) return()
+    if(!checkNumeric(3)) return()
+    initializeDialog(title="Factor Analysis")
+    xBox <- variableListBox(top, .numeric, selectmode="multiple", title="Variables (pick three or more)")
+    subsetBox()
     optionsFrame <- tkframe(top)
     nfactorVariable <- tclVar("1")
     nfactorEntry <- tkentry(optionsFrame, width="2", textvariable=nfactorVariable)
     checkFrame <- tkframe(top)
-    rotationVariable <- tclVar("varimax")
-    rotationFrame <- tkframe(checkFrame)
-    noRotateButton <- tkradiobutton(rotationFrame, variable=rotationVariable, value="none")
-    varimaxButton <- tkradiobutton(rotationFrame, variable=rotationVariable, value="varimax")
-    promaxButton <- tkradiobutton(rotationFrame, variable=rotationVariable, value="promax")
-    scoresVariable <- tclVar("none")
-    scoresFrame <- tkframe(checkFrame)
-    noScoresButton <- tkradiobutton(scoresFrame, variable=scoresVariable, value="none")
-    bartlettButton <- tkradiobutton(scoresFrame, variable=scoresVariable, value="Bartlett")
-    regressionButton <- tkradiobutton(scoresFrame, variable=scoresVariable, value="regression")
+    radioButtons(checkFrame, name="rotation", buttons=c("noRotate", "varimax", "promax"), 
+        values=c("none", "varimax", "promax"), initialValue="varimax", labels=c("None", "Varimax", "Promax"),
+        title="Factor Rotation")
+    radioButtons(checkFrame, name="scores", buttons=c("noScores", "bartlett", "regression"),
+        values=c("none", "Bartlett", "regression"), labels=c("None", "Bartlett's method", "Regression method"),
+        title="Factor Scores")
     onOK <- function(){
-        x <- .numeric[as.numeric(tkcurselection(xBox)) + 1]
+        x <- getSelection(xBox)
         nvar <- length(x)
         nfactor <- as.numeric(tclvalue(nfactorVariable))
         subset <- tclvalue(subsetVariable)
         rotation <- tclvalue(rotationVariable)
         scores <- tclvalue(scoresVariable)
         if (3 > length(x)) {
-            tkmessageBox(message="Fewer than 3 variables selected.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            factorAnalysis()
+            errorCondition(recall=factorAnalysis, message="Fewer than 3 variables selected.")
             return()
             }
         f <- function(k, p) ((p - k)^2 - p - k)^2
         max.factors <- floor(optimize(f, c(0, nvar), tol=.0001, p=nvar)$minimum)
         if (nfactor > max.factors) {
-            if (max.factors > 1)
-                tkmessageBox(message=paste("Number of factors must be between 1 and ",
-                    max.factors, ".", sep=""),
-                    icon="error", type="ok")
-            else
-                tkmessageBox(message="Number of factors cannot exceed 1",
-                    icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            factorAnalysis()
+            errorCondition(recall=factorAnalysis, message=
+                if (max.factors > 1) paste("Number of factors must be between 1 and ", max.factors, ".", sep="")
+                    else "Number of factors cannot exceed 1.")
             return()
             }
         if (.grab.focus) tkgrab.release(top)
@@ -285,16 +128,11 @@ factorAnalysis <- function(){
         logger(paste(".FA <- ", command, sep=""))
         doItAndPrint(".FA")
         if (scores != "none") {
-            if (is.element("F1", .variables)) {
-                if ("no" == tclvalue(checkReplace("F1"))){
-                    if (.grab.focus) tkgrab.release(top)
-                    tkdestroy(top)
-                    remove(.FA, envir=.GlobalEnv)   
-                    logger("remove(.FA)")
-                    return()
-                    }
-                }
             for(i in 1:nfactor){
+                var <- paste("F", i, sep="")
+                if (is.element(var, .variables)) {
+                    if ("no" == tclvalue(checkReplace(var))) next
+                    }
                 justDoIt(paste(.activeDataSet, "$F", i, " <- .FA$scores[,", i, "]", sep=""))
                 logger(paste(.activeDataSet, "$F", i, " <- .FA$scores[,", i, "]", sep=""))
                 }
@@ -304,51 +142,14 @@ factorAnalysis <- function(){
         remove(.FA, envir=.GlobalEnv)
         tkfocus(.commander)
         }
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(factanal)
-        }
-    helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
-    tkgrid(tklabel(top, text="Variables (pick three or more)"), sticky="w")
-    tkgrid(xBox, xScroll, sticky="nw")
-    tkgrid(xFrame, sticky="w")
-    tkgrid(tklabel(subsetFrame, text="Subset expression"), sticky="w")
-    tkgrid(subsetEntry, sticky="w")
-    tkgrid(subsetScroll, sticky="ew")
+    OKCancelHelp(helpSubject="factanal")
+    tkgrid(getFrame(xBox), sticky="nw")
     tkgrid(subsetFrame, sticky="w")
     tkgrid(tklabel(optionsFrame, text="Number of factors:"),
         nfactorEntry, sticky="w")
-    tkgrid(tklabel(rotationFrame, text="Factor Rotation", fg="blue"), sticky="w")
-    tkgrid(tklabel(rotationFrame, text="None"), noRotateButton, sticky="w")
-    tkgrid(tklabel(rotationFrame, text="Varimax"), varimaxButton, sticky="w")
-    tkgrid(tklabel(rotationFrame, text="Promax"), promaxButton, sticky="w")
-    tkgrid(tklabel(scoresFrame, text="Factor Scores", fg="blue"), sticky="w")
-    tkgrid(tklabel(scoresFrame, text="None"), noScoresButton, sticky="w")
-    tkgrid(tklabel(scoresFrame, text="Bartlett's method"), bartlettButton, sticky="w")
-    tkgrid(tklabel(scoresFrame, text="Regression method"), regressionButton, sticky="w")
     tkgrid(optionsFrame, sticky="w")
-    tkgrid(rotationFrame, scoresFrame, sticky="w")
+    tkgrid(rotationFrame, tklabel(checkFrame, text="    "), scoresFrame, sticky="w")
     tkgrid(checkFrame, sticky="w")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="        "), 
-        helpButton,sticky="w")
     tkgrid(buttonsFrame,  sticky="w")
-    tkgrid.configure(xScroll, sticky="ns")
-    for (row in 0:5) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(top)
-    tkwait.window(top)
+    dialogSuffix(rows=5, columns=1)
     }

@@ -257,3 +257,21 @@ Version 0.9-9
     o  Various small changes for compatibility with the new interface.
     
     o  Changes to numerical model tests dialogs for compatibility with new lmtest package. 
+    
+    o  Small bug fixes. 
+    
+Version 0.9-10
+
+    o  The Rcmdr dialog-generating functions were completely rewritten, using much more modularized code (as a result of gentle prodding by Martin Maechler). As a consequence, the R code for the package has been reduced by nearly 40 percent, from about 10,700 lines to about 6600 lines. See help("Rcmdr.Utilities") for the utilities supporting these changes.
+
+    o  If there are missing required packages at startup, the Rcmdr now tries to install them.
+    
+    o  The Commander() now intercepts warnings and prints them in a message box.
+    
+    o  New function (bin.var) and dialog to bin a numeric variable (contributed by Dan Putler)
+    
+    o  Added "Save R workspace" and "Save R workspace as" to File menu (suggested by Dan Putler).
+    
+    o  Added "Save graph to file" submenu to File menu, with items "as bitmap", "as PDF/Postscript/EPS", and "3D RGL graph" (súggested by Dan Putler).  
+
+    o  Small bug fixes and interface enhancements. 

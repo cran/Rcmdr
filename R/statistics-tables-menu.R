@@ -1,60 +1,35 @@
 # Statistics Menu dialogs
 
-# last modified 5 June 04 by J. Fox
+# last modified 5 July 04 by J. Fox
 
     # Tables menu
     
 twoWayTable <- function(){
-    if (activeDataSet() == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    if (length(.factors) < 2){
-        tkmessageBox(message="There fewer than 2 factors in the active data set.", 
-                icon="error", type="ok")
-        tkfocus(.commander)
-        return()
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Two-Way Table")
-    rowFrame <- tkframe(top)
-    columnFrame <- tkframe(top)
-    rowBox <- tklistbox(rowFrame, height=min(4, length(.factors)),
-        selectmode="single", background="white", exportselection="FALSE")
-    rowScroll <- tkscrollbar(rowFrame, repeatinterval=5, 
-        command=function(...) tkyview(rowBox, ...))
-    tkconfigure(rowBox, yscrollcommand=function(...) tkset(rowScroll, ...))
-    for (var in .factors) tkinsert(rowBox, "end", var)
-    columnBox <- tklistbox(columnFrame, height=min(4, length(.factors)),
-        selectmode="single", background="white", exportselection="FALSE")
-    columnScroll <- tkscrollbar(columnFrame, repeatinterval=5, 
-        command=function(...) tkyview(columnBox, ...))    
-    tkconfigure(columnBox, yscrollcommand=function(...) tkset(columnScroll, ...))
-    for (var in .factors) tkinsert(columnBox, "end", var)
-    subsetVariable <- tclVar("<all valid cases>")
-    subsetFrame <- tkframe(top)
-    subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable)
-    subsetScroll <- tkscrollbar(subsetFrame, orient="horizontal",
-        repeatinterval=5, command=function(...) tkxview(subsetEntry, ...))
-    tkconfigure(subsetEntry, xscrollcommand=function(...) tkset(subsetScroll, ...))
+    if (!checkActiveDataSet()) return()
+    if (!checkFactors(2)) return()
+    initializeDialog(title="Two-Way Table")
+    variablesFrame <- tkframe(top)
+    rowBox <- variableListBox(variablesFrame, .factors, title="Row variable (pick one)")
+    columnBox <- variableListBox(variablesFrame, .factors, title="Column variable (pick one)")
+    subsetBox()
     onOK <- function(){
-        row <- as.character(tkget(rowBox, "active"))
-        column <- as.character(tkget(columnBox, "active"))
+        row <- getSelection(rowBox)
+        column <- getSelection(columnBox)
+        if (length(row) == 0 || length(column) == 0){
+            errorCondition(recall=twoWayTable, message="You must select two variables.")
+            return()
+            }
+        if (row == column) {
+            errorCondition(recall=twoWayTable, message="Row and column variables are the same.")
+            return()
+            }        
         percents <- as.character(tclvalue(percentsVariable))
-        chisq <- tclvalue(chisqTest)
-        expected <- tclvalue(expFreq)
-        fisher <- tclvalue(fisherTest)
+        chisq <- tclvalue(chisqTestVariable)
+        expected <- tclvalue(expFreqVariable)
+        fisher <- tclvalue(fisherTestVariable)
         subset <- tclvalue(subsetVariable)
         subset <- if (trim.blanks(subset) == "<all valid cases>") "" 
             else paste(", subset=", subset, sep="")
-        if (row == column) {
-            tkmessageBox(message="Row and column variables are the same.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            twoWayTable()
-            return()
-            }
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         command <- paste("xtabs(~", row, "+", column, ", data=", .activeDataSet, 
@@ -85,128 +60,42 @@ twoWayTable <- function(){
         remove(.Table, envir=.GlobalEnv)                                                      
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(xtabs)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
-    percentsVariable <- tclVar("none")
-    percentsFrame <- tkframe(top)
-    rowPercentsButton <- tkradiobutton(percentsFrame, variable=percentsVariable, value="row")
-    columnPercentsButton <- tkradiobutton(percentsFrame, variable=percentsVariable, value="column")
-    nonePercentsButton <- tkradiobutton(percentsFrame, variable=percentsVariable, value="none")
-    chisqTest <- tclVar("1")
-    expFreq <- tclVar("0")
-    fisherTest <- tclVar("0")
-    testsFrame <- tkframe(top)
-    chisqCheckBox <- tkcheckbutton(testsFrame, variable=chisqTest)
-    expFreqCheckBox <- tkcheckbutton(testsFrame, variable=expFreq)
-    fisherCheckBox <- tkcheckbutton(testsFrame, variable=fisherTest)
-    tkgrid(tklabel(top, text="Row variable (pick one)"), 
-        tklabel(top, text="Column variable (pick one)"), sticky="w")
-    tkgrid(rowBox, rowScroll, sticky="nw")
-    tkgrid(columnBox, columnScroll, sticky="nw")
-    tkgrid(rowFrame, columnFrame, sticky="nw")
-    tkgrid(tklabel(percentsFrame, text="Compute Percentages", fg="blue"), columnspan=2, sticky="w")
-    tkgrid(tklabel(percentsFrame, text="Row percentages"), rowPercentsButton, sticky="w")
-    tkgrid(tklabel(percentsFrame, text="Column percentages"), columnPercentsButton, sticky="w")
-    tkgrid(tklabel(percentsFrame, text="No percentages"), nonePercentsButton, sticky="w")
+    OKCancelHelp(helpSubject="xtabs")
+    radioButtons(name="percents", buttons=c("rowPercents", "columnPercents", "nonePercents"), 
+        values=c("row", "column", "none"), initialValue="none", 
+        labels=c("Row percentages", "Column percentages", "No percentages"), title="Compute Percentages")
+    checkBoxes(frame="testsFrame", boxes=c("chisqTest", "expFreq", "fisherTest"), initialValues=c("1", "0", "0"),
+        labels=c("Chisquare test of independence", "Print expected frequencies", "Fisher's exact test"))
+    tkgrid(getFrame(rowBox), tklabel(variablesFrame, text="    "), getFrame(columnBox), sticky="nw")
+    tkgrid(variablesFrame, sticky="w")
     tkgrid(percentsFrame, sticky="w")
-    tkgrid(tklabel(testsFrame, text="Hypothesis Tests", fg="blue"), sticky="w")
-    tkgrid(tklabel(testsFrame, text="Chisquare test of independence"), chisqCheckBox, sticky="e")
-    tkgrid(tklabel(testsFrame, text="Print expected frequencies"), expFreqCheckBox, sticky="e")
-    tkgrid(tklabel(testsFrame, text="Fisher's exact test"), fisherCheckBox, sticky="e")
-    tkgrid(testsFrame)
-    tkgrid(tklabel(subsetFrame, text="Subset expression"), sticky="w")
-    tkgrid(subsetEntry, sticky="w")
-    tkgrid(subsetScroll, sticky="ew")
+    tkgrid(tklabel(top, text="Hypothesis Tests", fg="blue"), sticky="w")
+    tkgrid(testsFrame, sticky="w")
     tkgrid(subsetFrame, sticky="w")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
-    tkgrid.configure(chisqCheckBox, sticky="w")
-    tkgrid.configure(fisherCheckBox, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    tkgrid.configure(rowScroll, sticky="ns")
-    tkgrid.configure(columnScroll, sticky="ns")
-    for (row in 0:6) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkselection.set(rowBox, 0)
-    tkselection.set(columnBox, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(top)
-    tkwait.window(top)
+    tkgrid(buttonsFrame, sticky="w")
+    dialogSuffix(rows=6, columns=1)
     }
 
 multiWayTable <- function(){
-    if (activeDataSet() == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    if (length(.factors) < 3){
-        tkmessageBox(message="There fewer than 3 factors in the active data set.", 
-                icon="error", type="ok")
-        tkfocus(.commander)
-        return()
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Multi-Way Table")
-    rowFrame <- tkframe(top)
-    columnFrame <- tkframe(top)
-    controlFrame <- tkframe(top)
-    rowBox <- tklistbox(rowFrame, height=min(4, length(.factors)),
-        selectmode="single", background="white", exportselection="FALSE")
-    rowScroll <- tkscrollbar(rowFrame, repeatinterval=5, 
-        command=function(...) tkyview(rowBox, ...))
-    tkconfigure(rowBox, yscrollcommand=function(...) tkset(rowScroll, ...))
-    for (var in .factors) tkinsert(rowBox, "end", var)
-    columnBox <- tklistbox(columnFrame, height=min(4, length(.factors)),
-        selectmode="single", background="white", exportselection="FALSE")
-    columnScroll <- tkscrollbar(columnFrame, repeatinterval=5, 
-        command=function(...) tkyview(columnBox, ...))   
-    tkconfigure(columnBox, yscrollcommand=function(...) tkset(columnScroll, ...))
-    for (var in .factors) tkinsert(columnBox, "end", var)
-    controlBox <- tklistbox(controlFrame, height=min(4, length(.factors)),
-        selectmode="multiple", background="white", exportselection="FALSE")
-    controlScroll <- tkscrollbar(controlFrame, repeatinterval=5, 
-        command=function(...) tkyview(controlBox, ...))    
-    tkconfigure(controlBox, yscrollcommand=function(...) tkset(controlScroll, ...))
-    for (var in .factors) tkinsert(controlBox, "end", var)
-    subsetVariable <- tclVar("<all valid cases>")
-    subsetFrame <- tkframe(top)
-    subsetEntry <- tkentry(subsetFrame, width="20", textvariable=subsetVariable)
-    subsetScroll <- tkscrollbar(subsetFrame, orient="horizontal",
-        repeatinterval=5, command=function(...) tkxview(subsetEntry, ...))
-    tkconfigure(subsetEntry, xscrollcommand=function(...) tkset(subsetScroll, ...))
+    if (!checkActiveDataSet()) return()
+    if (!checkFactors(3)) return()
+    initializeDialog(title="Multi-Way Table")
+    variablesFrame <- tkframe(top)
+    rowBox <- variableListBox(variablesFrame, .factors, title="Row variable (pick one)")
+    columnBox <- variableListBox(variablesFrame, .factors, title="Column variable (pick one)")
+    controlBox <- variableListBox(variablesFrame, .factors, selectmode="multiple", 
+        title="Control variable(s) (pick one or more)")
+    subsetBox()
     onOK <- function(){
-        row <- as.character(tkget(rowBox, "active"))
-        column <- as.character(tkget(columnBox, "active"))
-        controls <- .factors[as.numeric(tkcurselection(controlBox)) + 1]
-        if (length(controls) == 0) {
-            tkmessageBox(message="No control variable(s) specified",
-                icon="error", type="ok")
-            tkdestroy(top)
-            multiWayTable()
+        row <- getSelection(rowBox)
+        column <- getSelection(columnBox)
+        controls <- getSelection(controlBox)
+        if (length(row) == 0 || length(column) == 0 || length(controls) == 0) {
+            errorCondition(recall=multiWayTable, message="You must select row, column, and control variables")
             return()
             }
         if ((row == column) || is.element(row, controls) || is.element(column, controls)) {
-            tkmessageBox(message="Row, column, and control variables must be different.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            multiWayTable()
+            errorCondition(recall=multiWayTable, message="Row, column, and control variables must be different.")
             return()
             }
         percents <- as.character(tclvalue(percentsVariable))
@@ -226,64 +115,21 @@ multiWayTable <- function(){
         remove(.Table, envir=.GlobalEnv)                                             
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        } 
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(xtabs)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
-    percentsVariable <- tclVar("none")
-    percentsFrame <- tkframe(top)
-    rowPercentsButton <- tkradiobutton(percentsFrame, variable=percentsVariable, value="row")
-    columnPercentsButton <- tkradiobutton(percentsFrame, variable=percentsVariable, value="column")
-    nonePercentsButton <- tkradiobutton(percentsFrame, variable=percentsVariable, value="none")
-    tkgrid(tklabel(top, text="Row variable (pick one)"), 
-        tklabel(top, text="Column variable (pick one)"), 
-        tklabel(top, text="Control variable(s) (pick one or more)"), sticky="w")
-    tkgrid(rowBox, rowScroll, sticky="nw")
-    tkgrid(columnBox, columnScroll, sticky="nw")
-    tkgrid(controlBox, controlScroll, sticky="nw")
-    tkgrid(rowFrame, columnFrame, controlFrame, sticky="nw")
-    tkgrid(tklabel(percentsFrame, text="Compute Percentages", fg="blue"), columnspan=3, sticky="w")
-    tkgrid(tklabel(percentsFrame, text="Row percentages"), rowPercentsButton, sticky="w")
-    tkgrid(tklabel(percentsFrame, text="Column percentages"), columnPercentsButton, sticky="w")
-    tkgrid(tklabel(percentsFrame, text="No percentages"), nonePercentsButton, sticky="w")
+    OKCancelHelp(helpSubject="xtabs")
+    radioButtons(name="percents", buttons=c("rowPercents", "columnPercents", "nonePercents"), values=c("row", "column", "none"),
+        initialValue="none", labels=c("Row percentages", "Column percentages", "No percentages"), title="Compute Percentages")
+    tkgrid(getFrame(rowBox), tklabel(variablesFrame, text="    "), getFrame(columnBox), tklabel(variablesFrame, text="    "), 
+        getFrame(controlBox), sticky="nw")
+    tkgrid(variablesFrame, sticky="w")
     tkgrid(percentsFrame, sticky="w")
-    tkgrid(tklabel(subsetFrame, text="Subset expression"), sticky="w")
-    tkgrid(subsetEntry, sticky="w")
-    tkgrid(subsetScroll, sticky="ew")
     tkgrid(subsetFrame, sticky="w")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    tkgrid.configure(rowScroll, sticky="ns")
-    tkgrid.configure(columnScroll, sticky="ns")
-    tkgrid.configure(controlScroll, sticky="ns")
-    for (row in 0:5) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:2) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkselection.set(rowBox, 0)
-    tkselection.set(columnBox, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(top)
-    tkwait.window(top)
+    tkgrid(buttonsFrame, sticky="w")
+    dialogSuffix(rows=4, columns=1)
     }
 
 enterTable <- function(){
     env <- environment()
-    top <- tktoplevel()
-    tkwm.title(top, "Enter and Analyze Two-Way Table")
+    initializeDialog(title="Enter and Analyze Two-Way Table")
     outerTableFrame <- tkframe(top)
     assign(".tableFrame", tkframe(outerTableFrame), envir=env)
     setUpTable <- function(...){
@@ -347,32 +193,22 @@ enterTable <- function(){
             }
         counts <- na.omit(counts)
         if (length(counts) != nrows*ncols){
-            tkmessageBox(message=paste("Number of valid entries (", length(counts), ")\n",
-                "not equal to number of rows (", nrows,") * number of columns (", ncols,").", 
-                sep=""), icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            enterTable()
+            errorCondition(recall=enterTable, message=paste("Number of valid entries (", length(counts), ")\n",
+                "not equal to number of rows (", nrows,") * number of columns (", ncols,").", sep=""))
             return()
             }
         if (length(unique(row.names)) != nrows){
-            tkmessageBox(message="Row names are not unique.", icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            enterTable()
+            errorCondition(recall=enterTable, message="Row names are not unique.")
             return()
             }     
         if (length(unique(col.names)) != ncols){
-            tkmessageBox(message="Column names are not unique.", icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            enterTable()
+            errorCondition(recall=enterTable, message="Column names are not unique.")
             return()
             }     
         percents <- as.character(tclvalue(percentsVariable))
-        chisq <- tclvalue(chisqTest)
-        expected <- tclvalue(expFreq)
-        fisher <- tclvalue(fisherTest)
+        chisq <- tclvalue(chisqVariable)
+        expected <- tclvalue(expFreqVariable)
+        fisher <- tclvalue(fisherVariable)
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         command <- paste("matrix(c(", paste(counts, collapse=","), "), ", nrows, ", ", ncols,
@@ -388,7 +224,6 @@ enterTable <- function(){
         doItAndPrint(".Table  # Counts")
         if (percents == "row") doItAndPrint("rowPercents(.Table) # Row Percentages")
         if (percents == "column") doItAndPrint("colPercents(.Table) # Column Percentages")
-        cat("\n")
         if (chisq == 1) {
             command <- "chisq.test(.Table, correct=FALSE)"
             logger(paste(".Test <- ", command, sep=""))
@@ -410,59 +245,19 @@ enterTable <- function(){
         remove(.Table, envir=.GlobalEnv)                                                      
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(chisq.test)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
-    percentsVariable <- tclVar("none")
-    percentsFrame <- tkframe(top)
-    rowPercentsButton <- tkradiobutton(percentsFrame, variable=percentsVariable, value="row")
-    columnPercentsButton <- tkradiobutton(percentsFrame, variable=percentsVariable, value="column")
-    nonePercentsButton <- tkradiobutton(percentsFrame, variable=percentsVariable, value="none")
-    chisqTest <- tclVar("1")
-    expFreq <- tclVar("0")
-    fisherTest <- tclVar("0")
-    testsFrame <- tkframe(top)
-    chisqCheckBox <- tkcheckbutton(testsFrame, variable=chisqTest)
-    expFreqCheckBox <- tkcheckbutton(testsFrame, variable=expFreq)
-    fisherCheckBox <- tkcheckbutton(testsFrame, variable=fisherTest)
+    OKCancelHelp(helpSubject="chisq.test")
+    radioButtons(name="percents", buttons=c("rowPercents", "columnPercents", "nonePercents"), values=c("row", "column", "none"),
+        initialValue="none", labels=c("Row percentages", "Column percentages", "No percentages"), title="Compute Percentages")
+    checkBoxes(frame="testsFrame", boxes=c("chisq", "expFreq", "fisher"), initialValues=c("1", "0", "0"),
+        labels=c("Chisquare test of independence", "Print expected frequencies", "Fisher's exact test"))
     tkgrid(tklabel(rowColFrame, text="Number of Rows:"), rowsSlider, rowsShow, sticky="w")
     tkgrid(tklabel(rowColFrame, text="Number of Columns:"), colsSlider, colsShow, sticky="w")
     tkgrid(rowColFrame, sticky="w")
     tkgrid(tklabel(top, text="Enter counts:", fg="blue"), sticky="w")
     tkgrid(outerTableFrame, sticky="w")
-    tkgrid(tklabel(percentsFrame, text="Compute Percentages", fg="blue"), columnspan=2, sticky="w")
-    tkgrid(tklabel(percentsFrame, text="Row percentages"), rowPercentsButton, sticky="w")
-    tkgrid(tklabel(percentsFrame, text="Column percentages"), columnPercentsButton, sticky="w")
-    tkgrid(tklabel(percentsFrame, text="No percentages"), nonePercentsButton, sticky="w")
     tkgrid(percentsFrame, sticky="w")
-    tkgrid(tklabel(testsFrame, text="Hypothesis Tests", fg="blue"), sticky="w")
-    tkgrid(tklabel(testsFrame, text="Chisquare test of independence"), chisqCheckBox, sticky="e")
-    tkgrid(tklabel(testsFrame, text="Print expected frequencies"), expFreqCheckBox, sticky="e")
-    tkgrid(tklabel(testsFrame, text="Fisher's exact test"), fisherCheckBox, sticky="e")
+    tkgrid(tklabel(top, text="Hypothesis Tests", fg="blue"), sticky="w")
     tkgrid(testsFrame, sticky="w")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
-    tkgrid.configure(chisqCheckBox, sticky="w")
-    tkgrid.configure(fisherCheckBox, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:5) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(top)
-    tkwait.window(top)        
+    tkgrid(buttonsFrame, columnspan=2, sticky="w")
+    dialogSuffix(rows=7, columns=2)
     } 

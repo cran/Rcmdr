@@ -1,10 +1,9 @@
 # Distributions  -> Plot Distributions menu dialogs
 
-# last modified 27 Jan 04 by J. Fox
+# last modified 25 June 04 by J. Fox
 
 normalDistributionPlot <- function(){
-    top <- tktoplevel()
-    tkwm.title(top, "Normal Distribution")
+    initializeDialog(title="Normal Distribution")
     muVar <- tclVar("0")
     muEntry <- tkentry(top, width="6", textvariable=muVar)
     sigmaVar <- tclVar("1")
@@ -33,45 +32,21 @@ normalDistributionPlot <- function(){
         logger("remove(.x)")
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(dnorm)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="dnorm")
     tkgrid(tklabel(top, text="mu (mean)"), muEntry, sticky="e")
     tkgrid(tklabel(top, text="sigma (standard deviation)"), sigmaEntry, sticky="e")
     tkgrid(tklabel(top, text="Plot density function"), densityButton, sticky="e")
     tkgrid(tklabel(top, text="Plot distribution function"), distributionButton, sticky="e")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="        "), sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(muEntry, sticky="w")
     tkgrid.configure(sigmaEntry, sticky="w")
     tkgrid.configure(densityButton, sticky="w")
     tkgrid.configure(distributionButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:4) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(muEntry)
-    tkwait.window(top)
+    dialogSuffix(rows=5, columns=2, focus=muEntry)
     }
 
 tDistributionPlot <- function(){
-    top <- tktoplevel()
-    tkwm.title(top, "t Distribution")
+    initializeDialog(title="t Distribution")
     dfVar <- tclVar("")
     dfEntry <- tkentry(top, width="6", textvariable=dfVar)
     functionVar <- tclVar("Density")
@@ -80,11 +55,7 @@ tDistributionPlot <- function(){
     onOK <- function(){
         df <- as.numeric(tclvalue(dfVar))
         if (is.na(df)) {
-            tkmessageBox(message="Degrees of freedom not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            tDistributionPlot()
+            errorCondition(recall=tDistributionPlot, message="Degrees of freedom not specified.")
             return()
             }
         fun <- tclvalue(functionVar)
@@ -104,43 +75,19 @@ tDistributionPlot <- function(){
         logger("remove(.x)")
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(dt)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="dt")
     tkgrid(tklabel(top, text="Degrees of freedom"), dfEntry, sticky="e")
     tkgrid(tklabel(top, text="Plot density function"), densityButton, sticky="e")
     tkgrid(tklabel(top, text="Plot distribution function"), distributionButton, sticky="e")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="        "), sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(dfEntry, sticky="w")
     tkgrid.configure(densityButton, sticky="w")
     tkgrid.configure(distributionButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:3) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(dfEntry)
-    tkwait.window(top)
+    dialogSuffix(rows=4, columns=2, focus=dfEntry)
     }
 
 chisquareDistributionPlot <- function(){
-    top <- tktoplevel()
-    tkwm.title(top, "Chi-squared Distribution")
+    initializeDialog(title="Chi-squared Distribution")
     dfVar <- tclVar("")
     dfEntry <- tkentry(top, width="6", textvariable=dfVar)
     functionVar <- tclVar("Density")
@@ -149,11 +96,7 @@ chisquareDistributionPlot <- function(){
     onOK <- function(){
         df <- as.numeric(tclvalue(dfVar))
         if (is.na(df)) {
-            tkmessageBox(message="Degrees of freedom not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            chisquareDistributionPlot()
+            errorCondition(recall=chisquareDistributionPlot,message="Degrees of freedom not specified.")
             return()
             }
         fun <- tclvalue(functionVar)
@@ -173,43 +116,19 @@ chisquareDistributionPlot <- function(){
         logger("remove(.x)")
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(dchisq)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="dchisq")
     tkgrid(tklabel(top, text="Degrees of freedom"), dfEntry, sticky="e")
     tkgrid(tklabel(top, text="Plot density function"), densityButton, sticky="e")
     tkgrid(tklabel(top, text="Plot distribution function"), distributionButton, sticky="e")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="        "), sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(dfEntry, sticky="w")
     tkgrid.configure(densityButton, sticky="w")
     tkgrid.configure(distributionButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:3) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(dfEntry)
-    tkwait.window(top)
+    dialogSuffix(rows=4, columns=2, focus=dfEntry)
     }
 
 FDistributionPlot <- function(){
-    top <- tktoplevel()
-    tkwm.title(top, "F Distribution")
+    initializeDialog(title="F Distribution")
     df1Var <- tclVar("")
     df2Var <- tclVar("")
     df1Entry <- tkentry(top, width="6", textvariable=df1Var)
@@ -221,19 +140,11 @@ FDistributionPlot <- function(){
         df1 <- as.numeric(tclvalue(df1Var))
         df2 <- as.numeric(tclvalue(df2Var))
         if (is.na(df1)) {
-            tkmessageBox(message="Numerator degrees of freedom not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            FDistributionPlot()
+            errorCondition(recall=FDistributionPlot, message="Numerator degrees of freedom not specified.")
             return()
             }
         if (is.na(df2)) {
-            tkmessageBox(message="Denominator degrees of freedom not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            FDistributionPlot()
+             errorCondition(recall=FDistributionPlot, message="Denominator degrees of freedom not specified.")
             return()
             }
         fun <- tclvalue(functionVar)
@@ -254,45 +165,21 @@ FDistributionPlot <- function(){
         logger("remove(.x)")
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(df)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="df")
     tkgrid(tklabel(top, text="Numerator degrees of freedom"), df1Entry, sticky="e")
     tkgrid(tklabel(top, text="Denominator degrees of freedom"), df2Entry, sticky="e")
     tkgrid(tklabel(top, text="Plot density function"), densityButton, sticky="e")
     tkgrid(tklabel(top, text="Plot distribution function"), distributionButton, sticky="e")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="        "), sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(df1Entry, sticky="w")
     tkgrid.configure(df2Entry, sticky="w")
     tkgrid.configure(densityButton, sticky="w")
     tkgrid.configure(distributionButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:4) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(df1Entry)
-    tkwait.window(top)
+    dialogSuffix(rows=5, columns=2, focus=df1Entry)
     }
 
 binomialDistributionPlot <- function(){
-    top <- tktoplevel()
-    tkwm.title(top, "Binomial Distribution")
+    initializeDialog(title="Binomial Distribution")
     trialsVar <- tclVar("")
     trialsEntry <- tkentry(top, width="6", textvariable=trialsVar)
     probVar <- tclVar(".5")
@@ -303,20 +190,12 @@ binomialDistributionPlot <- function(){
     onOK <- function(){
         trials <- as.numeric(tclvalue(trialsVar))
         if (is.na(trials)) {
-            tkmessageBox(message="Binomial trials not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            binomialDistributionPlot()
+            errorCondition(recall=binomialDistributionPlot, message="Binomial trials not specified.")
             return()
             }
         prob <- as.numeric(tclvalue(probVar))
         if (is.na(prob)) {
-            tkmessageBox(message="Probability of success not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            binomialDistributionPlot()
+            errorCondition(recall=binomialDistributionPlot, message="Probability of success not specified.")
             return()
             }
         fun <- tclvalue(functionVar)
@@ -347,45 +226,21 @@ binomialDistributionPlot <- function(){
         logger("remove(.x)")
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(dbinom)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="dbinom")
     tkgrid(tklabel(top, text="Binomial trials"), trialsEntry, sticky="e")
     tkgrid(tklabel(top, text="Probability of success"), probEntry, sticky="e")
     tkgrid(tklabel(top, text="Plot probability mass function"), densityButton, sticky="e")
     tkgrid(tklabel(top, text="Plot distribution function"), distributionButton, sticky="e")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="        "), sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(trialsEntry, sticky="w")
     tkgrid.configure(probEntry, sticky="w")
     tkgrid.configure(densityButton, sticky="w")
     tkgrid.configure(distributionButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:4) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(trialsEntry)
-    tkwait.window(top)
+    dialogSuffix(rows=5, columns=2, focus=trialsEntry)
     }
 
 PoissonDistributionPlot <- function(){
-    top <- tktoplevel()
-    tkwm.title(top, "Poisson Distribution")
+    initializeDialog(title="Poisson Distribution")
     meanVar <- tclVar("")
     meanEntry <- tkentry(top, width="6", textvariable=meanVar)
     functionVar <- tclVar("Probability")
@@ -394,11 +249,7 @@ PoissonDistributionPlot <- function(){
     onOK <- function(){
         mean <- as.numeric(tclvalue(meanVar))
         if (is.na(mean)) {
-            tkmessageBox(message="Mean not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            PoissonDistributionPlot()
+            errorCondition(recall=PoissonDistributionPlot, message="Mean not specified.")
             return()
             }
         fun <- tclvalue(functionVar)
@@ -429,36 +280,13 @@ PoissonDistributionPlot <- function(){
         logger("remove(.x)")
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(dpois)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="dpois")
     tkgrid(tklabel(top, text="mean"), meanEntry, sticky="e")
     tkgrid(tklabel(top, text="Plot probability mass function"), densityButton, sticky="e")
     tkgrid(tklabel(top, text="Plot distribution function"), distributionButton, sticky="e")
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="        "), sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(meanEntry, sticky="w")
     tkgrid.configure(densityButton, sticky="w")
     tkgrid.configure(distributionButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:3) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(meanEntry)
-    tkwait.window(top)
+    dialogSuffix(rows=4, columns=2, focus=meanEntry)
     }

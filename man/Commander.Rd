@@ -153,6 +153,14 @@ set none, one, several, or all options. The available options are as follows:
     \item{\code{double.click}}{Set to \code{TRUE} if you want a double-click of the left mouse
     button to press the default button in all dialogs. The default is \code{FALSE}.}
     
+    \item{\code{multiple.select.mode}}{Affects the way multiple variables are selected in variable-list boxes.
+    If set to \code{"extended"} (the default), left-clicking on a variable selects it and deselects any other
+    variables that are selected; Control-left-click toggles
+    the selection (and may be used to select additional variables); Shift-left-click extends the selection.
+    This is the standard Windows convention. If set
+    to \code{"multiple"}, left-clicking toggles the selection of a variable and may be used to select more than one
+    variable. This is the behaviour in the Rcmdr prior to version 1.9-10.}
+    
     \item{\code{sort.names}}{Set to \code{TRUE} (the default) if you want variable names to be sorted
     alphabetically in variable lists.}
     

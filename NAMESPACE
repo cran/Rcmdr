@@ -1,7 +1,12 @@
-export(Commander, colPercents, rowPercents, reliability,
+export(bin.var, Commander, colPercents, rowPercents, reliability,
     partial.cor, RcmdrPager, listLinearModels, listGeneralizedLinearModels, doItAndPrint,
     justDoIt, logger, listDataSets, activeDataSet, activeModel, is.valid.name, stem.leaf,
-    Hist, plotMeans, scatter3d)
+    Hist, plotMeans, scatter3d, listVariables, listFactors, listTwoLevelFactors, listNumeric, listVariables,
+    OKCancelHelp, subOKCancelHelp, checkActiveDataSet, checkActiveModel, checkBoxes, checkFactors, checkNumeric,
+    checkReplace, checkTwoLevelFactors, checkVariables, dialogSuffix, errorCondition, groupsBox,
+    groupsLabel, modelFormula, radioButtons, subsetBox, variableListBox, initializeDialog, getFrame, getSelection)
 
 S3method(print, stem.leaf)
 S3method(print, reliability) 
+S3method(getFrame, listbox)
+S3method(getSelection, listbox) 

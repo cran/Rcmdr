@@ -1,30 +1,20 @@
 # Statistics Menu dialogs
 
-# last modified 27 Jan 04 by J. Fox
+# last modified 10 July 04 by J. Fox
 
     # Proportions menu
     
 singleProportionTest <- function(){
-    if (activeDataSet() == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    if (length(.twoLevelFactors) == 0){
-        tkmessageBox(message="There are no 2-level factors in the active data set.", 
-                icon="error", type="ok")
-        tkfocus(.commander)
-        return()
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Single-Sample Proportion Test")
-    xFrame <- tkframe(top)
-    xBox <- tklistbox(xFrame, height=min(4, length(.twoLevelFactors)),
-        selectmode="single", background="white", exportselection="FALSE")
-    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
-    tkconfigure(xBox, yscrollcommand=function(...) tkset(xScroll, ...))
-    for (x in .twoLevelFactors) tkinsert(xBox, "end", x)
+    if (!checkActiveDataSet()) return()
+    if (!checkTwoLevelFactors()) return()
+    initializeDialog(title="Single-Sample Proportion Test")
+    xBox <- variableListBox(top, .twoLevelFactors, title="Variable (pick one)")
     onOK <- function(){
-        x <- .twoLevelFactors[as.numeric(tkcurselection(xBox)) + 1]
+        x <- getSelection(xBox)
+        if (length(x) == 0) {
+            errorCondition(recall=singleProportionTest, message="You must select a variable.")
+            return()
+            }
         alternative <- as.character(tclvalue(alternativeVariable))
         level <- tclvalue(confidenceLevel)
         test <- as.character(tclvalue(testVariable))
@@ -43,24 +33,9 @@ singleProportionTest <- function(){
             alternative, "', p=", p, ", conf.level=", level, ")", sep=""))
         tkfocus(.commander)
         }
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }  
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(prop.test)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
-    alternativeFrame <- tkframe(top)
-    alternativeVariable <- tclVar("two.sided")
-    twosidedButton <- tkradiobutton(alternativeFrame, variable=alternativeVariable, value="two.sided")
-    lessButton <- tkradiobutton(alternativeFrame, variable=alternativeVariable, value="less")
-    greaterButton <- tkradiobutton(alternativeFrame, variable=alternativeVariable, value="greater")
+    OKCancelHelp(helpSubject="prop.test")
+    radioButtons(top, name="alternative", buttons=c("twosided", "less", "greater"), values=c("two.sided", "less", "greater"),
+        labels=c("Population proportion = p0", "Population proportion < p0", "Population proportion > p0"), title="Alternative Hypothesis")
     rightFrame <- tkframe(top)
     confidenceFrame <- tkframe(rightFrame)
     confidenceLevel <- tclVar(".95")
@@ -68,93 +43,52 @@ singleProportionTest <- function(){
     pFrame <- tkframe(rightFrame)
     pVariable <- tclVar(".5")
     pField <- tkentry(pFrame, width="6", textvariable=pVariable)
-    testFrame <- tkframe(top)
-    testVariable <- tclVar("normal")
-    normalButton <- tkradiobutton(testFrame, variable=testVariable, value="normal")
-    correctedButton <- tkradiobutton(testFrame, variable=testVariable, value="corrected")
-    exactButton <- tkradiobutton(testFrame, variable=testVariable, value="exact")    
-    tkgrid(tklabel(top, text="Variable (pick one)"), sticky="w")
-    tkgrid(xBox, xScroll, sticky="nw")
-    tkgrid(xFrame, sticky="nw")    
-    tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis", fg="blue"), columnspan=2, sticky="w")
-    tkgrid(tklabel(alternativeFrame, text="Population proportion = p0"), twosidedButton, sticky="w")
-    tkgrid(tklabel(alternativeFrame, text="Population proportion < p0"), lessButton, sticky="w")
-    tkgrid(tklabel(alternativeFrame, text="Population proportion > p0"), greaterButton, sticky="w")
-    tkgrid(tklabel(pFrame, text="Null hypothesis: p = "), pField, sticky="w")
+    radioButtons(name="test", buttons=c("normal", "corrected", "exact"), 
+        labels=c("Normal approximation", "Normal approximation with\ncontinuity correction", "Exact binomial"), 
+        title="Type of Test")
+    tkgrid(getFrame(xBox), sticky="nw")    
+    tkgrid(tklabel(pFrame, text="Null hypothesis: p = ", fg="blue"), pField, sticky="w")
     tkgrid(pFrame, sticky="w")
-    tkgrid(tklabel(confidenceFrame, text="Confidence Level: "), confidenceField, sticky="w")
+    tkgrid(tklabel(rightFrame, text=""))
+    tkgrid(tklabel(confidenceFrame, text="Confidence Level: ", fg="blue"), confidenceField, sticky="w")
     tkgrid(confidenceFrame, sticky="w")
     tkgrid(alternativeFrame, rightFrame, sticky="nw")
-    tkgrid(tklabel(testFrame, text="Type of Test", fg="blue"), columnspan=2, sticky="w")
-    tkgrid(tklabel(testFrame, text="Normal approximation"), normalButton, sticky="w")
-    tkgrid(tklabel(testFrame, text="Normal approximation with\ncontinuity correction", justify="left"), 
-        correctedButton, sticky="w")
-    tkgrid(tklabel(testFrame, text="Exact binomial"), exactButton, sticky="w")
     tkgrid(testFrame, sticky="w")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(confidenceField, sticky="e")
-    tkgrid.configure(xScroll, sticky="ns")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:3) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkselection.set(xBox, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(top)
-    tkwait.window(top)
+    dialogSuffix(rows=4, columns=2)
     }
 
 twoSampleProportionsTest <- function(){
-    if (activeDataSet() == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    if (length(.twoLevelFactors) < 2){
-        tkmessageBox(message="There are fewer than 2 two-level factors in the active data set.", 
-                icon="error", type="ok")
-        tkfocus(.commander)
-        return()
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Two-Sample Proportions Test")
-    xFrame <- tkframe(top)
-    xBox <- tklistbox(xFrame, height=min(4, length(.twoLevelFactors)),
-        selectmode="single", background="white", exportselection="FALSE")
-    xScroll <- tkscrollbar(xFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
-    tkconfigure(xBox, yscrollcommand=function(...) tkset(xScroll, ...))
-    for (x in .twoLevelFactors) tkinsert(xBox, "end", x)
-    groupsFrame <- tkframe(top)
-    groupsBox <- tklistbox(groupsFrame, height=min(4, length(.twoLevelFactors)),
-        selectmode="single", background="white", exportselection="FALSE")
-    groupsScroll <- tkscrollbar(groupsFrame, repeatinterval=5, command=function(...) tkyview(xBox, ...))
-    tkconfigure(groupsBox, yscrollcommand=function(...) tkset(groupsScroll, ...))
-    for (group in .twoLevelFactors) tkinsert(groupsBox, "end", group)
+    if (!checkActiveDataSet()) return()
+    if (!checkTwoLevelFactors(2)) return()
+    initializeDialog(title="Two-Sample Proportions Test")
+    groupsBox <- variableListBox(top, .twoLevelFactors, title="Groups (pick one)")
+    xBox <- variableListBox(top, .twoLevelFactors, title="Response Variable (pick one)")
     onOK <- function(){
-        x <- .twoLevelFactors[as.numeric(tkcurselection(xBox)) + 1]
-        groups <- .twoLevelFactors[as.numeric(tkcurselection(groupsBox)) + 1]
+        groups <- getSelection(groupsBox)
+        if (length(groups) == 0) {
+            errorCondition(recall=twoSampleProportionsTest, message="You must select a groups variable.")
+            return()
+            }
+        x <- getSelection(xBox)
+        if (length(x) == 0) {
+            errorCondition(recall=twoSampleProportionsTest, message="You must select a response variable.")
+            return()
+            }
+        if (x == groups) {
+            errorCondition(recall=twoSampleProportionsTest, message="Groups and response variables must be different.")
+            return()
+            }
         alternative <- as.character(tclvalue(alternativeVariable))
         level <- tclvalue(confidenceLevel)
         test <- as.character(tclvalue(testVariable))
-        if (x == groups) {
-            tkmessageBox(message="Groups and response variables must be different.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            twoSampleProportionsTest()
-            return()
-            }
-
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         command <- paste("xtabs(~", groups, "+", x, ", data=", .activeDataSet, ")", sep="")
         logger(paste(".Table <-", command))
         assign(".Table", justDoIt(command), envir=.GlobalEnv)
-        doItAndPrint(".Table")
+        doItAndPrint("rowPercents(.Table)")
         if (test == "normal") doItAndPrint(paste("prop.test(.Table, alternative='", 
             alternative, "', conf.level=", level, ", correct=FALSE)", sep=""))
         else doItAndPrint(paste("prop.test(.Table, alternative='", 
@@ -163,65 +97,22 @@ twoSampleProportionsTest <- function(){
         remove(.Table, envir=.GlobalEnv)
         tkfocus(.commander)
         }
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(prop.test)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
-    alternativeFrame <- tkframe(top)
-    alternativeVariable <- tclVar("two.sided")
-    twosidedButton <- tkradiobutton(alternativeFrame, variable=alternativeVariable, value="two.sided")
-    lessButton <- tkradiobutton(alternativeFrame, variable=alternativeVariable, value="less")
-    greaterButton <- tkradiobutton(alternativeFrame, variable=alternativeVariable, value="greater")
+    OKCancelHelp(helpSubject="prop.test")
+    radioButtons(name="alternative", buttons=c("twosided", "less", "greater"), values=c("two.sided", "less", "greater"),
+        labels=c("Two-sided", "Difference < 0", "Difference > 0"), title="Alternative Hypothesis")
     rightFrame <- tkframe(top)
     confidenceFrame <- tkframe(rightFrame)
     confidenceLevel <- tclVar(".95")
     confidenceField <- tkentry(confidenceFrame, width="6", textvariable=confidenceLevel)
-    testFrame <- tkframe(top)
-    testVariable <- tclVar("normal")
-    normalButton <- tkradiobutton(testFrame, variable=testVariable, value="normal")
-    correctedButton <- tkradiobutton(testFrame, variable=testVariable, value="corrected")
-    tkgrid(tklabel(top, text="Groups (pick one)"), 
-        tklabel(top, text="Response Variable (pick one)"), sticky="w")
-    tkgrid(xBox, xScroll, sticky="nw")
-    tkgrid(groupsBox, groupsScroll, sticky="nw")
-    tkgrid(groupsFrame, xFrame, sticky="nw")    
-    tkgrid(tklabel(alternativeFrame, text="Alternative Hypothesis", fg="blue"), columnspan=2, sticky="w")
-    tkgrid(tklabel(alternativeFrame, text="Two-sided"), twosidedButton, sticky="w")
-    tkgrid(tklabel(alternativeFrame, text="Difference < 0"), lessButton, sticky="w")
-    tkgrid(tklabel(alternativeFrame, text="Difference > 0"), greaterButton, sticky="w")
-    tkgrid(tklabel(confidenceFrame, text="Confidence Level: "), confidenceField, sticky="w")
+    radioButtons(name="test", buttons=c("normal", "corrected"), 
+        labels=c("Normal approximation", "Normal approximation with\ncontinuity correction"), title="Type of Test")
+    tkgrid(getFrame(groupsBox), getFrame(xBox), sticky="nw")    
+    groupsLabel(columnspan=2)
+    tkgrid(tklabel(confidenceFrame, text="Confidence Level: ", fg="blue"), confidenceField, sticky="w")
     tkgrid(confidenceFrame, sticky="w")
     tkgrid(alternativeFrame, rightFrame, sticky="nw")
-    tkgrid(tklabel(testFrame, text="Type of Test", fg="blue"), columnspan=2, sticky="w")
-    tkgrid(tklabel(testFrame, text="Normal approximation"), normalButton, sticky="w")
-    tkgrid(tklabel(testFrame, text="Normal approximation with\ncontinuity correction", justify="left"), 
-        correctedButton, sticky="w")
     tkgrid(testFrame, sticky="w")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
-    tkgrid.configure(xScroll, sticky="ns")
-    tkgrid.configure(groupsScroll, sticky="ns")
+    tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(confidenceField, sticky="e")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:4) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkselection.set(xBox, 0)
-    tkselection.set(groupsBox, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(top)
-    tkwait.window(top)
+    dialogSuffix(rows=5, columns=2)
     }

@@ -1,4 +1,4 @@
-# last modified 28 May 2004 by J. Fox
+# last modified 31 July 2004 by J. Fox
 
 # File menu dialogs
 
@@ -60,18 +60,32 @@ saveOutputAs <- function() {
     close(fileCon)
     assign(".outputFileName", outputFile, envir=.GlobalEnv)
     }
+
+saveWorkspaceAs <- function(){
+    saveFile <- tclvalue(tkgetSaveFile(filetypes='{"All Files" {"*"}}',
+        defaultextension="", initialfile=".RData"))
+    save(list=ls(envir=.GlobalEnv), file=saveFile)
+    assign(".saveFileName", saveFile, envir=.GlobalEnv)
+    }
+
+saveWorkspace <- function() {
+    if (is.null(.saveFileName)) saveWorkspaceAs()
+    else save(list=ls(envir=.GlobalEnv), file=.saveFileName)
+    }
     
 closeCommander <- function(){
-    globals <- c(".activeDataSet", ".activeModel", ".attach.data.set", ".command.text.color", ".commander", 
-        ".console.output", ".dataSetLabel", ".dataSetName", ".double.click", ".factors",
-        ".grab.focus", ".log", ".log.commands", ".logFileName", ".logFont", ".log.text.color",
-        ".modelLabel", ".modelName", ".modelNumber", ".modelWithSubset", 
-        ".numeric", "oldPager", ".operatorFont", ".output.text.color", ".outputFileName", 
-        ".rgl", ".saveOptions", ".sort.names",
+    globals <- c(".activeDataSet", ".activeModel", ".attach.data.set", ".command.text.color", ".commander", ".grab.focus", 
+        ".console.output", ".contrasts", ".dataSetLabel", ".dataSetName", ".double.click", ".factors",
+        ".length.messages", ".log", ".log.commands", ".logFileName", ".logFont", ".log.font.size", ".log.text.color",
+        ".messages", ".messages.connection",
+        ".modelLabel", ".modelName", ".modelNumber", ".modelWithSubset", ".multiple.select.mode",
+        ".numeric", "oldPager", ".operatorFont", ".output", ".output.text.color", ".outputFileName", 
+        ".rgl", ".saveFileName", ".saveOptions", ".sort.names",
         ".twoLevelFactors", ".variables")
     response <- tclvalue(tkmessageBox(message="Exit?",
         icon="question", type="okcancel", default="cancel"))
     if (response == "cancel") return(invisible(response))
+    sink(type="message")
     if (.rgl) rgl.quit()
     if (!is.null(.activeDataSet) && .attach.data.set) 
         justDoIt(logger(paste("detach(", .activeDataSet, ")", sep="")))
@@ -83,7 +97,7 @@ closeCommander <- function(){
         if ("yes" == tclvalue(response2)) saveLog()
         }
     if (!.console.output && tclvalue(tkget(.output, "1.0", "end")) != "\n"){
-        response3 <- tkmessageBox(message="Save ouptut file?",
+        response3 <- tkmessageBox(message="Save output file?",
                 icon="question", type="yesno", default="yes")
         if ("yes" == tclvalue(response3)) saveOutput()
         }
@@ -104,26 +118,28 @@ closeCommanderAndR <- function(){
     }
 
 Options <- function(){
-    top <- tktoplevel()
-    tkwm.title(top, "Commander Options")
+    setOption <- function(option, default) {
+        if (is.null(current[[option]])) default else current[[option]]
+        }
+    initializeDialog(title="Commander Options")
     current <- options("Rcmdr")[[1]]
-    console.output <- if (is.null(current$console.output)) FALSE else current$console.output
-    log.commands <- if (is.null(current$log.commands)) TRUE else current$log.commands
-    log.font.size <- if (is.null(current$log.font.size)) 10 else current$log.font.size
-    log.width <- if (is.null(current$log.width)) 80 else current$log.width
+    console.output <- setOption("console.output", FALSE)
+    log.commands <- setOption("log.commands", TRUE)
+    log.font.size <- setOption("log.font.size", 10)
+    log.width <- setOption("log.width", 80)
     log.height <- if (!is.null(current$log.height)) current$log.height
                     else if (!log.commands) 0 else 10
     output.height <- if (!is.null(current$output.height)) current$output.height
         else if (console.output) 0 else 2*log.height 
-    contrasts <- if (is.null(current$contrasts)) c("contr.Treatment", "contr.poly") else current$contrasts
-    grab.focus <- if (is.null(current$grab.focus)) TRUE else current$grab.focus
-    double.click <- if (is.null(current$double.click)) FALSE else current$double.click
-    sort.names <- if (is.null(current$sort.names)) TRUE else current$sort.names
-    show.edit.button <- if (is.null(current$show.edit.button)) TRUE else current$show.edit.button
+    contrasts <- setOption("contrasts", c("contr.Treatment", "contr.poly"))
+    grab.focus <- setOption("grab.focus", TRUE)
+    double.click <- setOption("double.click", FALSE)
+    sort.names <- setOption("sort.names", TRUE)
+    show.edit.button <- setOption("show.edit.button", TRUE)
     scale.factor <- current$scale.factor
-    default.font.size <- if (is.null(current$default.font.size)) 10 else current$default.font.size
-    default.font <- if(is.null(current$default.font)) paste("*helvetica-medium-r-normal-*-",
-            default.font.size, "*", sep="") else current$default.font
+    default.font.size <- setOption("default.font.size", 10)
+    default.font <- setOption("default.font", 
+        paste("*helvetica-medium-r-normal-*-", default.font.size, "*", sep=""))
     consoleOutputVar <- tclVar(console.output)
     consoleOutputCheckBox <- tkcheckbutton(top, variable=consoleOutputVar)
     logCommandsVar <- tclVar(log.commands)
@@ -187,27 +203,14 @@ Options <- function(){
             show.edit.button=show.edit.button
             )
         if (.Platform$OS.type == "windows") options$scale.factor <- scale.factor
-        else options$default.font <- default.font
+            else options$default.font <- default.font
         options(Rcmdr=options)
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)  
         closeCommander()
         Commander()
         }
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }    
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="Restart Commander", fg="darkgreen", command=onOK, 
-        default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(Commander)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="Commander")
     tkgrid(tklabel(top, text="Log commands to script window"), logCommandsCheckBox, sticky="e")
     tkgrid.configure(logCommandsCheckBox, sticky="w")
     tkgrid(tklabel(top, text="Log-font size (points)"), logFontSizeSlider, sticky="se")
@@ -242,24 +245,12 @@ Options <- function(){
         tkgrid(tklabel(top, text="Default font"), defaultFontEntry, sticky="e")
         tkgrid.configure(defaultFontEntry, sticky="w")
         }
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:10) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(top)
-    tkwait.window(top)
+    tkgrid(buttonsFrame, columnspan=2, sticky="w")
+    dialogSuffix(rows=11, columns=2)
     }
 
 setOutputWidth <- function(){
-    top <- tktoplevel()
-    tkwm.title(top, "Reset Output Width")
+    initializeDialog(title="Reset Output Width")
     output.width <- unlist(options("width"))
     outputWidthVar <- tclVar(output.width)
     logWidthSlider <- tkscale(top, from=20, to=200, showvalue=TRUE, variable=outputWidthVar,
@@ -271,33 +262,9 @@ setOutputWidth <- function(){
         tkfocus(.commander)
         tkdestroy(top)  
         }
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }    
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", command=onOK, width=12,
-        default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(options)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="options")
     tkgrid(tklabel(top, text="Output width (characters)"), logWidthSlider, sticky="w")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:1) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(top)
-    tkwait.window(top)
+    tkgrid(buttonsFrame, sticky="w")
+    dialogSuffix(rows=2, columns=1)
     }
    

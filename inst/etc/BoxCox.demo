@@ -1,30 +1,13 @@
 BoxCox <- function(){
-    if (activeDataSet() == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    if (length(.numeric) < 1){
-        tkmessageBox(message="There no numeric variables in the active data set.", 
-                icon="error", type="ok")
-        tkfocus(.commander)
-        return()
-        }
-    top <- tktoplevel()
-    tkwm.title(top, "Box-Cox Transformations")
-    variablesFrame <- tkframe(top)
-    variablesBox <- tklistbox(variablesFrame, height=min(4, length(.numeric)),
-        selectmode="multiple", background="white", exportselection="FALSE")
-    variablesScroll <- tkscrollbar(variablesFrame, 
-        repeatinterval=5, command=function(...) tkyview(variablesBox, ...))    
-    tkconfigure(variablesBox, yscrollcommand=function(...) tkset(variablesScroll, ...))
-    for (variable in .numeric) tkinsert(variablesBox, "end", variable)
+    if (!checkActiveDataSet()) return()
+    if (!checkNumeric()) return()
+    initializeDialog(title="Box-Cox Transformations")
+    variablesBox <- variableListBox(top, .numeric, selectmode="multiple", 
+        title="Select variables (one or more)")
     onOK <- function(){
-        variables <- .numeric[as.numeric(tkcurselection(variablesBox)) + 1]
+        variables <- getSelection(variablesBox)
         if (length(variables) < 1) {
-            tkmessageBox(message="You must select one or more variables.", 
-                icon="error", type="ok")
-            tkdestroy(top)
-            BoxCox()
+            errorCondition(recall=BoxCox, message="You must select one or more variables.")
             return()
             }
         if (.grab.focus) tkgrab.release(top)
@@ -34,34 +17,8 @@ BoxCox <- function(){
         doItAndPrint(command)
         tkfocus(.commander)
         }
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(box.cox.powers)
-        }
-    helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
-    tkgrid(tklabel(top, text="Select variables (one or more)"), sticky="w")
-    tkgrid(variablesBox, variablesScroll, sticky="nw")
-    tkgrid(variablesFrame, sticky="nw")    
-    tkgrid(OKbutton, cancelButton, tklabel(buttonsFrame, text="      "), helpButton, sticky="w")
+    OKCancelHelp(helpSubject="box.cox.powers")
+    tkgrid(getFrame(variablesBox), sticky="nw")    
     tkgrid(buttonsFrame, sticky="w")
-    for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkgrid.configure(variablesScroll, sticky="ns")
-    tkgrid.configure(helpButton, sticky="e")
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(top)
-    tkwait.window(top)
+    dialogSuffix(rows=2, columns=1)
     }

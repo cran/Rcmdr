@@ -1,8 +1,13 @@
 # The R Commander and command logger
 
-# last modified 11 June 04 by J. Fox
+# last modified 30 July 04 by J. Fox
 
 Commander <- function(){
+    setOption <- function(option, default, global=TRUE) {
+        opt <- if (is.null(current[[option]])) default else current[[option]]
+        if (global) assign(paste(".", option, sep=""), opt, envir=.GlobalEnv)
+        else opt
+        }
     etc <- file.path(.path.package(package="Rcmdr")[1], "etc")
     onCopy <- function(){
         focused <- tkfocus()
@@ -38,32 +43,23 @@ Commander <- function(){
         focused <- tkfocus()
         if ((tclvalue(focused) != .log$ID) && (tclvalue(focused) != .output$ID))  
             focused <- .log
-        top <- tktoplevel()
-        tkwm.title(top, "Find")
+        initializeDialog(title="Find")
         textFrame <- tkframe(top)
         textVar <- tclVar("")
         textEntry <- tkentry(textFrame, width="20", textvariable=textVar)
-        optionsFrame <- tkframe(top)
-        regexprVar <- tclVar("0")
-        regexprCheckBox <- tkcheckbutton(optionsFrame, variable=regexprVar)
-        caseVar <- tclVar("1")
-        caseCheckBox <- tkcheckbutton(optionsFrame, variable=caseVar)
-        directionVar <- tclVar("-forward")
-        forwardButton <- tkradiobutton(optionsFrame, variable=directionVar, value="-forward")
-        backwardButton <- tkradiobutton(optionsFrame, variable=directionVar, value="-backward")
+        checkBoxes(frame="optionsFrame", boxes=c("regexpr", "case"), initialValues=c("0", "1"), 
+            labels=c("Regular-expression search", "Case sensitive"))
+        radioButtons(name="direction", buttons=c("foward", "backward"), labels=c("Forward", "Backward"),
+            values=c("-forward", "-backward"), title="Search Direction")
         onOK <- function(){
             text <- tclvalue(textVar)
             if (text == ""){
-                tkmessageBox(message="No search text specified.", 
-                    icon="error", type="ok")
-                if (.grab.focus) tkgrab.release(top)
-                tkdestroy(top)
-                onFind()
+                errorCondition(recall=onFind, message="No search text specified.")
                 return()
                 }
-            type <- if (tclvalue(regexprVar) == 1) "-regexp" else "-exact"
-            case <- tclvalue(caseVar) == 1
-            direction <- tclvalue(directionVar)
+            type <- if (tclvalue(regexprVariable) == 1) "-regexp" else "-exact"
+            case <- tclvalue(caseVariable) == 1
+            direction <- tclvalue(directionVariable)
             stop <- if (direction == "-forward") "end" else "1.0"
             where <- if (case) tksearch(focused, type, direction, "--", text, "insert", stop)
                         else tksearch(focused, type, direction, "-nocase", "--", text, "insert", stop)
@@ -82,35 +78,14 @@ Commander <- function(){
             tksee(focused, where)
             tkdestroy(top)  
             }
-        onCancel <- function() {
-            if (.grab.focus) tkgrab.release(top)
-            tkfocus(.commander)
-            tkdestroy(top)  
-            }
-        buttonsFrame <- tkframe(top)
-        OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-        cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12",command=onCancel)  
+        OKCancelHelp()
         tkgrid(tklabel(textFrame, text="Search for:"), textEntry, sticky="w") 
         tkgrid(textFrame, sticky="w") 
-        tkgrid(tklabel(optionsFrame, text="Regular-expression search"), regexprCheckBox, sticky="w")
-        tkgrid(tklabel(optionsFrame, text="Case sensitive"), caseCheckBox, sticky="w")
-        tkgrid(tklabel(optionsFrame, text="Search Direction", fg="blue"), sticky="w")
-        tkgrid(tklabel(optionsFrame, text="Forward"), forwardButton, sticky="w")
-        tkgrid(tklabel(optionsFrame, text="Backward"), backwardButton, sticky="w")
         tkgrid(optionsFrame, sticky="w")
-        tkgrid(OKbutton, tklabel(buttonsFrame, text="        "), cancelButton, sticky="w")
+        tkgrid(directionFrame, sticky="w")
         tkgrid(buttonsFrame, sticky="w")
-        for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
-        for (col in 0:0) tkgrid.columnconfigure(top, col, weight=0)
-        .Tcl("update idletasks")
-        tkwm.resizable(top, 0, 0)
-        tkbind(top, "<Return>", onOK)
-        if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-        tkwm.deiconify(top)
-        if (.grab.focus) tkgrab.set(top)
-        tkfocus(textEntry)
-        tkwait.window(top)
-        }    
+        dialogSuffix(rows=4, columns=1, focus=textEntry)
+         }    
     onSelectAll <- function() {
         focused <- tkfocus()
         if ((tclvalue(focused) != .log$ID) && (tclvalue(focused) != .output$ID))  
@@ -122,63 +97,51 @@ Commander <- function(){
         onSelectAll()
         onDelete()
         }
+    assign(".messages.connection", textConnection(".messages", open = "w"), envir=.GlobalEnv)
+    sink(.messages.connection, type="message")
+    assign(".length.messages", 0, envir=.GlobalEnv)
     assign(".activeDataSet", NULL, envir=.GlobalEnv)
     assign(".activeModel", NULL, envir=.GlobalEnv)
     assign(".logFileName", NULL, envir=.GlobalEnv)
     assign(".outputFileName", NULL, envir=.GlobalEnv)
+    assign(".saveFileName", NULL, envir=.GlobalEnv)
     assign(".modelNumber", 0, envir=.GlobalEnv)
     assign(".rgl", FALSE, envir=.GlobalEnv)
-    log.font.size <- options("Rcmdr")[[1]]$log.font.size
-    log.font.size <- if (is.null(log.font.size)) 10 else log.font.size
-    assign(".logFont", tkfont.create(family="courier", size=log.font.size), envir=.GlobalEnv)
-    assign(".operatorFont", tkfont.create(family="courier", size=log.font.size), 
+    current <- options("Rcmdr")[[1]]
+    setOption("log.font.size", 10)
+    assign(".logFont", tkfont.create(family="courier", size=.log.font.size), envir=.GlobalEnv)
+    assign(".operatorFont", tkfont.create(family="courier", size=.log.font.size), 
         envir=.GlobalEnv)
-    scale.factor <- options("Rcmdr")[[1]]$scale.factor
+    scale.factor <- current$scale.factor
     if (!is.null(scale.factor)) .Tcl(paste("tk scaling ", scale.factor, sep=""))
-    contrasts <- options("Rcmdr")[[1]]$contrasts
-    contrasts <- if (is.null(contrasts)) c("contr.Treatment", "contr.poly") else contrasts
-    log.commands <- options("Rcmdr")[[1]]$log.commands
-    assign(".log.commands", if (is.null(log.commands)) TRUE else log.commands, envir=.GlobalEnv)
-    console.output <- options("Rcmdr")[[1]]$console.output
-    assign(".console.output", if (is.null(console.output)) FALSE else console.output, envir=.GlobalEnv)
-    log.height <- options("Rcmdr")[[1]]$log.height
-    log.height <- if (!is.null(log.height)) as.character(log.height)
-        else if (!.log.commands) "0" else "10"
-    log.width <- options("Rcmdr")[[1]]$log.width
-    log.width <- if (is.null(log.width)) "80" else as.character(log.width)   
-    output.height <- options("Rcmdr")[[1]]$output.height
-    output.height <- if (!is.null(output.height)) as.character(output.height) 
-        else if (.console.output) "0" 
-        else if ((as.numeric(log.height) != 0) || (!log.commands)) as.character(2*as.numeric(log.height))
-        else 20
-    assign(".saveOptions", options(warn=1, contrasts=contrasts, width=as.numeric(log.width),
+    setOption("contrasts", c("contr.Treatment", "contr.poly"))
+    setOption("log.commands", TRUE)
+    setOption("console.output", FALSE)
+    log.height <- as.character(setOption("log.height", if (!.log.commands) 0 else 10, global=FALSE))
+    log.width <- as.character(setOption("log.width", 80, global=FALSE))
+    output.height <- as.character(setOption("output.height",
+        if (.console.output) 0
+        else if ((as.numeric(log.height) != 0) || (!.log.commands)) 2*as.numeric(log.height)
+        else 20, global=FALSE))
+    assign(".saveOptions", options(warn=1, contrasts=.contrasts, width=as.numeric(log.width),
         na.action="na.exclude", graphics.record=TRUE), envir=.GlobalEnv) 
-    double.click <- options("Rcmdr")[[1]]$double.click
-    assign(".double.click", if (is.null(double.click)) FALSE else double.click, envir=.GlobalEnv)
-    sort.names <- options("Rcmdr")[[1]]$sort.names
-    assign(".sort.names", if (is.null(sort.names)) TRUE else sort.names, envir=.GlobalEnv)
-    grab.focus <- options("Rcmdr")[[1]]$grab.focus
-    assign(".grab.focus", if (is.null(grab.focus)) TRUE else grab.focus, envir=.GlobalEnv)
-    attach.data.set <- options("Rcmdr")[[1]]$attach.data.set
-    assign(".attach.data.set", if (is.null(attach.data.set)) TRUE else attach.data.set, envir=.GlobalEnv)
-    log.text.color <- options("Rcmdr")[[1]]$log.text.color
-    assign(".log.text.color", if (is.null(log.text.color)) "black" else log.text.color, envir=.GlobalEnv)
-    command.text.color <- options("Rcmdr")[[1]]$command.text.color
-    assign(".command.text.color", if (is.null(command.text.color)) "red" else command.text.color, envir=.GlobalEnv)
-    output.text.color <- options("Rcmdr")[[1]]$output.text.color
-    assign(".output.text.color", if (is.null(output.text.color)) "blue" else output.text.color, envir=.GlobalEnv)
+    setOption("double.click", FALSE)
+    setOption("sort.names", TRUE)
+    setOption("grab.focus", TRUE)
+    setOption("attach.data.set", TRUE)
+    setOption("log.text.color", "black")
+    setOption("command.text.color", "red")
+    setOption("output.text.color", "darkblue")
+    setOption("multiple.select.mode", "extended")
     if (.Platform$OS.type != "windows") {
         assign(".oldPager", options(pager=RcmdrPager), envir=.GlobalEnv)
-        default.font.size <- options("Rcmdr")[[1]]$default.font.size
-        default.font.size <- if (is.null(default.font.size)) "10" else as.character(default.font.size)
-        default.font <- options("Rcmdr")[[1]]$default.font
-        default.font <- if (is.null(default.font)) paste("*helvetica-medium-r-normal-*-",
-            default.font.size, "*", sep="") else default.font
+        default.font.size <- as.character(setOption("default.font.size", 10, global=FALSE))
+        default.font <- setOption("default.font", 
+            paste("*helvetica-medium-r-normal-*-", default.font.size, "*", sep=""), global=FALSE)
         .Tcl(paste("option add *font ", default.font, sep=""))
         } 
     assign(".commander", tktoplevel(), envir=.GlobalEnv)
-    placement <- options("Rcmdr")[[1]]$placement
-    placement <- if (is.null(placement)) "-40+40" else placement
+    placement <- setOption("placement", "-40+40", global=FALSE)
     tkwm.geometry(.commander, placement)
     tkwm.title(.commander, "R Commander")
     tkwm.protocol(.commander, "WM_DELETE_WINDOW", closeCommander)
@@ -303,6 +266,7 @@ Commander <- function(){
                         tkyview.moveto(.output, 1)
                         }
                     }
+                checkWarnings()
                 }
             iline <- iline + 1
             }
@@ -444,6 +408,8 @@ doItAndPrint <- function(command) {
             tkyview.moveto(.output, 1)
             }
         }
+    checkWarnings()
+    result
     }
 
 justDoIt <- function(command) {
@@ -454,6 +420,16 @@ justDoIt <- function(command) {
         tkfocus(.commander)
         return()
         }
+    checkWarnings()
     result
     }
     
+checkWarnings <- function(){
+    length.messages <- length(.messages)
+    if (length.messages > .length.messages){
+        tkmessageBox(message=paste(.messages[(.length.messages + 1):length.messages], collapse="\n"), 
+            icon="warning")
+        assign(".length.messages", length.messages, envir=.GlobalEnv)
+        tkfocus(.commander)
+        }
+    }

@@ -1,10 +1,9 @@
 # Distributions menu dialogs
 
-# last modified 4 June 04 by J. Fox
+# last modified 25 June 04 by J. Fox
 
 normalQuantiles <- function(){
-    top <- tktoplevel()
-    tkwm.title(top, "Normal Quantiles")
+    initializeDialog(title="Normal Quantiles")
     quantilesVar <- tclVar("")
     quantilesEntry <- tkentry(top, width="30", textvariable=quantilesVar)
     muVar <- tclVar("0")
@@ -17,11 +16,7 @@ normalQuantiles <- function(){
     onOK <- function(){
         quantiles <- gsub(" ", ",", tclvalue(quantilesVar))
         if ("" == quantiles) {
-            tkmessageBox(message="No probabilities specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            normalQuantiles()
+            errorCondition(recall=normalQuantiles, message="No probabilities specified.")
             return()
             }
         mu <- as.numeric(tclvalue(muVar))
@@ -33,47 +28,23 @@ normalQuantiles <- function(){
             ", sd=", sigma, ", lower.tail=", tail == "lower",")", sep=""))
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        } 
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(qnorm)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="qnorm")
     tkgrid(tklabel(top, text="Probabilities"), quantilesEntry, sticky="e")
     tkgrid(tklabel(top, text="mu (mean)"), muEntry, sticky="e")
     tkgrid(tklabel(top, text="sigma (standard deviation)"), sigmaEntry, sticky="e")
     tkgrid(tklabel(top, text="Lower tail"), lowerTailButton, sticky="e")
     tkgrid(tklabel(top, text="Upper tail"), upperTailButton, sticky="e")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid(buttonsFrame, sticky="w", columnspan=2)
     tkgrid.configure(quantilesEntry, sticky="w")
     tkgrid.configure(muEntry, sticky="w")
     tkgrid.configure(sigmaEntry, sticky="w")
     tkgrid.configure(lowerTailButton, sticky="w")
     tkgrid.configure(upperTailButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:5) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(quantilesEntry)
-    tkwait.window(top)
+    dialogSuffix(rows=6, columns=2, focus=quantilesEntry)
     }
 
 normalProbabilities <- function(){
-    top <- tktoplevel()
-    tkwm.title(top, "Normal Probabilities")
+    initializeDialog(title="Normal Probabilities")
     probabilitiesVar <- tclVar("")
     probabilitiesEntry <- tkentry(top, width="30", textvariable=probabilitiesVar)
     muVar <- tclVar("0")
@@ -86,11 +57,7 @@ normalProbabilities <- function(){
     onOK <- function(){
         probabilities <- gsub(" ", ",", tclvalue(probabilitiesVar))
         if ("" == probabilities) {
-            tkmessageBox(message="No values specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            normalProbabilities()
+            errorCondition(recall=normalProbabilities, message="No values specified.")
             return()
             }
         mu <- as.numeric(tclvalue(muVar))
@@ -102,47 +69,23 @@ normalProbabilities <- function(){
             ", sd=", sigma, ", lower.tail=", tail == "lower",")", sep=""))
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(pnorm)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="pnorm")
     tkgrid(tklabel(top, text="Variable value(s)"), probabilitiesEntry, sticky="e")
     tkgrid(tklabel(top, text="mu (mean)"), muEntry, sticky="e")
     tkgrid(tklabel(top, text="sigma (standard deviation)"), sigmaEntry, sticky="e")
     tkgrid(tklabel(top, text="Lower tail"), lowerTailButton, sticky="e")
     tkgrid(tklabel(top, text="Upper tail"), upperTailButton, sticky="e")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid(buttonsFrame, sticky="w", columnspan=2)
     tkgrid.configure(probabilitiesEntry, sticky="w")
     tkgrid.configure(muEntry, sticky="w")
     tkgrid.configure(sigmaEntry, sticky="w")
     tkgrid.configure(lowerTailButton, sticky="w")
     tkgrid.configure(upperTailButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:5) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(probabilitiesEntry)
-    tkwait.window(top)
+    dialogSuffix(rows=6, columns=1, focus=probabilitiesEntry)
     }
-
+    
 tQuantiles <- function(){
-    top <- tktoplevel()
-    tkwm.title(top, "t Quantiles")
+    initializeDialog(title="t Quantiles")
     quantilesVar <- tclVar("")
     quantilesEntry <- tkentry(top, width="30", textvariable=quantilesVar)
     dfVar <- tclVar("")
@@ -153,20 +96,12 @@ tQuantiles <- function(){
     onOK <- function(){
         quantiles <- gsub(" ", ",", tclvalue(quantilesVar))
         if ("" == quantiles) {
-            tkmessageBox(message="No probabilities specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            tQuantiles()
+            errorCondition(recall=tQuantiles, message="No probabilities specified.") 
             return()
             }
         df <- as.numeric(tclvalue(dfVar))
         if (is.na(df)) {
-            tkmessageBox(message="Degrees of freedom not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            tQuantiles()
+            errorCondition(recall=tQuantiles, message="Degrees of freedom not specified.")
             return()
             }
         tail <- tclvalue(tailVar)
@@ -176,45 +111,21 @@ tQuantiles <- function(){
             ", lower.tail=", tail == "lower",")", sep=""))
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(qt)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="qt")
     tkgrid(tklabel(top, text="Probabilities"), quantilesEntry, sticky="e")
     tkgrid(tklabel(top, text="Degrees of freedom"), dfEntry, sticky="e")
     tkgrid(tklabel(top, text="Lower tail"), lowerTailButton, sticky="e")
     tkgrid(tklabel(top, text="Upper tail"), upperTailButton, sticky="e")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid(buttonsFrame, sticky="w", columnspan=2)
     tkgrid.configure(quantilesEntry, sticky="w")
     tkgrid.configure(dfEntry, sticky="w")
     tkgrid.configure(lowerTailButton, sticky="w")
     tkgrid.configure(upperTailButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:4) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(quantilesEntry)
-    tkwait.window(top)
+    dialogSuffix(rows=5, columns=2, focus=quantilesEntry)
     }
     
 tProbabilities <- function(){
-    top <- tktoplevel()
-    tkwm.title(top, "t Probabilities")
+    initializeDialog(title="t Probabilities")
     probabilitiesVar <- tclVar("")
     probabilitiesEntry <- tkentry(top, width="30", textvariable=probabilitiesVar)
     dfVar <- tclVar("")
@@ -226,20 +137,12 @@ tProbabilities <- function(){
         probabilities <- gsub(" ", ",", tclvalue(probabilitiesVar))
         df <- as.numeric(tclvalue(dfVar))
         if ("" == probabilities) {
-            tkmessageBox(message="No values specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            tProbabilities()
+            errorCondition(recall=tProbabilities, message="No values specified.")
             return()
             }
         df <- as.numeric(tclvalue(dfVar))
         if (is.na(df)) {
-            tkmessageBox(message="Degrees of freedom not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            tProbabilities()
+            errorCondition(recall=tProbabilities, message="Degrees of freedom not specified.")
             return()
             }
         tail <- tclvalue(tailVar)
@@ -249,45 +152,21 @@ tProbabilities <- function(){
             ", lower.tail=", tail == "lower",")", sep=""))
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(pt)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="pt")
     tkgrid(tklabel(top, text="Variable value(s)"), probabilitiesEntry, sticky="e")
     tkgrid(tklabel(top, text="Degrees of freedom"), dfEntry, sticky="e")
     tkgrid(tklabel(top, text="Lower tail"), lowerTailButton, sticky="e")
     tkgrid(tklabel(top, text="Upper tail"), upperTailButton, sticky="e")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid(buttonsFrame, sticky="w", columnspan=2)
     tkgrid.configure(probabilitiesEntry, sticky="w")
     tkgrid.configure(dfEntry, sticky="w")
     tkgrid.configure(lowerTailButton, sticky="w")
     tkgrid.configure(upperTailButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:4) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(probabilitiesEntry)
-    tkwait.window(top)
+    dialogSuffix(rows=5, columns=2, focus=probabilitiesEntry)
     }
 
 chisqQuantiles <- function(){
-    top <- tktoplevel()
-    tkwm.title(top, "Chi-Squared Quantiles")
+    initializeDialog(title="Chi-Squared Quantiles")
     quantilesVar <- tclVar("")
     quantilesEntry <- tkentry(top, width="30", textvariable=quantilesVar)
     dfVar <- tclVar("")
@@ -298,20 +177,12 @@ chisqQuantiles <- function(){
     onOK <- function(){
         quantiles <- gsub(" ", ",", tclvalue(quantilesVar))
         if ("" == quantiles) {
-            tkmessageBox(message="No probabilities specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            chisqQuantiles()
+            errorCondition(recall=chisqQuantiles, message="No probabilities specified.")
             return()
             }
         df <- as.numeric(tclvalue(dfVar))
         if (is.na(df)) {
-            tkmessageBox(message="Degrees of freedom not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            chisqQuantiles()
+            errorCondition(recall=chisqQuantiles, message="Degrees of freedom not specified.")
             return()
             }
         tail <- tclvalue(tailVar)
@@ -321,45 +192,21 @@ chisqQuantiles <- function(){
             ", lower.tail=", tail == "lower",")", sep=""))
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(qchisq)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="qchisq")
     tkgrid(tklabel(top, text="Probabilities"), quantilesEntry, sticky="e")
     tkgrid(tklabel(top, text="Degrees of freedom"), dfEntry, sticky="e")
     tkgrid(tklabel(top, text="Lower tail"), lowerTailButton, sticky="e")
     tkgrid(tklabel(top, text="Upper tail"), upperTailButton, sticky="e")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(quantilesEntry, sticky="w")
     tkgrid.configure(dfEntry, sticky="w")
     tkgrid.configure(lowerTailButton, sticky="w")
     tkgrid.configure(upperTailButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:4) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(quantilesEntry)
-    tkwait.window(top)
+    dialogSuffix(rows=5, columns=2, focus=quantilesEntry)
     }
     
 chisqProbabilities <- function(){
-    top <- tktoplevel()
-    tkwm.title(top, "Chi-Squared Probabilities")
+    initializeDialog(title="Chi-Squared Probabilities")
     probabilitiesVar <- tclVar("")
     probabilitiesEntry <- tkentry(top, width="30", textvariable=probabilitiesVar)
     dfVar <- tclVar("")
@@ -370,20 +217,12 @@ chisqProbabilities <- function(){
     onOK <- function(){
         probabilities <- gsub(" ", ",", tclvalue(probabilitiesVar))
         if ("" == probabilities) {
-            tkmessageBox(message="No values specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            chisqProbabilities()
+            errorCondition(recall=chisqProbabilities, message="No values specified.")
             return()
             }
         df <- as.numeric(tclvalue(dfVar))
         if (is.na(df)) {
-            tkmessageBox(message="Degrees of freedom not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            chisqProbabilities()
+            errorCondition(recall=chisqProbabilities, message="Degrees of freedom not specified.")
             return()
             }
         tail <- tclvalue(tailVar)
@@ -393,45 +232,22 @@ chisqProbabilities <- function(){
             ", lower.tail=", tail == "lower",")", sep=""))
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(pchisq)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="pchisq")
     tkgrid(tklabel(top, text="Variable value(s)"), probabilitiesEntry, sticky="e")
     tkgrid(tklabel(top, text="Degrees of freedom"), dfEntry, sticky="e")
     tkgrid(tklabel(top, text="Lower tail"), lowerTailButton, sticky="e")
     tkgrid(tklabel(top, text="Upper tail"), upperTailButton, sticky="e")
     tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(probabilitiesEntry, sticky="w")
     tkgrid.configure(dfEntry, sticky="w")
     tkgrid.configure(lowerTailButton, sticky="w")
     tkgrid.configure(upperTailButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:4) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(probabilitiesEntry)
-    tkwait.window(top)
+    dialogSuffix(rows=5, columns=2, focus=probabilitiesEntry)
     }
 
 FQuantiles <- function(){
-    top <- tktoplevel()
-    tkwm.title(top, "F Quantiles")
+    initializeDialog(title="F Quantiles")
     quantilesVar <- tclVar("")
     quantilesEntry <- tkentry(top, width="30", textvariable=quantilesVar)
     df1Var <- tclVar("")
@@ -444,21 +260,13 @@ FQuantiles <- function(){
     onOK <- function(){
         quantiles <- gsub(" ", ",", tclvalue(quantilesVar))
         if ("" == quantiles) {
-            tkmessageBox(message="Probabilities not specified", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            FQuantiles()
+            errorCondition(recall=FQuantiles, message="Probabilities not specified")
             return()
             }
         df1 <- as.numeric(tclvalue(df1Var))
         df2 <- as.numeric(tclvalue(df2Var))
         if (is.na(df1) || is.na(df2)) {
-            tkmessageBox(message="Degrees of freedom not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            FQuantiles()
+            errorCondition(recall=FQuantiles, message="Degrees of freedom not specified.")
             return()
             }
         tail <- tclvalue(tailVar)
@@ -468,47 +276,23 @@ FQuantiles <- function(){
             ", df2=", df2, ", lower.tail=", tail == "lower",")", sep=""))
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(qf)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="qf")
     tkgrid(tklabel(top, text="Probabilities"), quantilesEntry, sticky="e")
     tkgrid(tklabel(top, text="Numerator degrees of freedom"), df1Entry, sticky="e")
     tkgrid(tklabel(top, text="Denominator degrees of freedom"), df2Entry, sticky="e")
     tkgrid(tklabel(top, text="Lower tail"), lowerTailButton, sticky="e")
     tkgrid(tklabel(top, text="Upper tail"), upperTailButton, sticky="e")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(quantilesEntry, sticky="w")
     tkgrid.configure(df1Entry, sticky="w")
     tkgrid.configure(df2Entry, sticky="w")
     tkgrid.configure(lowerTailButton, sticky="w")
     tkgrid.configure(upperTailButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:5) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(quantilesEntry)
-    tkwait.window(top)
+    dialogSuffix(rows=6, columns=2, focus=quantilesEntry)
     }
     
 FProbabilities <- function(){
-    top <- tktoplevel()
-    tkwm.title(top, "F Probabilities")
+    initializeDialog(title="F Probabilities")
     probabilitiesVar <- tclVar("")
     probabilitiesEntry <- tkentry(top, width="30", textvariable=probabilitiesVar)
     df1Var <- tclVar("")
@@ -521,21 +305,13 @@ FProbabilities <- function(){
     onOK <- function(){
         probabilities <- gsub(" ", ",", tclvalue(probabilitiesVar))
         if ("" == probabilities) {
-            tkmessageBox(message="Values not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            FProbabilities()
+            errorCondition(recall=FProbabilities, message="Values not specified.")
             return()
             }
         df1 <- as.numeric(tclvalue(df1Var))
         df2 <- as.numeric(tclvalue(df2Var))
         if (is.na(df1) || is.na(df2)) {
-            tkmessageBox(message="Degrees of freedom not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            FProbabilities()
+            errorCondition(recall=FProbabilities, message="Degrees of freedom not specified.")
             return()
             }
         tail <- tclvalue(tailVar)
@@ -545,47 +321,23 @@ FProbabilities <- function(){
             ", df2=", df2, ", lower.tail=", tail == "lower",")", sep=""))
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(pf)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="pf")
     tkgrid(tklabel(top, text="Variable value(s)"), probabilitiesEntry, sticky="e")
     tkgrid(tklabel(top, text="Numerator degrees of freedom"), df1Entry, sticky="e")
     tkgrid(tklabel(top, text="Denominator degrees of freedom"), df2Entry, sticky="e")    
     tkgrid(tklabel(top, text="Lower tail"), lowerTailButton, sticky="e")
     tkgrid(tklabel(top, text="Upper tail"), upperTailButton, sticky="e")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(probabilitiesEntry, sticky="w")
     tkgrid.configure(df1Entry, sticky="w")
     tkgrid.configure(df2Entry, sticky="w")
     tkgrid.configure(lowerTailButton, sticky="w")
     tkgrid.configure(upperTailButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    for (row in 0:5) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(probabilitiesEntry)
-    tkwait.window(top)
+    dialogSuffix(rows=6, columns=2, focus=probabilitiesEntry)
     }
 
 binomialQuantiles <- function(){
-    top <- tktoplevel()
-    tkwm.title(top, "Binomial Quantiles")
+    initializeDialog(title="Binomial Quantiles")
     quantilesVar <- tclVar("")
     quantilesEntry <- tkentry(top, width="30", textvariable=quantilesVar)
     trialsVar <- tclVar("")
@@ -600,27 +352,15 @@ binomialQuantiles <- function(){
         trials <- as.numeric(tclvalue(trialsVar))
         prob <- as.numeric(tclvalue(probVar))
         if ("" == quantiles) {
-            tkmessageBox(message="Probabilities not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            binomialQuantiles()
+            errorCondition(recall=binomialQuantiles, message="Probabilities not specified.")
             return()
             }
         if (is.na(trials)) {
-            tkmessageBox(message="Binomial trials not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            binomialQuantiles()
+            errorCondition(recall=binomialQuantiles, message="Binomial trials not specified.")
             return()
             }
         if (is.na(prob)) {
-            tkmessageBox(message="Probability of success not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            binomialQuantiles()
+            errorCondition(recall=binomialQuantiles, message="Probability of success not specified.")
             return()
             }
         tail <- tclvalue(tailVar)
@@ -630,47 +370,23 @@ binomialQuantiles <- function(){
             ", prob=", prob, ", lower.tail=", tail == "lower",")", sep=""))
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        } 
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(qbinom)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="qbinom")
     tkgrid(tklabel(top, text="Probabilities"), quantilesEntry, sticky="e")
     tkgrid(tklabel(top, text="Binomial trials"), trialsEntry, sticky="e")
     tkgrid(tklabel(top, text="Probability of success"), probEntry, sticky="e")
     tkgrid(tklabel(top, text="Lower tail"), lowerTailButton, sticky="e")
     tkgrid(tklabel(top, text="Upper tail"), upperTailButton, sticky="e")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid(buttonsFrame,columnspan=2, sticky="w")
     tkgrid.configure(quantilesEntry, sticky="w")
     tkgrid.configure(trialsEntry, sticky="w")
     tkgrid.configure(probEntry, sticky="w")
     tkgrid.configure(lowerTailButton, sticky="w")
     tkgrid.configure(upperTailButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:5) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(quantilesEntry)
-    tkwait.window(top)
+    dialogSuffix(rows=6, columns=2, focus=quantilesEntry)
     }
     
 binomialProbabilities <- function(){
-    top <- tktoplevel()
-    tkwm.title(top, "Cumulative Binomial Probabilities")
+    initializeDialog(title="Cumulative Binomial Probabilities")
     probabilitiesVar <- tclVar("")
     probabilitiesEntry <- tkentry(top, width="30", textvariable=probabilitiesVar)
     trialsVar <- tclVar("")
@@ -685,27 +401,15 @@ binomialProbabilities <- function(){
         trials <- as.numeric(tclvalue(trialsVar))
         prob <- as.numeric(tclvalue(probVar))
         if ("" == probabilities) {
-            tkmessageBox(message="Values not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            binomialProbabilities()
+            errorCondition(recall=binomialProbabilities, message="Values not specified.") 
             return()
             }
         if (is.na(trials)) {
-            tkmessageBox(message="Binomial trials not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            binomialProbabilities()
+            errorCondition(recall=binomialProbabilities, message="Binomial trials not specified.")
             return()
             }
         if (is.na(prob)) {
-            tkmessageBox(message="Probability of success not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            binomialProbabilities()
+            errorCondition(recall=binomialProbabilities, message="Probability of success not specified.")
             return()
             }
         tail <- tclvalue(tailVar)
@@ -715,42 +419,19 @@ binomialProbabilities <- function(){
             ", prob=", prob, ", lower.tail=", tail == "lower",")", sep=""))
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(pbinom)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="pbinom")
     tkgrid(tklabel(top, text="Variable value(s)"), probabilitiesEntry, sticky="e")
     tkgrid(tklabel(top, text="Binomial trials"), trialsEntry, sticky="e")
     tkgrid(tklabel(top, text="Probability of success"), probEntry, sticky="e")    
     tkgrid(tklabel(top, text="Lower tail"), lowerTailButton, sticky="e")
     tkgrid(tklabel(top, text="Upper tail"), upperTailButton, sticky="e")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, helpButton, sticky="w")
+    tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(probabilitiesEntry, sticky="w")
     tkgrid.configure(trialsEntry, sticky="w")
     tkgrid.configure(probEntry, sticky="w")
     tkgrid.configure(lowerTailButton, sticky="w")
     tkgrid.configure(upperTailButton, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:5) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(probabilitiesEntry)
-    tkwait.window(top)
+    dialogSuffix(rows=6, columns=2, focus=probabilitiesEntry)
     }
 
 binomialMass <- function(){
@@ -758,8 +439,7 @@ binomialMass <- function(){
         tkmessageBox(message=paste("Number of trials", trials, "is large.\nCreate long output?"),
             icon="warning", type="yesno", default="no")
         }
-    top <- tktoplevel()
-    tkwm.title(top, "Binomial Probabilities")
+    initializeDialog(title="Binomial Probabilities")
     trialsVar <- tclVar("")
     trialsEntry <- tkentry(top, width="6", textvariable=trialsVar)
     probVar <- tclVar(".5")
@@ -767,11 +447,7 @@ binomialMass <- function(){
     onOK <- function(){
         trials <- as.numeric(tclvalue(trialsVar))
         if (is.na(trials)) {
-            tkmessageBox(message="Binomial trials not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            binomialMass()
+            errorCondition(recall=binomialMass, message="Binomial trials not specified.")
             return()
             }
         if (trials > 50){
@@ -784,11 +460,7 @@ binomialMass <- function(){
             }
         prob <- as.numeric(tclvalue(probVar))
         if (is.na(prob)) {
-            tkmessageBox(message="Probability of success not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            binomialMass()
+            errorCondition(recall=binomialMass, message="Probability of success not specified.")
             return()
             }
         if (.grab.focus) tkgrab.release(top)
@@ -804,36 +476,13 @@ binomialMass <- function(){
         remove(.Table, envir=.GlobalEnv)       
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(dbinom)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="dbinom")
     tkgrid(tklabel(top, text="Binomial trials"), trialsEntry, sticky="e")
     tkgrid(tklabel(top, text="Probability of success"), probEntry, sticky="e")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, tklabel(top, text="    "), helpButton, sticky="w")
+    tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(trialsEntry, sticky="w")
     tkgrid.configure(probEntry, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:2) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(trialsEntry)
-    tkwait.window(top)
+    dialogSuffix(rows=3, columns=2, focus=trialsEntry)
     }
 
 PoissonMass <- function(){
@@ -841,18 +490,13 @@ PoissonMass <- function(){
         tkmessageBox(message=paste("Range of values over which to plot,", range, ", is large.\nCreate long output?"),
             icon="warning", type="yesno", default="no")
         }
-    top <- tktoplevel()
-    tkwm.title(top, "Poisson Probabilities")
+    initializeDialog(title="Poisson Probabilities")
     meanVar <- tclVar("")
     meanEntry <- tkentry(top, width="6", textvariable=meanVar)
     onOK <- function(){
         mean <- as.numeric(tclvalue(meanVar))
         if (is.na(mean)) {
-            tkmessageBox(message="Poisson mean not specified.", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            PoissonMass()
+            errorCondition(recall=PoissonMass, message="Poisson mean not specified.")
             return()
             }
         min <- qpois(.00005, lambda=mean)
@@ -878,32 +522,9 @@ PoissonMass <- function(){
         remove(.Table, envir=.GlobalEnv)       
         tkfocus(.commander)
         }
-    buttonsFrame <- tkframe(top)
-    OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active")
-    onCancel <- function() {
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel)
-    onHelp <- function() {
-        if (.Platform$OS.type != "windows") if (.grab.focus) tkgrab.release(top)
-        help(dpois)
-        }
-    helpButton <- tkbutton(top, text="Help", width="12", command=onHelp)
+    OKCancelHelp(helpSubject="dpois")
     tkgrid(tklabel(top, text="Mean"), meanEntry, sticky="e")
-    tkgrid(OKbutton, cancelButton, sticky="w")
-    tkgrid(buttonsFrame, tklabel(top, text="    "), helpButton, sticky="w")
+    tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(meanEntry, sticky="w")
-    tkgrid.configure(helpButton, sticky="e")
-    for (row in 0:1) tkgrid.rowconfigure(top, row, weight=0)
-    for (col in 0:1) tkgrid.columnconfigure(top, col, weight=0)
-    .Tcl("update idletasks")
-    tkwm.resizable(top, 0, 0)
-    tkbind(top, "<Return>", onOK)
-    if (.double.click) tkbind(top, "<Double-ButtonPress-1>", onOK)
-    tkwm.deiconify(top)
-    if (.grab.focus) tkgrab.set(top)
-    tkfocus(meanEntry)
-    tkwait.window(top)
+    dialogSuffix(rows=2, columns=2, focus=meanEntry)
     }
