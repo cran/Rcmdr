@@ -275,3 +275,7 @@ Version 0.9-10
     o  Added "Save graph to file" submenu to File menu, with items "as bitmap", "as PDF/Postscript/EPS", and "3D RGL graph" (súggested by Dan Putler).  
 
     o  Small bug fixes and interface enhancements. 
+    
+Version 0.9-11
+
+    o  Added LazyLoad: no to DESCRIPTION file to prevent lazy loading of functions in the package in R 2.0.0 (to prevent problems uncovered by Brian Ripley). 

@@ -3,7 +3,7 @@
 
 \title{About the Rcmdr Package}
 \description{
-  Rcdmr Version 0.9-10
+  Rcdmr Version 0.9-11
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}}
