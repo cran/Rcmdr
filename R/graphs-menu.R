@@ -1,6 +1,6 @@
 # Graphs menu dialogs
 
-# last modified 1 Aug 04 by J. Fox
+# last modified 28 Aug 04 by J. Fox
 
 indexPlot <- function(){
     if(!checkActiveDataSet()) return()
@@ -691,12 +691,14 @@ Scatter3D <- function(){
             else paste(", fit=c(", paste(surfaces, collapse=","), ")", sep="")
         bg <- tclvalue(bgVariable)
         if (.groups != FALSE){ 
-            groups <- paste(", groups=", .groups, sep="")
+            groups <- paste(", groups=", .activeDataSet, "$", .groups, sep="")
             parallel <- paste(", parallel=", .linesByGroup, sep="")
             }
         else groups <- parallel <- ""                   
-        command <- paste("scatter3d(", x[1], ", ", y, ", ", x[2], fit, dfNonpar, 
-            dfAdd, groups, parallel, ', bg="', bg, '", grid=', grid, ')', sep="")
+        command <- paste("scatter3d(", .activeDataSet, "$", x[1], ", ", 
+            .activeDataSet, "$", y, ", ", .activeDataSet, "$", x[2], fit, dfNonpar, 
+            dfAdd, groups, parallel, ', bg="', bg, '", grid=', grid, 
+            ', xlab="', x[1], '", ylab="', y, '", zlab="', x[2], '")', sep="")
         doItAndPrint(command)
         assign(".rgl", TRUE, envir=.GlobalEnv)
         tkfocus(.commander)

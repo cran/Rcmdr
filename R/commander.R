@@ -1,8 +1,9 @@
 # The R Commander and command logger
 
-# last modified 30 July 04 by J. Fox
+# last modified 24 Oct 04 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
 
 Commander <- function(){
+    if (is.SciViews()) return(invisible(svCommander())) # +PhG
     setOption <- function(option, default, global=TRUE) {
         opt <- if (is.null(current[[option]])) default else current[[option]]
         if (global) assign(paste(".", option, sep=""), opt, envir=.GlobalEnv)
@@ -127,12 +128,14 @@ Commander <- function(){
         na.action="na.exclude", graphics.record=TRUE), envir=.GlobalEnv) 
     setOption("double.click", FALSE)
     setOption("sort.names", TRUE)
+#    setOption("grab.focus", .Platform$OS.type == "windows")
     setOption("grab.focus", TRUE)
     setOption("attach.data.set", TRUE)
     setOption("log.text.color", "black")
     setOption("command.text.color", "red")
     setOption("output.text.color", "darkblue")
     setOption("multiple.select.mode", "extended")
+    setOption("report.X11.warnings", FALSE) # to address problem in Linux
     if (.Platform$OS.type != "windows") {
         assign(".oldPager", options(pager=RcmdrPager), envir=.GlobalEnv)
         default.font.size <- as.character(setOption("default.font.size", 10, global=FALSE))
@@ -366,6 +369,8 @@ Commander <- function(){
     tkbind(.commander, "<Control-R>", onSubmit)
     tkbind(.commander, "<Control-f>", onFind)
     tkbind(.commander, "<Control-F>", onFind)
+    tkbind(.commander, "<Control-s>", saveLog)
+    tkbind(.commander, "<Control-S>", saveLog)
     tkbind(.log, "<ButtonPress-3>", contextMenuLog)
     tkbind(.output, "<ButtonPress-3>", contextMenuOutput)
     tkwm.deiconify(.commander)
@@ -375,6 +380,7 @@ Commander <- function(){
     }
 
 logger <- function(command){
+    if (is.SciViews()) return(svlogger(command))    # +PhG
     if (.log.commands) {
         tkinsert(.log, "end", paste(command,"\n", sep=""))
         tkyview.moveto(.log, 1)
@@ -425,11 +431,20 @@ justDoIt <- function(command) {
     }
     
 checkWarnings <- function(){
+    if (is.SciViews()) return(invisible()) # PhG: added for SciViews compatibility 
     length.messages <- length(.messages)
     if (length.messages > .length.messages){
-        tkmessageBox(message=paste(.messages[(.length.messages + 1):length.messages], collapse="\n"), 
-            icon="warning")
+        current.messages <- .messages[(.length.messages + 1):length.messages]
         assign(".length.messages", length.messages, envir=.GlobalEnv)
+        # suppress X11 warnings (origin at this point unclear)
+        X11.warning <- grep("^Warning\\: X11 protocol error\\: BadWindow \\(invalid Window parameter\\)", current.messages)
+        if ((length(X11.warning) > 0) && !.report.X11.warnings){
+            current.messages <- current.messages[-X11.warning]
+            if (length(current.messages) == 0) return()
+            }
+        if (length(current.messages) > 10) current.messages <- c(paste(length(current.messages), "warnings."),
+            "First and last 5 warnings:", head(current.messages,5), ". . .", tail(current.messages, 5))
+        tkmessageBox(message=paste(current.messages, collapse="\n"), icon="warning")
         tkfocus(.commander)
         }
     }

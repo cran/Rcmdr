@@ -1,7 +1,7 @@
-# last modified 5 Aug 04 by J. Fox
+# last modified 14 Oct 04 by J. Fox
 
 .onAttach <- function(...){
-    cat("\nRcmdr Version 0.9-11\n")
+    cat("\nRcmdr Version 0.9-12\n")
     Commander()
     }
 
@@ -9,8 +9,8 @@
     save.options <- options(warn=-1)
     on.exit(options(save.options))
     tcltk <- require(tcltk)
-    required.packages <- c("lattice", "foreign", "abind", "lmtest", "multcomp", 
-        "mvtnorm", "relimp", "effects", "rgl", "mgcv", "car")
+    required.packages <- rev(c("abind", "car", "effects", "foreign", "lattice", "lmtest", "MASS", 
+        "mgcv", "multcomp", "mvtnorm", "nlme", "relimp", "rgl", "sandwich", "strucchange", "zoo"))
     for (package in required.packages) assign(package, require(package, character.only=TRUE))
     if (!tcltk) stop("The tcltk package is absent. The R Commander cannot function.")
     absent <- !sapply(required.packages, function(package) eval(parse(text=package)))

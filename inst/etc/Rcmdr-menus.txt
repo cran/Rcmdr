@@ -1,6 +1,6 @@
 # R Commander Menu Definitions
 
-# last modified 31 July 04 by J. Fox
+# last modified 28 August 04 by J. Fox
 
 #   type    menu/item      operation/parent  label                                          command/menu
 
@@ -188,8 +188,10 @@
     item    PoissonMenu     command         "Poisson probabilities..."                      PoissonMass
     item    PoissonMenu     command         "Plot Poisson distribution..."                  PoissonDistributionPlot
     item    topMenu         cascade         "Distributions"                                 distributionsMenu
+    menu    spaceMenu       topMenu         ""                                              ""
+    item    topMenu         cascade         "        "                                      spaceMenu
     menu    helpMenu        topMenu         ""                                              ""
-    item    helpMenu        command         "Commander help"                                "function() help(Commander)"
-    item    helpMenu        command         "About Rcmdr"                                   "function() help('aboutRcmdr')"
+    item    helpMenu        command         "Commander help"                                helpCommander
+    item    helpMenu        command         "About Rcmdr"                                   helpAboutCommander
     item    helpMenu        command         "Introduction to the R Commander"               browseManual
     item    topMenu         cascade         "Help"                                          helpMenu

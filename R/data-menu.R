@@ -1,4 +1,4 @@
-# last modified 1 Aug 2004 by J. Fox
+# last modified 19 Oct 2004 by J. Fox
 
 # Data menu dialogs
 
@@ -331,7 +331,7 @@ readDataFromPackage <- function() {
     dsname <- tclVar("")
     enterFrame <- tkframe(top)
     entryDsname <- tkentry(enterFrame, width="20", textvariable=dsname)
-    packages <- .packages()
+    packages <- sort(.packages())
     packagesBox <- variableListBox(top, packages, title="Select package:")
     onOK <- function(){
         dsnameValue <- tclvalue(dsname)
@@ -365,7 +365,7 @@ readDataFromPackage <- function() {
                 return()
                 }
             save.options <- options(warn=-1)
-            dataSets <- data(package=parse(text=packageName))$results[,3] 
+            dataSets <- data(package=packageName)$results[,3] 
             options(save.options)
             if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
@@ -872,7 +872,8 @@ standardize <- function(X){
 
 helpDataSet <- function(){
     if (!checkActiveDataSet()) return()
-    justDoIt(paste("help(", .activeDataSet, ")", sep=""))
+    if (as.numeric(R.Version()$major) >= 2) justDoIt(paste("Rcmdr:::printRcmdrDataSetHelp(help(", .activeDataSet, "))", sep=""))
+    else justDoIt(paste("help(", .activeDataSet, ")", sep=""))
     logger(paste("help(", .activeDataSet, ")", sep=""))
     NULL
     }

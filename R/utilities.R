@@ -1,4 +1,4 @@
-# last modified 28 July 04 by J. Fox
+# last modified 19 Oct 04 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
 
 # utility functions
 
@@ -42,18 +42,20 @@ activeDataSet <- function(dsname){
         }
     assign(".activeModel", NULL, envir=.GlobalEnv)
     tclvalue(.modelName) <- "<No active model>"
-    tkconfigure(.modelLabel, fg="red")
+    # -PhG tkconfigure(.modelLabel, fg="red")
     assign(".activeDataSet", dsname, envir=.GlobalEnv)
     assign(".variables", listVariables(), envir=.GlobalEnv)
     assign(".numeric", listNumeric(), envir=.GlobalEnv)
     assign(".factors", listFactors(), envir=.GlobalEnv)
     assign(".twoLevelFactors", listTwoLevelFactors(), envir=.GlobalEnv)
     tclvalue(.dataSetName) <- paste(.activeDataSet, " ")
-    tkconfigure(.dataSetLabel, fg="blue")
+    # -PhG tkconfigure(.dataSetLabel, fg="blue")
+    if (!is.SciViews()) tkconfigure(.dataSetLabel, fg="blue") else refreshStatus() # +PhG
     if (.attach.data.set){
         attach(get(dsname, envir=.GlobalEnv), name=dsname)
         logger(paste("attach(", dsname, ")", sep=""))
         }
+    if (!is.SciViews()) tkconfigure(.modelLabel, fg="red") else refreshStatus() # +PhG
     dsname
     }
 
@@ -68,7 +70,8 @@ activeModel <- function(model){
         }
     assign(".activeModel", model, envir=.GlobalEnv)
     tclvalue(.modelName) <- .activeModel
-    tkconfigure(.modelLabel, fg="blue")
+    # -PhG tkconfigure(.modelLabel, fg="blue")
+    if (!is.SciViews()) tkconfigure(.modelLabel, fg="blue") else refreshStatus() # +PhG
     model
     }
     
@@ -427,6 +430,7 @@ scatter3d <- function(x, y, z, xlab=deparse(substitute(x)), ylab=deparse(substit
                       fit="linear", groups=NULL, parallel=TRUE, model.summary=FALSE){
     require(rgl)
     require(mgcv)
+    summaries <- list()
     if ((!is.null(groups)) && (nlevels(groups) > length(surface.col))) stop(paste("Number of groups (", 
         nlevels(groups), ") exceeds number of colors (", length(surface.col), ").", sep=""))
     if ((!is.null(groups)) && (!is.factor(groups))) stop("groups variable must be a factor.")
@@ -480,7 +484,7 @@ scatter3d <- function(x, y, z, xlab=deparse(substitute(x)), ylab=deparse(substit
                         else gam(y ~ s(x, fx=TRUE, k=df.additive[1]+1) + 
                             s(z, fx=TRUE, k=(rev(df.additive+1)[1]+1)))
                     )
-                if (model.summary) print(summary(mod))
+                if (model.summary) summaries[[f]] <- summary(mod)
                 yhat <- matrix(predict(mod, newdata=dat), 26, 26)
                 rgl.surface(vals, vals, yhat, color=surface.col[i], alpha=0.5, lit=FALSE)
                 if(grid) rgl.surface(vals, vals, yhat, color=grid.col, alpha=0.5, lit=FALSE, front="lines", back="lines")
@@ -503,7 +507,7 @@ scatter3d <- function(x, y, z, xlab=deparse(substitute(x)), ylab=deparse(substit
                             else gam(y ~ s(x, fx=TRUE, k=df.additive[1]+1) + 
                                 s(z, fx=TRUE, k=(rev(df.additive+1)[1]+1)) + groups)
                         )
-                    if (model.summary) print(summary(mod))
+                    if (model.summary) summaries[[f]] <- summary(mod)
                     levs <- levels(groups)
                     for (j in 1:length(levs)){
                         group <- levs[j]
@@ -537,7 +541,7 @@ scatter3d <- function(x, y, z, xlab=deparse(substitute(x)), ylab=deparse(substit
                                 else gam(y ~ s(x, fx=TRUE, k=df.additive[1]+1) + 
                                     s(z, fx=TRUE, k=(rev(df.additive+1)[1]+1)), subset=select.obs)
                             )
-                        if (model.summary) print(summary(mod))
+                        if (model.summary) summaries[[paste(f, ".", group, sep="")]] <- summary(mod)
                         yhat <- matrix(predict(mod, newdata=dat), 26, 26)
                         rgl.surface(vals, vals, yhat, color=surface.col[j], alpha=0.5, lit=FALSE)
                         rgl.surface(vals, vals, yhat, color=grid.col, alpha=0.5, lit=FALSE, front="lines", back="lines")
@@ -561,6 +565,7 @@ scatter3d <- function(x, y, z, xlab=deparse(substitute(x)), ylab=deparse(substit
             for (angle in seq(1, 360, length=360/speed)) rgl.viewpoint(-angle, fov=fov)
             }
         }
+    if (model.summary) return(summaries) else return(invisible(NULL))
     }
 
 
@@ -597,13 +602,138 @@ RcmdrPager <- function (file, header, title, delete.file)
     }
 }
 
-    # Open browser with manual
+    # help functions
     
+
+    
+helpCommander <- function() {
+    if (as.numeric(R.Version()$major) >= 2) print(help("Commander"))
+    else help("Commander")
+    }
+
+helpAboutCommander <- function() {
+    if (as.numeric(R.Version()$major) >= 2) print(help("aboutRcmdr"))
+    else help("aboutRcmdr")
+    }
+
 browseManual <- function() {
     browseURL(paste(file.path(.path.package(package="Rcmdr")[1], "doc"), 
         "/Getting-Started-with-the-Rcmdr.pdf", sep=""))
     }
 
+printRcmdrDataSetHelp <- function (x, ...) 
+## this is slightly modified from print.help_files_with_topic in the utils package in R 2.0.0
+## replacing calls to writeLines() with calls to warning()
+{
+    topic <- attr(x, "topic")
+    paths <- as.character(x)
+    if (!length(paths)) {
+        warning(c(paste("No documentation for", sQuote(topic), 
+            "in specified packages and libraries:"), paste("you could try", 
+            sQuote(paste("help.search(", dQuote(topic), ")", 
+                sep = "")))))
+        return(invisible(x))
+    }
+    if (attr(x, "tried_all_packages")) {
+        paths <- unique(dirname(dirname(paths)))
+        msg <- paste("Help for topic", sQuote(topic), "is not in any loaded package but can be found", 
+            "in the following packages:")
+        warning(c(strwrap(msg), "", paste(" ", formatDL(c("Package", 
+            basename(paths)), c("Library", dirname(paths)), indent = 22))))
+    }
+    else {
+        if (length(paths) > 1) {
+            file <- paths[1]
+            msg <- paste("Help on topic", sQuote(topic), "was found in the following packages:")
+            paths <- dirname(dirname(paths))
+            warning(c(strwrap(msg), "", paste(" ", formatDL(c("Package", 
+                basename(paths)), c("Library", dirname(paths)), 
+                indent = 22)), "\nUsing the first match ..."))
+        }
+        else file <- paths
+        type <- attr(x, "type")
+        if (type == "html") {
+            if (file.exists(file)) 
+                .show_help_on_topic_as_HTML(file, topic)
+            else stop(paste("No HTML help for ", sQuote(topic), 
+                " is available:\n", "corresponding file is missing.", 
+                sep = ""))
+        }
+        else if (type == "chm") {
+            chm.dll <- file.path(R.home(), "bin", "Rchtml.dll")
+            if (!file.exists(chm.dll)) 
+                stop("Compiled HTML is not installed")
+            if (!is.loaded(symbol.C("Rchtml"))) 
+                dyn.load(chm.dll)
+            wfile <- sub("/chm/([^/]*)$", "", file)
+            thispkg <- sub(".*/([^/]*)/chm/([^/]*)$", "\\1", 
+                file)
+            thispkg <- sub("_.*$", "", thispkg)
+            hlpfile <- paste(wfile, "/chtml/", thispkg, ".chm", 
+                sep = "")
+            if (file.exists(hlpfile)) {
+                err <- .C("Rchtml", hlpfile, topic, err = integer(1), 
+                  PACKAGE = "")$err
+                if (err) 
+                  stop("CHM file could not be displayed")
+            }
+            else stop(paste("No CHM help for ", sQuote(topic), 
+                " is available:\n", "corresponding file is missing.", 
+                sep = ""))
+        }
+        else if (type == "help") {
+            zfile <- zip.file.extract(file, "Rhelp.zip")
+            if (file.exists(zfile)) 
+                file.show(zfile, title = paste("R Help on", sQuote(topic)), 
+                  delete.file = (zfile != file), pager = attr(x, 
+                    "pager"))
+            else stop(paste("No text help for", sQuote(topic), 
+                " is available:\n", "corresponding file is missing.", 
+                sep = ""))
+        }
+        else if (type == "latex") {
+            ok <- FALSE
+            zfile <- zip.file.extract(file, "Rhelp.zip")
+            if (zfile != file) 
+                on.exit(unlink(zfile))
+            if (file.exists(zfile)) {
+                .show_help_on_topic_offline(zfile, topic)
+                ok <- TRUE
+            }
+            else if (interactive()) {
+                path <- dirname(file)
+                dirpath <- dirname(path)
+                pkgname <- basename(dirpath)
+                Rdpath <- file.path(dirpath, "man", paste(pkgname, 
+                  "Rd.gz", sep = "."))
+                if (file.exists(Rdpath)) {
+                  ans <- readline("No latex file is available: shall I try to create it? (y/n) ")
+                  if (substr(ans, 1, 1) == "y") {
+                    lines <- tools:::extract_Rd_file(Rdpath, 
+                      topic)
+                    tf <- tempfile("Rd")
+                    tf2 <- tempfile("Rlatex")
+                    writeLines(lines, tf)
+                    cmd <- paste("R CMD Rdconv -t latex", tf, 
+                      ">", tf2)
+                    res <- system(cmd)
+                    if (res) 
+                      stop("problems running R CMD Rdconv")
+                    .show_help_on_topic_offline(tf2, topic)
+                    ok <- TRUE
+                  }
+                }
+            }
+            if (!ok) 
+                stop(paste("No offline help for ", sQuote(topic), 
+                  " is available:\n", "corresponding file is missing.", 
+                  sep = ""))
+        }
+    }
+    invisible(x)
+}
+
+    
     # functions for building dialog boxes
     
 # the following function is slightly modified from Thomas Lumley, 
@@ -658,7 +788,11 @@ OKCancelHelp <- defmacro(window=top, helpSubject=NULL, model=FALSE,
             }
         cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel, borderwidth=3)
         if (!is.null(helpSubject)){
-            onHelp <- function() help(helpSubject)
+            onHelp <- function() {
+                if (.grab.focus && .Platform$OS.type != "windows") tkgrab.release(window)
+                if (as.numeric(R.Version()$major) >= 2) print(help(helpSubject))
+                else help(helpSubject)
+                }
             helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp, borderwidth=3)
             }       
         tkgrid(OKbutton, tklabel(buttonsFrame, text="  "), cancelButton, tklabel(buttonsFrame, text="            "), 
@@ -678,7 +812,11 @@ subOKCancelHelp <- defmacro(window=subdialog, helpSubject=NULL,
         subCancelButton <- tkbutton(subButtonsFrame, text="Cancel", fg="red", width="12", command=onCancelSub, 
             borderwidth=3)
         if (!is.null(helpSubject)){
-            onHelpSub <- function() help(helpSubject)
+            onHelpSub <- function(){
+                if (.grab.focus && .Platform$OS.type != "windows") tkgrab.release(window)
+                if (as.numeric(R.Version()$major) >= 2) print(help(helpSubject))
+                else help(helpSubject)
+                }
             subHelpButton <- tkbutton(subButtonsFrame, text="Help", width="12", command=onHelpSub, borderwidth=3)
             }       
         tkgrid(subOKbutton, tklabel(subButtonsFrame, text="  "), subCancelButton, 
@@ -943,7 +1081,7 @@ groupsLabel <- defmacro(frame=top, groupsBox=groupsBox, columnspan=1,
         tkgrid(groupsFrame, sticky="w", columnspan=columnspan)
         onSelect <- function(){
             group <- getSelection(groupsBox)
-            levels <- eval(parse(text=paste("levels(", group, ")")))
+            levels <- eval(parse(text=paste("levels(", .activeDataSet, "$", group, ")", sep="")))
             tkconfigure(groupsLabel, text=paste(levels[1], "-", levels[2]))
             }
         tkbind(groupsBox$listbox, "<ButtonRelease-1>", onSelect)
