@@ -1,0 +1,129 @@
+# R Commander Menu Definitions
+
+# last modified 25 May 03 by J. Fox
+
+#   type    menu/item      operation/parent  label                                          command/menu
+    
+    menu    fileMenu        topMenu         ""                                              ""
+    item    fileMenu        command         "Load log from file..."                         loadLog
+    item    fileMenu        command         "Save log..."                                   saveLog
+    item    fileMenu        command         "Save log as..."                                saveLogAs
+    menu    exitMenu        fileMenu        ""                                              ""
+    item    exitMenu        command         "From Commander"                                closeCommander
+    item    exitMenu        command         "From Commander and R"                          closeCommanderAndR
+    item    fileMenu        cascade         "Exit"                                          exitMenu
+    item    topMenu         cascade         "File"                                          fileMenu
+    menu    dataMenu        topMenu         ""                                              ""
+    menu    importMenu      dataMenu        ""                                              ""
+    item    importMenu      command         "from text file..."                             readDataSet
+    item    importMenu      command         "from SPSS data set..."                         importSPSS
+    item    importMenu      command         "from Minitab data set..."                      importMinitab
+    item    dataMenu        cascade         "Import data"                                   importMenu
+    menu    packagesMenu    dataMenu        ""                                              ""
+    item    packagesMenu    command         "List data sets in packages"                    listDataSetsInPackages
+    item    packagesMenu    command         "Read data set from an attached package..."     readDataFromPackage
+    item    dataMenu        cascade         "Data in packages"                              packagesMenu
+    menu    activeMenu      dataMenu        ""                                              ""
+    item    activeMenu      command         "Select active data set..."                     selectActiveDataSet
+    item    activeMenu      command         "Help on active data set (if available)"        helpDataSet
+    item    activeMenu      command         "Variables in active data set"                  variablesDataSet
+    item    dataMenu        cascade         "Active data set"                               activeMenu
+    menu    variablesMenu   dataMenu        ""                                              ""
+    item    variablesMenu   command         "Recode variable..."                            Recode
+    item    variablesMenu   command         "Compute new variable..."                       Compute
+    item    variablesMenu   command         "Standardize variables..."                      standardize
+    item    variablesMenu   command         "Convert numeric variable to factor..."         numericToFactor
+    item    variablesMenu   command         "Reorder factor levels..."                      reorderFactor
+    item    variablesMenu   command         "Delete variable from data set ..."             deleteVariable
+    item    dataMenu        cascade         "Manage variables in active data set"           variablesMenu
+    item    topMenu         cascade         "Data"                                          dataMenu
+    menu    statisticsMenu  topMenu         ""                                              ""  
+    menu    summariesMenu   statisticsMenu  ""                                              "" 
+    item    summariesMenu   command         "Numerical summaries..."                        numericalSummaries
+    item    summariesMenu   command         "Frequency distribution..."                     frequencyDistribution
+    item    summariesMenu   command         "Table of statistics..."                        statisticsTable
+    item    summariesMenu   command         "Correlation matrix..."                         correlationMatrix
+    menu    tablesMenu      statisticsMenu  ""                                              ""  
+    item    tablesMenu      command         "Two-way table..."                              twoWayTable
+    item    tablesMenu      command         "Multi-way table..."                            multiWayTable
+    menu    meansMenu       statisticsMenu  ""                                              "" 
+    item    meansMenu       command         "Single-sample t-test..."                       singleSampleTTest
+    item    meansMenu       command         "Independent samples t-test..."                 independentSamplesTTest
+    item    meansMenu       command         "Paired t-test..."                              pairedTTest
+    item    meansMenu       command         "One-way ANOVA..."                              oneWayAnova
+    item    meansMenu       command         "Multi-way ANOVA..."                            multiWayAnova
+    menu    proportionsMenu statisticsMenu  ""                                              "" 
+    item    proportionsMenu command         "Single-sample proportion test..."              singleProportionTest
+    item    proportionsMenu command         "Two-sample proportions test..."                twoSampleProportionsTest
+    menu    variancesMenu   statisticsMenu  ""                                              "" 
+    item    variancesMenu   command         "Two-variances F-test..."                       twoVariancesFTest
+    item    variancesMenu   command         "Bartlett's test..."                            BartlettTest
+    item    variancesMenu   command         "Levene's test..."                              LeveneTest
+    menu    nonparametricMenu statisticsMenu    ""                                          ""  
+    item    nonparametricMenu command       "Two-sample Wilcoxon test..."                   twoSampleWilcoxonTest
+    item    nonparametricMenu command       "Paired-samples Wilcoxon test..."               pairedWilcoxonTest
+    item    nonparametricMenu command       "Kruskal-Wallis test..."                        KruskalWallisTest
+    menu    dimensionalMenu statisticsMenu  ""                                              ""  
+    item    dimensionalMenu command         "Scale reliability..."                          Reliability
+    item    dimensionalMenu command         "Principal-components analysis..."              principalComponents
+    item    dimensionalMenu command         "Factor analysis..."                            factorAnalysis
+    menu    modelsMenu      statisticsMenu  ""                                              ""  
+    item    modelsMenu      command         "Linear regression..."                          linearRegressionModel
+    item    modelsMenu      command         "Linear model..."                               linearModel
+    item    modelsMenu      command         "Generalized linear model..."                   generalizedLinearModel
+    item    topMenu         cascade         "Statistics"                                    statisticsMenu
+    item    statisticsMenu  cascade         "Summaries"                                     summariesMenu
+    item    statisticsMenu  cascade         "Contingency tables"                            tablesMenu
+    item    statisticsMenu  cascade         "Means"                                         meansMenu
+    item    statisticsMenu  cascade         "Proportions"                                   proportionsMenu
+    item    statisticsMenu  cascade         "Variances"                                     variancesMenu
+    item    statisticsMenu  cascade         "Nonparametric tests"                           nonparametricMenu
+    item    statisticsMenu  cascade         "Dimensional analysis"                          dimensionalMenu
+    item    statisticsMenu  cascade         "Fit models"                                    modelsMenu
+    menu    graphsMenu      topMenu         ""                                              ""
+    item    graphsMenu      command         "Histogram..."                                  histogram
+    item    graphsMenu      command         "Stem-and-leaf display..."                      stemAndLeaf
+    item    graphsMenu      command         "Boxplot..."                                    boxPlot
+    item    graphsMenu      command         "Scatterplot..."                                scatterPlot
+    item    graphsMenu      command         "Scatterplot matrix..."                         scatterPlotMatrix
+    item    graphsMenu      command         "Bar graph..."                                  barGraph
+    item    graphsMenu      command         "Pie chart..."                                  pieChart
+    item    topMenu         cascade         "Graphs"                                        graphsMenu
+    menu    modelsMenu      topMenu         ""                                              "" 
+    item    modelsMenu      command         "Select active model..."                        selectActiveModel
+    item    modelsMenu      command         "Summarize model"                               summarizeModel
+    item    modelsMenu      command         "ANOVA table"                                   anovaTable
+    item    modelsMenu      command         "Variance-inflation factors"                    VIF
+    item    modelsMenu      command         "Basic diagnostic plots"                        plotModel
+    item    modelsMenu      command         "Component+residual plots"                      CRPlots
+    item    modelsMenu      command         "Added-variable plots"                          AVPlots
+    item    modelsMenu      command         "Influence plot"                                influencePlot
+    item    modelsMenu      command         "Add observation statistics to data..."         addObservationStatistics
+    item    topMenu         cascade         "Models"                                        modelsMenu
+    menu    distributionsMenu topMenu       ""                                              ""  
+    menu    normalMenu      distributionsMenu ""                                            ""  
+    item    distributionsMenu cascade       "Normal distribution"                           normalMenu
+    item    normalMenu      command         "Normal quantiles..."                           normalQuantiles
+    item    normalMenu      command         "Normal probabilities..."                       normalProbabilities
+    menu    tMenu           distributionsMenu ""                                            ""  
+    item    distributionsMenu cascade       "t distribution"                                tMenu
+    item    tMenu           command         "t quantiles..."                                tQuantiles  
+    item    tMenu           command         "t probabilities..."                            tProbabilities 
+    menu    chisqMenu       distributionsMenu ""                                            ""  
+    item    distributionsMenu cascade       "Chi-squared distribution"                      chisqMenu
+    item    chisqMenu       command         "Chi-squared quantiles..."                      chisqQuantiles  
+    item    chisqMenu       command         "Chi-squared probabilities..."                  chisqProbabilities  
+    menu    FMenu           distributionsMenu ""                                            ""  
+    item    distributionsMenu cascade       "F distribution"                                FMenu
+    item    FMenu           command         "F quantiles..."                                FQuantiles  
+    item    FMenu           command         "F probabilities..."                            FProbabilities   
+    menu    binomialMenu    distributionsMenu ""                                            ""  
+    item    distributionsMenu cascade       "Binomial distribution"                         binomialMenu
+    item    binomialMenu    command         "Binomial quantiles..."                         binomialQuantiles  
+    item    binomialMenu    command         "Binomial tail probabilities..."                binomialProbabilities 
+    item    binomialMenu    command         "Binomial probabilities..."                     binomialMass  
+    item    topMenu         cascade         "Distributions"                                 distributionsMenu
+    menu    helpMenu        topMenu         ""                                              ""
+    item    helpMenu        command         "Commander help"                                "function() help(Commander)"
+    item    helpMenu        command         "About Rcmdr"                                   "function() help(aboutRcmdr)"
+    item    topMenu         cascade         "Help"                                          helpMenu            

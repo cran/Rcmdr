@@ -1,0 +1,73 @@
+Version 0.5-0: initial version in package form
+
+Version 0.6-0
+
+    o Rather than being hard-wired, menus are now configured in the menus/Rcmdr-menus.txt file and can be modified or supplemented by the user (suggested by Frank Harrell).
+
+    o Allow font-size selection via options("Rcmdr.fontsize") for text in the log window.
+
+    o Set pager to tkpager (suggested by Martin Maechler).
+    
+    o Added "Exit" menu items; intercept R Commander window close (suggested by Martin Maechler).
+    
+    o Cleaned up menus and dialog boxes.
+    
+    o Added ability to load log files.
+    
+    o Reorganized items on File and Data menus (suggested by Martin Maechler).
+    
+    o Added point-identification to scatterplots (suggested by Bob Andersen).
+    
+Version 0.7-0
+
+    o Added subset expressions to model dialog boxes and some other dialogs calling functions using formulas.
+    
+    o Added jitter option to scatterplots.
+    
+    o Many new input-error checks.
+    
+    o Added delete-variable dialog.
+    
+    o Added provision for optionally invoking tkwait while the Commander runs.
+    
+    o Added help menu.
+    
+Version 0.7-1
+
+    o Help buttons fixed so that they don't hang tkpager when it's used to display help files; tkpager only used now on non-Windows systems.
+    
+Version 0.8-0
+
+    o More error checking.
+    
+    o Don't allow a non-data-frame to become the active data set.
+    
+    o Added "Convert numeric variable to factor" menu item and dialog (suggested by Bob Andersen and Peter Dalgaard).
+    
+    o Added "Reorder factor levels" menu item and dialog (suggested by Bob Andersen).
+    
+    o Reorganized Data menu, adding "Manage variables" sub-menu.
+    
+    o New version of "Read data set from an attached package" dialog (suggested by several people).
+    
+    o Added "influence plots" to the Model menu (suggested by Bob Andersen).
+    
+Version 0.8-1
+
+    o Added "add observation statistics" to Model menu.
+    
+Version 0.8-2
+
+    o Further error checks.
+    
+    o Added variance-inflation factors to Model menu.
+    
+    o Added Statistics -> Dimensional analysis menu with scale reliability, principal-components analysis, and factor analysis (suggested by Bob Andersen).
+    
+    o Added Spearman rank-order and partial correlations to the Correlation Matrix dialog.
+    
+    o Added Standardize item to Data -> Manage variables menu.
+    
+    
+    
+    
