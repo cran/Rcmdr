@@ -158,7 +158,7 @@ addObservationStatistics <- function(){
                 logger(command)
                 }
             }
-        activeDataSet(.activeDataSet)
+        activeDataSet(.activeDataSet, flushModel=FALSE)
         if (.grab.focus) tkgrab.release(top)
         tkdestroy(top)
         tkfocus(.commander)

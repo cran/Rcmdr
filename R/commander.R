@@ -1,6 +1,6 @@
 # The R Commander and command logger
 
-# last modified 27 Nov 04 by J. Fox
+# last modified 17 Jan 04 by J. Fox
 #   slight changes 12 Aug 04 by Ph. Grosjean
 
 Commander <- function(){
@@ -137,6 +137,7 @@ Commander <- function(){
     setOption("output.text.color", "darkblue")
     setOption("multiple.select.mode", "extended")
     setOption("report.X11.warnings", FALSE) # to address problem in Linux
+    setOption("showData.threshold", 100)
     if (.Platform$OS.type != "windows") {
         assign(".oldPager", options(pager=RcmdrPager), envir=.GlobalEnv)
         default.font.size <- as.character(setOption("default.font.size", 10, global=FALSE))
@@ -152,7 +153,7 @@ Commander <- function(){
     topMenu <- tkmenu(.commander)
     tkconfigure(.commander, menu=topMenu)
     .commander.done <<- tclVar("0") # to address problem in Debian Linux
-    source.files <- list.files(etc, pattern="*.R$")
+    source.files <- list.files(etc, pattern="\\.[Rr]$")
     for (file in source.files) {
         source(file.path(etc, file))
         cat(paste("Sourced:", file, "\n"))
@@ -190,8 +191,11 @@ Commander <- function(){
             return()
             }
         view.height <- max(as.numeric(output.height) + as.numeric(log.height), 10)
-        command <- paste("showData(", .activeDataSet, ", placement='-20+200', font=.logFont, maxwidth=", 
-            log.width, ", maxheight=", view.height, ")", sep="")
+        ncols <- eval(parse(text=paste("ncol(", .activeDataSet, ")")))
+        command <- if (ncols <= .showData.threshold)
+            paste("showData(", .activeDataSet, ", placement='-20+200', font=.logFont, maxwidth=", 
+                log.width, ", maxheight=", view.height, ")", sep="")
+            else paste("invisible(edit(", .activeDataSet, "))", sep="")
         logger(command)
         justDoIt(command)
         tkwm.deiconify(.commander)

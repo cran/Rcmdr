@@ -1,4 +1,4 @@
-# last modified 5 Dec 04 by J. Fox
+# last modified 28 Dec 04 by J. Fox
 
 export(bin.var, Commander, colPercents, rowPercents, reliability,
     partial.cor, RcmdrPager, listLinearModels, listGeneralizedLinearModels, doItAndPrint,

@@ -1,4 +1,4 @@
-# last modified 29 Nov 2004 by J. Fox
+# last modified 15 Jan 2005 by J. Fox
 
 # File menu dialogs
 
@@ -80,7 +80,7 @@ closeCommander <- function(){
         ".length.messages", ".log", ".log.commands", ".logFileName", ".logFont", ".log.font.size", ".log.text.color",
         ".modelClasses", ".modelLabel", ".modelName", ".modelNumber", ".modelWithSubset", ".multiple.select.mode",
         ".numeric", "oldPager", ".operatorFont", ".output", ".output.text.color", ".outputFileName", 
-        ".report.X11.warnings", ".rgl", ".rglPackage", ".saveFileName", ".saveOptions", ".sort.names",
+        ".report.X11.warnings", ".rgl", ".rglPackage", ".saveFileName", ".saveOptions", ".showData.threshold", ".sort.names",
         ".twoLevelFactors", ".variables")
     response <- tclvalue(tkmessageBox(message="Exit?",
         icon="question", type="okcancel", default="cancel"))
@@ -268,3 +268,28 @@ setOutputWidth <- function(){
     dialogSuffix(rows=2, columns=1)
     }
    
+loadPackages <- function(){
+    currentPackages <- .packages()
+    allPackages <- .packages(all.available = TRUE)
+    availablePackages <- sort(setdiff(allPackages, currentPackages))
+    initializeDialog(title="Load Packages")
+    packagesBox <- variableListBox(top, availablePackages, title="Packages (pick one or more)",
+        selectmode="multiple", listHeight=10)
+    onOK <- function(){
+        packages <- getSelection(packagesBox)
+        if (.grab.focus) tkgrab.release(top)
+        tkdestroy(top)
+        if (length(packages) == 0){
+            errorCondition(recall=loadPackages, message="You must select at least one package.")
+            return()
+            }
+        for (package in packages) {
+            command <- paste('library("', package, '", character.only=TRUE)', sep="")
+            justDoIt(command)
+            }
+        }
+    OKCancelHelp(helpSubject="library")
+    tkgrid(getFrame(packagesBox), sticky="nw")    
+    tkgrid(buttonsFrame, sticky="w")
+    dialogSuffix(rows=1, columns=1)
+    }

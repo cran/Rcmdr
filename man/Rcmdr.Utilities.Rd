@@ -46,7 +46,7 @@
 }
 
 \usage{
-activeDataSet(dsname)
+activeDataSet(dsname, flushModel=TRUE)
 activeModel(model)
 checkActiveDataSet()
 checkActiveModel()
@@ -84,7 +84,8 @@ radioButtons(window=top, name, buttons, values=NULL, initialValue=..values[1],
 subOKCancelHelp(window=subdialog, helpSubject=NULL)  # macro
 subsetBox(window=top, model=FALSE)  # macro
 variableListBox(parentWindow, variableList=.variables, bg="white",
-    selectmode="single", export="FALSE", initialSelection=NULL, title)
+    selectmode="single", export="FALSE", initialSelection=NULL, 
+    listHeight = 4, title)
 }
 
 \arguments{
@@ -97,6 +98,9 @@ variableListBox(parentWindow, variableList=.variables, bg="white",
   \item{dataSet, dsname}{the quoted name of a data frame in memory.}
   \item{envir}{the environment to be searched; should generally be left at the default.}
   \item{export}{export selection?}
+  \item{flushModel}{set (or reset) the active model to NULL? Should normally be \code{TRUE} when the active 
+    data set is changed; an exception is when variables are simply added to, deleted from, or modified in 
+    the data set set.}
   \item{focus}{Tk window to get the focus.}
   \item{frame}{frame or quoted name for frame depending upon the function.}
   \item{groupsBox}{listbox object for selecting groups variable.}
@@ -108,7 +112,8 @@ variableListBox(parentWindow, variableList=.variables, bg="white",
   \item{initialValue}{for a set of related radio buttons.}
   \item{initialValues}{for a set of related check boxes.}
   \item{label}{label prefix for groups button after a selection is made.}
-  \item{labels}{A vector of character strings to label a set of radio buttons or check boxes.}
+  \item{labels}{a vector of character strings to label a set of radio buttons or check boxes.}
+  \item{listHeight}{Maximum number of elements displayed simultaneously in list box.}
   \item{log}{echo command to the log window, as well as executing it and printing its output.}
   \item{message}{error message.}
   \item{model}{the name of a model, as a character string, or \code{TRUE} or \code{FALSE}, depending

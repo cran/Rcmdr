@@ -192,6 +192,11 @@ set none, one, several, or all options. The available options are as follows:
     the \code{tkwait} option to \code{TRUE} is that the R session command prompt is suppressed until the Commander exits.
     One can still enter commands via the log/script window, however. In particular, there is no reason to use this option
     under Windows, and it should not be used with the Windows R GUI with buffered output.}
+    
+    \item{\code{showData.threshold}}{If the number of variables in the active data set exceeds this value (default, 100),
+    then \code{edit()} rather than \code{showData()} is used to display the data set. A disadvantage is that control doesn't
+    return to the Commander until the edit window is closed. The reason for the option is that \code{showData()} is very slow
+    when the number of variables is large.}
     }
     
 Many options can also be set via the \emph{File -> Options} menu, which will restart the Commander after options are set.

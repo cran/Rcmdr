@@ -8,8 +8,8 @@
   rows or columns.
 }
 \usage{
-colPercents(tab, digits=2)
-rowPercents(tab, digits=2)
+colPercents(tab, digits=1)
+rowPercents(tab, digits=1)
 }
 
 \arguments{

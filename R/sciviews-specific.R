@@ -1,6 +1,7 @@
 # SciViews specific R Commander code
 
 # last modified 24 October 2004 by Ph. Grosjean
+#  small fix to call to list.files() by J. Fox 17 Jan 05
 
 is.SciViews <- function() {
     # SciViews defines the option "SciViews.version".
@@ -79,9 +80,9 @@ svCommander <- function(){
             .Tcl(paste("option add *font ", default.font, sep=""))
             }
         placement <- setOption("placement", "-40+40", global=FALSE)
-        source.files <- list.files(etc, pattern="*.R$")
+#        source.files <- list.files(etc, pattern="\\.R$")  # duplicate line commented out by J. Fox
         .commander.done <<- tclVar("0") # to address problem in Debian Linux
-        source.files <- list.files(etc, pattern="*.R$")
+        source.files <- list.files(etc, pattern="\\.[Rr]$")
         for (file in source.files) {
              source(file.path(etc, file))
              cat(paste("Sourced:", file, "\n"))

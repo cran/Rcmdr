@@ -1,4 +1,4 @@
-# last modified 2 Nov 2004 by J. Fox
+# last modified 15 Jan 2005 by J. Fox
 
 # Data menu dialogs
 
@@ -8,6 +8,8 @@ newDataSet <- function() {
     entryDsname <- tkentry(top, width="20", textvariable=dsname)
     onOK <- function(){
         dsnameValue <- trim.blanks(tclvalue(dsname))
+        if (.grab.focus) tkgrab.release(top)
+        tkdestroy(top)
         if (dsnameValue == "") {
             errorCondition(recall=newDataSet, 
                 message="You must enter the name of a data set.")  
@@ -28,10 +30,12 @@ newDataSet <- function() {
             }
         command <- "edit(as.data.frame(NULL))"
         assign(dsnameValue, justDoIt(command), envir=.GlobalEnv)
-        logger(paste(dsnameValue, " <- ", command, sep=""))
+        logger(paste(dsnameValue, "<-", command))
+        if (eval(parse(text=paste("nrow(", dsnameValue, ")"))) == 0){
+            errorCondition(recall=newDataSet, message="empty data set.")
+            return()
+            }
         activeDataSet(dsnameValue)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         tkfocus(.commander)
         }
     OKCancelHelp(helpSubject="edit.data.frame")
@@ -132,7 +136,7 @@ Recode <- function(){
             "', as.factor.result=", asFactor, ")", sep="")
         logger(paste(dataSet,"$",newVar, " <- ", cmd, sep=""))
         justDoIt(paste(dataSet,"$",newVar, " <- ", cmd, sep=""))
-        activeDataSet(dataSet)
+        activeDataSet(dataSet, flushModel=FALSE)
         tkfocus(.commander)
         }
     OKCancelHelp(helpSubject="Recode")    
@@ -193,7 +197,7 @@ Compute <- function(){
         logger(paste(dataSet,"$",newVar, " <- ", express, sep=""))
         justDoIt(paste(dataSet,"$",newVar, " <- with(", .activeDataSet,
             " ,", express, ")"))
-        activeDataSet(dataSet)
+        activeDataSet(dataSet, flushModel=FALSE)
         tkfocus(.commander)
         }
     OKCancelHelp(helpSubject="Compute")
@@ -242,7 +246,7 @@ deleteVariable <- function(){
             eval(parse(text=paste(dataSet, "$", variable, "<- NULL", sep="")), envir=.GlobalEnv)
             logger(paste(dataSet, "$", variable, " <- NULL", sep=""))
             }
-        activeDataSet(dataSet)
+        activeDataSet(dataSet, flushModel=FALSE)
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
@@ -696,7 +700,7 @@ numericToFactor <- function(){
             command <- paste("as.factor(", .activeDataSet, "$", variable, ")", sep="")
             justDoIt(paste(.activeDataSet, "$", name, " <- ", command, sep=""))
             logger(paste(.activeDataSet, "$", name," <- ", command, sep=""))
-            activeDataSet(.activeDataSet)
+            activeDataSet(.activeDataSet, flushModel=FALSE)
             if (.grab.focus) tkgrab.release(top)
             tkdestroy(top)
             tkfocus(.commander)
@@ -804,7 +808,7 @@ binVariable <- function(){
             ", method=", "'", method, "', labels=", labels, ")", sep="")
         logger(command)
         justDoIt(command)
-        activeDataSet(.activeDataSet)
+        activeDataSet(.activeDataSet, flushModel=FALSE)
         tkfocus(.commander)
         }
     OKCancelHelp(helpSubject="bin.var")
@@ -880,7 +884,7 @@ reorderFactor <- function(){
                 ordered, ")", sep="")
             justDoIt(paste(.activeDataSet, "$", name, " <- ", command, sep=""))
             logger(paste(.activeDataSet,"$", name," <- ", command, sep=""))
-            activeDataSet(.activeDataSet)
+            activeDataSet(.activeDataSet, flushModel=FALSE)
             if (.grab.focus) tkgrab.release(subdialog)
             tkdestroy(subdialog)
             }
@@ -940,7 +944,7 @@ standardize <- function(X){
             }
         remove(.Z, envir=.GlobalEnv)   
         logger("remove(.Z)")
-        activeDataSet(.activeDataSet)
+        activeDataSet(.activeDataSet, flushModel=FALSE)
         tkfocus(.commander)
         }
     OKCancelHelp(helpSubject="scale")
@@ -951,9 +955,11 @@ standardize <- function(X){
 
 helpDataSet <- function(){
     if (!checkActiveDataSet()) return()
-    if (as.numeric(R.Version()$major) >= 2) justDoIt(paste("Rcmdr:::printRcmdrDataSetHelp(help(", .activeDataSet, "))", sep=""))
-    else justDoIt(paste("help(", .activeDataSet, ")", sep=""))
-    logger(paste("help(", .activeDataSet, ")", sep=""))
+    if (as.numeric(R.Version()$major) >= 2) doItAndPrint(paste('help("', .activeDataSet, '")', sep=""))
+    else {
+        justDoIt(paste("help('", .activeDataSet, "')", sep=""))
+        logger(paste('help("', .activeDataSet, '")', sep=""))
+        }
     NULL
     }
     
@@ -1173,7 +1179,7 @@ setCaseNames <- function(){
         logger(command)
         eval(parse(text=paste(dataSet, "$", variable, "<- NULL", sep="")), envir=.GlobalEnv)
         logger(paste(dataSet, "$", variable, " <- NULL", sep=""))
-        activeDataSet(dataSet)
+        activeDataSet(dataSet, flushModel=FALSE)
         if (.grab.focus) tkgrab.release(top)
         tkfocus(.commander)
         tkdestroy(top)  
@@ -1225,7 +1231,7 @@ renameVariables <- function(){
                 ")] <- c(", paste('"', newnames, '"', collapse=",", sep=""), ")", sep="")
             justDoIt(command)
             logger(command)
-            activeDataSet(.activeDataSet)
+            activeDataSet(.activeDataSet, flushModel=FALSE)
             if (.grab.focus) tkgrab.release(subdialog)
             tkfocus(.commander)
             tkdestroy(subdialog)
@@ -1352,7 +1358,7 @@ setContrasts <- function(){
                 logger(command)
                 justDoIt("remove(.Contrasts, envir=.GlobalEnv)")   
                 logger("remove(.Contrasts)") 
-                activeDataSet(.activeDataSet)                                      
+                activeDataSet(.activeDataSet, flushModel=FALSE)                                      
                 tkfocus(.commander)
                 }
             subOKCancelHelp(helpSubject="contrasts")

@@ -1,10 +1,11 @@
 # R Commander Menu Definitions
 
-# last modified 5 December 2004 by J. Fox
+# last modified 15 January 2005 by J. Fox
 
 #   type    menu/item      operation/parent  label                                          command/menu
 
     menu    fileMenu        topMenu         ""                                              ""
+    item    fileMenu        command         "Load package(s)..."                            loadPackages    
     item    fileMenu        command         "Load script from file..."                      loadLog
     item    fileMenu        command         "Save script..."                                saveLog
     item    fileMenu        command         "Save script as..."                             saveLogAs
@@ -203,4 +204,5 @@
     item    helpMenu        command         "Commander help"                                helpCommander
     item    helpMenu        command         "About Rcmdr"                                   helpAboutCommander
     item    helpMenu        command         "Introduction to the R Commander"               browseManual
+    item    helpMenu        command         "Help on active data set (if available)"        helpDataSet
     item    topMenu         cascade         "Help"                                          helpMenu

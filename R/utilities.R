@@ -1,4 +1,4 @@
-# last modified 10 Dec 04 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 15 Jan 05 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
 
 # utility functions
 
@@ -42,7 +42,7 @@ listAllModels <- function(envir=.GlobalEnv, ...) {
         function(.x) (class(eval(parse(text=.x), envir=envir))[1])) %in% .modelClasses]
     }
                 
-activeDataSet <- function(dsname){
+activeDataSet <- function(dsname, flushModel=TRUE){
     if (missing(dsname)) {
         if (is.null(.activeDataSet)){
             tkmessageBox(message="There is no active data set.", icon="error", type="ok")
@@ -61,8 +61,10 @@ activeDataSet <- function(dsname){
         detach(pos = match(.activeDataSet, search()))
         logger(paste("detach(", .activeDataSet, ")", sep=""))
         }
-    assign(".activeModel", NULL, envir=.GlobalEnv)
-    tclvalue(.modelName) <- "<No active model>"
+    if (flushModel) {
+        assign(".activeModel", NULL, envir=.GlobalEnv)
+        tclvalue(.modelName) <- "<No active model>"
+        }
     # -PhG tkconfigure(.modelLabel, fg="red")
     assign(".activeDataSet", dsname, envir=.GlobalEnv)
     assign(".variables", listVariables(), envir=.GlobalEnv)
@@ -76,7 +78,7 @@ activeDataSet <- function(dsname){
         attach(get(dsname, envir=.GlobalEnv), name=dsname)
         logger(paste("attach(", dsname, ")", sep=""))
         }
-    if (!is.SciViews()) tkconfigure(.modelLabel, fg="red") else refreshStatus() # +PhG
+    if (is.SciViews()) refreshStatus() else if (flushModel) tkconfigure(.modelLabel, fg="red") # +PhG (& J.Fox, 25Dec04)
     dsname
     }
 
@@ -132,7 +134,7 @@ is.valid.name <- function(x){
     
     # statistical
     
-colPercents <- function(tab, digits=2){
+colPercents <- function(tab, digits=1){
     dim <- length(dim(tab))
     if (is.null(dimnames(tab))){
         dims <- dim(tab)
@@ -149,7 +151,7 @@ colPercents <- function(tab, digits=2){
     result
     }
 
-rowPercents <- function(tab, digits=2){
+rowPercents <- function(tab, digits=1){
     dim <- length(dim(tab))
     if (dim == 2) return(t(colPercents(t(tab), digits=digits)))
     tab <- aperm(tab, c(2,1,3:dim))
@@ -642,117 +644,6 @@ browseManual <- function() {
         "/Getting-Started-with-the-Rcmdr.pdf", sep=""))
     }
 
-printRcmdrDataSetHelp <- function (x, ...) 
-## this is slightly modified from print.help_files_with_topic in the utils package in R 2.0.0
-## replacing calls to writeLines() with calls to warning()
-{
-    topic <- attr(x, "topic")
-    paths <- as.character(x)
-    if (!length(paths)) {
-        warning(c(paste("No documentation for", sQuote(topic), 
-            "in specified packages and libraries:"), paste("you could try", 
-            sQuote(paste("help.search(", dQuote(topic), ")", 
-                sep = "")))))
-        return(invisible(x))
-    }
-    if (attr(x, "tried_all_packages")) {
-        paths <- unique(dirname(dirname(paths)))
-        msg <- paste("Help for topic", sQuote(topic), "is not in any loaded package but can be found", 
-            "in the following packages:")
-        warning(c(strwrap(msg), "", paste(" ", formatDL(c("Package", 
-            basename(paths)), c("Library", dirname(paths)), indent = 22))))
-    }
-    else {
-        if (length(paths) > 1) {
-            file <- paths[1]
-            msg <- paste("Help on topic", sQuote(topic), "was found in the following packages:")
-            paths <- dirname(dirname(paths))
-            warning(c(strwrap(msg), "", paste(" ", formatDL(c("Package", 
-                basename(paths)), c("Library", dirname(paths)), 
-                indent = 22)), "\nUsing the first match ..."))
-        }
-        else file <- paths
-        type <- attr(x, "type")
-        if (type == "html") {
-            if (file.exists(file)) 
-                .show_help_on_topic_as_HTML(file, topic)
-            else stop(paste("No HTML help for ", sQuote(topic), 
-                " is available:\n", "corresponding file is missing.", 
-                sep = ""))
-        }
-        else if (type == "chm") {
-            chm.dll <- file.path(R.home(), "bin", "Rchtml.dll")
-            if (!file.exists(chm.dll)) 
-                stop("Compiled HTML is not installed")
-            if (!is.loaded(symbol.C("Rchtml"))) 
-                dyn.load(chm.dll)
-            wfile <- sub("/chm/([^/]*)$", "", file)
-            thispkg <- sub(".*/([^/]*)/chm/([^/]*)$", "\\1", 
-                file)
-            thispkg <- sub("_.*$", "", thispkg)
-            hlpfile <- paste(wfile, "/chtml/", thispkg, ".chm", 
-                sep = "")
-            if (file.exists(hlpfile)) {
-                err <- .C("Rchtml", hlpfile, topic, err = integer(1), 
-                  PACKAGE = "")$err
-                if (err) 
-                  stop("CHM file could not be displayed")
-            }
-            else stop(paste("No CHM help for ", sQuote(topic), 
-                " is available:\n", "corresponding file is missing.", 
-                sep = ""))
-        }
-        else if (type == "help") {
-            zfile <- zip.file.extract(file, "Rhelp.zip")
-            if (file.exists(zfile)) 
-                file.show(zfile, title = paste("R Help on", sQuote(topic)), 
-                  delete.file = (zfile != file), pager = attr(x, 
-                    "pager"))
-            else stop(paste("No text help for", sQuote(topic), 
-                " is available:\n", "corresponding file is missing.", 
-                sep = ""))
-        }
-        else if (type == "latex") {
-            ok <- FALSE
-            zfile <- zip.file.extract(file, "Rhelp.zip")
-            if (zfile != file) 
-                on.exit(unlink(zfile))
-            if (file.exists(zfile)) {
-                .show_help_on_topic_offline(zfile, topic)
-                ok <- TRUE
-            }
-            else if (interactive()) {
-                path <- dirname(file)
-                dirpath <- dirname(path)
-                pkgname <- basename(dirpath)
-                Rdpath <- file.path(dirpath, "man", paste(pkgname, 
-                  "Rd.gz", sep = "."))
-                if (file.exists(Rdpath)) {
-                  ans <- readline("No latex file is available: shall I try to create it? (y/n) ")
-                  if (substr(ans, 1, 1) == "y") {
-                    lines <- tools:::extract_Rd_file(Rdpath, 
-                      topic)
-                    tf <- tempfile("Rd")
-                    tf2 <- tempfile("Rlatex")
-                    writeLines(lines, tf)
-                    cmd <- paste("R CMD Rdconv -t latex", tf, 
-                      ">", tf2)
-                    res <- system(cmd)
-                    if (res) 
-                      stop("problems running R CMD Rdconv")
-                    .show_help_on_topic_offline(tf2, topic)
-                    ok <- TRUE
-                  }
-                }
-            }
-            if (!ok) 
-                stop(paste("No offline help for ", sQuote(topic), 
-                  " is available:\n", "corresponding file is missing.", 
-                  sep = ""))
-        }
-    }
-    invisible(x)
-}
 
     
     # functions for building dialog boxes
@@ -938,10 +829,10 @@ dialogSuffix <- defmacro(window=top, onOK=onOK, rows=1, columns=1, focus=top,
 
             
 variableListBox <- function(parentWindow, variableList=.variables, bg="white",
-    selectmode="single", export="FALSE", initialSelection=NULL, title){
+    selectmode="single", export="FALSE", initialSelection=NULL, listHeight=4, title){
     if (selectmode == "multiple") selectmode <- .multiple.select.mode
     frame <- tkframe(parentWindow)
-    listbox <- tklistbox(frame, height=min(4, length(variableList)),
+    listbox <- tklistbox(frame, height=min(listHeight, length(variableList)),
         selectmode=selectmode, background=bg, exportselection=export)
     scrollbar <- tkscrollbar(frame, repeatinterval=5, command=function(...) tkyview(listbox, ...))
     tkconfigure(listbox, yscrollcommand=function(...) tkset(scrollbar, ...))
@@ -1308,9 +1199,12 @@ checkClass <- defmacro(object, class, message=NULL,
 
 # the following function is from John Chambers
 
-#isS4object <- function(object) length(attr(object, "class"))==1 && class(object) != "by" && 
-# !is.null(getClass(class(object)))
-
 isS4object <- function(object) {
-    !(length(object) == 1 && class(object) == "character") &&  length(slotNames(object)) != 0
-    }
+     if(length(attr(object, "class"))!= 1)
+         return(FALSE)
+    !isVirtualClass(getClass(class(object), TRUE)) }
+
+
+#isS4object <- function(object) {
+#    !(length(object) == 1 && class(object) == "character") &&  length(slotNames(object)) != 0
+#    }

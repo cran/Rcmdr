@@ -319,5 +319,19 @@ Version 0.9-15
 Version 0.9-16
 
    o  Fixed a problem in the new output facility, where a test for S4 objects sometimes failed.
+   
+Version 0.9-17
+
+   o  Changed the test for S4 objects (courtesy of John Chambers).
+   
+   o  The active model is no longer set to NULL when variables are simply added to, deleted from, or modified in the active data set (from a suggestion by Andy Jaworski).
+
+   o  Data-set help now works with HTML help (after bug report from Dan Putler); other improvements to data-set help.
+   
+   o  New Rcmdr option, showData.threshold, to set maximum number of variables in the active data set beyond which showData() won't be used to display the data set.
+
+   o  New "File -> Load package(s)" menu item (suggested by Rob Cribbie).
+   
+   o  Small changes and bug fixes.
 
     
