@@ -1,6 +1,6 @@
 # R Commander Menu Definitions
 
-# last modified 9 Dec 03 by J. Fox
+# last modified 22 Dec 03 by J. Fox
 
 #   type    menu/item      operation/parent  label                                          command/menu
     
@@ -112,20 +112,26 @@
     menu    modelsMenu      topMenu         ""                                              "" 
     item    modelsMenu      command         "Select active model..."                        selectActiveModel
     item    modelsMenu      command         "Summarize model"                               summarizeModel
-    item    modelsMenu      command         "ANOVA table"                                   anovaTable
-    
-# Uncomment the following line and rename the file compareModels.demo to compareModels.R in the
-#  Rcmdr etc directory to activate a demo of adding a menu/dialog to Rcmdr
-#   item    modelsMenu      command         "Compare two models..."                         compareModels
-    
-    item    modelsMenu      command         "Variance-inflation factors"                    VIF
-    item    modelsMenu      command         "Basic diagnostic plots"                        plotModel
-    item    modelsMenu      command         "Residual quantile-comparison plot..."          residualQQPlot
-    item    modelsMenu      command         "Component+residual plots"                      CRPlots
-    item    modelsMenu      command         "Added-variable plots"                          AVPlots
-    item    modelsMenu      command         "Influence plot"                                influencePlot
-    item    modelsMenu      command         "Effect plots"                                  effectPlots
     item    modelsMenu      command         "Add observation statistics to data..."         addObservationStatistics
+    menu    hypothesisMenu  modelsMenu      ""                                              ""
+    item    modelsMenu      cascade         "Hypothesis tests"                              hypothesisMenu
+    item    hypothesisMenu  command         "ANOVA table"                                   anovaTable
+    item    hypothesisMenu  command         "Compare two models..."                         compareModels
+    item    hypothesisMenu  command         "Linear hypothesis..."                          testLinearHypothesis
+    menu    diagnosticsMenu modelsMenu      ""                                              ""
+    item    modelsMenu      cascade         "Numerical diagnostics"                         diagnosticsMenu
+    item    diagnosticsMenu command         "Variance-inflation factors"                    VIF 
+    item    diagnosticsMenu command         "Breusch-Pagan test for heteroscedasticity..."  BreuschPaganTest
+    item    diagnosticsMenu command         "Durbin-Watson test for autocorrelation..."     DurbinWatsonTest
+    item    diagnosticsMenu command         "RESET test for nonlinearity..."                RESETtest
+    menu    graphsMenu      modelsMenu      ""                                              "" 
+    item    modelsMenu      cascade         "Graphs"                                        graphsMenu  
+    item    graphsMenu      command         "Basic diagnostic plots"                        plotModel
+    item    graphsMenu      command         "Residual quantile-comparison plot..."          residualQQPlot
+    item    graphsMenu      command         "Component+residual plots"                      CRPlots
+    item    graphsMenu      command         "Added-variable plots"                          AVPlots
+    item    graphsMenu      command         "Influence plot"                                influencePlot
+    item    graphsMenu      command         "Effect plots"                                  effectPlots
     item    topMenu         cascade         "Models"                                        modelsMenu
     menu    distributionsMenu topMenu       ""                                              ""  
     menu    normalMenu      distributionsMenu ""                                            ""  
