@@ -1,6 +1,6 @@
 # R Commander Menu Definitions
 
-# last modified 28 August 04 by J. Fox
+# last modified 18 November 2004 by J. Fox
 
 #   type    menu/item      operation/parent  label                                          command/menu
 
@@ -34,6 +34,7 @@
     item    importMenu      command         "from text file..."                             readDataSet
     item    importMenu      command         "from SPSS data set..."                         importSPSS
     item    importMenu      command         "from Minitab data set..."                      importMinitab
+    item    importMenu      command         "from STATA data set..."                        importSTATA
     item    dataMenu        cascade         "Import data"                                   importMenu
     menu    packagesMenu    dataMenu        ""                                              ""
     item    packagesMenu    command         "List data sets in packages"                    listDataSetsInPackages
@@ -96,6 +97,8 @@
     item    modelsMenu      command         "Linear regression..."                          linearRegressionModel
     item    modelsMenu      command         "Linear model..."                               linearModel
     item    modelsMenu      command         "Generalized linear model..."                   generalizedLinearModel
+    item    modelsMenu      command         "Multinomial logit model..."                    multinomialLogitModel
+    item    modelsMenu      command         "Proportional-odds logit model..."              proportionalOddsModel
 
 #    menu    transformMenu   statisticsMenu  ""                                              ""
 #    item    transformMenu   command         "Multivariate Box-Cox transformations..."       BoxCox

@@ -1,9 +1,9 @@
 # Model menu dialogs
 
-# last modified 13 July 04 by J. Fox
+# last modified 19 Nov 04 by J. Fox
 
 selectActiveModel <- function(){
-    models <- union(listLinearModels(), listGeneralizedLinearModels())
+    models <- listAllModels()
     if (length(models) == 0){
         tkmessageBox(message="There are no models from which to choose.", 
                 icon="error", type="ok")
@@ -51,11 +51,13 @@ selectActiveModel <- function(){
 
 summarizeModel <- function(){
     if (!checkActiveModel()) return()
+    if (!checkMethod("summary", .activeModel)) return()
     doItAndPrint(paste("summary(", .activeModel, ")", sep=""))
     }
 
 plotModel <- function(){
     if (!checkActiveModel()) return()
+    if (!checkMethod("plot", .activeModel)) return()
     doItAndPrint("par(mfrow=c(2,2))")
     doItAndPrint(paste("plot(", .activeModel, ")", sep=""))
     doItAndPrint("par(mfrow=c(1,1))")
@@ -63,11 +65,13 @@ plotModel <- function(){
 
 CRPlots <- function(){
     if (!checkActiveModel()) return()
+    if (!checkMethod("cr.plot", .activeModel)) return()
     doItAndPrint(paste("cr.plots(", .activeModel, ", ask=FALSE)", sep=""))
     }
 
 AVPlots <- function(){
     if (!checkActiveModel()) return()
+    if (!checkMethod("av.plot", .activeModel)) return()
     response <- tclvalue(tkmessageBox(message="Identify points with mouse?", 
         icon="question", type="yesno", default="no"))
     doItAndPrint(paste("av.plots(", .activeModel, ", ask=FALSE, identify.points=",
@@ -76,22 +80,19 @@ AVPlots <- function(){
 
 anovaTable <- function(){
     if (!checkActiveModel()) return()
+    if (!checkMethod("Anova", .activeModel)) return()
     doItAndPrint(paste("Anova(", .activeModel, ")", sep=""))
     }
 
 VIF <- function(){
     if (!checkActiveModel()) return()
-    if (class(get(.activeModel, envir=.GlobalEnv))[1] != "lm"){
-        tkmessageBox(message="Variance-inflation factors available\nonly for linear models.", 
-            icon="error", type="ok")
-        tkfocus(.commander)
-        return()
-        }
+    if (!checkMethod("vif", .activeModel)) return()
     doItAndPrint(paste("vif(", .activeModel, ")", sep=""))
     }
             
 influencePlot <- function(){
     if (!checkActiveModel()) return()
+    if (!checkMethod("influence.plot", .activeModel)) return()
     response <- tclvalue(tkmessageBox(message="Identify points with mouse?", 
         icon="question", type="yesno", default="no"))
     labels <- if (response == "no") ", labels=FALSE" else ""
@@ -100,7 +101,8 @@ influencePlot <- function(){
     
 effectPlots <- function(){
     if (!checkActiveModel()) return()
-    doItAndPrint('trellis.device(bg="white")')
+    if (!checkMethod("effect", .activeModel)) return()
+    doItAndPrint('trellis.device(theme="col.whitebg")')
     command <- paste("plot(all.effects(", .activeModel, "), ask=FALSE)", sep="")
     justDoIt(command)
     logger(command)
@@ -133,11 +135,21 @@ addObservationStatistics <- function(){
         labels=c("Fitted values", "Residuals", "Studentized residuals", "Hat-values", "Cook's distances", 
         "Observation indices"))
     onOK <- function(){
-        if (tclvalue(fittedVariable) == 1) addVariable("fitted")
-        if (tclvalue(residualsVariable) == 1) addVariable("residuals")
-        if (tclvalue(rstudentVariable) == 1) addVariable("rstudent")
-        if (tclvalue(hatvaluesVariable) == 1) addVariable("hatvalues")
-        if (tclvalue(cookdVariable) == 1) addVariable("cookd")
+        if (tclvalue(fittedVariable) == 1) {
+            if (checkMethod("fitted", .activeModel, default=TRUE)) addVariable("fitted")
+            }
+        if (tclvalue(residualsVariable) == 1) {
+            if (checkMethod("residuals", .activeModel, default=TRUE)) addVariable("residuals")
+            }
+        if (tclvalue(rstudentVariable) == 1) {
+            if (checkMethod("rstudent", .activeModel)) addVariable("rstudent")
+            }
+        if (tclvalue(hatvaluesVariable) == 1) {
+            if (checkMethod("hatvalues", .activeModel)) addVariable("hatvalues")
+            }
+        if (tclvalue(cookdVariable) == 1) {
+            if (checkMethod("cooks.distance", .activeModel)) addVariable("cookd")
+            }
         if (tclvalue(obsNumbersVariable) == 1){
             proceed <- if (obsNumberExists) tclvalue(checkReplace("obsNumber")) else "yes"
             if (proceed == "yes") {
@@ -159,6 +171,7 @@ addObservationStatistics <- function(){
 
 residualQQPlot <- function(){
     if (!checkActiveModel()) return()
+    if (!checkMethod("qq.plot", .activeModel)) return()
     initializeDialog(title="Residual Quantile-Comparison Plot")
     selectFrame <- tkframe(top)
     simulateVar <- tclVar("1")
@@ -186,6 +199,7 @@ residualQQPlot <- function(){
 
 testLinearHypothesis <- function(){
     if (!checkActiveModel()) return()
+    if (!checkMethod("linear.hypothesis", .activeModel)) return()
     env <- environment()
     initializeDialog(title="Test Linear Hypothesis")
     outerTableFrame <- tkframe(top)
@@ -294,7 +308,7 @@ testLinearHypothesis <- function(){
     } 
 
 compareModels <- function(){
-    models <- union(listLinearModels(), listGeneralizedLinearModels())
+    models <- listAllModels()
     if (length(models) < 2){
         tkmessageBox(message="There are fewer than two models.", 
                 icon="error", type="ok")
@@ -309,6 +323,11 @@ compareModels <- function(){
         model2 <- getSelection(modelsBox2)
         if (length(model1) == 0 || length(model2) == 0) {
             errorCondition(recall=compareModels, message="You must select two models.")
+            return()
+            }
+        if (!checkMethod("anova", model1)) {
+            tkgrab.release(top)
+            tkdestroy(top)            
             return()
             }
         if (!eval(parse(text=paste("class(", model1, ")[1] == class(", model2, ")[1]",
@@ -333,10 +352,7 @@ compareModels <- function(){
     
 BreuschPaganTest <- function(){
     if(!checkActiveModel()) return()
-    if (eval(parse(text=paste("class(", .activeModel, ")[1] != 'lm'", sep="")))){
-        errorCondition(message="Breusch-Pagan test requires a linear model.")
-        return()
-        }
+    if (!checkClass(.activeModel, "lm")) return()
     initializeDialog(title="Breusch-Pagan Test")
     tkgrid(tklabel(top, text="Score Test for Nonconstant Error Variance", fg="blue"), sticky="w")
     optionsFrame <- tkframe(top)
@@ -377,10 +393,7 @@ BreuschPaganTest <- function(){
 
 DurbinWatsonTest <- function(){
     if (!checkActiveModel()) return()
-    if (eval(parse(text=paste("class(", .activeModel, ")[1] != 'lm'", sep="")))){
-        errorCondition(message="Durbin-Watson test requires a linear model.")
-        return()
-        }
+    if (!checkClass(.activeModel, "lm")) return()
     initializeDialog(title="Durbin-Waton Test")
     tkgrid(tklabel(top, text="Test for First-Order Error Autocorrelation", fg="blue"), sticky="w")
     onOK <- function(){
@@ -404,10 +417,7 @@ DurbinWatsonTest <- function(){
 
 RESETtest <- function(){
     if(!checkActiveModel()) return()
-    if (eval(parse(text=paste("class(", .activeModel, ")[1] != 'lm'", sep="")))){
-        errorCondition(message="RESET test requires a linear model.")
-        return()
-        }
+    if (!checkClass(.activeModel, "lm")) return()
     initializeDialog(title="RESET Test")
     tkgrid(tklabel(top, text="Test for Nonlinearity", fg="blue"), sticky="w")
     onOK <- function(){
@@ -451,5 +461,6 @@ RESETtest <- function(){
 
 outlierTest <- function(){
     if (!checkActiveModel()) return()
+    if (!checkMethod("outlier.test", .activeModel)) return()
     doItAndPrint(paste("outlier.test(", .activeModel, ")", sep=""))
     }

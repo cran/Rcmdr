@@ -296,3 +296,13 @@ Version 0.9-12
     
     o  scatter3d() now returns model summaries (rather than prints them as side effects) when model.summary=TRUE (to fix a problem reported by Paul Johnson).
     
+Version 0.9-13
+
+    o  Added "from STATA data set..." to the "Import" menu; contributed by Michael Ash. 
+    
+Version 0.9-14
+
+    o  New facilities for incorporating additional classes of statistical models. 
+
+    o  Added support for multinomial logit models [via multinom() in nnet] and for proportional-odds logit models [via polr() in MASS].
+    

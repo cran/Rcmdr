@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 18 July 04 by J. Fox
+# last modified 18 Nov 04 by J. Fox
 
     # Models menu
     
@@ -286,6 +286,164 @@ generalizedLinearModel <- function(){
     tkselection.set(linkBox, lnk)
     tkbind(familyBox, "<Double-ButtonPress-1>", onFamilySelect)
     dialogSuffix(rows=7, columns=1, focus=lhsEntry)
+    }
+
+proportionalOddsModel <- function(){
+    if (!checkActiveDataSet()) return()
+    if (!checkVariables(2)) return()
+    initializeDialog(title="Multinomial Logit Model")
+    currentModel <- if (!is.null(.activeModel)) 
+        eval(parse(text=paste("class(", .activeModel, ")[1] == 'multinom'", sep="")), 
+            envir=.GlobalEnv) 
+        else FALSE
+    if (currentModel) {
+        currentFields <- formulaFields(eval(parse(text=.activeModel), 
+            envir=.GlobalEnv))
+        if (currentFields$data != .activeDataSet) currentModel <- FALSE
+        }
+    assign(".modelNumber", .modelNumber + 1, envir=.GlobalEnv)
+    modelName <- tclVar(paste("POM.", .modelNumber, sep=""))
+    modelFrame <- tkframe(top)
+    model <- tkentry(modelFrame, width="20", textvariable=modelName)
+    onOK <- function(){
+        if (.grab.focus) tkgrab.release(top)
+        tkdestroy(top)
+        modelValue <- trim.blanks(tclvalue(modelName))
+        if (!is.valid.name(modelValue)){
+            errorCondition(recall=proportionalOddsModel, message=paste('"', modelValue, '" is not a valid name.', sep=""), model=TRUE)
+            return()
+            }
+        subset <- tclvalue(subsetVariable)
+        if (trim.blanks(subset) == "<all valid cases>" || trim.blanks(subset) == ""){
+            subset <- ""
+            assign(".modelWithSubset", FALSE, envir=.GlobalEnv)
+            }
+        else{
+            subset <- paste(", subset=", subset, sep="")
+            assign(".modelWithSubset", TRUE, envir=.GlobalEnv)            
+            }
+        check.empty <- gsub(" ", "", tclvalue(lhsVariable))
+        if ("" == check.empty) {
+            errorCondition(recall=proportionalOddsModel, message="Left-hand side of model empty.", model=TRUE) 
+            return()
+            }
+        check.empty <- gsub(" ", "", tclvalue(rhsVariable))
+        if ("" == check.empty) {
+            errorCondition(recall=proportionalOddsModel, message="Right-hand side of model empty.", model=TRUE)
+            return()
+            }
+        if (!is.factor(eval(parse(text=tclvalue(lhsVariable)), envir=eval(parse(text=.activeDataSet), envir=.GlobalEnv)))){
+            errorCondition(recall=proportionalOddsModel, message="Response variable must be a factor")
+            return()
+            }
+        if (is.element(modelValue, listProportionalOddsModels())) {
+            if ("no" == tclvalue(checkReplace(modelValue, type="Model"))){
+                assign(".modelNumber", .modelNumber - 1, envir=.GlobalEnv) 
+                if (.grab.focus) tkgrab.release(top)
+                tkdestroy(top)
+                linearModel()
+                return()
+                }
+            }
+        activeModel(modelValue)
+        formula <- paste(tclvalue(lhsVariable), tclvalue(rhsVariable), sep=" ~ ")
+        command <- paste("polr(", formula,
+            ", data=", .activeDataSet, subset, ", Hess=TRUE)", sep="")
+        logger(paste(modelValue, " <- ", command, sep=""))
+        assign(modelValue, justDoIt(command), envir=.GlobalEnv)
+        doItAndPrint(paste("summary(", modelValue, ")", sep=""))
+        tkfocus(.commander)
+        }
+    OKCancelHelp(helpSubject="polr", model=TRUE)
+    tkgrid(tklabel(modelFrame, text="Enter name for model:"), model, sticky="w")
+    tkgrid(modelFrame, sticky="w")
+    modelFormula()
+    subsetBox(model=TRUE)
+    tkgrid(getFrame(xBox), sticky="w")
+    tkgrid(outerOperatorsFrame, sticky="w")
+    tkgrid(formulaFrame, sticky="w")
+    tkgrid(subsetFrame, sticky="w")
+    tkgrid(buttonsFrame, sticky="w")
+    dialogSuffix(rows=6, columns=1, focus=lhsEntry)
+    }
+    
+multinomialLogitModel <- function(){
+    if (!checkActiveDataSet()) return()
+    if (!checkVariables(2)) return()
+    initializeDialog(title="Multinomial Logit Model")
+    currentModel <- if (!is.null(.activeModel)) 
+        eval(parse(text=paste("class(", .activeModel, ")[1] == 'multinom'", sep="")), 
+            envir=.GlobalEnv) 
+        else FALSE
+    if (currentModel) {
+        currentFields <- formulaFields(eval(parse(text=.activeModel), 
+            envir=.GlobalEnv))
+        if (currentFields$data != .activeDataSet) currentModel <- FALSE
+        }
+    assign(".modelNumber", .modelNumber + 1, envir=.GlobalEnv)
+    modelName <- tclVar(paste("MLM.", .modelNumber, sep=""))
+    modelFrame <- tkframe(top)
+    model <- tkentry(modelFrame, width="20", textvariable=modelName)
+    onOK <- function(){
+        if (.grab.focus) tkgrab.release(top)
+        tkdestroy(top)
+        modelValue <- trim.blanks(tclvalue(modelName))
+        if (!is.valid.name(modelValue)){
+            errorCondition(recall=multinomialLogitModel, message=paste('"', modelValue, '" is not a valid name.', sep=""), model=TRUE)
+            return()
+            }
+        subset <- tclvalue(subsetVariable)
+        if (trim.blanks(subset) == "<all valid cases>" || trim.blanks(subset) == ""){
+            subset <- ""
+            assign(".modelWithSubset", FALSE, envir=.GlobalEnv)
+            }
+        else{
+            subset <- paste(", subset=", subset, sep="")
+            assign(".modelWithSubset", TRUE, envir=.GlobalEnv)            
+            }
+        check.empty <- gsub(" ", "", tclvalue(lhsVariable))
+        if ("" == check.empty) {
+            errorCondition(recall=multinomialLogitModel, message="Left-hand side of model empty.", model=TRUE) 
+            return()
+            }
+        check.empty <- gsub(" ", "", tclvalue(rhsVariable))
+        if ("" == check.empty) {
+            errorCondition(recall=multinomialLogitModel, message="Right-hand side of model empty.", model=TRUE)
+            return()
+            }
+        if (!is.factor(eval(parse(text=tclvalue(lhsVariable)), envir=eval(parse(text=.activeDataSet), envir=.GlobalEnv)))){
+            errorCondition(recall=multinomialLogitModel, message="Response variable must be a factor")
+            return()
+            }
+        if (is.element(modelValue, listMultinomialLogitModels())) {
+            if ("no" == tclvalue(checkReplace(modelValue, type="Model"))){
+                assign(".modelNumber", .modelNumber - 1, envir=.GlobalEnv) 
+                if (.grab.focus) tkgrab.release(top)
+                tkdestroy(top)
+                linearModel()
+                return()
+                }
+            }
+        activeModel(modelValue)
+        formula <- paste(tclvalue(lhsVariable), tclvalue(rhsVariable), sep=" ~ ")
+        command <- paste("multinom(", formula,
+            ", data=", .activeDataSet, subset, ", trace=FALSE)", sep="")
+        logger(paste(modelValue, " <- ", command, sep=""))
+        assign(modelValue, justDoIt(command), envir=.GlobalEnv)
+        doItAndPrint(paste("summary(", modelValue, ", cor=FALSE)", sep=""))
+        tkfocus(.commander)
+        }
+    OKCancelHelp(helpSubject="multinom", model=TRUE)
+    tkgrid(tklabel(modelFrame, text="Enter name for model:"), model, sticky="w")
+    tkgrid(modelFrame, sticky="w")
+    modelFormula()
+    subsetBox(model=TRUE)
+    tkgrid(getFrame(xBox), sticky="w")
+    tkgrid(outerOperatorsFrame, sticky="w")
+    tkgrid(formulaFrame, sticky="w")
+    tkgrid(subsetFrame, sticky="w")
+    tkgrid(buttonsFrame, sticky="w")
+    dialogSuffix(rows=6, columns=1, focus=lhsEntry)
     }
 
 formulaFields <- function(model, glm=FALSE){

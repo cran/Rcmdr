@@ -1,6 +1,7 @@
 # The R Commander and command logger
 
-# last modified 24 Oct 04 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 18 Nov 04 by J. Fox
+#   slight changes 12 Aug 04 by Ph. Grosjean
 
 Commander <- function(){
     if (is.SciViews()) return(invisible(svCommander())) # +PhG
@@ -169,6 +170,8 @@ Commander <- function(){
         else stop(paste("menu defintion error:", Menus[m, ], collapse=" "))
         }
     exceptions <- scan(file.path(etc, "log-exceptions.txt"), what="", quiet=TRUE, comment.char="#")
+    assign(".modelClasses", scan(file.path(etc, "model-classes.txt"), what="", quiet=TRUE, comment.char="#"),
+        envir=.GlobalEnv)
     onEdit <- function(){
         if (activeDataSet() == FALSE) {
             tkfocus(.commander)

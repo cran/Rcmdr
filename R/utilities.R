@@ -1,4 +1,4 @@
-# last modified 19 Oct 04 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 18 Nov 04 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
 
 # utility functions
 
@@ -20,7 +20,28 @@ listGeneralizedLinearModels <- function(envir=.GlobalEnv, ...) {
     else objects[sapply(objects, 
         function(.x) "glm" == (class(eval(parse(text=.x), envir=envir))[1]))]
     }
-    
+
+listMultinomialLogitModels <- function(envir=.GlobalEnv, ...) {
+    objects <- ls(envir=envir, ...)
+    if (length(objects) == 0) NULL
+    else objects[sapply(objects, 
+        function(.x) "multinom" == (class(eval(parse(text=.x), envir=envir))[1]))]
+    }
+
+listProportionalOddsModels <- function(envir=.GlobalEnv, ...) {
+    objects <- ls(envir=envir, ...)
+    if (length(objects) == 0) NULL
+    else objects[sapply(objects, 
+        function(.x) "polr" == (class(eval(parse(text=.x), envir=envir))[1]))]
+    }
+
+listAllModels <- function(envir=.GlobalEnv, ...) {
+    objects <- ls(envir=envir, ...)
+    if (length(objects) == 0) NULL
+    else objects[sapply(objects, 
+        function(.x) (class(eval(parse(text=.x), envir=envir))[1])) %in% .modelClasses]
+    }
+                
 activeDataSet <- function(dsname){
     if (missing(dsname)) {
         if (is.null(.activeDataSet)){
@@ -1255,3 +1276,31 @@ modelFormula <- defmacro(frame=top, hasLhs=TRUE, expr={
         }
     tkgrid.configure(rhsXscroll, sticky="ew")
     })
+
+exists.method <- function(generic, object, default=TRUE, strict=FALSE){
+    classes <- class(object)
+    if (default) classes <- c(classes, "default")
+    if (strict) classes <- classes[1]
+    any(paste(generic, ".", classes, sep="") %in%
+        as.character(methods(generic)))
+    }
+
+checkMethod <- defmacro(generic, object, message=NULL, default=FALSE, strict=FALSE,
+    expr={
+        msg <- if (is.null(message)) paste("No appropriate", generic, "method exists\nfor a model of this class.")
+            else message
+        method <- exists.method(generic, eval(parse(text=object)), default=default, strict=strict)
+        if (!method) tkmessageBox(message=msg, icon="error", type="ok", default="ok")
+        method
+        }
+    )
+    
+checkClass <- defmacro(object, class, message=NULL,
+    expr={
+        msg <- if (is.null(message)) paste('The model is not of class "', class, '".')
+            else message
+       properClass <- eval(parse(text=paste("class(", object, ")")))[1] == class
+       if (!properClass) tkmessageBox(message=msg, icon="error", type="ok", default="ok")
+       properClass
+       }
+    )

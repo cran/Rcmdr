@@ -1,4 +1,4 @@
-# last modified 1 Sept 2004 by J. Fox
+# last modified 18 Nov 2004 by J. Fox
 
 # File menu dialogs
 
@@ -77,7 +77,7 @@ closeCommander <- function(){
     globals <- c(".activeDataSet", ".activeModel", ".attach.data.set", ".command.text.color", ".commander", ".grab.focus", 
         ".console.output", ".contrasts", ".dataSetLabel", ".dataSetName", ".double.click", ".factors",
         ".length.messages", ".log", ".log.commands", ".logFileName", ".logFont", ".log.font.size", ".log.text.color",
-        ".messages", ".messages.connection", 
+        ".messages", ".messages.connection", ".modelClasses",
         ".modelLabel", ".modelName", ".modelNumber", ".modelWithSubset", ".multiple.select.mode",
         ".numeric", "oldPager", ".operatorFont", ".output", ".output.text.color", ".outputFileName", 
         ".report.X11.warnings", ".rgl", ".saveFileName", ".saveOptions", ".sort.names",

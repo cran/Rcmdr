@@ -1,4 +1,4 @@
-# last modified 19 Oct 2004 by J. Fox
+# last modified 2 Nov 2004 by J. Fox
 
 # Data menu dialogs
 
@@ -533,6 +533,85 @@ importMinitab <- function() {
     tkgrid.configure(entryDsname, sticky="w")
     dialogSuffix(rows=2, columns=2, focus=entryDsname)
     }
+
+# the following function was contributed by Michael Ash
+
+importSTATA <- function() {
+    initializeDialog(title="Import STATA Data Set")
+    dsname <- tclVar("Dataset")
+    entryDsname <- tkentry(top, width="20", textvariable=dsname)
+    asFactor <- tclVar("1")
+    asFactorCheckBox <- tkcheckbutton(top, variable=asFactor)
+    asDate <- tclVar("1")
+    asDateCheckBox <- tkcheckbutton(top, variable=asDate)
+    asMissingType <- tclVar("1")
+    asMissingTypeCheckBox <- tkcheckbutton(top, variable=asMissingType)
+    asConvertUnderscore <- tclVar("1")
+    asConvertUnderscoreCheckBox <- tkcheckbutton(top, variable=asConvertUnderscore)
+    asWarnMissingLabels <- tclVar("1")
+    asWarnMissingLabelsCheckBox <- tkcheckbutton(top, variable=asWarnMissingLabels)
+    onOK <- function(){
+        dsnameValue <- trim.blanks(tclvalue(dsname))
+        if (dsnameValue == ""){
+            errorCondition(recall=importSTATA,
+                message="You must enter the name of a data set.")
+                return()
+                }
+        if (!is.valid.name(dsnameValue)){
+            errorCondition(recall=importSTATA,
+                message=paste('"', dsnameValue, '" is not a valid name.', sep=""))
+            return()
+            }                     
+        if (is.element(dsnameValue, listDataSets())) {
+            if ("no" == tclvalue(checkReplace(dsnameValue, "Data set"))){
+                if (.grab.focus) tkgrab.release(top)
+                tkdestroy(top)
+                importSTATA()
+                return()
+                }
+            }
+        file <- tclvalue(tkgetOpenFile(
+            filetypes='{"STATA datasets" {".dta" ".DTA"}} {"All Files" {"*"}}'))
+        if (file == "") {
+            if (.grab.focus) tkgrab.release(top)
+            tkdestroy(top)
+            return()
+            }
+        convert.date <- tclvalue(asDate) == "1"
+        factor <- tclvalue(asFactor) == "1"
+        missingtype <- tclvalue(asMissingType) == "1"
+        convertunderscore <- tclvalue(asConvertUnderscore) == "1"
+        warnmissinglabels <- tclvalue(asWarnMissingLabels) == "1"
+        command <- paste('read.dta("', file,'", convert.dates=', convert.date,
+            ", convert.factors=", factor, ", missing.type=", missingtype, 
+            ", convert.underscore=", convertunderscore, ", warn.missing.labels=TRUE)", sep="")
+        logger(paste(dsnameValue, " <- ", command, sep=""))
+        assign(dsnameValue, justDoIt(command), envir=.GlobalEnv)
+        activeDataSet(dsnameValue)
+        if (.grab.focus) tkgrab.release(top)
+        tkdestroy(top)
+        tkfocus(.commander)
+        }
+    OKCancelHelp(helpSubject="read.dta")
+    tkgrid(tklabel(top, text="Enter name for data set:"), entryDsname, sticky="w")
+    tkgrid(tklabel(top, text="Convert value labels\nto factor levels", justify="left"), 
+        asFactorCheckBox, sticky="w")
+    tkgrid(tklabel(top, text="Convert dates to R format", justify="left"), 
+        asDateCheckBox, sticky="w")
+    tkgrid(tklabel(top, text="Multiple missing types (>=Stata 8)", justify="left"), 
+        asMissingTypeCheckBox, sticky="w")
+    tkgrid(tklabel(top, text="Convert underscore to period", justify="left"), 
+        asConvertUnderscoreCheckBox, sticky="w")
+    tkgrid(tklabel(top, text="Warn on missing labels", justify="left"), 
+        asWarnMissingLabelsCheckBox, sticky="w")
+    tkgrid(buttonsFrame, columnspan="2", sticky="w")
+    tkgrid.configure(entryDsname, sticky="w")
+    tkgrid.configure(asFactorCheckBox, sticky="w")
+    tkgrid.configure(asDateCheckBox, sticky="w")
+    tkgrid.configure(asMissingTypeCheckBox, sticky="w")
+    tkgrid.configure(asWarnMissingLabelsCheckBox, sticky="w")
+    dialogSuffix(rows=4, columns=2, focus=entryDsname)
+    } 
 
 numericToFactor <- function(){
     if (!checkActiveDataSet()) return()
