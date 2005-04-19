@@ -1,15 +1,28 @@
-# last modified 28 Dec 04 by J. Fox
+# last modified 7 April 05 by J. Fox
 
-export(bin.var, Commander, colPercents, rowPercents, reliability,
-    partial.cor, RcmdrPager, listLinearModels, listGeneralizedLinearModels, doItAndPrint,
-    justDoIt, logger, listDataSets, activeDataSet, activeModel, is.valid.name, stem.leaf,
-    Hist, plotMeans, scatter3d, listVariables, listFactors, listTwoLevelFactors, listNumeric, listVariables,
-    OKCancelHelp, subOKCancelHelp, checkActiveDataSet, checkActiveModel, checkBoxes, checkFactors, checkNumeric,
-    checkReplace, checkTwoLevelFactors, checkVariables, dialogSuffix, errorCondition, groupsBox,
-    groupsLabel, modelFormula, radioButtons, subsetBox, variableListBox, initializeDialog, getFrame, getSelection,
-    KMeans, assignCluster)
+export(activateMenus, activeDataSet, ActiveDataSet, activeDataSetP, activeModel,
+ActiveModel, activeModelP, assignCluster, bin.var, checkActiveDataSet,
+checkActiveModel, checkBoxes, checkFactors, checkNumeric, checkReplace,
+checkTwoLevelFactors, checkVariables, closeDialog, colPercents, Commander,
+commanderPosition, CommanderWindow, Confint, dataSetsP,
+dialogSuffix, doItAndPrint, errorCondition,
+Factors, factorsP, getFrame, getRcmdr, getSelection,
+glmP, GrabFocus, groupsBox, groupsLabel, hclustSolutionsP,
+Hist, initializeDialog, is.valid.name, is.SciViews, justDoIt, KMeans,
+listDataSets, listFactors, listGeneralizedLinearModels, listLinearModels,
+listNumeric, listTwoLevelFactors, listVariables, lmP, logger, LogWindow,
+Message, MessagesWindow, modelFormula, modelsP, Numeric,
+numericP, OKCancelHelp, OutputWindow, packageLoaded, partial.cor,
+plotMeans, putRcmdr, radioButtons, RcmdrPager, RcmdrTclSet,
+reliability, rowPercents, scatter3d, stem.leaf, subOKCancelHelp,
+subsetBox, TwoLevelFactors, twoLevelFactorsP, UpdateModelNumber,
+variableListBox, Variables)
 
+S3method(Confint, glm)
+S3method(Confint, default)
+S3method(confint, multinom)
+S3method(confint, polr)
+S3method(print, reliability)
 S3method(print, stem.leaf)
-S3method(print, reliability) 
 S3method(getFrame, listbox)
-S3method(getSelection, listbox) 
+S3method(getSelection, listbox)

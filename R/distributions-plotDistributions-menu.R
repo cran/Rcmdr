@@ -1,6 +1,6 @@
 # Distributions  -> Plot Distributions menu dialogs
 
-# last modified 25 June 04 by J. Fox
+# last modified 12 Mar 05 by J. Fox
 
 normalDistributionPlot <- function(){
     initializeDialog(title="Normal Distribution")
@@ -12,14 +12,13 @@ normalDistributionPlot <- function(){
     densityButton <- tkradiobutton(top, variable=functionVar, value="Density")
     distributionButton <- tkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
+        closeDialog()
         mu <- as.numeric(tclvalue(muVar))
         sigma <- as.numeric(tclvalue(sigmaVar))
         fun <- tclvalue(functionVar)
         fn <- if (fun == "Density") "dnorm" else "pnorm"
         min <- round(qnorm(.0005, mean=mu, sd=sigma), 3)
         max <- round(qnorm(.9995, mean=mu, sd=sigma), 3)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         command <- paste("seq(", min, ", ", max, ", length=100)", sep="")
         logger(paste(".x <- ", command, sep=""))
         assign(".x", justDoIt(command), envir=.GlobalEnv)
@@ -30,7 +29,7 @@ normalDistributionPlot <- function(){
         doItAndPrint('abline(h=0, col="gray")')
         remove(.x, envir=.GlobalEnv)
         logger("remove(.x)")
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="dnorm")
     tkgrid(tklabel(top, text="mu (mean)"), muEntry, sticky="e")
@@ -53,6 +52,7 @@ tDistributionPlot <- function(){
     densityButton <- tkradiobutton(top, variable=functionVar, value="Density")
     distributionButton <- tkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
+        closeDialog()
         df <- as.numeric(tclvalue(dfVar))
         if (is.na(df)) {
             errorCondition(recall=tDistributionPlot, message="Degrees of freedom not specified.")
@@ -62,8 +62,6 @@ tDistributionPlot <- function(){
         fn <- if (fun == "Density") "dt" else "pt"
         min <- round(qt(.0005, df=df), 3)
         max <- round(qt(.9995, df=df), 3)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         command <- paste("seq(", min, ", ", max, ", length=100)", sep="")
         logger(paste(".x <- ", command, sep=""))
         assign(".x", justDoIt(command), envir=.GlobalEnv)
@@ -73,7 +71,7 @@ tDistributionPlot <- function(){
         doItAndPrint('abline(h=0, col="gray")')
         remove(.x, envir=.GlobalEnv)
         logger("remove(.x)")
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="dt")
     tkgrid(tklabel(top, text="Degrees of freedom"), dfEntry, sticky="e")
@@ -94,6 +92,7 @@ chisquareDistributionPlot <- function(){
     densityButton <- tkradiobutton(top, variable=functionVar, value="Density")
     distributionButton <- tkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
+        closeDialog()
         df <- as.numeric(tclvalue(dfVar))
         if (is.na(df)) {
             errorCondition(recall=chisquareDistributionPlot,message="Degrees of freedom not specified.")
@@ -103,8 +102,6 @@ chisquareDistributionPlot <- function(){
         fn <- if (fun == "Density") "dchisq" else "pchisq"
         min <- round(qchisq(.0005, df=df), 3)
         max <- round(qchisq(.9995, df=df), 3)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         command <- paste("seq(", min, ", ", max, ", length=100)", sep="")
         logger(paste(".x <- ", command, sep=""))
         assign(".x", justDoIt(command), envir=.GlobalEnv)
@@ -114,7 +111,7 @@ chisquareDistributionPlot <- function(){
         doItAndPrint('abline(h=0, col="gray")')
         remove(.x, envir=.GlobalEnv)
         logger("remove(.x)")
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="dchisq")
     tkgrid(tklabel(top, text="Degrees of freedom"), dfEntry, sticky="e")
@@ -137,6 +134,7 @@ FDistributionPlot <- function(){
     densityButton <- tkradiobutton(top, variable=functionVar, value="Density")
     distributionButton <- tkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
+        closeDialog()
         df1 <- as.numeric(tclvalue(df1Var))
         df2 <- as.numeric(tclvalue(df2Var))
         if (is.na(df1)) {
@@ -151,8 +149,6 @@ FDistributionPlot <- function(){
         fn <- if (fun == "Density") "df" else "pf"
         min <- round(qf(.0005, df1=df1, df2=df2), 3)
         max <- round(qf(.9995, df1=df1, df2=df2), 3)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         command <- paste("seq(", min, ", ", max, ", length=100)", sep="")
         logger(paste(".x <- ", command, sep=""))
         assign(".x", justDoIt(command), envir=.GlobalEnv)
@@ -163,7 +159,7 @@ FDistributionPlot <- function(){
         doItAndPrint('abline(h=0, col="gray")')
         remove(.x, envir=.GlobalEnv)
         logger("remove(.x)")
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="df")
     tkgrid(tklabel(top, text="Numerator degrees of freedom"), df1Entry, sticky="e")
@@ -188,6 +184,7 @@ binomialDistributionPlot <- function(){
     densityButton <- tkradiobutton(top, variable=functionVar, value="Probability")
     distributionButton <- tkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
+        closeDialog()
         trials <- as.numeric(tclvalue(trialsVar))
         if (is.na(trials)) {
             errorCondition(recall=binomialDistributionPlot, message="Binomial trials not specified.")
@@ -201,8 +198,6 @@ binomialDistributionPlot <- function(){
         fun <- tclvalue(functionVar)
         min <- qbinom(.0005, size=trials, prob=prob)
         max <- qbinom(.9995, size=trials, prob=prob)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         command <- paste(min, ":", max, sep="")
         logger(paste(".x <- ", command, sep=""))
         assign(".x", justDoIt(command), envir=.GlobalEnv)
@@ -224,7 +219,7 @@ binomialDistributionPlot <- function(){
         doItAndPrint('abline(h=0, col="gray")')
         remove(.x, envir=.GlobalEnv)
         logger("remove(.x)")
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="dbinom")
     tkgrid(tklabel(top, text="Binomial trials"), trialsEntry, sticky="e")
@@ -247,6 +242,7 @@ PoissonDistributionPlot <- function(){
     densityButton <- tkradiobutton(top, variable=functionVar, value="Probability")
     distributionButton <- tkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
+        closeDialog()
         mean <- as.numeric(tclvalue(meanVar))
         if (is.na(mean)) {
             errorCondition(recall=PoissonDistributionPlot, message="Mean not specified.")
@@ -255,8 +251,6 @@ PoissonDistributionPlot <- function(){
         fun <- tclvalue(functionVar)
         min <- qpois(.0005, lambda=mean)
         max <- qpois(.9995, lambda=mean)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         command <- paste(min, ":", max, sep="")
         logger(paste(".x <- ", command, sep=""))
         assign(".x", justDoIt(command), envir=.GlobalEnv)
@@ -278,7 +272,7 @@ PoissonDistributionPlot <- function(){
         doItAndPrint('abline(h=0, col="gray")')
         remove(.x, envir=.GlobalEnv)
         logger("remove(.x)")
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="dpois")
     tkgrid(tklabel(top, text="mean"), meanEntry, sticky="e")

@@ -8,7 +8,8 @@
 }
 
 \usage{
-stem.leaf(data, unit, m, Min, Max, rule.line = c("Dixon", "Velleman", "Sturges"), 
+stem.leaf(data, unit, m, Min, Max,
+    rule.line = c("Dixon", "Velleman", "Sturges"),
     style = c("Tukey", "bare"), trim.outliers = TRUE, depths = TRUE,
     reverse.negative.leaves = TRUE)
 

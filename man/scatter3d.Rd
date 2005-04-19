@@ -9,12 +9,15 @@
 
 \usage{
 scatter3d(x, y, z, xlab=deparse(substitute(x)), ylab=deparse(substitute(y)),
-    zlab=deparse(substitute(z)), revolutions=0, bg.col=c("black", "white"), axis.col=NULL,
-    surface.col=c("blue", "green", "orange", "magenta", "cyan", "red", "yellow", "gray"), 
+    zlab=deparse(substitute(z)), revolutions=0,
+    bg.col=c("black", "white"), axis.col=NULL,
+    surface.col=c("blue", "green", "orange", "magenta", "cyan", "red",
+        "yellow", "gray"),
     neg.res.col="red", pos.res.col="green", point.col="yellow",
     text.col=axis.col, grid.col=if (bg.col == "white") "black" else "gray", 
     fogtype=c("exp2", "linear", "exp", "none"), 
-    residuals=(length(fit) == 1), surface=TRUE, grid=TRUE, df.smooth=NULL, df.additive=NULL,
+    residuals=(length(fit) == 1), surface=TRUE, grid=TRUE, grid.lines=26,
+    df.smooth=NULL, df.additive=NULL,
     sphere.size=1, threshold=0.01, speed=1, fov=60, 
     fit="linear", groups=NULL, parallel=TRUE, model.summary=FALSE)
 }
@@ -45,6 +48,7 @@ You have to install the \code{rgl} and \code{mgcv} packages to produce 3D plots.
     when there is one surface plotted.}
   \item{surface}{plot surface(s) (\code{TRUE} or \code{FALSE}).}
   \item{grid}{plot grid lines on the regression surface(s) (\code{TRUE} or \code{FALSE}).}
+  \item{grid.lines}{number of lines (default, 26) forming the grid, in each of the x and y directions.}
   \item{df.smooth}{degrees of freedom for the two-dimensional smooth regression surface;
     if \code{NULL} (the default), the \code{\link[mgcv]{gam}} function will select the degrees of freedom
     for a smoothing spline by generalized cross-validation; if a positive number, a fixed

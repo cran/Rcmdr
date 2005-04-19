@@ -1,22 +1,22 @@
 # Graphs menu dialogs
 
-# last modified 4 Dec 04 by J. Fox
+# last modified 17 Mar 05 by J. Fox
 
 indexPlot <- function(){
-    if(!checkActiveDataSet()) return()
-    if(!checkNumeric()) return()
+##    if(!checkActiveDataSet()) return()
+##    if(!checkNumeric()) return()
     initializeDialog(title="Index Plot")
-    xBox <- variableListBox(top, .numeric, title="Variable (pick one)")
+    xBox <- variableListBox(top, Numeric(), title="Variable (pick one)")
     onOK <- function(){
         x <- getSelection(xBox)
+        closeDialog()
         if (length(x) == 0){
             errorCondition(recall=indexPlot, message="You must select a variable")
             return()
             }
         type <- if (tclvalue(typeVariable) == "spikes") "h" else "p"
         identify <- tclvalue(identifyVariable) == "1"
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        .activeDataSet <- ActiveDataSet()
         command <- paste("plot(", .activeDataSet, "$", x, ', type="', type, '")', sep="")
         doItAndPrint(command)
         if (par("usr")[3] <= 0) doItAndPrint('abline(h=0, col="gray")')
@@ -25,7 +25,7 @@ indexPlot <- function(){
                 ", labels=rownames(", .activeDataSet, "))", sep="")
             doItAndPrint(command)
             }        
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="plot")
     optionsFrame <- tkframe(top)
@@ -45,25 +45,26 @@ indexPlot <- function(){
     }
 
 Histogram <- function(){
-    if (!checkActiveDataSet()) return()
-    if(!checkNumeric()) return()
+##    if (!checkActiveDataSet()) return()
+##    if(!checkNumeric()) return()
     initializeDialog(title="Histogram")
-    xBox <- variableListBox(top, .numeric, title="Variable (pick one)")
+    xBox <- variableListBox(top, Numeric(), title="Variable (pick one)")
     onOK <- function(){
         x <- getSelection(xBox)
+        closeDialog()
         if (length(x) == 0){
             errorCondition(recall=Histogram, message="You must select a variable")
             return()
             }
         bins <- tclvalue(binsVariable)
+        opts <- options(warn=-1)
         bins <- if (bins == "<auto>") '"Sturges"' else as.numeric(bins)
+        options(opts)
         scale <- tclvalue(scaleVariable)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
-        command <- paste("Hist(", .activeDataSet, "$", x, ', scale="',
+        command <- paste("Hist(", ActiveDataSet(), "$", x, ', scale="',
             scale, '", breaks=', bins, ', col="darkgray")', sep="")
         doItAndPrint(command)
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="Hist")
     radioButtons(name="scale", buttons=c("frequency", "percent", "density"),
@@ -81,10 +82,10 @@ Histogram <- function(){
     }
 
 stemAndLeaf <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric()) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric()) return()
     initializeDialog(title="Stem and Leaf Display")
-    xBox <- variableListBox(top, .numeric, title="Variable (pick one)")
+    xBox <- variableListBox(top, Numeric(), title="Variable (pick one)")
     displayDigits <- tclVar("1")
     onDigits <- function(...){
         tclvalue(displayDigits) <- formatC(10^as.numeric(tclvalue(leafsDigitValue)), 
@@ -107,6 +108,7 @@ stemAndLeaf <- function(){
     leafsDigitCheckBox <- tkcheckbutton(leafsFrame, variable=leafsAutoVariable)
     onOK <- function(){
         x <- getSelection(xBox)
+        closeDialog()
         if (length(x) == 0){
             errorCondition(recall=stemAndLeaf, message="You must select a variable")
             return()
@@ -123,12 +125,10 @@ stemAndLeaf <- function(){
             else ", reverse.negative.leaves=FALSE"
         style <- if (tclvalue(styleVariable) == "Tukey") ""
             else ', style="bare"'
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
-        command <- paste("stem.leaf(", .activeDataSet, "$", x, style, unit, m, trim, 
+        command <- paste("stem.leaf(", ActiveDataSet(), "$", x, style, unit, m, trim,
             depths, reverse, ")", sep="")
         doItAndPrint(command)
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="stem.leaf")
     tkgrid(getFrame(xBox), sticky="nw")
@@ -146,23 +146,23 @@ stemAndLeaf <- function(){
     }
 
 boxPlot <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric()) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric()) return()
     initializeDialog(title="Boxplot")
-    xBox <- variableListBox(top, .numeric, title="Variable (pick one)")
+    xBox <- variableListBox(top, Numeric(), title="Variable (pick one)")
     identifyVariable <- tclVar("0")
     identifyFrame <- tkframe(top)
     identifyCheckBox <- tkcheckbutton(identifyFrame, variable=identifyVariable)
     .groups <- FALSE
     onOK <- function(){
         x <- getSelection(xBox)
+        closeDialog()
         if (length(x) == 0){
             errorCondition(recall=boxPlot, message="You must select a variable")
             return()
             }
         identifyPoints <- "1" == tclvalue(identifyVariable)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        .activeDataSet <- ActiveDataSet()
         var <- paste(.activeDataSet, "$", x, sep="")
         if (.groups == FALSE) {
             command <- (paste("boxplot(", var, ', ylab="', x, '")', sep=""))
@@ -180,7 +180,7 @@ boxPlot <- function(){
             if (identifyPoints) doItAndPrint(paste("identify(", .activeDataSet, "$", .groups, ", ", var,
                 ", rownames(", .activeDataSet,"))", sep=""))
             }
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     groupsBox(boxPlot)
     OKCancelHelp(helpSubject="boxplot")
@@ -194,9 +194,10 @@ boxPlot <- function(){
     }
 
 scatterPlot <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric(2)) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric(2)) return()
     initializeDialog(title="Scatterplot")
+    .numeric <- Numeric()
     xBox <- variableListBox(top, .numeric, title="x-variable (pick one)")
     yBox <- variableListBox(top, .numeric, title="y-variable (pick one)")
     checkBoxes(frame="optionsFrame", boxes=c("identify", "jitterX", "jitterY", "boxplots", "lsLine", "smoothLine"),
@@ -209,6 +210,7 @@ scatterPlot <- function(){
     onOK <- function(){
         x <- getSelection(xBox)
         y <- getSelection(yBox)
+        closeDialog()
         if (length(x) == 0 || length(y) == 0){
             errorCondition(recall=scatterPlot, message="You must select two variables")
             return()
@@ -217,8 +219,11 @@ scatterPlot <- function(){
             errorCondition(recall=scatterPlot, message="x and y variables must be different")
             return()
             }
-        if ("1" == tclvalue(jitterXVariable)) x <- paste("jitter(", x, ")", sep="")
-        if ("1" == tclvalue(jitterYVariable)) y <- paste("jitter(", y, ")", sep="")
+        .activeDataSet <- ActiveDataSet()
+        jitter <- if ("1" == tclvalue(jitterXVariable) && "1" == tclvalue(jitterYVariable)) ", jitter=list(x=1, y=1)"
+            else if ("1" == tclvalue(jitterXVariable)) ", jitter=list(x=1)"
+            else if ("1" == tclvalue(jitterYVariable)) ", jitter=list(y=1)"
+            else ""
         labels <- if("1" == tclvalue(identifyVariable)) 
             paste("rownames(", .activeDataSet, ")", sep="") else "FALSE"
         box <- if ("1" == tclvalue(boxplotsVariable)) "'xy'" else "FALSE"
@@ -228,22 +233,21 @@ scatterPlot <- function(){
         subset <- tclvalue(subsetVariable)
         subset <- if (trim.blanks(subset) == "<all valid cases>") "" 
             else paste(", subset=", subset, sep="")
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
         tkdestroy(top)
         if (.groups == FALSE) {
             doItAndPrint(paste("scatterplot(", y, "~", x,
                 ", reg.line=", line, ", smooth=", smooth, ", labels=", labels,
-                ", boxplots=", box, ", span =", span/100,
+                ", boxplots=", box, ", span =", span/100, jitter,
                 ", data=", .activeDataSet, subset, ")", sep=""))
             }
         else {
             doItAndPrint(paste("scatterplot(", y, "~", x," | ", .groups,
                 ", reg.line=", line, ", smooth=", smooth, ", labels=", labels,
-                ", boxplots=", box, ", span=", span/100,
+                ", boxplots=", box, ", span=", span/100, jitter,
                 ", by.groups=", .linesByGroup,
                 ", data=", .activeDataSet, subset, ")", sep=""))
             }
+        tkfocus(CommanderWindow())
         }
     groupsBox(scatterPlot, plotLinesByGroup=TRUE, positionLegend=TRUE)
     OKCancelHelp(helpSubject="scatterplot")
@@ -257,10 +261,10 @@ scatterPlot <- function(){
     }
 
 scatterPlotMatrix <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric(3)) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric(3)) return()
     initializeDialog(title="Scatterplot Matrix")
-    variablesBox <- variableListBox(top, .numeric, title="Select variables (three or more)",
+    variablesBox <- variableListBox(top, Numeric(), title="Select variables (three or more)",
         selectmode="multiple", initialSelection=NULL)
     checkBoxes(frame="optionsFrame", boxes=c("lsLine", "smoothLine"), initialValues=rep(1,2),
         labels=c("Least-squares lines", "Smooth lines"))
@@ -273,6 +277,7 @@ scatterPlotMatrix <- function(){
     subsetBox()
     onOK <- function(){
         variables <- getSelection(variablesBox)
+        closeDialog()
         if (length(variables) < 3) {
             errorCondition(recall=scatterPlotMatrix, message="Fewer than 3 variable selected.")
             return()
@@ -284,8 +289,7 @@ scatterPlotMatrix <- function(){
         subset <- tclvalue(subsetVariable)
         subset <- if (trim.blanks(subset) == "<all valid cases>") "" 
             else paste(", subset=", subset, sep="")
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        .activeDataSet <- ActiveDataSet()
         if (.groups == FALSE) {
            command <- paste("scatterplot.matrix(~", paste(variables, collapse="+"),
                 ", reg.line=", line, ", smooth=", smooth,
@@ -303,7 +307,7 @@ scatterPlotMatrix <- function(){
             logger(command)
             justDoIt(command)
             }
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     groupsBox(scatterPlot, plotLinesByGroup=TRUE)
     OKCancelHelp(helpSubject="scatterplot.matrix")
@@ -317,23 +321,22 @@ scatterPlotMatrix <- function(){
     }
 
 barGraph <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkFactors()) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkFactors()) return()
     initializeDialog(title="Bar Graph")
-    variableBox <- variableListBox(top, .factors, title="Variable (pick one)")
+    variableBox <- variableListBox(top, Factors(), title="Variable (pick one)")
     onOK <- function(){
         variable <- getSelection(variableBox)
+        closeDialog()
         if (length(variable) == 0){
             errorCondition(recall=barGraph, message="You must select a variable")
             return()
             }
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
-        command <- paste("barplot(table(", .activeDataSet, "$", variable, '), xlab="',
+        command <- paste("barplot(table(", ActiveDataSet(), "$", variable, '), xlab="',
             variable, '", ylab="Frequency")', sep="")
         logger(command)
         justDoIt(command)
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="barplot")
     tkgrid(getFrame(variableBox), sticky="nw")
@@ -342,24 +345,24 @@ barGraph <- function(){
     }
 
 pieChart <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkFactors()) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkFactors()) return()
     initializeDialog(title="Pie Chart")
-    variableBox <- variableListBox(top, .factors, title="Variable (pick one)")
+    variableBox <- variableListBox(top, Factors(), title="Variable (pick one)")
     onOK <- function(){
         variable <- getSelection(variableBox)
+        closeDialog()
         if (length(variable) == 0){
             errorCondition(recall=pieChart, message="You must select a variable")
             return()
             }
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        .activeDataSet <- ActiveDataSet()
         command <- (paste("pie(table(", .activeDataSet, "$", variable, "), labels=levels(",
             .activeDataSet, "$", variable, '), main="', variable, '", col=rainbow(length(levels(',
             .activeDataSet, "$", variable, "))))", sep=""))
         logger(command)
         justDoIt(command)
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="pie")
     tkgrid(getFrame(variableBox), sticky="nw")
@@ -368,10 +371,11 @@ pieChart <- function(){
     }
 
 linePlot <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric(2)) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric(2)) return()
     initializeDialog(title="Line Plot")
     variablesFrame <- tkframe(top)
+    .numeric <- Numeric()
     xBox <- variableListBox(variablesFrame, .numeric, title="x variable (pick one)")
     yBox <- variableListBox(variablesFrame, .numeric, title="y variables (pick one or more)", 
         selectmode="multiple", initialSelection=NULL)
@@ -387,6 +391,7 @@ linePlot <- function(){
     onOK <- function(){
         y <- getSelection(yBox)
         x <- getSelection(xBox)
+        closeDialog()
         if (0 == length(x)) {
             errorCondition(recall=linePlot, message="No x variable selected.") 
             return()
@@ -399,6 +404,7 @@ linePlot <- function(){
             errorCondition(recall=linePlot, message="x and y variables must be different.")
             return()
             }
+        .activeDataSet <- ActiveDataSet()
         .x <- na.omit(eval(parse(text=paste(.activeDataSet, "$", x, sep="")), envir=.GlobalEnv))
         if (!identical(order(.x), seq(along=.x))){
             response <- tclvalue(tkmessageBox(message="x-values are not in order.\nContinue?", 
@@ -415,8 +421,6 @@ linePlot <- function(){
                 else if(length(y) == 1) y
                 else paste(paste("(", 1:length(y), ") ", y, sep=""), collapse=", ")
             }
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         pch <- if (length(y) == 1) ", pch=1" else ""
         command <- paste("matplot(", .activeDataSet, "$", x, ", ", .activeDataSet, "[, ",
             paste("c(", paste(paste('"', y, '"', sep=""), collapse=","), ")", sep=""),
@@ -433,7 +437,7 @@ linePlot <- function(){
             logger(command)
             justDoIt(command)
             }
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="matplot")
     tkgrid(getFrame(xBox), tklabel(variablesFrame, text="    "), getFrame(yBox), sticky="nw")
@@ -452,12 +456,13 @@ linePlot <- function(){
 QQPlot <- function()
 # this function modified by Martin Maechler
 {
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric()) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric()) return()
     initializeDialog(title="Quantile-Comparison (QQ) Plot")
-    xBox <- variableListBox(top, .numeric, title="Variable (pick one)")
+    xBox <- variableListBox(top, Numeric(), title="Variable (pick one)")
     onOK <- function(){
         x <- getSelection(xBox)
+        closeDialog()
        if (0 == length(x)) {
             errorCondition(recall=QQPlot, message="You must select a variable.") 
             return()
@@ -466,9 +471,7 @@ QQPlot <- function()
         save <- options(warn=-1)
         on.exit(options=save)
         retryMe <- function(msg) {
-            tkmessageBox(message= msg, icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
+            Message(message= msg, type="error")
             QQPlot()
         }
         switch(dist,
@@ -509,16 +512,15 @@ QQPlot <- function()
                params <- tclvalue(otherParamsVariable)
                args <- paste('dist="', dist,'", ', params, sep="")
            }) # end{switch}
+        .activeDataSet <- ActiveDataSet()
         labels <-
             if ("1" == tclvalue(identifyVariable))
                 paste("rownames(", .activeDataSet, ")", sep="")
             else "FALSE"
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         command <- paste("qq.plot", "(", .activeDataSet, "$", x, ", ", args,
                           ", labels=", labels, ")", sep="")
         doItAndPrint(command)
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
     }
     OKCancelHelp(helpSubject="qq.plot")
     distFrame <- tkframe(top)
@@ -572,15 +574,16 @@ QQPlot <- function()
     }
 
 PlotMeans <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric()) return()
-    if (!checkFactors()) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric()) return()
+##    if (!checkFactors()) return()
     initializeDialog(title="Plot Means")
-    groupBox <- variableListBox(top, .factors, title="Factors (pick one or two)", selectmode="multiple")
-    responseBox <- variableListBox(top, .numeric, title="Response Variable (pick one)")
+    groupBox <- variableListBox(top, Factors(), title="Factors (pick one or two)", selectmode="multiple")
+    responseBox <- variableListBox(top, Numeric(), title="Response Variable (pick one)")
     onOK <- function(){
         groups <- getSelection(groupBox)
         response <- getSelection(responseBox)
+        closeDialog()
         if (0 == length(groups)) {
             errorCondition(recall=PlotMeans, message="No factors selected.")
             return()
@@ -593,8 +596,7 @@ PlotMeans <- function(){
             errorCondition(recall=PlotMeans, message="No response variable selected.")
             return()
             }
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        .activeDataSet <- ActiveDataSet()
         error.bars <- tclvalue(errorBarsVariable)
         level <- if (error.bars == "conf.int") paste(", level=", tclvalue(levelVariable), sep="") else ""
         if (length(groups) == 1) doItAndPrint(paste("plotMeans(", .activeDataSet, "$", response, 
@@ -607,7 +609,7 @@ PlotMeans <- function(){
             doItAndPrint(paste("plotMeans(", .activeDataSet, "$", response, ", ", .activeDataSet, "$", groups[1], 
                 ", ", .activeDataSet, "$", groups[2], ', error.bars="', error.bars, '"', level, ')', sep=""))
             }
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     optionsFrame <- tkframe(top)
     errorBarsVariable <- tclVar("se")
@@ -632,16 +634,17 @@ PlotMeans <- function(){
     }
 
 Scatter3D <- function(){
-    if (!.rglPackage) {
-        tkmessageBox(message="rgl package not present:\n3D plots unavailable.",
-            icon="error", type="ok", default="ok")
-        tkfocus(.commander)
-        return()
-        }
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric(3)) return()
+##    if (!.rglPackage) {
+##        tkmessageBox(message="rgl package not present:\n3D plots unavailable.",
+##            icon="error", type="ok", default="ok")
+##        tkfocus(.commander)
+##        return()
+##        }
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric(3)) return()
     initializeDialog(title="3D Scatterplot")
     variablesFrame <- tkframe(top)
+    .numeric <- Numeric()
     xBox <- variableListBox(variablesFrame, .numeric, title="Explanatory variables (pick two)", selectmode="multiple",
         initialSelection=NULL)
     yBox <- variableListBox(variablesFrame, .numeric, title="Response variable (pick one)")
@@ -667,6 +670,7 @@ Scatter3D <- function(){
     onOK <- function(){
         x <- getSelection(xBox)
         y <- getSelection(yBox)
+        closeDialog()
         if (length(y) == 0) {
             errorCondition(recall=Scatter3D, message="You must select a response variable.")
             return()
@@ -679,8 +683,6 @@ Scatter3D <- function(){
             errorCondition(recall=Scatter3D, message="Response and explanatory variables must be different.")
             return()
             }
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         grid <- if (tclvalue(gridLines) == 1) "TRUE" else "FALSE"
         lin <- if(tclvalue(linearLSSurface) == 1) '"linear"'
         quad <- if(tclvalue(quadLSSurface) == 1) '"quadratic"'
@@ -688,14 +690,17 @@ Scatter3D <- function(){
         additive <- if (tclvalue(additiveSurface) == 1) '"additive"'
         surfaces <- c(lin, quad, nonpar, additive)
         nsurfaces <- length(surfaces)
+        opts <- options(warn=-1)
         dfNonpar <- tclvalue(dfNonparVariable)
         dfNonpar <- if (dfNonpar == "<auto>") "" else paste(", df.smooth=", as.numeric(dfNonpar), sep="")
         dfAdd <- tclvalue(dfAddVariable)
         dfAdd <- if (dfAdd == "<auto>") "" else paste(", df.additive=", as.numeric(dfAdd), sep="")
+        options(opts)
         fit <- if (nsurfaces == 0) ", surface=FALSE"
             else if (nsurfaces == 1) paste(", fit=", surfaces, sep="")
             else paste(", fit=c(", paste(surfaces, collapse=","), ")", sep="")
         bg <- tclvalue(bgVariable)
+        .activeDataSet <- ActiveDataSet()
         if (.groups != FALSE){ 
             groups <- paste(", groups=", .activeDataSet, "$", .groups, sep="")
             parallel <- paste(", parallel=", .linesByGroup, sep="")
@@ -706,8 +711,8 @@ Scatter3D <- function(){
             dfAdd, groups, parallel, ', bg="', bg, '", grid=', grid, 
             ', xlab="', x[1], '", ylab="', y, '", zlab="', x[2], '")', sep="")
         doItAndPrint(command)
-        assign(".rgl", TRUE, envir=.GlobalEnv)
-        tkfocus(.commander)
+        putRcmdr(".rgl", TRUE)
+        tkfocus(CommanderWindow())
         }
     groupsBox(Scatter3D, plotLinesByGroup=TRUE, plotLinesByGroupsText="Parallel regression surfaces")
     OKCancelHelp(helpSubject="Scatter3DDialog")
@@ -748,11 +753,10 @@ saveBitmap <- function(){
     heightSlider <- tkscale(sliderFrame, from=200, to=1000, showvalue=TRUE, variable=heightVariable,
         resolution=25, orient="horizontal")
     onOK <- function(){
+        closeDialog()
         width <- tclvalue(widthVariable)
         height <- tclvalue(heightVariable)
         type <- tclvalue(filetypeVariable)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         if (type == "png"){
             ext <- "png"
             filetypes <- '{"PNG Files" {".png" ".PNG"}} {"All Files" {"*"}}'
@@ -767,6 +771,7 @@ saveBitmap <- function(){
         if (filename == "") return()
         command <- paste('dev.print(', type, ', filename="', filename, '", width=', width, ', height=', height, ')', sep="")
         doItAndPrint(command)
+        Message(paste("Graph saved to file", filename), type="note")
         }
     OKCancelHelp(helpSubject="png")
     tkgrid(filetypeFrame, sticky="w")
@@ -796,12 +801,11 @@ savePDF <- function(){
     pointSizeSlider <- tkscale(sliderFrame, from=6, to=14, showvalue=TRUE, variable=pointSizeVariable,
         resolution=1, orient="horizontal")
     onOK <- function(){
+        closeDialog()
         width <- tclvalue(widthVariable)
         height <- tclvalue(heightVariable)
         type <- tclvalue(filetypeVariable)
         pointsize <- tclvalue(pointSizeVariable)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         if (type == "pdf"){
             ext <- "pdf"
             filetypes <- '{"PDF Files" {".pdf" ".PDF"}} {"All Files" {"*"}}'
@@ -824,6 +828,7 @@ savePDF <- function(){
             else paste('dev.print(', type, ', file="', filename, '", width=', width, ', height=', height, 
                 ', pointsize=', pointsize, ')', sep="")
         doItAndPrint(command)
+        Message(paste("Graph saved to file", filename), type="note")
         }
     OKCancelHelp(helpSubject="pdf")
     tkgrid(filetypeFrame, sticky="w")
@@ -837,8 +842,8 @@ savePDF <- function(){
 
 saveRglGraph <- function(){
     if (0 == rgl.cur()) {
-        tkmessageBox(message="There is no current RGL graphics device to save.",
-            icon="error", type="ok", default="ok")
+        Message(message="There is no current RGL graphics device to save.",
+            type="error")
         return()
         }  
     ext <- "png"
@@ -848,4 +853,5 @@ saveRglGraph <- function(){
     if (filename == "") return()
     command <- paste('rgl.snapshot("', filename, '")', sep="")
     doItAndPrint(command)
+    Message(paste("Graph saved to file", filename), type="note")
     }

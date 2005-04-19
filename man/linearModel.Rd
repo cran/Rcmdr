@@ -7,13 +7,6 @@
 }
 
 \details{
-Enter a name for the linear model to be fit if you want to retain more than one model. The model 
-name must be a valid R object name (consisting only of upper and lower-case letters, numerals, and
-periods, and not starting with a numeral).
-
-The variable-list box is there only to remind you of the names of variables in the active data set.
-Factors are indicated in the variable list; all other variables are numeric.
-
 The left model-formula box specifies the response variable to be used in the model; it
 may be a variable name or an expression evaluating to the response variable, such as
 \code{log(income)}.

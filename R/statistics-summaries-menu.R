@@ -1,18 +1,19 @@
 # Statistics Menu dialogs
 
-# last modified 13 July 04 by J. Fox
+# last modified 12 Apr 05 by J. Fox
 
     # Summaries menu
     
 summarizeDataSet <- function(){
-    if (!checkActiveDataSet()) return()
-    nvar <- length(.variables)
+##    if (!checkActiveDataSet()) return()
+    nvar <- length(Variables())
+    .activeDataSet <- ActiveDataSet()
     if (nvar > 10){
         response <- tkmessageBox(message=paste("There are ", nvar, " variables in the data set ",
             .activeDataSet, ".\nDo you want to proceed?", sep=""),
             icon="question", type="okcancel", default="cancel")
         if ("cancel" == tclvalue(response)) {
-            tkfocus(.commander)        
+            tkfocus(CommanderWindow())
             return()
             }
         }
@@ -20,10 +21,10 @@ summarizeDataSet <- function(){
     }
 
 numericalSummaries <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric()) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric()) return()
     initializeDialog(title="Numerical Summaries")
-    xBox <- variableListBox(top, .numeric, title="Variable (pick one)")
+    xBox <- variableListBox(top, Numeric(), title="Variable (pick one)")
     checkBoxes(frame="checkBoxFrame", boxes=c("mean", "sd"), initialValues=c("1", "1"), labels=c("Mean", "Standard Deviation"))
     quantilesVariable <- tclVar("1")
     quantilesFrame <- tkframe(top)
@@ -38,9 +39,9 @@ numericalSummaries <- function(){
             return()
             }
         quants <- paste("c(", gsub(" ", ",", tclvalue(quantiles)), ")")
+        .activeDataSet <- ActiveDataSet()
         var <- paste(.activeDataSet, "$", x, sep="")
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        closeDialog()
         if (.groups == FALSE) {
             if (tclvalue(meanVariable) == "1") doItAndPrint(paste("mean(", var, ", na.rm=TRUE)", sep=""))
             if (tclvalue(sdVariable) == "1") doItAndPrint(paste("sd(", var, ", na.rm=TRUE)", sep=""))
@@ -49,14 +50,14 @@ numericalSummaries <- function(){
             }
         else {
             grps <- paste(.activeDataSet, "$", .groups, sep="")
-            if (tclvalue(meanVariable) == "1") doItAndPrint(paste("by(", var, ",", grps,
+            if (tclvalue(meanVariable) == "1") doItAndPrint(paste("by(", var, ", ", grps,
                 ", mean, na.rm=TRUE)", sep=""))
-            if (tclvalue(sdVariable) == "1") doItAndPrint(paste("by(", var, ",", grps,
+            if (tclvalue(sdVariable) == "1") doItAndPrint(paste("by(", var, ", ", grps,
                 ", sd, na.rm=TRUE)", sep=""))
-            if (tclvalue(quantilesVariable) == "1") doItAndPrint(paste("by(", var, ",", grps,
+            if (tclvalue(quantilesVariable) == "1") doItAndPrint(paste("by(", var, ", ", grps,
                 ", quantile, na.rm=TRUE, probs=", quants,")", sep=""))
             }
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="quantile")
     tkgrid(getFrame(xBox), sticky="nw")    
@@ -70,10 +71,10 @@ numericalSummaries <- function(){
     }
 
 frequencyDistribution <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkFactors()) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkFactors()) return()
     initializeDialog(title="Frequency Distribution")
-    xBox <- variableListBox(top, .factors, title="Variable (pick one)")
+    xBox <- variableListBox(top, Factors(), title="Variable (pick one)")
     optionsFrame <- tkframe(top)
     goodnessOfFitVariable <- tclVar("0")
     goodnessOfFitCheckBox <- tkcheckbutton(optionsFrame, variable=goodnessOfFitVariable)
@@ -84,13 +85,13 @@ frequencyDistribution <- function(){
             return()
             }
         goodnessOfFit <- tclvalue(goodnessOfFitVariable)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        closeDialog()
+        .activeDataSet <- ActiveDataSet()
         command <- paste("table(", .activeDataSet, "$", x, ")", sep="")
         logger(paste(".Table <-", command))
         assign(".Table", justDoIt(command), envir=.GlobalEnv)
         doItAndPrint(".Table  # counts")
-        doItAndPrint("100*.Table/sum(.Table)  # percentages")        
+        doItAndPrint("100*.Table/sum(.Table)  # percentages")
         env <- environment()
         if (goodnessOfFit == 1){
             initializeDialog(subwin, title="Goodness-of-Fit Test")
@@ -114,12 +115,20 @@ frequencyDistribution <- function(){
                 probs <- rep(NA, n.levs)
                 for (i in 1:n.levs){
                     entry.varname <- paste(".entry.", i, sep="")
-                    entry <- eval(parse(text=eval(parse(text=paste("tclvalue(", entry.varname,")", sep="")), envir=env)))
+                    res <- try(
+                        entry <- eval(parse(text=eval(parse(text=paste("tclvalue(", entry.varname,")", sep="")), envir=env))),
+                        silent=TRUE)
+                    if (class(res) == "try-error"){
+                        errorCondition(subwin, message="Invalid entry.")
+                        return()
+                        }
                     if (length(entry) == 0){
                         errorCondition(subwin, message="Missing entry.")
                         return()
                         }
-                    probs[i] <- entry
+                    opts <- options(warn=-1)
+                    probs[i] <- as.numeric(entry)
+                    options(opts)
                     }
                 probs <- na.omit(probs)
                 if (length(probs) != n.levs){
@@ -132,11 +141,10 @@ frequencyDistribution <- function(){
                     return()
                     }
                 if (abs(sum(probs) - 1) > 0.001){
-                    tkmessageBox(message="Probabilities rescaled to sum to 1.", icon="warning", type="ok")
+                    Message(message="Probabilities rescaled to sum to 1.", type="warning")
                     probs <- probs/sum(probs)
                     }
-                if (.grab.focus) tkgrab.release(subwin)
-                tkdestroy(subwin)
+                closeDialog(subwin)
                 command <- paste("c(", paste(probs, collapse=","), ")", sep="")
                 logger(paste(".Probs <-", command))
                 assign(".Probs", justDoIt(command), envir=.GlobalEnv)
@@ -150,7 +158,7 @@ frequencyDistribution <- function(){
             }            
         logger("remove(.Table)") 
         remove(.Table, envir=.GlobalEnv)  
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="table")
     tkgrid(getFrame(xBox), sticky="nw")    
@@ -161,29 +169,13 @@ frequencyDistribution <- function(){
     }
 
 statisticsTable <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric()) return()
-    if (!checkFactors()) return()
-    if (activeDataSet() == FALSE) {
-        tkfocus(.commander)
-        return()
-        }
-    if (length(.numeric) == 0){
-        tkmessageBox(message="There no numeric variables in the active data set.", 
-                icon="error", type="ok")
-        tkfocus(.commander)
-        return()
-        }
-    if (length(.factors) == 0){
-        tkmessageBox(message="There no factors in the active data set.", 
-                icon="error", type="ok")
-        tkfocus(.commander)
-        return()
-        }
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric()) return()
+##    if (!checkFactors()) return()
     initializeDialog(title="Table of Statistics")
     variablesFrame <- tkframe(top)
-    groupBox <- variableListBox(variablesFrame, .factors, selectmode="multiple", title="Factors (pick one or more)")
-    responseBox <- variableListBox(variablesFrame, .numeric, title="Response Variable (pick one)")
+    groupBox <- variableListBox(variablesFrame, Factors(), selectmode="multiple", title="Factors (pick one or more)")
+    responseBox <- variableListBox(variablesFrame, Numeric(), title="Response Variable (pick one)")
     radioButtons(name="statistic", buttons=c("mean", "median", "sd"), labels=c("Mean", "Median", "Standard deviation"), title="Statistic")
     otherVariable <- tclVar("")
     otherButton <- tkradiobutton(statisticFrame, variable=statisticVariable, value="other")
@@ -202,12 +194,12 @@ statisticsTable <- function(){
             }
         statistic <- tclvalue(statisticVariable)
         if (statistic == "other") statistic <- tclvalue(otherVariable)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        closeDialog()
+        .activeDataSet <- ActiveDataSet()
         groups.list <- paste(paste(groups, "=", .activeDataSet, "$", groups, sep=""), collapse=", ")
         doItAndPrint(paste("tapply(", .activeDataSet, "$", response, ", list(", groups.list,
              "), ", statistic, ", na.rm=TRUE)", sep=""))
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="tapply")
     tkgrid(getFrame(groupBox), tklabel(variablesFrame, text="    "),getFrame(responseBox), sticky="nw")
@@ -218,10 +210,10 @@ statisticsTable <- function(){
     }
     
 correlationMatrix <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric(2)) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric(2)) return()
     initializeDialog(title="Correlation Matrix")
-    xBox <- variableListBox(top, .numeric, selectmode="multiple", title="Variables (pick two or more)")
+    xBox <- variableListBox(top, Numeric(), selectmode="multiple", title="Variables (pick two or more)")
     radioButtons(name="correlations", buttons=c("pearson", "spearman", "partial"), values=c("Pearson", "Spearman", "partial"),
         labels=c("Pearson product-moment", "Spearman rank-order", "Partial"), title="Type of Correlations")
     onOK <- function(){
@@ -235,9 +227,9 @@ correlationMatrix <- function(){
             errorCondition(recall=correlationMatrix, message="Fewer than 3 variables selected\nfor partial correlations.")
             return()
             }
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        closeDialog()
         x <- paste('"', x, '"', sep="")
+        .activeDataSet <- ActiveDataSet()
         if (correlations == "Pearson")
             doItAndPrint(paste("cor(", .activeDataSet, "[,c(", paste(x, collapse=","),
                 ')], use="complete.obs")', sep=""))
@@ -248,7 +240,7 @@ correlationMatrix <- function(){
              }
         else doItAndPrint(paste("partial.cor(", .activeDataSet, "[,c(", paste(x, collapse=","),
                 ')], use="complete.obs")', sep=""))    
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="cor")
     tkgrid(getFrame(xBox), sticky="nw")

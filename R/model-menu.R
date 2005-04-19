@@ -1,25 +1,32 @@
 # Model menu dialogs
 
-# last modified 19 Nov 04 by J. Fox
+# last modified 2 April 05 by J. Fox
 
 selectActiveModel <- function(){
     models <- listAllModels()
+    .activeModel <- ActiveModel()
+    if ((length(models) == 1) && !is.null(.activeModel)) {
+        Message(message="There is only one model in memory.",
+                type="warning")
+        tkfocus(CommanderWindow())
+        return()
+        }
     if (length(models) == 0){
-        tkmessageBox(message="There are no models from which to choose.", 
-                icon="error", type="ok")
-        tkfocus(.commander)
+        Message(message="There are no models from which to choose.",
+                type="error")
+        tkfocus(CommanderWindow())
         return()
         }
     initializeDialog(title="Select Model")
+    .activeDataSet <- ActiveDataSet()
     initial <- if (is.null(.activeModel)) NULL else which(.activeModel == models) - 1
     modelsBox <- variableListBox(top, models, title="Models (pick one)", 
         initialSelection=initial)
     onOK <- function(){
         model <- getSelection(modelsBox)
+        closeDialog()
         if (length(model) == 0) {
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
-            tkfocus(.commander)
+            tkfocus(CommanderWindow())
             return()
             }
         dataSet <- eval(parse(text=paste("as.character(", model, "$call$data)")))
@@ -35,14 +42,12 @@ selectActiveModel <- function(){
             }
         if (is.null(.activeDataSet) || (dataSet != .activeDataSet)) activeDataSet(dataSet)
         activeModel(model)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp()
     nameFrame <- tkframe(top)
     tkgrid(tklabel(nameFrame, fg="blue", text="Current Model: "), 
-        tklabel(nameFrame, text=tclvalue(.modelName)), sticky="w")
+        tklabel(nameFrame, text=tclvalue(getRcmdr("modelName"))), sticky="w")
     tkgrid(nameFrame, sticky="w", columnspan="2")
     tkgrid(getFrame(modelsBox), columnspan="2", sticky="w")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
@@ -50,13 +55,15 @@ selectActiveModel <- function(){
     }
 
 summarizeModel <- function(){
-    if (!checkActiveModel()) return()
+##    if (!checkActiveModel()) return()
+    .activeModel <- ActiveModel()
     if (!checkMethod("summary", .activeModel)) return()
-    doItAndPrint(paste("summary(", .activeModel, ")", sep=""))
+    doItAndPrint(paste("summary(", .activeModel, ", cor=FALSE)", sep=""))
     }
 
 plotModel <- function(){
-    if (!checkActiveModel()) return()
+##    if (!checkActiveModel()) return() \
+    .activeModel <- ActiveModel()
     if (!checkMethod("plot", .activeModel)) return()
     doItAndPrint("par(mfrow=c(2,2))")
     doItAndPrint(paste("plot(", .activeModel, ")", sep=""))
@@ -64,13 +71,15 @@ plotModel <- function(){
     }
 
 CRPlots <- function(){
-    if (!checkActiveModel()) return()
+##    if (!checkActiveModel()) return()
+    .activeModel <- ActiveModel()
     if (!checkMethod("cr.plot", .activeModel)) return()
     doItAndPrint(paste("cr.plots(", .activeModel, ", ask=FALSE)", sep=""))
     }
 
 AVPlots <- function(){
-    if (!checkActiveModel()) return()
+##    if (!checkActiveModel()) return()
+    .activeModel <- ActiveModel()
     if (!checkMethod("av.plot", .activeModel)) return()
     response <- tclvalue(tkmessageBox(message="Identify points with mouse?", 
         icon="question", type="yesno", default="no"))
@@ -79,19 +88,22 @@ AVPlots <- function(){
     }
 
 anovaTable <- function(){
-    if (!checkActiveModel()) return()
+##    if (!checkActiveModel()) return()
+    .activeModel <- ActiveModel()
     if (!checkMethod("Anova", .activeModel)) return()
     doItAndPrint(paste("Anova(", .activeModel, ")", sep=""))
     }
 
 VIF <- function(){
-    if (!checkActiveModel()) return()
+#    if (!checkActiveModel()) return()
+    .activeModel <- ActiveModel()
     if (!checkMethod("vif", .activeModel)) return()
     doItAndPrint(paste("vif(", .activeModel, ")", sep=""))
     }
             
 influencePlot <- function(){
-    if (!checkActiveModel()) return()
+##    if (!checkActiveModel()) return()
+    .activeModel <- ActiveModel()
     if (!checkMethod("influence.plot", .activeModel)) return()
     response <- tclvalue(tkmessageBox(message="Identify points with mouse?", 
         icon="question", type="yesno", default="no"))
@@ -100,7 +112,8 @@ influencePlot <- function(){
     }  
     
 effectPlots <- function(){
-    if (!checkActiveModel()) return()
+##    if (!checkActiveModel()) return()
+    .activeModel <- ActiveModel()
     if (!checkMethod("effect", .activeModel)) return()
     doItAndPrint('trellis.device(theme="col.whitebg")')
     command <- paste("plot(all.effects(", .activeModel, "), ask=FALSE)", sep="")
@@ -110,7 +123,7 @@ effectPlots <- function(){
     }
 
 addObservationStatistics <- function(){
-    addVariable <- function(name, values){
+    addVariable <- function(name){
         variable <- paste(.activeModel, ".", name, sep="")
         if (is.element(variable, .variables)) {
             ans <- checkReplace(variable)
@@ -120,36 +133,36 @@ addObservationStatistics <- function(){
         justDoIt(paste(.activeDataSet, "$", variable, " <- ", command, sep=""))
         logger(paste(.activeDataSet, "$", variable, " <- ", command, sep=""))
         }
-    if (!checkActiveModel()) return()
-    if (.modelWithSubset){
-        tkmessageBox(message=
+##    if (!checkActiveModel()) return()
+    if (getRcmdr("modelWithSubset")){
+        Message(message=
             paste("Observation statistics not available\nfor a model fit to a subset of the data."),
-            icon="error", type="ok")
+            type="error")
         tkfocus(.commander)
         return()
         }
     initializeDialog(title="Add Observation Statistics to Data")
+    .activeModel <- ActiveModel()
+    .activeDataSet <- ActiveDataSet()
+    .variables <- Variables()
     obsNumberExists <- is.element("obsNumber", .variables)
-    checkBoxes(frame="selectFrame", boxes=c("fitted", "residuals", "rstudent", "hatvalues", "cookd", "obsNumbers"),
-        initialValues=c("1", "1", "1", "1", "1", if(obsNumberExists) "0" else "1"),
-        labels=c("Fitted values", "Residuals", "Studentized residuals", "Hat-values", "Cook's distances", 
+    activate <- c(  checkMethod("fitted", .activeModel, default=TRUE, reportError=FALSE),
+                    checkMethod("residuals", .activeModel, default=TRUE, reportError=FALSE),
+                    checkMethod("rstudent", .activeModel, reportError=FALSE),
+                    checkMethod("hatvalues", .activeModel, reportError=FALSE),
+                    checkMethod("cooks.distance", .activeModel, reportError=FALSE))
+    checkBoxes(frame="selectFrame", boxes=c(c("fitted", "residuals", "rstudent", "hatvalues", "cookd")[activate],
+        "obsNumbers"),
+        initialValues=c(rep(1, sum(activate)), if(obsNumberExists) "0" else "1"),
+        labels=c(c("Fitted values", "Residuals", "Studentized residuals", "Hat-values", "Cook's distances")[activate],
         "Observation indices"))
     onOK <- function(){
-        if (tclvalue(fittedVariable) == 1) {
-            if (checkMethod("fitted", .activeModel, default=TRUE)) addVariable("fitted")
-            }
-        if (tclvalue(residualsVariable) == 1) {
-            if (checkMethod("residuals", .activeModel, default=TRUE)) addVariable("residuals")
-            }
-        if (tclvalue(rstudentVariable) == 1) {
-            if (checkMethod("rstudent", .activeModel)) addVariable("rstudent")
-            }
-        if (tclvalue(hatvaluesVariable) == 1) {
-            if (checkMethod("hatvalues", .activeModel)) addVariable("hatvalues")
-            }
-        if (tclvalue(cookdVariable) == 1) {
-            if (checkMethod("cooks.distance", .activeModel)) addVariable("cookd")
-            }
+        closeDialog()
+        if (activate[1] && tclvalue(fittedVariable) == 1) addVariable("fitted")
+        if (activate[2] && tclvalue(residualsVariable) == 1) addVariable("residuals")
+        if (activate[3] && tclvalue(rstudentVariable) == 1) addVariable("rstudent")
+        if (activate[4] && tclvalue(hatvaluesVariable) == 1) addVariable("hatvalues")
+        if (activate[5] && tclvalue(cookdVariable) == 1) addVariable("cooks.distance")
         if (tclvalue(obsNumbersVariable) == 1){
             proceed <- if (obsNumberExists) tclvalue(checkReplace("obsNumber")) else "yes"
             if (proceed == "yes") {
@@ -159,9 +172,7 @@ addObservationStatistics <- function(){
                 }
             }
         activeDataSet(.activeDataSet, flushModel=FALSE)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="influence.measures")
     tkgrid(selectFrame, sticky="w")  
@@ -170,7 +181,8 @@ addObservationStatistics <- function(){
     }
 
 residualQQPlot <- function(){
-    if (!checkActiveModel()) return()
+##    if (!checkActiveModel()) return()
+    .activeModel <- ActiveModel()
     if (!checkMethod("qq.plot", .activeModel)) return()
     initializeDialog(title="Residual Quantile-Comparison Plot")
     selectFrame <- tkframe(top)
@@ -179,15 +191,14 @@ residualQQPlot <- function(){
     simulateCheckBox <- tkcheckbutton(selectFrame, variable=simulateVar)
     identifyCheckBox <- tkcheckbutton(selectFrame, variable=identifyVar)
     onOK <- function(){
-        tkdestroy(top)
+        closeDialog()
         simulate <- tclvalue(simulateVar) == 1
         identify <- if (tclvalue(identifyVar) == 1) paste("names(residuals(", .activeModel, "))",
             sep="") else "FALSE"
         command <- paste("qq.plot(", .activeModel, ", simulate=", simulate, ", labels=", identify,
             ")", sep="")
         doItAndPrint(command)
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="qq.plot.lm")
     tkgrid(tklabel(selectFrame, text="Simulated confidence envelope"), simulateCheckBox, sticky="w")
@@ -198,7 +209,8 @@ residualQQPlot <- function(){
     }
 
 testLinearHypothesis <- function(){
-    if (!checkActiveModel()) return()
+##    if (!checkActiveModel()) return()
+    .activeModel <- ActiveModel()
     if (!checkMethod("linear.hypothesis", .activeModel)) return()
     env <- environment()
     initializeDialog(title="Test Linear Hypothesis")
@@ -259,20 +271,17 @@ testLinearHypothesis <- function(){
                 }
             }
         values <- na.omit(values)
+        closeDialog()
         if (length(values) != nrows*ncols){
-            tkmessageBox(message=paste("Number of valid entries in hypothesis matrix(", length(values), ")\n",
+            Message(message=paste("Number of valid entries in hypothesis matrix(", length(values), ")\n",
                 "not equal to number of rows (", nrows,") * number of columns (", ncols,").", 
-                sep=""), icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
+                sep=""), type="error")
             testLinearHypothesis()
             return()
             }
         if (qr(matrix(values, nrows, ncols, byrow=TRUE))$rank < nrows) {
-            tkmessageBox(message="Hypothesis matrix is not of full row rank", 
-                icon="error", type="ok")
-            if (.grab.focus) tkgrab.release(top)
-            tkdestroy(top)
+            Message(message="Hypothesis matrix is not of full row rank",
+                type="error")
             testLinearHypothesis()
             return()
             }            
@@ -282,8 +291,6 @@ testLinearHypothesis <- function(){
                 length(rhs), ")\n", "not equal to number of rows (", nrows,")", sep=""))
             return()
             }
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         command <- paste("matrix(c(", paste(values, collapse=","), "), ", nrows, ", ", ncols,
             ", byrow=TRUE)", sep="")
         assign(".Hypothesis", justDoIt(command), envir=.GlobalEnv)
@@ -295,7 +302,7 @@ testLinearHypothesis <- function(){
         doItAndPrint(command)
         justDoIt("remove(.Hypothesis, .RHS, envir=.GlobalEnv)") 
         logger("remove(.Hypothesis, .RHS)")                                              
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="linear.hypothesis")
     tkgrid(tklabel(rowsFrame, text="Number of Rows:"), rowsSlider, rowsShow, sticky="w")
@@ -310,9 +317,9 @@ testLinearHypothesis <- function(){
 compareModels <- function(){
     models <- listAllModels()
     if (length(models) < 2){
-        tkmessageBox(message="There are fewer than two models.", 
-                icon="error", type="ok")
-        tkfocus(.commander)
+        Message(message="There are fewer than two models.",
+                type="error")
+        tkfocus(CommanderWindow())
         return()
         }
     initializeDialog(title="Compare Models")
@@ -321,28 +328,23 @@ compareModels <- function(){
     onOK <- function(){
         model1 <- getSelection(modelsBox1)
         model2 <- getSelection(modelsBox2)
+        closeDialog()
         if (length(model1) == 0 || length(model2) == 0) {
             errorCondition(recall=compareModels, message="You must select two models.")
             return()
             }
         if (!checkMethod("anova", model1)) {
-            tkgrab.release(top)
-            tkdestroy(top)            
             return()
             }
         if (!eval(parse(text=paste("class(", model1, ")[1] == class(", model2, ")[1]",
             sep="")), envir=.GlobalEnv)){
-                tkmessageBox(message="Models are not of the same class.", 
-                    icon="error", type="ok")
-                tkgrab.release(top)
-                tkdestroy(top)
+                Message(message="Models are not of the same class.",
+                    type="error")
                 compareModels()
                 return()
                 }
-        tkgrab.release(top)
-        tkdestroy(top)
         doItAndPrint(paste("anova(", model1, ",", model2, ")", sep=""))
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="anova")
     tkgrid(getFrame(modelsBox1), getFrame(modelsBox2), sticky="nw")
@@ -351,13 +353,15 @@ compareModels <- function(){
     }
     
 BreuschPaganTest <- function(){
-    if(!checkActiveModel()) return()
-    if (!checkClass(.activeModel, "lm")) return()
+##    if(!checkActiveModel()) return()
+##    if (!checkClass(.activeModel, "lm")) return()
     initializeDialog(title="Breusch-Pagan Test")
     tkgrid(tklabel(top, text="Score Test for Nonconstant Error Variance", fg="blue"), sticky="w")
     optionsFrame <- tkframe(top)
     onOK <- function(){
+        .activeModel <- ActiveModel()
         var <- tclvalue(varVariable)
+        closeDialog()
         type <- if (var == "fitted") paste(", varformula = ~ fitted.values(",
                     .activeModel, ")", sep="") 
                 else if (var == "predictors") ""
@@ -365,12 +369,10 @@ BreuschPaganTest <- function(){
         student <- if (tclvalue(studentVariable) == 1) "TRUE" else "FALSE"
         model.formula <- as.character(eval(parse(text=paste("formula(", .activeModel, ")", sep=""))))
         model.formula <- paste(model.formula[2], "~", model.formula[3])
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         command <- paste("bptest(", model.formula, type, ", studentize=", student,
-            ", data=", .activeDataSet, ")", sep="")
+            ", data=", ActiveDataSet(), ")", sep="")
         doItAndPrint(command)  
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="bptest")
     studentVariable <- tclVar("0")
@@ -392,20 +394,19 @@ BreuschPaganTest <- function(){
     }
 
 DurbinWatsonTest <- function(){
-    if (!checkActiveModel()) return()
-    if (!checkClass(.activeModel, "lm")) return()
+##    if (!checkActiveModel()) return()
+##    if (!checkClass(.activeModel, "lm")) return()
     initializeDialog(title="Durbin-Waton Test")
     tkgrid(tklabel(top, text="Test for First-Order Error Autocorrelation", fg="blue"), sticky="w")
     onOK <- function(){
         altHypothesis <- tclvalue(altHypothesisVariable)
-        model.formula <- as.character(eval(parse(text=paste("formula(", .activeModel, ")", sep=""))))
+        closeDialog()
+        model.formula <- as.character(eval(parse(text=paste("formula(", ActiveModel(), ")", sep=""))))
         model.formula <- paste(model.formula[2], "~", model.formula[3])
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         command <- paste("dwtest(", model.formula, ', alternative="', altHypothesis,
-             '", data=', .activeDataSet, ')', sep="")
+             '", data=', ActiveDataSet(), ')', sep="")
         doItAndPrint(command)  
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="dwtest")
     radioButtons(name="altHypothesis", buttons=c("greater", "notequal", "less"), values=c("greater", "two.sided", "less"),
@@ -416,18 +417,17 @@ DurbinWatsonTest <- function(){
     }
 
 RESETtest <- function(){
-    if(!checkActiveModel()) return()
-    if (!checkClass(.activeModel, "lm")) return()
+##    if(!checkActiveModel()) return()
+##    if (!checkClass(.activeModel, "lm")) return()
     initializeDialog(title="RESET Test")
     tkgrid(tklabel(top, text="Test for Nonlinearity", fg="blue"), sticky="w")
     onOK <- function(){
         type <- tclvalue(typeVariable)
         square <- tclvalue(squareVariable)
         cube <- tclvalue(cubeVariable)
-        model.formula <- as.character(eval(parse(text=paste("formula(", .activeModel, ")", sep=""))))
+        closeDialog()
+        model.formula <- as.character(eval(parse(text=paste("formula(", ActiveModel(), ")", sep=""))))
         model.formula <- paste(model.formula[2], "~", model.formula[3])
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         if (square == "0" && cube == "0"){
             errorCondition(recall=RESETtest, message="No powers are checked.")
             return()
@@ -436,9 +436,9 @@ RESETtest <- function(){
             else if (square == "1" && cube == "0") "2"
             else if (square == "0" && cube == "1") "3"
         command <- paste("reset(", model.formula, ", power=", powers,
-            ', type="', type, '", data=', .activeDataSet, ')', sep="")
+            ', type="', type, '", data=', ActiveDataSet(), ')', sep="")
         doItAndPrint(command)  
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="reset")
     optionsFrame <- tkframe(top)
@@ -460,7 +460,44 @@ RESETtest <- function(){
     }
 
 outlierTest <- function(){
-    if (!checkActiveModel()) return()
+##    if (!checkActiveModel()) return()
+    .activeModel <- ActiveModel()
     if (!checkMethod("outlier.test", .activeModel)) return()
     doItAndPrint(paste("outlier.test(", .activeModel, ")", sep=""))
     }
+    
+confidenceIntervals <- function(){
+    initializeDialog(title="Confidence Intervals")
+    tkgrid(tklabel(top, text="Confidence Intervals for Individual Coefficients", fg="blue"), sticky="w")
+    onOK <- function(){
+        level <- tclvalue(confidenceLevel)
+        opts <- options(warn=-1)
+        lev <- as.numeric(level)
+        options(opts)
+        closeDialog()
+        if ((is.na(lev)) || (lev < 0) || (lev > 1)) {
+            Message("Confidence level must be a number between 0 and 1.")
+            tkfocus(CommanderWindow())
+            return()
+            }
+        command <- if (glm) paste("Confint(", .activeModel, ", level=", level,
+            ', type="', tclvalue(typeVariable), '")', sep="")
+            else paste("Confint(", .activeModel, ", level=", level, ")", sep="")
+        doItAndPrint(command)
+        tkfocus(CommanderWindow())
+        }
+    OKCancelHelp(helpSubject="Confint")
+    confidenceFrame <- tkframe(top)
+    confidenceLevel <- tclVar(".95")
+    confidenceField <- tkentry(confidenceFrame, width="6", textvariable=confidenceLevel)
+    radioButtons(top, name="type", buttons=c("LR", "Wald"),
+        labels=c("Likelihood-ratio statistic", "Wald statitic"), title="Test Based On")
+    tkgrid(tklabel(confidenceFrame, text="Confidence Level: "), confidenceField, sticky="w")
+    tkgrid(confidenceFrame, sticky="w")
+    .activeModel <- ActiveModel()
+    glm <- eval(parse(text=paste("class(", .activeModel, ")")))[1] == "glm"
+    if (glm) tkgrid(typeFrame, sticky="w")
+    tkgrid(buttonsFrame, sticky="w")
+    dialogSuffix(rows=3 + glm, columns=1)
+    }
+

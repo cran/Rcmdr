@@ -1,24 +1,23 @@
 BoxCox <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric()) return()
     initializeDialog(title="Box-Cox Transformations")
-    variablesBox <- variableListBox(top, .numeric, selectmode="multiple", 
+    variablesBox <- variableListBox(top, Numeric(), selectmode="multiple",
         title="Select variables (one or more)")
     onOK <- function(){
         variables <- getSelection(variablesBox)
         if (length(variables) < 1) {
-            errorCondition(recall=BoxCox, message="You must select one or more variables.")
+            errorCondition(recall=BoxCox,
+              message="You must select one or more variables.")
             return()
             }
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
-        command <- paste("box.cox.powers(na.omit(cbind(", 
-            paste(variables, collapse=","), ")))", sep="")
+        closeDialog()
+        command <- paste("box.cox.powers(na.omit(cbind(",
+            paste(paste(variables, "=", ActiveDataSet(), "$", variables, sep=""),
+                collapse=", "), ")))", sep="")
         doItAndPrint(command)
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="box.cox.powers")
-    tkgrid(getFrame(variablesBox), sticky="nw")    
+    tkgrid(getFrame(variablesBox), sticky="nw")
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix(rows=2, columns=1)
     }

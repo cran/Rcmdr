@@ -1,17 +1,17 @@
 # Statistics Menu dialogs
 
-# last modified 13 July 04 by J. Fox
+# last modified 13 Mar 05 by J. Fox
 
     # Variances menu
     
 twoVariancesFTest <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric()) return()
-    if (!checkTwoLevelFactors()) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric()) return()
+##    if (!checkTwoLevelFactors()) return()
     initializeDialog(title="Two Variances F-Test")
     variablesFrame <- tkframe(top)
-    groupBox <- variableListBox(variablesFrame, .twoLevelFactors, title="Groups (pick one)")
-    responseBox <- variableListBox(variablesFrame, .numeric, title="Response Variable (pick one)")
+    groupBox <- variableListBox(variablesFrame, TwoLevelFactors(), title="Groups (pick one)")
+    responseBox <- variableListBox(variablesFrame, Numeric(), title="Response Variable (pick one)")
     onOK <- function(){
         group <- getSelection(groupBox)
         if (length(group) == 0) {
@@ -25,14 +25,14 @@ twoVariancesFTest <- function(){
             }
         alternative <- as.character(tclvalue(alternativeVariable))
         level <- tclvalue(confidenceLevel)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        closeDialog()
+        .activeDataSet <- ActiveDataSet()
         doItAndPrint(paste("tapply(", .activeDataSet, "$", response, ", ", 
             .activeDataSet, "$", group, ",  var, na.rm=TRUE)", sep=""))
         doItAndPrint(paste("var.test(", response, " ~ ", group,
             ", alternative='", alternative, "', conf.level=", level,
             ", data=", .activeDataSet, ")", sep=""))
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         tkdestroy(top)
         }
     OKCancelHelp(helpSubject="var.test")
@@ -52,13 +52,13 @@ twoVariancesFTest <- function(){
     }
 
 BartlettTest <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric()) return()
-    if (!checkFactors()) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric()) return()
+##    if (!checkFactors()) return()
     initializeDialog(title="Bartlett's Test")
     variableFrame <- tkframe(top)
-    groupBox <- variableListBox(variableFrame, .factors, title="Groups (pick one)")
-    responseBox <- variableListBox(variableFrame, .numeric, title="Response Variable (pick one)")
+    groupBox <- variableListBox(variableFrame, Factors(), title="Groups (pick one)")
+    responseBox <- variableListBox(variableFrame, Numeric(), title="Response Variable (pick one)")
     onOK <- function(){
         group <- getSelection(groupBox)
         if (length(group) == 0) {
@@ -70,13 +70,13 @@ BartlettTest <- function(){
             errorCondition(recall=BartlettTest, message="You must select a response variable.")
             return()
             }
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        closeDialog()
+        .activeDataSet <- ActiveDataSet()
         doItAndPrint(paste("tapply(", paste(.activeDataSet, "$", response, sep=""),
             ", ", paste(.activeDataSet, "$", group, sep=""), ", var, na.rm=TRUE)", sep=""))
         doItAndPrint(paste("bartlett.test(", response, " ~ ", group, ", data=",
             .activeDataSet, ")", sep=""))
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="bartlett.test")
     tkgrid(getFrame(groupBox), tklabel(variableFrame, text="    "), getFrame(responseBox), sticky="nw")
@@ -86,13 +86,13 @@ BartlettTest <- function(){
     }
 
 LeveneTest <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric()) return()
-    if (!checkFactors()) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric()) return()
+##    if (!checkFactors()) return()
     initializeDialog(title="Levene's Test")
     variableFrame <- tkframe(top)
-    groupBox <- variableListBox(variableFrame, .factors, title="Groups (pick one)")
-    responseBox <- variableListBox(variableFrame, .numeric, title="Response Variable (pick one)")
+    groupBox <- variableListBox(variableFrame, Factors(), title="Groups (pick one)")
+    responseBox <- variableListBox(variableFrame, Numeric(), title="Response Variable (pick one)")
     onOK <- function(){
         group <- getSelection(groupBox)
         if (length(group) == 0) {
@@ -104,13 +104,13 @@ LeveneTest <- function(){
             errorCondition(recall=LeveneTest, message="You must select a response variable.")
             return()
             }
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        closeDialog()
+        .activeDataSet <- ActiveDataSet()
         doItAndPrint(paste("tapply(", paste(.activeDataSet, "$", response, sep=""),
             ", ", paste(.activeDataSet, "$", group, sep=""), ", var, na.rm=TRUE)", sep=""))
         doItAndPrint(paste("levene.test(", paste(.activeDataSet, "$", response, sep=""), 
             ", ", paste(.activeDataSet, "$", group, sep=""), ")", sep=""))
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="levene.test")
     tkgrid(getFrame(groupBox), tklabel(variableFrame, text="    "), getFrame(responseBox), sticky="nw")

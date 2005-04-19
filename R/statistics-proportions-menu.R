@@ -1,14 +1,14 @@
 # Statistics Menu dialogs
 
-# last modified 10 July 04 by J. Fox
+# last modified 13 Mar 05 by J. Fox
 
     # Proportions menu
     
 singleProportionTest <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkTwoLevelFactors()) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkTwoLevelFactors()) return()
     initializeDialog(title="Single-Sample Proportion Test")
-    xBox <- variableListBox(top, .twoLevelFactors, title="Variable (pick one)")
+    xBox <- variableListBox(top, TwoLevelFactors(), title="Variable (pick one)")
     onOK <- function(){
         x <- getSelection(xBox)
         if (length(x) == 0) {
@@ -19,9 +19,8 @@ singleProportionTest <- function(){
         level <- tclvalue(confidenceLevel)
         test <- as.character(tclvalue(testVariable))
         p <- tclvalue(pVariable)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
-        command <- paste("xtabs(~", x, ", data=", .activeDataSet, ")")
+        closeDialog()
+        command <- paste("xtabs(~", x, ", data=", ActiveDataSet(), ")")
         logger(paste(".Table <-", command))
         assign(".Table", justDoIt(command), envir=.GlobalEnv)
         doItAndPrint(".Table")
@@ -31,7 +30,7 @@ singleProportionTest <- function(){
             alternative, "', p=", p, ", conf.level=", level, ", correct=TRUE)", sep=""))
         else doItAndPrint(paste("binom.test(rbind(.Table), alternative='", 
             alternative, "', p=", p, ", conf.level=", level, ")", sep=""))
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="prop.test")
     radioButtons(top, name="alternative", buttons=c("twosided", "less", "greater"), values=c("two.sided", "less", "greater"),
@@ -60,9 +59,10 @@ singleProportionTest <- function(){
     }
 
 twoSampleProportionsTest <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkTwoLevelFactors(2)) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkTwoLevelFactors(2)) return()
     initializeDialog(title="Two-Sample Proportions Test")
+    .twoLevelFactors <- TwoLevelFactors()
     groupsBox <- variableListBox(top, .twoLevelFactors, title="Groups (pick one)")
     xBox <- variableListBox(top, .twoLevelFactors, title="Response Variable (pick one)")
     onOK <- function(){
@@ -83,9 +83,8 @@ twoSampleProportionsTest <- function(){
         alternative <- as.character(tclvalue(alternativeVariable))
         level <- tclvalue(confidenceLevel)
         test <- as.character(tclvalue(testVariable))
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
-        command <- paste("xtabs(~", groups, "+", x, ", data=", .activeDataSet, ")", sep="")
+        closeDialog()
+        command <- paste("xtabs(~", groups, "+", x, ", data=", ActiveDataSet(), ")", sep="")
         logger(paste(".Table <-", command))
         assign(".Table", justDoIt(command), envir=.GlobalEnv)
         doItAndPrint("rowPercents(.Table)")
@@ -95,7 +94,7 @@ twoSampleProportionsTest <- function(){
             alternative, "', conf.level=", level, ", correct=TRUE)", sep=""))
         logger("remove(.Table)")
         remove(.Table, envir=.GlobalEnv)
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="prop.test")
     radioButtons(name="alternative", buttons=c("twosided", "less", "greater"), values=c("two.sided", "less", "greater"),

@@ -1,5 +1,7 @@
 # this code by Dan Putler, used with permission
 
+# last modified 16 Mar 05 by J. Fox
+
 assignCluster <- function(clusterData, origData, clusterVec){
     rowsDX <- row.names(clusterData)
     rowsX <- row.names(origData)
@@ -10,6 +12,8 @@ assignCluster <- function(clusterData, origData, clusterVec){
     }
 
 KMeans <- function (x, centers, iter.max=10, num.seeds=10) {
+    # fixed 15 Mar 05 by J. Fox
+    if(mode(x)=="numeric") x<-data.frame(new.x=x)
     KM <- kmeans(x=x, centers=centers, iter.max=iter.max)
     for(i in 2:num.seeds) {
         newKM <- kmeans(x=x, centers=centers, iter.max=iter.max)
@@ -40,11 +44,11 @@ listKmeansSolutions <- function(envir=.GlobalEnv, ...) {
     }
 
 kmeansClustering <- function(){
-    if(!checkActiveDataSet()) return()
-    if(!checkNumeric()) return()
+##    if(!checkActiveDataSet()) return()
+##    if(!checkNumeric()) return()
     initializeDialog(title="KMeans Clustering")
     dataFrame <- tkframe(top)
-    xBox <- variableListBox(dataFrame, .numeric, selectmode="multiple",
+    xBox <- variableListBox(dataFrame, Numeric(), selectmode="multiple",
       title="Variables (pick one or more)")
     subsetBox(dataFrame)
     optionsFrame <- tkframe(top)
@@ -80,11 +84,10 @@ kmeansClustering <- function(){
         clusterPlot <- tclvalue(plotClusters)
         clusterAssign <- tclvalue(assignClusters)
         clusterVariable <- trim.blanks(tclvalue(assignName))
+        closeDialog()
         if (clusterAssign == "1"){
-           if (is.element(clusterVariable, .variables)) {
+           if (is.element(clusterVariable, Variables())) {
                 if ("no" == tclvalue(checkReplace(clusterVariable))){
-                    if (.grab.focus) tkgrab.release(top)
-                    tkdestroy(top)
                     kmeansClustering()
                     return()
                     }
@@ -95,10 +98,9 @@ kmeansClustering <- function(){
               message="No variables selected.")
             return()
             }
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         varFormula <- paste(x, collapse=" + ")
         vars <- paste(x, collapse=",", sep="")
+        .activeDataSet <- ActiveDataSet()
         dset <- if (trim.blanks(subset) == "<all valid cases>") .activeDataSet
           else {paste(.activeDataSet, "[", .activeDataSet, "$", subset, ", ]",
             sep="")}
@@ -134,7 +136,7 @@ kmeansClustering <- function(){
             }
         justDoIt(paste("remove(.cluster)"))
         logger(paste("remove(.cluster)"))
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="KMeans")
     tkgrid(getFrame(xBox), sticky="nw")
@@ -168,8 +170,8 @@ listHclustSolutions <- function(envir=.GlobalEnv, ...) {
     }
 
 hierarchicalCluster <- function(){
-    if(!checkActiveDataSet()) return()
-    if(!checkNumeric()) return()
+##    if(!checkActiveDataSet()) return()
+##    if(!checkNumeric()) return()
     solutionNumber=length(listHclustSolutions())
     initializeDialog(title="Hierarchical Clustering")
     solutionFrame <- tkframe(top)
@@ -178,7 +180,7 @@ hierarchicalCluster <- function(){
     solutionField <- tkentry(solutionFrame, width="20",
       textvariable=solutionName)
     dataFrame <- tkframe(top)
-    xBox <- variableListBox(dataFrame, .numeric, selectmode="multiple",
+    xBox <- variableListBox(dataFrame, Numeric(), selectmode="multiple",
       title="Variables (pick one or more)")
     subsetBox(dataFrame)
     radioButtons(name="method",
@@ -207,10 +209,10 @@ hierarchicalCluster <- function(){
               message="No variables selected.")
             return()
             }
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        closeDialog()
         varFormula <- paste(x, collapse="+")
         vars <- paste(x, collapse=",", sep="")
+        .activeDataSet <- ActiveDataSet()
         dset <- if (subset == "<all valid cases>") .activeDataSet
           else {paste(.activeDataSet, "[", .activeDataSet, "$", subset, ", ]",
             sep="")}
@@ -250,7 +252,8 @@ hierarchicalCluster <- function(){
               "; Distance=", distlab, '"', ")",
               sep=""))
             }
-         tkfocus(.commander)
+         activateMenus()
+         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="hclust")
     tkgrid(solutionField, sticky="w")
@@ -269,7 +272,7 @@ hierarchicalCluster <- function(){
     }
 
 hclustSummary <- function(){
-    if(!checkActiveDataSet()) return()
+##    if(!checkActiveDataSet()) return()
     parseDataSet <- function(x) {
         y <- eval(parse(text=paste(x, "$call", sep="")))
         string1 <- unlist(strsplit(as.character(y)[2], "\\("))
@@ -287,6 +290,7 @@ hclustSummary <- function(){
     hclustObjects <- listHclustSolutions()
     testDataSet <- tapply(hclustObjects, as.factor(1:length(hclustObjects)),
       parseDataSet)
+    .activeDataSet <- ActiveDataSet()
     validHclust <- hclustObjects[testDataSet==.activeDataSet]
     initializeDialog(
       title="Hierarchical Cluster Summary")
@@ -313,7 +317,7 @@ hclustSummary <- function(){
    onOK <- function(){
         solution <- getSelection(hclustBox)
         if(length(solution)==0) {
-          errorCondition(recall=appendHclustGroup,
+          errorCondition(recall=hclustSummary,
             message="A clustering solution has not been selected.")
           return()
             }
@@ -326,6 +330,7 @@ hclustSummary <- function(){
         string1 <- unlist(strsplit(as.character(hclustCall)[2], "\\("))
         string2 <- unlist(strsplit(string1[3], ","))
         form.vars <- string2[1]
+        closeDialog()
         if(length(grep("\\[", string2[2])) == 0) {
             xmat <- paste("model.matrix(", form.vars, ", ", .activeDataSet, ")",
               sep="")
@@ -348,9 +353,7 @@ hclustSummary <- function(){
             justDoIt(plotCommand)
             logger(plotCommand)
             }
-        if(.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         } 
     OKCancelHelp(helpSubject="biplot")
     tkgrid(tklabel(optionsFrame, text="Number of clusters:"), slider,
@@ -365,7 +368,7 @@ hclustSummary <- function(){
     }
 
 appendHclustGroup <- function(){
-    if(!checkActiveDataSet()) return()
+##    if(!checkActiveDataSet()) return()
     parseDataSet <- function(x) {
         y <- eval(parse(text=paste(x, "$call", sep="")))
         string1 <- unlist(strsplit(as.character(y)[2], "\\("))
@@ -382,16 +385,17 @@ appendHclustGroup <- function(){
         }
     hclustObjects <- listHclustSolutions()
     if(length(hclustObjects)==0) {
-        tkmessageBox(message="There are no hierachical clustering solutions", 
-            icon = "error", type = "ok", default = "ok")
+        Message(message="There are no hierachical clustering solutions",
+            type = "error")
         return()
         }    
     testDataSet <- tapply(hclustObjects, as.factor(1:length(hclustObjects)),
       parseDataSet)
+    .activeDataSet <- ActiveDataSet()
     validHclust <- hclustObjects[testDataSet==.activeDataSet]
     if(length(validHclust)==0) {
-        tkmessageBox(message="No hierachical clustering solutions are associated with this data set.", 
-            icon = "error", type = "ok", default = "ok")
+        Message(message="No hierachical clustering solutions are associated with this data set.",
+            type = "error")
         return()
         }
     initializeDialog(
@@ -414,10 +418,9 @@ appendHclustGroup <- function(){
             }
         clusters <- as.numeric(tclvalue(clusterNumber))
         label <- trim.blanks(tclvalue(labelName))
-        if (is.element(label, .variables)) {
+        closeDialog()
+        if (is.element(label, Variables())) {
             if ("no" == tclvalue(checkReplace(label))){
-                if (.grab.focus) tkgrab.release(top)
-                tkdestroy(top)
                 appendHclustGroup()
                 return()
                 }
@@ -442,9 +445,7 @@ appendHclustGroup <- function(){
         justDoIt(command)
         logger(command)
         activeDataSet(.activeDataSet)
-        if(.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         } 
     OKCancelHelp(helpSubject="assignCluster")
     tkgrid(tklabel(optionsFrame, text="  Assigned cluster label:"),

@@ -1,4 +1,4 @@
-# last modified 15 Jan 2005 by J. Fox
+# last modified 24 Mar 2005 by J. Fox
 
 # File menu dialogs
 
@@ -9,7 +9,8 @@ loadLog <- function(){
     fileCon <- file(logFile, "r")
     contents <- readLines(fileCon)
     close(fileCon)
-    assign(".logFileName", logFile, envir=.GlobalEnv)
+    putRcmdr("logFileName", logFile)
+    .log <- LogWindow()
     if (tclvalue(tkget(.log, "1.0", "end")) != "\n"){
         response2 <- tkmessageBox(message="Save current log file?",
                 icon="question", type="yesno", default="yes")
@@ -20,45 +21,51 @@ loadLog <- function(){
     }
     
 saveLog <- function() {
+    .logFileName <- getRcmdr("logFileName")
     if (is.null(.logFileName)) {
         saveLogAs()
         return()
         }
-    log <- tclvalue(tkget(.log, "1.0", "end"))
+    log <- tclvalue(tkget(LogWindow(), "1.0", "end"))
     fileCon <- file(.logFileName, "w")
     cat(log, file = fileCon)
     close(fileCon)
+    Message(paste("Script saved to", .logFileName), type="note")
     }
 
 saveLogAs <- function() {
     logFile <- tclvalue(tkgetSaveFile(filetypes='{"Script Files" {".R"}} {"All Files" {"*"}}',
         defaultextension="R", initialfile="RCommander.R"))
-    log <- tclvalue(tkget(.log, "1.0", "end"))
+    log <- tclvalue(tkget(LogWindow(), "1.0", "end"))
     fileCon <- file(logFile, "w")
     cat(log, file = fileCon)
     close(fileCon)
-    assign(".logFileName", logFile, envir=.GlobalEnv)
+    putRcmdr("logFileName", logFile)
+     Message(paste("Script saved to", logFile), type="note")
     }
 
 saveOutput <- function() {
+    .outputFileName <- getRcmdr("outputFileName")
     if (is.null(.outputFileName)) {
         saveOutputAs()
         return()
         }
-    output <- tclvalue(tkget(.output, "1.0", "end"))
+    output <- tclvalue(tkget(OutputWindow(), "1.0", "end"))
     fileCon <- file(.outputFileName, "w")
     cat(output, file = fileCon)
     close(fileCon)
+    Message(paste("Output saved to", .outputFileName), type="note")
     }
 
 saveOutputAs <- function() {
     outputFile <- tclvalue(tkgetSaveFile(filetypes='{"Output Files" {".txt"}} {"All Files" {"*"}}',
         defaultextension="txt", initialfile="RCommander.txt"))
-    output <- tclvalue(tkget(.output, "1.0", "end"))
+    output <- tclvalue(tkget(OutputWindow(), "1.0", "end"))
     fileCon <- file(outputFile, "w")
     cat(output, file = fileCon)
     close(fileCon)
-    assign(".outputFileName", outputFile, envir=.GlobalEnv)
+    putRcmdr("outputFileName", outputFile)
+    Message(paste("Output saved to", outputFile), type="note")
     }
 
 saveWorkspaceAs <- function(){
@@ -66,48 +73,44 @@ saveWorkspaceAs <- function(){
         defaultextension="", initialfile=".RData"))
     if (saveFile == "") return()
     save(list=ls(envir=.GlobalEnv), file=saveFile)
-    assign(".saveFileName", saveFile, envir=.GlobalEnv)
+    putRcmdr("saveFileName", saveFile)
+    Message(paste("R workspace saved to", saveFile), type="note")
     }
 
 saveWorkspace <- function() {
-    if (is.null(.saveFileName)) saveWorkspaceAs()
+    .saveFileName <- getRcmdr("saveFileName")
+    if (is.null(.saveFileName)) {
+        saveWorkspaceAs()
+        return()
+        }
     else save(list=ls(envir=.GlobalEnv), file=.saveFileName)
+    Message(paste("R workspace saved to", .saveFileName), type="note")
     }
     
 closeCommander <- function(){
-    globals <- c(".activeDataSet", ".activeModel", ".attach.data.set", ".command.text.color", ".commander", ".grab.focus", 
-        ".console.output", ".contrasts", ".dataSetLabel", ".dataSetName", ".double.click", ".factors",
-        ".length.messages", ".log", ".log.commands", ".logFileName", ".logFont", ".log.font.size", ".log.text.color",
-        ".modelClasses", ".modelLabel", ".modelName", ".modelNumber", ".modelWithSubset", ".multiple.select.mode",
-        ".numeric", "oldPager", ".operatorFont", ".output", ".output.text.color", ".outputFileName", 
-        ".report.X11.warnings", ".rgl", ".rglPackage", ".saveFileName", ".saveOptions", ".showData.threshold", ".sort.names",
-        ".twoLevelFactors", ".variables")
     response <- tclvalue(tkmessageBox(message="Exit?",
         icon="question", type="okcancel", default="cancel"))
     if (response == "cancel") return(invisible(response))
     sink(type="message")
-    if (.rgl) rgl.quit()
-    if (!is.null(.activeDataSet) && .attach.data.set) 
-        justDoIt(logger(paste("detach(", .activeDataSet, ")", sep="")))
-    assign(".activeDataSet", NULL, envir=.GlobalEnv)
-    assign(".activeModel", NULL, envir=.GlobalEnv)
-    if (.log.commands && tclvalue(tkget(.log, "1.0", "end")) != "\n"){
+    if (getRcmdr("rgl")) rgl.quit()
+    if (!is.null(ActiveDataSet()) && getRcmdr("attach.data.set"))
+        justDoIt(logger(paste("detach(", ActiveDataSet(), ")", sep="")))
+    putRcmdr(".activeDataSet", NULL)
+    putRcmdr(".activeModel", NULL)
+    if (getRcmdr("log.commands") && tclvalue(tkget(LogWindow(), "1.0", "end")) != "\n"){
         response2 <- tkmessageBox(message="Save script file?",
                 icon="question", type="yesno", default="yes")
         if ("yes" == tclvalue(response2)) saveLog()
         }
-    if (!.console.output && tclvalue(tkget(.output, "1.0", "end")) != "\n"){
+    if (!getRcmdr("console.output") && tclvalue(tkget(OutputWindow(), "1.0", "end")) != "\n"){
         response3 <- tkmessageBox(message="Save output file?",
                 icon="question", type="yesno", default="yes")
         if ("yes" == tclvalue(response3)) saveOutput()
         }
-    if (.Platform$OS.type != "windows") options(.oldPager)
-    options(.saveOptions)
-    tkdestroy(.commander)
-    tkwait <- options("Rcmdr")[[1]]$tkwait  # to address problem in Debian Linux
-    if ((!is.null(tkwait)) && tkwait) tclvalue(.commander.done) <<- "1"   
-    which.globals <- sapply(globals, exists, envir=.GlobalEnv)
-    remove(list=globals[which.globals], envir=.GlobalEnv)
+    if (.Platform$OS.type != "windows") options(getRcmdr("oldPager"))
+    options(getRcmdr("saveOptions"))
+    tkdestroy(CommanderWindow())
+    tclvalue(.commander.done) <<- "1"
     return(invisible(response))
     }
     
@@ -175,6 +178,7 @@ Options <- function(){
     defaultFont <- tclVar(default.font)
     defaultFontEntry <- tkentry(top, width="30", textvariable=scaleFactorVar)                  
     onOK <- function(){
+        closeDialog(top)
         log.font.size <- round(as.numeric(tclvalue(logFontSizeVar)))
         log.width <- round(as.numeric(tclvalue(logWidthVar)))
         log.height <- as.numeric(tclvalue(logHeightVar))
@@ -205,8 +209,6 @@ Options <- function(){
         if (.Platform$OS.type == "windows") options$scale.factor <- scale.factor
             else options$default.font <- default.font
         options(Rcmdr=options)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)  
         closeCommander()
         Commander()
         }
@@ -237,6 +239,7 @@ Options <- function(){
     tkgrid.configure(sortNamesCheckBox, sticky="w")
     tkgrid(tklabel(top, text="Show edit button"), showEditButtonCheckBox, sticky="e")
     tkgrid.configure(showEditButtonCheckBox, sticky="w")
+    tkconfigure(OKbutton, text="Exit and Restart\nR Commander", width=18)
     if (.Platform$OS.type == "windows"){
         tkgrid(tklabel(top, text="Scale factor for Tk elements"), scaleFactorSlider, sticky="se")
         tkgrid.configure(scaleFactorSlider, sticky="w")
@@ -249,36 +252,18 @@ Options <- function(){
     dialogSuffix(rows=11, columns=2)
     }
 
-setOutputWidth <- function(){
-    initializeDialog(title="Reset Output Width")
-    output.width <- unlist(options("width"))
-    outputWidthVar <- tclVar(output.width)
-    logWidthSlider <- tkscale(top, from=20, to=200, showvalue=TRUE, variable=outputWidthVar,
-        resolution=10, orient="horizontal")    
-    onOK <- function(){
-        output.width <- round(as.numeric(tclvalue(outputWidthVar)))
-        doItAndPrint(paste("options(width=", output.width, ")", sep=""))
-        if (.grab.focus) tkgrab.release(top)
-        tkfocus(.commander)
-        tkdestroy(top)  
-        }
-    OKCancelHelp(helpSubject="options")
-    tkgrid(tklabel(top, text="Output width (characters)"), logWidthSlider, sticky="w")
-    tkgrid(buttonsFrame, sticky="w")
-    dialogSuffix(rows=2, columns=1)
-    }
-   
 loadPackages <- function(){
-    currentPackages <- .packages()
-    allPackages <- .packages(all.available = TRUE)
-    availablePackages <- sort(setdiff(allPackages, currentPackages))
+    availablePackages <- sort(setdiff(.packages(all.available = TRUE), .packages()))
+    if (length(availablePackages) == 0){
+        errorCondition(message="No packages available to load.")
+        return()
+        }
     initializeDialog(title="Load Packages")
     packagesBox <- variableListBox(top, availablePackages, title="Packages (pick one or more)",
         selectmode="multiple", listHeight=10)
     onOK <- function(){
         packages <- getSelection(packagesBox)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        closeDialog(top)
         if (length(packages) == 0){
             errorCondition(recall=loadPackages, message="You must select at least one package.")
             return()
@@ -287,9 +272,10 @@ loadPackages <- function(){
             command <- paste('library("', package, '", character.only=TRUE)', sep="")
             justDoIt(command)
             }
+        Message(paste("Packages loaded:", paste(packages, collapse=", ")), type="note")
         }
     OKCancelHelp(helpSubject="library")
-    tkgrid(getFrame(packagesBox), sticky="nw")    
+    tkgrid(getFrame(packagesBox), sticky="nw")
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix(rows=1, columns=1)
     }

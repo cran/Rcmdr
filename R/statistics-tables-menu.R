@@ -1,14 +1,15 @@
 # Statistics Menu dialogs
 
-# last modified 5 July 04 by J. Fox
+# last modified 9 April 05 by J. Fox
 
     # Tables menu
     
 twoWayTable <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkFactors(2)) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkFactors(2)) return()
     initializeDialog(title="Two-Way Table")
     variablesFrame <- tkframe(top)
+    .factors <- Factors()
     rowBox <- variableListBox(variablesFrame, .factors, title="Row variable (pick one)")
     columnBox <- variableListBox(variablesFrame, .factors, title="Column variable (pick one)")
     subsetBox()
@@ -30,9 +31,8 @@ twoWayTable <- function(){
         subset <- tclvalue(subsetVariable)
         subset <- if (trim.blanks(subset) == "<all valid cases>") "" 
             else paste(", subset=", subset, sep="")
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
-        command <- paste("xtabs(~", row, "+", column, ", data=", .activeDataSet, 
+        closeDialog()
+        command <- paste("xtabs(~", row, "+", column, ", data=", ActiveDataSet(),
             subset, ")", sep="")
         logger(paste(".Table <- ", command, sep=""))
         assign(".Table", justDoIt(command), envir=.GlobalEnv)
@@ -48,17 +48,17 @@ twoWayTable <- function(){
             warnText <- NULL
             if (0 < (nlt1 <- sum(.Test$expected < 1))) warnText <- paste(nlt1,
                 "expected frequencies are less than 1")
-            if (0 < (nlt5 <- sum(.Test$expected < 1))) warnText <- paste(warnText, "\n", nlt5,
+            if (0 < (nlt5 <- sum(.Test$expected < 5))) warnText <- paste(warnText, "\n", nlt5,
                 " expected frequencies are less than 5", sep="")
-            if (!is.null(warnText)) tkmessageBox(message=warnText,
-                icon="warning", type="ok")
+            if (!is.null(warnText)) Message(message=warnText,
+                type="warning")
             logger("remove(.Test)") 
             remove(.Test, envir=.GlobalEnv) 
             }
         if (fisher == 1) doItAndPrint("fisher.test(.Table)")
         logger("remove(.Table)") 
         remove(.Table, envir=.GlobalEnv)                                                      
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="xtabs")
     radioButtons(name="percents", buttons=c("rowPercents", "columnPercents", "nonePercents"), 
@@ -77,10 +77,11 @@ twoWayTable <- function(){
     }
 
 multiWayTable <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkFactors(3)) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkFactors(3)) return()
     initializeDialog(title="Multi-Way Table")
     variablesFrame <- tkframe(top)
+    .factors <- Factors()
     rowBox <- variableListBox(variablesFrame, .factors, title="Row variable (pick one)")
     columnBox <- variableListBox(variablesFrame, .factors, title="Column variable (pick one)")
     controlBox <- variableListBox(variablesFrame, .factors, selectmode="multiple", 
@@ -102,10 +103,9 @@ multiWayTable <- function(){
         subset <- tclvalue(subsetVariable)
         subset <- if (trim.blanks(subset) == "<all valid cases>") "" 
             else paste(", subset=", subset, sep="")
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        closeDialog()
         command <- paste("xtabs(~", row, "+", column, "+", paste(controls, collapse="+"),
-            ", data=", .activeDataSet, subset, ")", sep="")
+            ", data=", ActiveDataSet(), subset, ")", sep="")
         logger(paste(".Table <- ", command, sep=""))
         assign(".Table", justDoIt(command), envir=.GlobalEnv)
         doItAndPrint(".Table")
@@ -113,7 +113,7 @@ multiWayTable <- function(){
         if (percents == "column") doItAndPrint("colPercents(.Table) # Column Percentages")
         logger("remove(.Table)") 
         remove(.Table, envir=.GlobalEnv)                                             
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="xtabs")
     radioButtons(name="percents", buttons=c("rowPercents", "columnPercents", "nonePercents"), values=c("row", "column", "none"),
@@ -129,7 +129,7 @@ multiWayTable <- function(){
 
 enterTable <- function(){
     env <- environment()
-    initializeDialog(title="Enter and Analyze Two-Way Table")
+    initializeDialog(title="Enter Two-Way Table")
     outerTableFrame <- tkframe(top)
     assign(".tableFrame", tkframe(outerTableFrame), envir=env)
     setUpTable <- function(...){
@@ -209,8 +209,7 @@ enterTable <- function(){
         chisq <- tclvalue(chisqVariable)
         expected <- tclvalue(expFreqVariable)
         fisher <- tclvalue(fisherVariable)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        closeDialog()
         command <- paste("matrix(c(", paste(counts, collapse=","), "), ", nrows, ", ", ncols,
             ", byrow=TRUE)", sep="")
         assign(".Table", justDoIt(command), envir=.GlobalEnv)
@@ -233,17 +232,17 @@ enterTable <- function(){
             warnText <- NULL
             if (0 < (nlt1 <- sum(.Test$expected < 1))) warnText <- paste(nlt1,
                 "expected frequencies are less than 1")
-            if (0 < (nlt5 <- sum(.Test$expected < 1))) warnText <- paste(warnText, "\n", nlt5,
+            if (0 < (nlt5 <- sum(.Test$expected < 5))) warnText <- paste(warnText, "\n", nlt5,
                 " expected frequencies are less than 5", sep="")
-            if (!is.null(warnText)) tkmessageBox(message=warnText,
-                icon="warning", type="ok")
+            if (!is.null(warnText)) Message(message=warnText,
+                type="warning")
             logger("remove(.Test)") 
             remove(.Test, envir=.GlobalEnv) 
             }
         if (fisher == 1) doItAndPrint("fisher.test(.Table)")
         logger("remove(.Table)") 
         remove(.Table, envir=.GlobalEnv)                                                      
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="chisq.test")
     radioButtons(name="percents", buttons=c("rowPercents", "columnPercents", "nonePercents"), values=c("row", "column", "none"),

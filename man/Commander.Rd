@@ -14,7 +14,7 @@ Commander()
 \bold{Getting Started}
 
 The default R Commander interface consists of (from top to bottom) a menu bar, a toolbar,
-a log/script window, and an output window.
+a script window, an output window, and a messages window.
 
 Commands to read, write, transform, and analyze data are entered using the menus in the
 menu bar at the top of the \emph{Commander} window. Most menu items lead to dialog boxes
@@ -23,38 +23,38 @@ what is available.
 
 Below the menu bar is a toolbar with (from left to right) an information field
 displaying the name of the active data set; buttons for editing and displaying the active
-data set; an information field showing the active statistical model;
-and a \emph{Submit} button for re-executing commands in the log/script window.
+data set; and an information field showing the active statistical model. There is also
+a \emph{Submit} button for re-executing commands in the script window.
 The information fields for the active data set and active model are actually 
 buttons that can be used to select the active data set and model from among, respectively,
-data frames or linear and generalized linear model objects in memory.
+data frames or suitable model objects in memory.
 
 Almost all commands require an active data set. When the Commander starts, there is no active
 data set, as indicated in the data set information field. A data set becomes the active data set
-when it is read into memory from an R package or imported from a text file, SPSS data set, or
-Minitab data set. In addition, the active data set can be selected from among R data frames
+when it is read into memory from an R package or imported from a text file, SPSS data set,
+Minitab data set, or STATA data set. In addition, the active data set can be selected from among R data frames
 resident in memory. You can therefore switch among data sets during a session.
 
-By default, commands are logged to the log/script window (the
+By default, commands are logged to the script window (the
 initially empty text window immediately below the toolbar); 
 commands and output appear in the output window (the initially empty text window below the
-log/script window); and the active data set is attached to the search path. To alter these and
+script window); and the active data set is attached to the search path. To alter these and
 other defaults, see the information below on configuration.
  
 Some \code{Rcmdr} dialogs (those in the \emph{Statistics -> Fit models} menu) 
-produce linear or generalized 
-linear models. When a model is fit, it becomes the active model, as indicated in the information
+produce linear, generalized
+linear, or other models. When a model is fit, it becomes the active model, as indicated in the information
 field in the R Commander toolbar.
 Items in the \emph{Models} menu apply to the active model. Initially, there is no active model. 
 If there are several models in memory, you can select the active model from among them.
 
 If command logging in turned on, R commands that are generated from the menus and dialog boxes are
-entered into the log/script window in the Commander. You can edit these commands in the normal
-manner and can also type new commands into the log/script window. Individual commands
+entered into the script window in the Commander. You can edit these commands in the normal
+manner and can also type new commands into the script window. Individual commands
 can be continued over more than one line, but each line after the first must be indented with
-one or more spaces or tabs. The contents of the log/script
+one or more spaces or tabs. The contents of the script
 window can be saved during or at the end of the session, and a saved script can be loaded into the
-log/script window. The contents of the output window can also be edited or saved to a text file.
+script window. The contents of the output window can also be edited or saved to a text file.
 
 To re-execute a command or set of commands, select the lines to be executed using
 the mouse and press the \emph{Submit} button at the right of the toolbar
@@ -63,14 +63,14 @@ submits the line containing the text-insertion cursor. Note that an error will b
 command or commands are incomplete.
 
 Pressing \emph{Control-F} brings up a find-text dialog box (which can also be accessed via 
-\emph{Edit -> Find}) to search for text in the log/script window or the output window. Edit functions such as
-search are performed in the log/script window unless you first click in the output window to make it the active
+\emph{Edit -> Find}) to search for text in the script window or the output window. Edit functions such as
+search are performed in the script window unless you first click in the output window to make it the active
 window.
 
-Pressing \emph{Control-S} will save the log/script or output window.
+Pressing \emph{Control-S} will save the script or output window.
 
-Right-clicking the mouse (clicking button 3 on a three-button mouse) in the log/script or output window brings up
-a "context" menu with the \emph{Edit}-menu items, plus (in the log/script window) a \emph{Submit} item.
+Right-clicking the mouse (clicking button 3 on a three-button mouse) in the script or output window brings up
+a "context" menu with the \emph{Edit}-menu items, plus (in the script window) a \emph{Submit} item.
 
 When you
 execute commands from the \emph{Commander} window, you must ensure that the sequence of commands
@@ -87,7 +87,7 @@ The \code{Rcmdr} menus can be customized by editing the file \code{Rcmdr-menus.t
 
 Some functions (e.g., \code{hist}) that do not normally create visible printed output when executed
 from the \emph{R Console} command prompt will do so --- unless prevented --- when executed from the 
-\emph{Commander} log window. Such output
+\emph{Commander} script window. Such output
 can be suppressed by listing the names of these functions in the \code{log-exceptions.txt} file.
 
 You can add R code to the package, e.g., for creating additional dialogs, by placing files with
@@ -97,11 +97,8 @@ additional menus, sub-menus, or menu-items. A demo addition is provided in the f
 and uncomment the corresponding menu line in \code{Rcmdr-menus.txt}. Alternatively, you can edit 
 the source package and recompile it.
 
-The following functions are provided to assist in writing dialogs: \code{activeDataSet}, 
-\code{activeModel}, \code{doItAndPrint}, \code{justDoIt}, \code{listDataSets}, 
-\code{listGeneralizedLinearModels}, \code{listLinearModels}, \code{logger}. The following global
-variables contain information about variables in the active data set: \code{.factors},
-\code{.numeric}, \code{.twoLevelFactors}, \code{.variables}. See \code{help("\link{Rcmdr.Utilities}")}
+A number of functions are provided to assist in writing dialogs, and \code{Rcmdr} state information
+is stored in a separate environment. See \code{help("\link{Rcmdr.Utilities}")}
 and the manual supplied in the \code{etc} directory of the \code{Rcmdr} package for more information.
 
 In addition, several features are controlled by run-time options, set via the \code{options("Rcmdr")}
@@ -110,49 +107,55 @@ the usual situation, defaults are used. Specify options as a list of \emph{name=
 set none, one, several, or all options. The available options are as follows:
 
 \describe{
-    \item{\code{attach.data.set}}{if \code{TRUE} (the default), the active data set is attached to the
+
+    \item{\code{attach.data.set}}{if \code{TRUE} (the default is \code{FALSE}), the active data set is attached to the
     search path.}
-    
-    \item{\code{log.commands}}{If \code{TRUE} (the default), commands are echoed to the log/script window;
-    if \code{FALSE}, the log/script window is not displayed.}
-    
-    \item{\code{log.text.color}}{Color for text in the log/script window; the default is \code{"black"}.}
-    
-    \item{\code{log.font.size}}{The font size, in points, to be used in the log/script window,
-    in the output window,
-    in recode dialogs, and in compute expressions --- that is, where a monospaced font is used. 
-    The default is 10.}
-    
-    \item{\code{log.width}}{The width of the log/script and output windows, in characters. The default is 80.}
-    
-    \item{\code{log.height}}{The height of the log/script window, in lines. The default is 10. Setting \code{log.height}
-    to 0 has the same effect as setting \code{log.commands} to \code{FALSE}.}
+
+    \item{\code{check.packages}}{if \code{TRUE} (the default), on start-up, the presence of all of the Rcmdr
+    recommended packages will be checked, and if any are absent, the Rcmdr will offer to install them.}
+
+    \item{\code{command.text.color}}{Color for commands in the output window; the default is \code{"red"}.}
     
     \item{\code{console.output}}{If \code{TRUE}, output is directed to the \emph{R Console}, and the 
     \emph{R Commander} output window is not displayed. The default is \code{FALSE}.}
     
-    \item{\code{output.height}}{The height of the output window, in lines. The default is twice the height
-    of the log/script window, or 20 if the log/script window is suppressed. Setting \code{output.height}
-    to 0 has the same effect as setting \code{console.output} to \code{TRUE}.}
-    
-    \item{\code{command.text.color}}{Color for commands in the output window; the default is \code{"red"}.}
-    
-    \item{\code{output.text.color}}{Color for output in the output window; the default is \code{"blue"}.}
-    
-    \item{\code{placement}}{Placement of the \emph{R Commander} window, in pixels; the default is
-    \code{"-40+40"}, which puts the window near the upper-right corner of the screen.}
-    
-    \item{\code{contrasts}}{Serves the same function as the general \code{contrasts} option; the default is 
+    \item{\code{contrasts}}{Serves the same function as the general \code{contrasts} option; the default is\cr
     \code{c("contr.Treatment", "contr.poly")}. When the Commander exits, the \code{contrasts}
     option is returned to its pre-existing value. Note that \code{contr.Treatment} is from the \code{car} package.}
     
+    \item{\code{default.font}}{The default font, as an X11 font specification, given in a character string. 
+    If specified, this value takes precedence
+    over the default font size (below). This option is only for non-Windows systems.}
+
+    \item{\code{default.font.size}}{The size, in points, of the default font. The default is 10 for Windows systems
+    and 12 for other systems Unless otherwise
+    specified (see the previous item), the default font is \code{"*helvetica-medium-r-normal-*-xx*"}, where \code{xx}
+    is the default font size. This option is only for non-Windows systems.}
+    
+    \item{\code{double.click}}{Set to \code{TRUE} if you want a double-click of the left mouse
+    button to press the default button in all dialogs. The default is \code{FALSE}.}
+
+    \item{\code{error.text.color}}{Color for error messages; the default is \code{"red"}.}
+
     \item{\code{grab.focus}}{Set to \code{TRUE} for the current Tk window to 
     "grab" the focus --- that is, to prevent the focus from being changed to another Tk window.
     On some systems, grabbing the focus in this manner apparently causes problems. The default is \code{TRUE}. 
     If you experience focus problems, try setting this option to \code{FALSE}.}
+      
+    \item{\code{log.commands}}{If \code{TRUE} (the default), commands are echoed to the script window;
+    if \code{FALSE}, the script window is not displayed.}
+
+    \item{\code{log.font.size}}{The font size, in points, to be used in the script window,
+    in the output window,
+    in recode dialogs, and in compute expressions --- that is, where a monospaced font is used. 
+    The default is 10 for Windows systems and 12 for other systems.}
     
-    \item{\code{double.click}}{Set to \code{TRUE} if you want a double-click of the left mouse
-    button to press the default button in all dialogs. The default is \code{FALSE}.}
+    \item{\code{log.height}}{The height of the script window, in lines. The default is 10. Setting \code{log.height}
+    to 0 has the same effect as setting \code{log.commands} to \code{FALSE}.}
+        
+    \item{\code{log.text.color}}{Color for text in the script window; the default is \code{"black"}.}
+        
+    \item{\code{log.width}}{The width of the script and output windows, in characters. The default is 80.}
     
     \item{\code{multiple.select.mode}}{Affects the way multiple variables are selected in variable-list boxes.
     If set to \code{"extended"} (the default), left-clicking on a variable selects it and deselects any other
@@ -162,41 +165,49 @@ set none, one, several, or all options. The available options are as follows:
     to \code{"multiple"}, left-clicking toggles the selection of a variable and may be used to select more than one
     variable. This is the behaviour in the Rcmdr prior to version 1.9-10.}
     
+    \item{\code{output.height}}{The height of the output window, in lines. The default is twice the height
+    of the script window, or 20 if the script window is suppressed. Setting \code{output.height}
+    to 0 has the same effect as setting \code{console.output} to \code{TRUE}.}
+        
+    \item{\code{output.text.color}}{Color for output in the output window; the default is \code{"blue"}.}
+        
+    \item{\code{placement}}{Placement of the \emph{R Commander} window, in pixels; the default is
+    \code{"-40+20"}, which puts the window near the upper-right corner of the screen.}
+            
     \item{\code{report.X11.warnings}}{On (some?) Linux systems, multiple X11 warnings are generated by Rcmdr
     commands after a graphics-device window has been opened. Set this option to \code{FALSE} (the default) to
     suppress reporting of these warnings. Some warnings will be printed when you exit from the Commander.}
     
-    \item{\code{sort.names}}{Set to \code{TRUE} (the default) if you want variable names to be sorted
-    alphabetically in variable lists.}
-    
-    \item{\code{show.edit.button}}{Set to \code{TRUE} (the default) if you want an \emph{Edit} button in the Commander
-    window, permitting you to edit the active data set. Windows users may wish to set this option to \code{FALSE}
-    to suppress the \emph{Edit} button because changing variable names in the data editor can cause R to crash.}
+    \item{\code{retain.messages}}{If \code{TRUE} (the default is code{FALSE}), the contents of the message window
+    are not erased between messages. In any event, a "NOTE" message will not erase a preceding "WARNING" or "ERROR".}
     
     \item{\code{scale.factor}}{A scaling factor to be applied to all Tk elements, such as fonts. This works well
     only in Windows. The default is \code{NULL}.}
+
+    \item{\code{showData.threshold}}{If the number of variables in the active data set exceeds this value (default, 100),
+    then \code{edit()} rather than \code{showData()} is used to display the data set. A disadvantage is that control doesn't
+    return to the Commander until the edit window is closed. The reason for the option is that \code{showData()} is very slow
+    when the number of variables is large; setting the threshold to 0 suppresses the use of showData altogether.}
+         
+    \item{\code{show.edit.button}}{Set to \code{TRUE} (the default) if you want an \emph{Edit} button in the Commander
+    window, permitting you to edit the active data set. Windows users may wish to set this option to \code{FALSE}
+    to suppress the \emph{Edit} button because changing variable names in the data editor can cause R to crash
+    (though I believe that this problem as been solved).}
     
-    \item{\code{default.font.size}}{The size, in points, of the default font. The default is 10. Unless otherwise 
-    specified (see the next item), the default font is \code{"*helvetica-medium-r-normal-*-xx*"}, where \code{xx}
-    is the default font size. This option is only for non-Windows systems.}
-    
-    \item{\code{default.font}}{The default font, as an X11 font specification, given in a character string. 
-    If specified, this value takes precedence
-    over the default font size (above). This option is only for non-Windows systems.}
-    
+    \item{\code{sort.names}}{Set to \code{TRUE} (the default) if you want variable names to be sorted
+    alphabetically in variable lists.}
+        
     \item{\code{tkwait}}{This option addresses a problem that, to my knowledge, is rare, 
     and may occur on some non-Windows systems. If the Commander causes R to hang, 
     then set the \code{tkwait} option to
     \code{TRUE}; otherwise set the option to \code{FALSE} or ignore it. 
     An undesirable side effect of setting
     the \code{tkwait} option to \code{TRUE} is that the R session command prompt is suppressed until the Commander exits.
-    One can still enter commands via the log/script window, however. In particular, there is no reason to use this option
-    under Windows, and it should not be used with the Windows R GUI with buffered output.}
+    One can still enter commands via the script window, however. In particular, there is no reason to use this option
+    under Windows, and it should not be used with the Windows R GUI with buffered output when output is directed to the
+    R console.}
     
-    \item{\code{showData.threshold}}{If the number of variables in the active data set exceeds this value (default, 100),
-    then \code{edit()} rather than \code{showData()} is used to display the data set. A disadvantage is that control doesn't
-    return to the Commander until the edit window is closed. The reason for the option is that \code{showData()} is very slow
-    when the number of variables is large.}
+    \item{\code{warning.text.color}}{Color for warning messages; the default is \code{"darkgreen"}.}
     }
     
 Many options can also be set via the \emph{File -> Options} menu, which will restart the Commander after options are set.

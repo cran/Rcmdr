@@ -1,73 +1,71 @@
 # Statistics Menu dialogs
 
-# last modified 29 Nov 04 by J. Fox
+# last modified 17 Mar 05 by J. Fox
 
     # Models menu
     
 linearRegressionModel <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric(2)) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric(2)) return()
     initializeDialog(title="Linear Regression")
     variablesFrame <- tkframe(top)
+    .numeric <- Numeric()
     xBox <- variableListBox(variablesFrame, .numeric, selectmode="multiple", 
         title="Explanatory variables (pick one or more)")
     yBox <- variableListBox(variablesFrame, .numeric, title="Response variable (pick one)")
-    assign(".modelNumber", .modelNumber + 1, envir=.GlobalEnv)
-    modelName <- tclVar(paste("RegModel.", .modelNumber, sep=""))
+    UpdateModelNumber()
+    modelName <- tclVar(paste("RegModel.", getRcmdr("modelNumber"), sep=""))
     modelFrame <- tkframe(top)
     model <- tkentry(modelFrame, width="20", textvariable=modelName)
     subsetBox()
     onOK <- function(){
         x <- getSelection(xBox)
         y <- getSelection(yBox)
+        closeDialog()
         if (0 == length(y)) {
-            assign(".modelNumber", .modelNumber - 1, envir=.GlobalEnv) 
+            UpdateModelNumber(-1)
             errorCondition(recall=linearRegressionModel, message="You must select a response variable.")
             return()
             }
         if (0 == length(x)) {
-            assign(".modelNumber", .modelNumber - 1, envir=.GlobalEnv) 
+            UpdateModelNumber(-1)
             errorCondition(recall=linearRegressionModel, message="No explanatory variables selected.")
             return()
             }        
         if (is.element(y, x)) {
-            assign(".modelNumber", .modelNumber - 1, envir=.GlobalEnv) 
+            UpdateModelNumber(-1)
             errorCondition(recall=linearRegressionModel, message="Response and explanatory variables must be different.")
             return()
             }
         subset <- tclvalue(subsetVariable)
         if (trim.blanks(subset) == "<all valid cases>" || trim.blanks(subset) == ""){
             subset <- ""
-            assign(".modelWithSubset", FALSE, envir=.GlobalEnv)
+            putRcmdr("modelWithSubset", FALSE)
             }
         else{
             subset <- paste(", subset=", subset, sep="")
-            assign(".modelWithSubset", TRUE, envir=.GlobalEnv)            
+            putRcmdr("modelWithSubset", TRUE)
             }
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         modelValue <- trim.blanks(tclvalue(modelName))
         if (!is.valid.name(modelValue)){
-            assign(".modelNumber", .modelNumber - 1, envir=.GlobalEnv) 
+            UpdateModelNumber(-1)
             errorCondition(recall=linearRegressionModel, message=paste('"', modelValue, '" is not a valid name.', sep=""))
             return()
             }
         if (is.element(modelValue, listLinearModels())) {
             if ("no" == tclvalue(checkReplace(modelValue, type="Model"))){
-                assign(".modelNumber", .modelNumber - 1, envir=.GlobalEnv) 
-                if (.grab.focus) tkgrab.release(top)
-                tkdestroy(top)
+                UpdateModelNumber(-1)
                 linearRegressionModel()
                 return()
                 }
             }
-        activeModel(modelValue)
         command <- paste("lm(", y, "~", paste(x, collapse="+"),
-            ", data=", .activeDataSet, subset, ")", sep="")
+            ", data=", ActiveDataSet(), subset, ")", sep="")
         logger(paste(modelValue, " <- ", command, sep=""))
         assign(modelValue, justDoIt(command), envir=.GlobalEnv)
         doItAndPrint(paste("summary(", modelValue, ")", sep=""))
-        tkfocus(.commander)
+        activeModel(modelValue)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="lm", model=TRUE)
     tkgrid(tklabel(modelFrame, text="Enter name for model:"), model, sticky="w")
@@ -81,10 +79,11 @@ linearRegressionModel <- function(){
     }
 
 linearModel <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric()) return()
-    if (!checkVariables(2)) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric()) return()
+##    if (!checkVariables(2)) return()
     initializeDialog(title="Linear Model")
+    .activeModel <- ActiveModel()
     currentModel <- if (!is.null(.activeModel)) 
         eval(parse(text=paste("class(", .activeModel, ")[1] == 'lm'", sep="")), 
             envir=.GlobalEnv) 
@@ -92,16 +91,15 @@ linearModel <- function(){
     if (currentModel) {
         currentFields <- formulaFields(eval(parse(text=.activeModel), 
             envir=.GlobalEnv))
-        if (currentFields$data != .activeDataSet) currentModel <- FALSE
+        if (currentFields$data != ActiveDataSet()) currentModel <- FALSE
         }
-    assign(".modelNumber", .modelNumber + 1, envir=.GlobalEnv)
-    modelName <- tclVar(paste("LinearModel.", .modelNumber, sep=""))
+    UpdateModelNumber()
+    modelName <- tclVar(paste("LinearModel.", getRcmdr("modelNumber"), sep=""))
     modelFrame <- tkframe(top)
     model <- tkentry(modelFrame, width="20", textvariable=modelName)
     onOK <- function(){
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         modelValue <- trim.blanks(tclvalue(modelName))
+        closeDialog()
         if (!is.valid.name(modelValue)){
             errorCondition(recall=linearModel, message=paste('"', modelValue, '" is not a valid name.', sep=""), model=TRUE)
             return()
@@ -109,11 +107,11 @@ linearModel <- function(){
         subset <- tclvalue(subsetVariable)
         if (trim.blanks(subset) == "<all valid cases>" || trim.blanks(subset) == ""){
             subset <- ""
-            assign(".modelWithSubset", FALSE, envir=.GlobalEnv)
+            putRcmdr("modelWithSubset", FALSE)
             }
         else{
             subset <- paste(", subset=", subset, sep="")
-            assign(".modelWithSubset", TRUE, envir=.GlobalEnv)            
+            putRcmdr("modelWithSubset", TRUE)
             }
         check.empty <- gsub(" ", "", tclvalue(lhsVariable))
         if ("" == check.empty) {
@@ -127,21 +125,19 @@ linearModel <- function(){
             }
         if (is.element(modelValue, listLinearModels())) {
             if ("no" == tclvalue(checkReplace(modelValue, type="Model"))){
-                assign(".modelNumber", .modelNumber - 1, envir=.GlobalEnv) 
-                if (.grab.focus) tkgrab.release(top)
-                tkdestroy(top)
+                UpdateModelNumber(-1)
                 linearModel()
                 return()
                 }
             }
-        activeModel(modelValue)
         formula <- paste(tclvalue(lhsVariable), tclvalue(rhsVariable), sep=" ~ ")
         command <- paste("lm(", formula,
-            ", data=", .activeDataSet, subset, ")", sep="")
+            ", data=", ActiveDataSet(), subset, ")", sep="")
         logger(paste(modelValue, " <- ", command, sep=""))
         assign(modelValue, justDoIt(command), envir=.GlobalEnv)
         doItAndPrint(paste("summary(", modelValue, ")", sep=""))
-        tkfocus(.commander)
+        activeModel(modelValue)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="linearModel", model=TRUE)
     tkgrid(tklabel(modelFrame, text="Enter name for model:"), model, sticky="w")
@@ -153,7 +149,7 @@ linearModel <- function(){
     tkgrid(formulaFrame, sticky="w")
     tkgrid(subsetFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
-    dialogSuffix(rows=6, columns=1, focus=lhsEntry)
+    dialogSuffix(rows=6, columns=1, focus=lhsEntry, preventDoubleClick=TRUE)
     }
 
 generalizedLinearModel <- function(){
@@ -174,9 +170,10 @@ generalizedLinearModel <- function(){
     colnames(availableLinks) <- links
     canonicalLinks <- c("identity", "logit", "log", "inverse", "1/mu^2", "logit", "log")
     names(canonicalLinks) <- families
-    if (!checkActiveDataSet()) return()
-    if (!checkVariables(2)) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkVariables(2)) return()
     initializeDialog(title="Generalized Linear Model")
+    .activeModel <- ActiveModel()
     currentModel <- if (!is.null(.activeModel)) 
         eval(parse(text=paste("class(", .activeModel, ")[1] == 'glm'", sep="")), 
             envir=.GlobalEnv)
@@ -184,11 +181,11 @@ generalizedLinearModel <- function(){
     if (currentModel) {
         currentFields <- formulaFields(eval(parse(text=.activeModel), 
             envir=.GlobalEnv), glm=TRUE)
-        if (currentFields$data != .activeDataSet) currentModel <- FALSE
+        if (currentFields$data != ActiveDataSet()) currentModel <- FALSE
         }
     modelFormula()
-    assign(".modelNumber", .modelNumber + 1, envir=.GlobalEnv)
-    modelName <- tclVar(paste("GLM.", .modelNumber, sep=""))
+    UpdateModelNumber()
+    modelName <- tclVar(paste("GLM.", getRcmdr("modelNumber"), sep=""))
     modelFrame <- tkframe(top)
     model <- tkentry(modelFrame, width="20", textvariable=modelName)
     linkFamilyFrame <- tkframe(top)
@@ -230,34 +227,33 @@ generalizedLinearModel <- function(){
             }
         if (is.element(modelValue, listGeneralizedLinearModels())) {
             if ("no" == tclvalue(checkReplace(modelValue))){
-                if (.grab.focus) tkgrab.release(top)
-                tkdestroy(top)
+                UpdateModelNumber(-1)
+                closeDialog()
                 generalizedLinearModel()
                 return()
                 }
             }
-        activeModel(modelValue)
         formula <- paste(tclvalue(lhsVariable), tclvalue(rhsVariable), sep=" ~ ")
         family <- families[as.numeric(tkcurselection(familyBox)) + 1]
         availLinks <- links[availableLinks[family,]]
         link <- availLinks[as.numeric(tkcurselection(linkBox)) + 1]
         subset <- tclvalue(subsetVariable)
+        closeDialog()
         if (trim.blanks(subset) == "<all valid cases>" || trim.blanks(subset) == ""){
             subset <- ""
-            assign(".modelWithSubset", FALSE, envir=.GlobalEnv)
+            putRcmdr("modelWithSubset", FALSE)
             }
         else{
             subset <- paste(", subset=", subset, sep="")
-            assign(".modelWithSubset", TRUE, envir=.GlobalEnv)            
+            putRcmdr("modelWithSubset", TRUE)
             }
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         command <- paste("glm(", formula, ", family=", family, "(", link,
-            "), data=", .activeDataSet, subset, ")", sep="")
+            "), data=", ActiveDataSet(), subset, ")", sep="")
         logger(paste(modelValue, " <- ", command, sep=""))
         assign(modelValue, justDoIt(command), envir=.GlobalEnv)
         doItAndPrint(paste("summary(", modelValue, ")", sep=""))
-        tkfocus(.commander)
+        activeModel(modelValue)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="generalizedLinearModel")
     helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
@@ -285,13 +281,15 @@ generalizedLinearModel <- function(){
             else 0
     tkselection.set(linkBox, lnk)
     tkbind(familyBox, "<Double-ButtonPress-1>", onFamilySelect)
-    dialogSuffix(rows=7, columns=1, focus=lhsEntry)
+    dialogSuffix(rows=7, columns=1, focus=lhsEntry, preventDoubleClick=TRUE)
     }
 
 proportionalOddsModel <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkVariables(2)) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkVariables(2)) return()
     initializeDialog(title="Proportional-Odds Logit Model")
+    .activeModel <- ActiveModel()
+    .activeDataSet <- ActiveDataSet()
     currentModel <- if (!is.null(.activeModel)) 
         eval(parse(text=paste("class(", .activeModel, ")[1] == 'polr'", sep="")), 
             envir=.GlobalEnv) 
@@ -301,14 +299,13 @@ proportionalOddsModel <- function(){
             envir=.GlobalEnv))
         if (currentFields$data != .activeDataSet) currentModel <- FALSE
         }
-    assign(".modelNumber", .modelNumber + 1, envir=.GlobalEnv)
-    modelName <- tclVar(paste("POM.", .modelNumber, sep=""))
+    UpdateModelNumber()
+    modelName <- tclVar(paste("POM.", getRcmdr("modelNumber"), sep=""))
     modelFrame <- tkframe(top)
     model <- tkentry(modelFrame, width="20", textvariable=modelName)
     onOK <- function(){
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         modelValue <- trim.blanks(tclvalue(modelName))
+        closeDialog()
         if (!is.valid.name(modelValue)){
             errorCondition(recall=proportionalOddsModel, message=paste('"', modelValue, '" is not a valid name.', sep=""), model=TRUE)
             return()
@@ -316,11 +313,11 @@ proportionalOddsModel <- function(){
         subset <- tclvalue(subsetVariable)
         if (trim.blanks(subset) == "<all valid cases>" || trim.blanks(subset) == ""){
             subset <- ""
-            assign(".modelWithSubset", FALSE, envir=.GlobalEnv)
+            putRcmdr("modelWithSubset", FALSE)
             }
         else{
             subset <- paste(", subset=", subset, sep="")
-            assign(".modelWithSubset", TRUE, envir=.GlobalEnv)            
+            putRcmdr("modelWithSubset", TRUE)
             }
         check.empty <- gsub(" ", "", tclvalue(lhsVariable))
         if ("" == check.empty) {
@@ -338,21 +335,19 @@ proportionalOddsModel <- function(){
             }
         if (is.element(modelValue, listProportionalOddsModels())) {
             if ("no" == tclvalue(checkReplace(modelValue, type="Model"))){
-                assign(".modelNumber", .modelNumber - 1, envir=.GlobalEnv) 
-                if (.grab.focus) tkgrab.release(top)
-                tkdestroy(top)
-                linearModel()
+                UpdateModelNumber(-1)
+                proportionalOddsModel()
                 return()
                 }
             }
-        activeModel(modelValue)
         formula <- paste(tclvalue(lhsVariable), tclvalue(rhsVariable), sep=" ~ ")
         command <- paste("polr(", formula,
             ", data=", .activeDataSet, subset, ", Hess=TRUE)", sep="")
         logger(paste(modelValue, " <- ", command, sep=""))
         assign(modelValue, justDoIt(command), envir=.GlobalEnv)
         doItAndPrint(paste("summary(", modelValue, ")", sep=""))
-        tkfocus(.commander)
+        activeModel(modelValue)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="polr", model=TRUE)
     tkgrid(tklabel(modelFrame, text="Enter name for model:"), model, sticky="w")
@@ -364,13 +359,15 @@ proportionalOddsModel <- function(){
     tkgrid(formulaFrame, sticky="w")
     tkgrid(subsetFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
-    dialogSuffix(rows=6, columns=1, focus=lhsEntry)
+    dialogSuffix(rows=6, columns=1, focus=lhsEntry, preventDoubleClick=TRUE)
     }
     
 multinomialLogitModel <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkVariables(2)) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkVariables(2)) return()
     initializeDialog(title="Multinomial Logit Model")
+    .activeModel <- ActiveModel()
+    .activeDataSet <- ActiveDataSet()
     currentModel <- if (!is.null(.activeModel)) 
         eval(parse(text=paste("class(", .activeModel, ")[1] == 'multinom'", sep="")), 
             envir=.GlobalEnv) 
@@ -380,14 +377,13 @@ multinomialLogitModel <- function(){
             envir=.GlobalEnv))
         if (currentFields$data != .activeDataSet) currentModel <- FALSE
         }
-    assign(".modelNumber", .modelNumber + 1, envir=.GlobalEnv)
-    modelName <- tclVar(paste("MLM.", .modelNumber, sep=""))
+    UpdateModelNumber()
+    modelName <- tclVar(paste("MLM.", getRcmdr("modelNumber"), sep=""))
     modelFrame <- tkframe(top)
     model <- tkentry(modelFrame, width="20", textvariable=modelName)
     onOK <- function(){
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         modelValue <- trim.blanks(tclvalue(modelName))
+        closeDialog()
         if (!is.valid.name(modelValue)){
             errorCondition(recall=multinomialLogitModel, message=paste('"', modelValue, '" is not a valid name.', sep=""), model=TRUE)
             return()
@@ -395,11 +391,11 @@ multinomialLogitModel <- function(){
         subset <- tclvalue(subsetVariable)
         if (trim.blanks(subset) == "<all valid cases>" || trim.blanks(subset) == ""){
             subset <- ""
-            assign(".modelWithSubset", FALSE, envir=.GlobalEnv)
+            putRcmdr("modelWithSubset", FALSE)
             }
         else{
             subset <- paste(", subset=", subset, sep="")
-            assign(".modelWithSubset", TRUE, envir=.GlobalEnv)            
+            putRcmdr("modelWithSubset", TRUE)
             }
         check.empty <- gsub(" ", "", tclvalue(lhsVariable))
         if ("" == check.empty) {
@@ -417,21 +413,19 @@ multinomialLogitModel <- function(){
             }
         if (is.element(modelValue, listMultinomialLogitModels())) {
             if ("no" == tclvalue(checkReplace(modelValue, type="Model"))){
-                assign(".modelNumber", .modelNumber - 1, envir=.GlobalEnv) 
-                if (.grab.focus) tkgrab.release(top)
-                tkdestroy(top)
-                linearModel()
+                UpdateModelNumber(-1)
+                multinomialLogitModel()
                 return()
                 }
             }
-        activeModel(modelValue)
         formula <- paste(tclvalue(lhsVariable), tclvalue(rhsVariable), sep=" ~ ")
         command <- paste("multinom(", formula,
             ", data=", .activeDataSet, subset, ", trace=FALSE)", sep="")
         logger(paste(modelValue, " <- ", command, sep=""))
         assign(modelValue, justDoIt(command), envir=.GlobalEnv)
-        doItAndPrint(paste("summary(", modelValue, ", cor=FALSE)", sep=""))
-        tkfocus(.commander)
+        doItAndPrint(paste("summary(", modelValue, ", cor=FALSE, Wald=TRUE)", sep=""))
+        activeModel(modelValue)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="multinom", model=TRUE)
     tkgrid(tklabel(modelFrame, text="Enter name for model:"), model, sticky="w")
@@ -443,7 +437,7 @@ multinomialLogitModel <- function(){
     tkgrid(formulaFrame, sticky="w")
     tkgrid(subsetFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
-    dialogSuffix(rows=6, columns=1, focus=lhsEntry)
+    dialogSuffix(rows=6, columns=1, focus=lhsEntry, preventDoubleClick=TRUE)
     }
 
 formulaFields <- function(model, glm=FALSE){

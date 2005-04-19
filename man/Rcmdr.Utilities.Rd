@@ -1,7 +1,12 @@
 \name{Rcmdr.Utilities}
 \alias{Rcmdr.Utilities}
+\alias{activateMenus}
 \alias{activeDataSet}
+\alias{ActiveDataSet}
+\alias{activeDataSetP}
 \alias{activeModel}
+\alias{ActiveModel}
+\alias{activeModelP}
 \alias{checkActiveDataSet}
 \alias{checkActiveModel}
 \alias{checkBoxes}
@@ -10,15 +15,25 @@
 \alias{checkReplace}
 \alias{checkTwoLevelFactors}
 \alias{checkVariables}
+\alias{closeDialog}
+\alias{commanderPosition}
+\alias{CommanderWindow}
+\alias{dataSetsP}
 \alias{dialogSuffix}
 \alias{doItAndPrint}
 \alias{errorCondition}
+\alias{Factors}
+\alias{factorsP}
 \alias{getFrame}
 \alias{getFrame.listbox}
+\alias{getRcmdr}
 \alias{getSelection}
 \alias{getSelection.listbox}
+\alias{glmP}
+\alias{GrabFocus}
 \alias{groupsBox}
 \alias{groupsLabel}
+\alias{hclustSolutionsP}
 \alias{initializeDialog}
 \alias{is.valid.name}
 \alias{justDoIt}
@@ -29,13 +44,28 @@
 \alias{listNumeric}
 \alias{listTwoLevelFactors}
 \alias{listVariables}
+\alias{lmP}
 \alias{logger}
+\alias{LogWindow}
+\alias{Message}
+\alias{MessagesWindow}
 \alias{modelFormula}
+\alias{modelsP}
+\alias{Numeric}
+\alias{numericP}
 \alias{OKCancelHelp}
+\alias{OutputWindow}
+\alias{packageLoaded}
+\alias{putRcmdr}
 \alias{radioButtons}
+\alias{RcmdrTclSet}
 \alias{subOKCancelHelp}
 \alias{subsetBox}
+\alias{TwoLevelFactors}
+\alias{twoLevelFactorsP}
+\alias{UpdateModelNumber}
 \alias{variableListBox}
+\alias{Variables}
 
 \title{Rcmdr Utility Functions}
 \description{
@@ -46,8 +76,13 @@
 }
 
 \usage{
+activateMenus()
 activeDataSet(dsname, flushModel=TRUE)
+ActiveDataSet(name)
+activeDataSetP()
 activeModel(model)
+ActiveModel(name)
+activeModelP()
 checkActiveDataSet()
 checkActiveModel()
 checkBoxes(window=top, frame, boxes, initialValues=NULL, labels)  # macro
@@ -56,36 +91,65 @@ checkNumeric(n=1)
 checkReplace(name, type="Variable")
 checkTwoLevelFactors(n=1)
 checkVariables(n=1)
+closeDialog(window, release=TRUE)  # macro
+CommanderWindow()
+dataSetsP()
 dialogSuffix(window=top, onOK=onOK, rows=1, columns=1, focus=top, bindReturn=TRUE, 
-    preventGrabFocus=FALSE)  # macro
+    preventGrabFocus=FALSE, preventDoubleClick=FALSE)  # macro
 doItAndPrint(command, log=TRUE)
 errorCondition(window=top, recall=NULL, message, model=FALSE)  # macro
+Factors(names)
+factorsP()
 \method{getFrame}{listbox}(object)
 \method{getSelection}{listbox}(object)
+getRcmdr(x, mode="any")
+glmP()
+GrabFocus(value)
 groupsBox(recall=NULL, label="Plot by:", initialLabel="Plot by groups",
     plotLinesByGroup=FALSE, positionLegend=FALSE, 
     plotLinesByGroupsText="Plot lines by group")  # macro
 groupsLabel(frame=top, groupsBox=groupsBox, columnspan=1)  # macro
-justDoIt(command)
-initializeDialog(window=top, title="")  # macro
+hclustSolutionsP()
+initializeDialog(window=top, title="", offset=10)  # macro
 is.valid.name(x)
+justDoIt(command)
 listDataSets(envir = .GlobalEnv, ...)
-listFactors(dataSet=.activeDataSet)
+listFactors(dataSet=ActiveDataSet())
 listGeneralizedLinearModels(envir = .GlobalEnv, ...)
 listLinearModels(envir = .GlobalEnv, ...)
 listNumeric{dataSet=.activeDataSet}
-listTwoLevelFactors(dataSet=.activeDataSet)
-listVariables(dataSet=.activeDataSet)
+listTwoLevelFactors(dataSet=ActiveDataSet())
+listVariables(dataSet=ActiveDataSet())
+lmP()
 logger(command)
+LogWindow()
+Message(message, type=c("note", "error", "warning"))
+MessagesWindow()
 modelFormula(frame=top, hasLhs=TRUE)  # macro
+modelsP()
+Numeric(names)
+numericP()
 OKCancelHelp(window=top, helpSubject=NULL, model=FALSE)  # macro
+OutputWindow()
+packageLoaded(name)
+putRcmdr(x, value)
 radioButtons(window=top, name, buttons, values=NULL, initialValue=..values[1], 
     labels, title)  # macro
+RcmdrTclSet(name, value)
 subOKCancelHelp(window=subdialog, helpSubject=NULL)  # macro
 subsetBox(window=top, model=FALSE)  # macro
-variableListBox(parentWindow, variableList=.variables, bg="white",
+TwoLevelFactors(names)
+twoLevelFactorsP()
+UpdateModelNumber(increment=1)
+variableListBox(parentWindow, variableList=Variables(), bg="white",
     selectmode="single", export="FALSE", initialSelection=NULL, 
     listHeight = 4, title)
+Variables(names)
+
+# the following two function is exported for technical reasons,
+# but is not meant to be called directly
+
+commanderPosition()
 }
 
 \arguments{
@@ -107,6 +171,7 @@ variableListBox(parentWindow, variableList=.variables, bg="white",
   \item{hasLhs}{does the model formula have a left-hand side?}
   \item{helpSubject}{the quoted name of a help subject, to be called as \code{help(helpSubject)}
     when the dialog \emph{Help} button is pressed.}
+  \item{increment}{increment to model number; -1 to set back after error.}
   \item{initialLabel}{label for groups button before a selection is made.}
   \item{initialSelection}{index of item initially selected, 0-base indexing.}
   \item{initialValue}{for a set of related radio buttons.}
@@ -115,26 +180,35 @@ variableListBox(parentWindow, variableList=.variables, bg="white",
   \item{labels}{a vector of character strings to label a set of radio buttons or check boxes.}
   \item{listHeight}{Maximum number of elements displayed simultaneously in list box.}
   \item{log}{echo command to the log window, as well as executing it and printing its output.}
-  \item{message}{error message.}
+  \item{message}{error (or other) message.}
+  \item{mode}{mode of object to retrieve.}
   \item{model}{the name of a model, as a character string, or \code{TRUE} or \code{FALSE}, depending
     upon the function.}
   \item{name}{quoted name.}
+  \item{names}{optional names to be stored.}
   \item{n}{number of variables to check for.}
   \item{object}{a \code{listbox} object.}
+  \item{offset}{in pixels, from top-left of Commander window.}
   \item{onOK}{function to execute when the \emph{OK} button is pressed.}
   \item{plotLinesByGroup}{include a check box for plotting lines by group?}
   \item{plotLinesByGroupsText}{the label for the plot-lines-by-group check box.}
   \item{positionLegend}{include a check box for a legend?}
   \item{preventGrabFocus}{prevent the dialog box from grabbing the focus.}
+  \item{preventDoubleClick}{prevent double-clicking from pressing the OK button, even when the
+    double.click option is set; necessary for statistical modelling dialogs, which use double-clicking
+    to build the model formula.}
   \item{recall}{function to call after error --- usually the function that initiates the dialog.}
+  \item{release}{release the focus if the grab.focus option has been set.}
   \item{rows, columns}{numbers of rows and columns of widgets in the dialog box.}
   \item{values}{vector of quoted values associated with radio buttons or check boxes.}
   \item{selectmode}{\code{"single"} or \code{"multiple"}.}
   \item{title}{Window or dialog-box-element title.}
-  \item{type}{quoted type of object to check; used to generate check-replace dialog box.}
+  \item{type}{quoted type of object to check; used to generate check-replace dialog box;
+    or type of message to print in Message window.}
+  \item{value}{an object to be stored.}
   \item{variableList}{a vector of variable names.}
   \item{window, parentWindow}{a Tk window.}
-  \item{x}{a putative R object name, as a character string.}
+  \item{x}{an R object name, as a character string.}
   \item{\dots}{Disregard.}
 }
 
@@ -162,8 +236,10 @@ variableListBox(parentWindow, variableList=.variables, bg="white",
   a dialog.
   
   \emph{Information: }
-  Several functions return vectors of object names: \code{listDataSets}, \code{listGeneralizedLinearModels}, 
-  \code{listFactors}, \code{listLinearModels}, \code{listNumeric}, \code{listTwoLevelFactors}, 
+  Several functions return vectors of object names: \code{listDataSets},\cr
+  \code{listGeneralizedLinearModels},
+  \code{listFactors}, \code{listLinearModels}, \code{listNumeric},\cr
+  \code{listTwoLevelFactors},
   \code{listVariables}. The functions \code{activeDataSet} and \code{activeModel} respectively report or set the active
   data set and model.
   

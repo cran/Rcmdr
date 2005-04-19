@@ -12,11 +12,8 @@ a valid R object name (consisting only of upper and lower-case letters, numerals
 periods, and not starting with a numeral).
 
 Enter an R expression in the box at the right. The expression is evaluated using the active data set. 
-
-Note that if this expression is later
-re-executed from the log window, it will be evaluated in the global environment; when the
-expression is re-evaluated, the active data set must be attached to the search path 
-and the variables in the expression must not be masked by other variables of the same name.
+You can double-click in the variable-list box to enter variable names in the expression.  The expression
+must evaluate to a valid variable, which is added to the active data set.
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}}

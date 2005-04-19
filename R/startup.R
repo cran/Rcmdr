@@ -1,25 +1,29 @@
-# last modified 13 Dec 04 by J. Fox
+# last modified 16 April 05 by J. Fox
 
 .onAttach <- function(...){
-    cat("\nRcmdr Version 0.9-17\n")
     Commander()
+    cat("\nRcmdr Version", getRcmdr("version"), "\n")
     }
 
 .onLoad <- function(...){
     save.options <- options(warn=-1)
     on.exit(options(save.options))
     tcltk <- require(tcltk)
-    required.packages <- rev(c("abind", "car", "effects", "foreign", "lattice", "lmtest", "MASS", 
-        "mgcv", "multcomp", "mvtnorm", "nlme", "nnet", "relimp", "sandwich", "strucchange", "zoo"))
-    for (package in required.packages) assign(package, require(package, character.only=TRUE))
     if (!tcltk) stop("The tcltk package is absent. The R Commander cannot function.")
-    assign(".rglPackage", require("rgl", character.only=TRUE), envir=.GlobalEnv)
-    if (!.rglPackage) cat("\n\nrgl package is missing; 3D graphs not available.\n\n")
+    require(rgl)
+    check <- options("Rcmdr")[[1]]$check.packages
+    required.packages <- rev(c("abind", "car", "effects", "foreign", "grid", "lattice", "lmtest", 
+        "MASS", "mgcv", "multcomp", "mvtnorm", "nlme", "nnet", "relimp", "sandwich", "strucchange",
+        "zoo"))
+    for (package in required.packages) assign(package, require(package, character.only=TRUE))
+    if (length(check) > 0 && !check) return()
     absent <- !sapply(required.packages, function(package) eval(parse(text=package)))
     missing.packages <- required.packages[absent]
     if (any(absent)) {
-        response <- tkmessageBox(message=paste("The following packages required by Rcmdr are missing:\n",
-                            paste(missing.packages, collapse=", "), "\nInstall these packages?"), 
+        response <- tkmessageBox(message=paste("The following packages used by Rcmdr are missing:\n",
+                            paste(missing.packages, collapse=", "), 
+                            "\nWithout these packages, some features will not be available.",
+                            "\nInstall these packages?"), 
                         icon="error", type="yesno")
         if (as.character(response) == "yes") {
             top <- tktoplevel(borderwidth=10)
@@ -54,45 +58,38 @@
             onOK <- function(){
                 errorMessage <- function() tkmessageBox(message=paste(
                     "The following packages were not found at the specified location:\n",
-                    paste(missing.packages[!present], collapse=", ")),  icon="error", type="ok")
+                    paste(missing.packages[!present], collapse=", ")),  icon="warning", type="ok")
                 tkgrab.release(top)
                 tkdestroy(top)
                 location <- tclvalue(locationVariable)
                 if (location == "CRAN") {
                     packages <- utils:::CRAN.packages()[,1]
                     present <- missing.packages %in% packages
-                    if (!all(present)){
-                        errorMessage()
-                        stop("Missing packages.", call.=FALSE)
-                        }
-                    utils:::install.packages(missing.packages, lib=.libPaths()[1])
+                    if (!all(present)) errorMessage()
+                    if (!any(present)) return()
+                    utils:::install.packages(missing.packages[present], lib=.libPaths()[1])
                     }
 #                else if (location == "Bioconductor") {
 #                    packages <- CRAN.packages(CRAN=getOption("BIOC"))[,1]
 #                    present <- missing.packages %in% packages
-#                    if (!all(present)){
-#                        errorMessage()
-#                        stop("Missing packages.", call.=FALSE)
-#                        }
-#                    install.packages(missing.packages., lib=.libPaths()[1],
+#                    if (!all(present)) errorMessage()
+#                    install.packages(missing.packages[present], lib=.libPaths()[1],
 #                        CRAN=getOption("BIOC"))
 #                    }
                 else {
                     directory <- paste("file:", tclvalue(directoryVariable), sep="")
                     packages <- utils:::CRAN.packages(contriburl=directory)[,1]
                     present <- missing.packages %in% packages
-                    if (!all(present)){
-                        errorMessage()
-                        stop("Missing packages.", call.=FALSE)
-                        }
-                    utils:::install.packages(missing.packages, contriburl=directory, lib=.libPaths()[1])
+                    if (!all(present)) errorMessage()
+                    if (!any(present)) return()
+                    utils:::install.packages(missing.packages[present], contriburl=directory, lib=.libPaths()[1])
                     }
-                for (package in missing.packages) require(package, character.only=TRUE)
+                for (package in missing.packages[present]) require(package, character.only=TRUE)
                 }
             onCancel <- function(){
                 tkgrab.release(top)
                 tkdestroy(top)
-                stop("Missing packages.", call.=FALSE)
+                return()
                 }
             onHelp <- function() help("install.packages")
             buttonsFrame <- tkframe(top)
@@ -114,6 +111,5 @@
             tkfocus(top)
             tkwait.window(top)
             }
-        else stop("Missing packages: ", paste(missing.packages, collapse=", "), call.=FALSE)
         }           
     }

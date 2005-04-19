@@ -1,16 +1,16 @@
 # Statistics Menu dialogs
 
-# last modified 10 July 04 by J. Fox
+# last modified 13 Mar 05 by J. Fox
 
     # Nonparametric tests menu
     
 twoSampleWilcoxonTest <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric()) return()
-    if (!checkTwoLevelFactors()) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric()) return()
+##    if (!checkTwoLevelFactors()) return()
     initializeDialog(title="Two-Sample Wilcoxon Test")
-    groupBox <- variableListBox(top, .twoLevelFactors, title="Groups (pick one)")
-    responseBox <- variableListBox(top, .numeric, title="Response Variable (pick one)")
+    groupBox <- variableListBox(top, TwoLevelFactors(), title="Groups (pick one)")
+    responseBox <- variableListBox(top, Numeric(), title="Response Variable (pick one)")
     onOK <- function(){
         group <- getSelection(groupBox)
         if (length(group) == 0) {
@@ -24,8 +24,8 @@ twoSampleWilcoxonTest <- function(){
             }
         alternative <- as.character(tclvalue(alternativeVariable))
         test <- as.character(tclvalue(testVariable))
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        closeDialog()
+        .activeDataSet <- ActiveDataSet()
         doItAndPrint(paste("tapply(", paste(.activeDataSet,"$", response, sep=""),
             ", ", paste(.activeDataSet,"$", group, sep=""), ", median, na.rm=TRUE)", sep=""))
         if (test == "default"){
@@ -35,7 +35,7 @@ twoSampleWilcoxonTest <- function(){
         else doItAndPrint(paste("wilcox.test(", response, " ~ ", group, ", alternative='", 
             alternative, "', exact=", test=="exact", 
             ", correct=", test=="correct",", data=", .activeDataSet, ")", sep=""))
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="wilcox.test")
     radioButtons(name="alternative", buttons=c("twosided", "less", "greater"), values=c("two.sided", "less", "greater"),
@@ -51,14 +51,16 @@ twoSampleWilcoxonTest <- function(){
     }    
 
 pairedWilcoxonTest <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric(2)) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric(2)) return()
     initializeDialog(title="Paired Wilcoxon Test")
+    .numeric <- Numeric()
     xBox <- variableListBox(top, .numeric, title="First variable (pick one)")
     yBox <- variableListBox(top, .numeric, title="Second variable (pick one)")
     onOK <- function(){
         x <- getSelection(xBox)
         y <- getSelection(yBox)
+        closeDialog()
         alternative <- as.character(tclvalue(alternativeVariable))
         test <- as.character(tclvalue(testVariable))
         if (length(x) == 0 | length(y) == 0) {
@@ -69,8 +71,7 @@ pairedWilcoxonTest <- function(){
             errorCondition(recall=pairedWilcoxonTest, message="The two variables must be different.")
             return()
             }
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        .activeDataSet <- ActiveDataSet()
         doItAndPrint(paste("median(", .activeDataSet, "$", x, " - ", .activeDataSet, "$", y, 
             ", na.rm=TRUE) # median difference", sep=""))
         if (test == "default"){
@@ -91,8 +92,7 @@ pairedWilcoxonTest <- function(){
                 ", alternative='", alternative, "', correct=", test=="correct",
                 ", exact=FALSE, paired=TRUE)", sep=""))
                 }
-        tkdestroy(top)
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="wilcox.test")
     radioButtons(name="alternative", buttons=c("twosided", "less", "greater"), values=c("two.sided", "less", "greater"),
@@ -107,12 +107,12 @@ pairedWilcoxonTest <- function(){
     }
     
 KruskalWallisTest <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric()) return()
-    if (!checkFactors()) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric()) return()
+##    if (!checkFactors()) return()
     initializeDialog(title="Kruskal-Wallis Rank Sum Test")
-    groupBox <- variableListBox(top, .factors, title="Groups (pick one)")
-    responseBox <- variableListBox(top, .numeric, title="Response Variable (pick one)")
+    groupBox <- variableListBox(top, Factors(), title="Groups (pick one)")
+    responseBox <- variableListBox(top, Numeric(), title="Response Variable (pick one)")
     onOK <- function(){
         group <- getSelection(groupBox)
         if (length(group) == 0) {
@@ -120,17 +120,17 @@ KruskalWallisTest <- function(){
             return()
             }
         response <- getSelection(responseBox)
+        closeDialog()
         if (length(response) == 0) {
             errorCondition(recall=KruskalWallisTest, message="You must select a response variable.")
             return()
             }
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        .activeDataSet <- ActiveDataSet()
         doItAndPrint(paste("tapply(", paste(.activeDataSet, "$", response, sep=""),
             ", ", paste(.activeDataSet, "$", group, sep=""), ", median, na.rm=TRUE)", sep=""))
         doItAndPrint(paste("kruskal.test(", response, " ~ ", group, ", data=",
             .activeDataSet, ")", sep=""))
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="kruskal.test")
     tkgrid(getFrame(groupBox), getFrame(responseBox), sticky="nw")

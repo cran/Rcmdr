@@ -7,97 +7,97 @@ Version 0.6-0
     o Allow font-size selection via options("Rcmdr.fontsize") for text in the log window.
 
     o Set pager to tkpager (suggested by Martin Maechler).
-    
+
     o Added "Exit" menu items; intercept R Commander window close (suggested by Martin Maechler).
-    
+
     o Cleaned up menus and dialog boxes.
-    
+
     o Added ability to load log files.
-    
+
     o Reorganized items on File and Data menus (suggested by Martin Maechler).
-    
+
     o Added point-identification to scatterplots (suggested by Bob Andersen).
-    
+
 Version 0.7-0
 
     o Added subset expressions to model dialog boxes and some other dialogs calling functions using formulas.
-    
+
     o Added jitter option to scatterplots.
-    
+
     o Many new input-error checks.
-    
+
     o Added delete-variable dialog.
-    
+
     o Added provision for optionally invoking tkwait while the Commander runs.
-    
+
     o Added help menu.
-    
+
 Version 0.7-1
 
     o Help buttons fixed so that they don't hang tkpager when it's used to display help files; tkpager only used now on non-Windows systems.
-    
+
 Version 0.8-0
 
     o More error checking.
-    
+
     o Don't allow a non-data-frame to become the active data set.
-    
+
     o Added "Convert numeric variable to factor" menu item and dialog (suggested by Bob Andersen and Peter Dalgaard).
-    
+
     o Added "Reorder factor levels" menu item and dialog (suggested by Bob Andersen).
-    
+
     o Reorganized Data menu, adding "Manage variables" sub-menu.
-    
+
     o New version of "Read data set from an attached package" dialog (suggested by several people).
-    
+
     o Added "influence plots" to the Model menu (suggested by Bob Andersen).
-    
+
 Version 0.8-1
 
     o Added "add observation statistics" to Model menu.
-    
+
 Version 0.8-2
 
     o Further error checks.
-    
+
     o Added variance-inflation factors to Model menu.
-    
+
     o Added Statistics -> Dimensional analysis menu with scale reliability, principal-components analysis, and factor analysis (suggested by Bob Andersen).
-    
+
     o Added Spearman rank-order and partial correlations to the Correlation Matrix dialog.
-    
+
     o Added Standardize item to Data -> Manage variables menu.
-    
+
     o Reorganized Data menu, adding "Data in packages" and  "Active data set" submenus, and items to get help on active data set and to list variables in it.
-    
+
 Version 0.8-3
 
     o Changed Compute dialog to use with(activeDataSet, expression) rather than to evaluate the expression in the global environment.
-    
+
     o Added RcmdrPager function for non-Windows systems, a version of the tkpager modified slightly to use the Rcmdr monospaced font and a white background. This is for non-Windows systems.
-    
+
     o Added Data -> Active data set -> Export active data set.
-    
+
     o Reworked package initialization so as not to fail when a required package -- probably car -- is missing (thanks to Brian Ripley for help here).
-    
+
     o Reworked options, mostly for better font support in non-Windows systems, but also to allow configurable size of log window, etc. Made default log window larger.
-    
+
     o Added check box to the Commander window to enable/disable attaching of active data set.
-    
+
     o Added flexibility to Data -> Import data -> From text file. Other small changes to Delete variables and Recode dialogs.
-    
+
     o Added Statistics -> Summaries -> Active data set.
-    
+
     o Cleaned up some dialogs -- for example, lm and glm dialogs have initial focus in the lhs field and tab directly to the rhs field.
-    
+
     o Changes to all dialogs to ensure better behaviour, particularly in fast Windows XP systems: preventing scrollbars from sticking and dialogs from displaying completely (thanks to Peter Dalgaard and, especially, Marc Schwartz).
-    
+
     o Re-executing lines from the log with assignment to a list (or data frame) element (e.g., data$x <- y) now works.
 
 Version 0.8-4
 
     o Minor bug fixes and additional input-error checks (many suggested by Tony Christensen).
-    
+
     o Documentation for Recode, Compute, linearModel, and generalizedLinearModel dialogs. More extensive documentation for the Commander.
 
     o Changes to list*() utility functions to ensure that all objects of a given class are found, and not masked by local variables or objects in the base package.
@@ -105,233 +105,267 @@ Version 0.8-4
     o Many small changes to ensure that objects in the global environment are not masked by objects in the base package.
 
     o Added Graphs -> Line graph.
-    
+
 Version 0.9-0
 
     o More flexible customization. All config files are now in the etc subdirectory, including:
-    
+
       - Rcmdr-menus.txt: defines the Rcmdr menus
-      
+
       - log-exceptions.txt: a list of functions that are prevented from printing output when executed from the log window.
 
       - compareModels.demo: contains a demonstration of how to add a dialog to Rcmdr. Rename this file to compareModels.R and uncomment the corresponding menu-definition line in Rcmdr-menus.txt.
 
     o Some more functions in the package are exported to support writing extensions.
-    
+
     o Made active-data-set and active-model "information fields" into buttons that can be used to select the active data set and model.
 
     o Added "Subset active data set", "Remove cases with missing data", and "Set case names" to Data -> Active data set menu.
-    
+
     o Added many error checks for adequate variables in the active data set.
-    
+
     o Ensured that focus returns to the proper window after an error.
-    
+
     o Commands generated by View and Edit Data Set buttons now appear in the log and sessions windows.
 
     o As an option, bound double-left-mouse-click to default button in all dialogs.
-    
+
     o Added more sophisticated interface for linearModel and generalizedLinearModel dialogs (suggested by Bob Stine).
-    
+
     o Where appropriate, previous field-values are retained in linearModel and generalizedLinearModel dialogs (suggested by Sandy Weisberg). Models are numbered.
-    
+
     o Generalized-linear models dialog now only shows appropriate links for the currently selected family.
-        
+
     o Added "Data -> New data set" menu, which opens data editor with empty data frame.
-    
+
     o Much improved stem-and-leaf display using stem.leaf function (courtesy of Peter Wolf).
-    
+
     o Added "grab.focus" option to allow disabling focus grabs on systems where this causes problem.
-    
+
     o Added "File -> Options" menu to set options and restart the Commander.
-    
+
     o On exit, the Commander cleans up global variables used for program control (from correspondence with Kjetil Brinchmann Halvorsen).
 
     o Added distribution plots to the Distributions menu (suggested by Yan Wong).
-    
+
     o Small interface changes and bug fixes.
-    
+
 Version 0.9-2
 
     o Added Hist function, a wrapper to hist permitting percentage as well as frequency and density scaling.
-    
+
     o Added "Data -> Manage variables in active data set -> Rename variables" menu and dialog, mostly to get around crashes due to changing names in the data editor.
-    
+
     o Improved formatting of percentage tables; now require abind package.
-    
+
     o Added "Statistics -> Contingency Tables -> Enter and analyze two-way table" menu and dialog (suggested by Aniko Szabo).
-    
+
     o Added "Graphs -> Index plot" menu and dialog.
-    
+
     o Added "Graphs -> Quantile-comparison plot" menu and dialog (suggested by and improved by Martin Maechler).
-    
+
     o Added "Models -> Effect plots" menu; now require effects package.
-    
+
     o Added "Models -> Residual quantile-comparison plot" menu and dialog.
-    
+
     o Added option to suppress edit button in the Commander window (to avoid crashes in Windows).
-    
+
     o Fixed problem that arose (associated with internal use of <<-) when using a data set exported from a package with a namespace (e.g, MASS).
-    
+
     o Added Edit menu with Cut, Copy, Paste, Delete, Find, and Select all (suggested by Brian Ripley).
-    
+
     o Added a right-click "context" menu to the log/script window.
-        
+
     o Small changes.
 
 Version 0.9-3
 
     o Reorganized Models menu using sub-menus (Hypothesis tests, Numerical diagnostics, Graphs).
-    
+
     o Added "Models -> Hypothesis tests -> Test linear hypothesis" menu and dialog.
-    
+
     o Added "Models -> Hypothesis tests -> Compare models" menu and dialog.
-    
+
     o Added Breusch-Pagan test, Durbin-Watson test, and RESET test to "Models -> Numerical diagnostics" menu; lmtest package now required.
-    
-    
+
+
 Version 0.9-4
-    
-    o Cleaned up code in enterTable and testLinearHypothesis functions to eliminate use of global variables. 
-    
+
+    o Cleaned up code in enterTable and testLinearHypothesis functions to eliminate use of global variables.
+
     o Added plotMeans function; "Graphs -> Plot of means" menu and dialog; option for pairwise comparisons to one-way ANOVA dialog; "Data -> Manage variables in active data set -> Define contrasts for a factor" menu and dialog; chi-square goodness-of-fit test to frequency distribution dialog -- all from suggestions by Murray Logan.
 
     o Now use the showData function in the relimp package to display data frames (thanks to David Firth).
-    
+
     o Added commas as decimal points as an option to inport text files (as suggested by Philippe Grosjean).
-    
+
     o Try to insure that the active data set stays in sync with the active model when data sets or models are changed (suggested by Philippe Grosjean).
-    
+
     o Added "Graphs -> 3D scatterplot" menu and dialog and supporting scatter3d function; depends on mgcv and rgl packages, the latter available at <http://wsopuppenkiste.wiso.uni-goettingen.de/~dadler/rgl/>.
 
     o Added "Models -> Numerical diagnostics -> Bonferroni outlier test".
-    
+
     o New sort.names Rcmdr option; if TRUE (now the default), names of variables are sorted alphabetically in variable lists.
-    
+
     o Small changes to handling lines executed from the log.
-    
-    o Small bug fixes and interface improvements. 
-    
+
+    o Small bug fixes and interface improvements.
+
 Version 0.9-5
 
     o Small bug fixes.
-    
+
 Version 0.9-6
 
     o Small changes to scatter3d; rgl and mgcv packages now required.
-    
+
     o Calls to data() now quote package in package= argument, necessary for R 1.9.0 (thanks to Erich Neuwirth for pointing this out).
-    
+
 Version 0.9-7
 
     o Small bug fixes/improvements.
-    
+
 Version 0.9-8
 
     o Moved levene.test and influence.plot functions to the car package (as suggested by Henric Nilsson).
-    
-    o Removed dependencies on ctest and tcltk packages. 
-    
+
+    o Removed dependencies on ctest and tcltk packages.
+
     o Added .csv and .CSV to list of text-file types (suggested by Adriano Azevedo-Filho).
-    
+
     o Fixed bug in computation of error bars in plotMeans (reported by Andrea De Cesarei).
-    
+
 Version 0.9-9
 
     o  Major changes to the R Commander interface:
-    
+
         - New default is for output to appear in an output window within the Commander window (suggested by Brian Ripley).
-        
+
         - Toolbar, options, and option dialog rearranged to conform to the new scheme.
-        
+
         - Log/script files now have .R extension (suggested by Philippe Grosjean); the output window can be saved to a file
           (by default with a .txt extension).
-          
-        - The Commander window is now resizable. 
-        
+
+        - The Commander window is now resizable.
+
         - Individual commands entered into the log/script window can extend over more than one line (with additional lines indented).
-        
+
     o  Added "Clear" item to Edit menu and context menus.
-        
+
     o  Added setOutputWidth dialog and corresponding menu item.
-    
+
     o  Various small changes for compatibility with the new interface.
-    
-    o  Changes to numerical model tests dialogs for compatibility with new lmtest package. 
-    
-    o  Small bug fixes. 
-    
+
+    o  Changes to numerical model tests dialogs for compatibility with new lmtest package.
+
+    o  Small bug fixes.
+
 Version 0.9-10
 
     o  The Rcmdr dialog-generating functions were completely rewritten, using much more modularized code (as a result of gentle prodding by Martin Maechler). As a consequence, the R code for the package has been reduced by nearly 40 percent, from about 10,700 lines to about 6600 lines. See help("Rcmdr.Utilities") for the utilities supporting these changes.
 
     o  If there are missing required packages at startup, the Rcmdr now tries to install them.
-    
-    o  The Commander() now intercepts warnings and prints them in a message box.
-    
-    o  New function (bin.var) and dialog to bin a numeric variable (contributed by Dan Putler)
-    
-    o  Added "Save R workspace" and "Save R workspace as" to File menu (suggested by Dan Putler).
-    
-    o  Added "Save graph to file" submenu to File menu, with items "as bitmap", "as PDF/Postscript/EPS", and "3D RGL graph" (súggested by Dan Putler).  
 
-    o  Small bug fixes and interface enhancements. 
-    
+    o  The Commander() now intercepts warnings and prints them in a message box.
+
+    o  New function (bin.var) and dialog to bin a numeric variable (contributed by Dan Putler)
+
+    o  Added "Save R workspace" and "Save R workspace as" to File menu (suggested by Dan Putler).
+
+    o  Added "Save graph to file" submenu to File menu, with items "as bitmap", "as PDF/Postscript/EPS", and "3D RGL graph" (súggested by Dan Putler).
+
+    o  Small bug fixes and interface enhancements.
+
 Version 0.9-11
 
     o  Added LazyLoad: no to DESCRIPTION file to prevent lazy loading of functions in the package in R 2.0.0 (to prevent problems uncovered by Brian Ripley).
 
-Version 0.9-12 
+Version 0.9-12
 
     o  SciViews compatibility added, provided by Philippe Grosjean. This does not affect the "standard" use of the Rcmdr package and currently applies only to the Windows platform.
 
     o  Added Control-S to save log and output windows (suggested by Harald Weedon-Fekjaer).
 
-    o  Small bug fixes. 
-    
+    o  Small bug fixes.
+
     o  Changed default "grab.focus" option to FALSE for non-Windows systems.
-    
-    o  Added "report.X11.warnings" options, with default of FALSE, to suppress X11 protocol error warnings in (some?) Linux system. This is, I hope, a stop-gap measure until the source of the problem is discovered. 
-    
+
+    o  Added "report.X11.warnings" options, with default of FALSE, to suppress X11 protocol error warnings in (some?) Linux system. This is, I hope, a stop-gap measure until the source of the problem is discovered.
+
     o  Changes to printed output routing for compatibility with R 2.0.0.
-    
+
     o  scatter3d() now returns model summaries (rather than prints them as side effects) when model.summary=TRUE (to fix a problem reported by Paul Johnson).
-    
+
 Version 0.9-13
 
-    o  Added "from STATA data set..." to the "Import" menu; contributed by Michael Ash. 
-    
+    o  Added "from STATA data set..." to the "Import" menu; contributed by Michael Ash.
+
 Version 0.9-14
 
-    o  New facilities for incorporating additional classes of statistical models. 
+    o  New facilities for incorporating additional classes of statistical models.
 
     o  Added support for multinomial logit models [via multinom() in nnet] and for proportional-odds logit models [via polr() in MASS].
-    
+
 Version 0.9-15
 
     o  Improvements to doItAndPrint(), justDoIt(), and checkWarnings() to handle wider range of output situations and to avoid intercepting errors and warnings when it is not desirable to do so (prompted by problems encountered by Bernhard Pfaff and suggestions by Brian Ripley).
 
     o  If the rgl package is absent, a message is printed in the console, but the Rcmdr can still be used.
-    
+
     o  Added various cluster-analysis facilities, courtesy of Dan Putler.
 
     o  Small bug fixes.
-    
+
 Version 0.9-16
 
    o  Fixed a problem in the new output facility, where a test for S4 objects sometimes failed.
-   
+
 Version 0.9-17
 
    o  Changed the test for S4 objects (courtesy of John Chambers).
-   
+
    o  The active model is no longer set to NULL when variables are simply added to, deleted from, or modified in the active data set (from a suggestion by Andy Jaworski).
 
    o  Data-set help now works with HTML help (after bug report from Dan Putler); other improvements to data-set help.
-   
+
    o  New Rcmdr option, showData.threshold, to set maximum number of variables in the active data set beyond which showData() won't be used to display the data set.
 
    o  New "File -> Load package(s)" menu item (suggested by Rob Cribbie).
-   
+
    o  Small changes and bug fixes.
 
-    
+Version 0.9-18
+
+   o  Added "Models -> Confidence intervals" menu item, along with Confint, Confint.glm, confint.multinom, and confint.polr.
+
+   o  Added preventDoubleClick argument to dialogSuffix() function so that modelling functions still work when the double.click option is set (to fix a problem discovered by Andy Jaworski).
+
+   o  Changed handling of assignments for commands executed from the Rcmdr script window so that a wider variety of commands will be executed correctly (to deal with a problem discovered by Ralph Grundel). The "console" provided by the script window still isn't bullet-proof.
+
+   o  New closeDialog() utility function.
+
+   o  Changes to the structure of the menu-definition file to support conditionally activated menu items; new function activateMenus() to conditionally activate menu items. Several new exported "predicate" utilities [e.g., activeDataSetP()] to support activation of menus.
+
+   o  Rcmdr windows no longer pop up at random positions on the screen, but on top of the Commander window.
+
+   o  State information is now saved in a separate environment rather than in the global environment, using functions adapted (with permission) from Philippe Grosjean; new functions getRcmdr() and putRcmdr() to store and retrieve state information; several convenience functions [e.g., ActiveDataSet()] to set or retrieve frequently used state information.
+
+   o  Messages (errors, warnings, and "notes") not requiring a response are now routed to a Messages window rather than to Tk message boxes.
+
+   o  Output width now automatically adjusts to the current width of the Output window.
+
+   o  The default is now *not* to attach the active data set.
+
+   o  Some menu items moved from File to new Tools menu.
+
+   o  Improved start-up (e.g., if non-essential packages are missing, rather than stopping, corresponding menu-items are inactivated).
+
+   o  Small changes.
+   
+Version 1.0-0
+
+   o  No feature changes.
+   
+   o  Change to svlogger (from Philippe Grosjean) to remove non-ascii characters (created problems with East Asian language version of R.)
+   
+   o  New introductory manual.

@@ -1,6 +1,6 @@
 # Distributions menu dialogs
 
-# last modified 25 June 04 by J. Fox
+# last modified 2 April 05 by J. Fox
 
 normalQuantiles <- function(){
     initializeDialog(title="Normal Quantiles")
@@ -14,6 +14,7 @@ normalQuantiles <- function(){
     lowerTailButton <- tkradiobutton(top, variable=tailVar, value="lower")
     upperTailButton <- tkradiobutton(top, variable=tailVar, value="upper")
     onOK <- function(){
+        closeDialog()
         quantiles <- gsub(" ", ",", tclvalue(quantilesVar))
         if ("" == quantiles) {
             errorCondition(recall=normalQuantiles, message="No probabilities specified.")
@@ -22,11 +23,9 @@ normalQuantiles <- function(){
         mu <- as.numeric(tclvalue(muVar))
         sigma <- as.numeric(tclvalue(sigmaVar))
         tail <- tclvalue(tailVar)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
-        doItAndPrint(paste("qnorm(c(", quantiles, "), mean=", mu, 
+        doItAndPrint(paste("qnorm(c(", quantiles, "), mean=", mu,
             ", sd=", sigma, ", lower.tail=", tail == "lower",")", sep=""))
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="qnorm")
     tkgrid(tklabel(top, text="Probabilities"), quantilesEntry, sticky="e")
@@ -55,6 +54,7 @@ normalProbabilities <- function(){
     lowerTailButton <- tkradiobutton(top, variable=tailVar, value="lower")
     upperTailButton <- tkradiobutton(top, variable=tailVar, value="upper")
     onOK <- function(){
+        closeDialog()
         probabilities <- gsub(" ", ",", tclvalue(probabilitiesVar))
         if ("" == probabilities) {
             errorCondition(recall=normalProbabilities, message="No values specified.")
@@ -63,11 +63,9 @@ normalProbabilities <- function(){
         mu <- as.numeric(tclvalue(muVar))
         sigma <- as.numeric(tclvalue(sigmaVar))
         tail <- tclvalue(tailVar)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         doItAndPrint(paste("pnorm(c(", probabilities, "), mean=", mu, 
             ", sd=", sigma, ", lower.tail=", tail == "lower",")", sep=""))
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="pnorm")
     tkgrid(tklabel(top, text="Variable value(s)"), probabilitiesEntry, sticky="e")
@@ -94,6 +92,7 @@ tQuantiles <- function(){
     lowerTailButton <- tkradiobutton(top, variable=tailVar, value="lower")
     upperTailButton <- tkradiobutton(top, variable=tailVar, value="upper")
     onOK <- function(){
+        closeDialog()
         quantiles <- gsub(" ", ",", tclvalue(quantilesVar))
         if ("" == quantiles) {
             errorCondition(recall=tQuantiles, message="No probabilities specified.") 
@@ -105,11 +104,9 @@ tQuantiles <- function(){
             return()
             }
         tail <- tclvalue(tailVar)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         doItAndPrint(paste("qt(c(", quantiles, "), df=", df, 
             ", lower.tail=", tail == "lower",")", sep=""))
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="qt")
     tkgrid(tklabel(top, text="Probabilities"), quantilesEntry, sticky="e")
@@ -134,6 +131,7 @@ tProbabilities <- function(){
     lowerTailButton <- tkradiobutton(top, variable=tailVar, value="lower")
     upperTailButton <- tkradiobutton(top, variable=tailVar, value="upper")
     onOK <- function(){
+        closeDialog()
         probabilities <- gsub(" ", ",", tclvalue(probabilitiesVar))
         df <- as.numeric(tclvalue(dfVar))
         if ("" == probabilities) {
@@ -146,11 +144,9 @@ tProbabilities <- function(){
             return()
             }
         tail <- tclvalue(tailVar)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         doItAndPrint(paste("pt(c(", probabilities, "), df=", df, 
             ", lower.tail=", tail == "lower",")", sep=""))
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="pt")
     tkgrid(tklabel(top, text="Variable value(s)"), probabilitiesEntry, sticky="e")
@@ -175,6 +171,7 @@ chisqQuantiles <- function(){
     lowerTailButton <- tkradiobutton(top, variable=tailVar, value="lower")
     upperTailButton <- tkradiobutton(top, variable=tailVar, value="upper")
     onOK <- function(){
+        closeDialog()
         quantiles <- gsub(" ", ",", tclvalue(quantilesVar))
         if ("" == quantiles) {
             errorCondition(recall=chisqQuantiles, message="No probabilities specified.")
@@ -186,11 +183,9 @@ chisqQuantiles <- function(){
             return()
             }
         tail <- tclvalue(tailVar)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         doItAndPrint(paste("qchisq(c(", quantiles, "), df=", df, 
             ", lower.tail=", tail == "lower",")", sep=""))
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="qchisq")
     tkgrid(tklabel(top, text="Probabilities"), quantilesEntry, sticky="e")
@@ -215,6 +210,7 @@ chisqProbabilities <- function(){
     lowerTailButton <- tkradiobutton(top, variable=tailVar, value="lower")
     upperTailButton <- tkradiobutton(top, variable=tailVar, value="upper")
     onOK <- function(){
+        closeDialog()
         probabilities <- gsub(" ", ",", tclvalue(probabilitiesVar))
         if ("" == probabilities) {
             errorCondition(recall=chisqProbabilities, message="No values specified.")
@@ -226,11 +222,9 @@ chisqProbabilities <- function(){
             return()
             }
         tail <- tclvalue(tailVar)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         doItAndPrint(paste("pchisq(c(", probabilities, "), df=", df, 
             ", lower.tail=", tail == "lower",")", sep=""))
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="pchisq")
     tkgrid(tklabel(top, text="Variable value(s)"), probabilitiesEntry, sticky="e")
@@ -258,6 +252,7 @@ FQuantiles <- function(){
     lowerTailButton <- tkradiobutton(top, variable=tailVar, value="lower")
     upperTailButton <- tkradiobutton(top, variable=tailVar, value="upper")
     onOK <- function(){
+        closeDialog()
         quantiles <- gsub(" ", ",", tclvalue(quantilesVar))
         if ("" == quantiles) {
             errorCondition(recall=FQuantiles, message="Probabilities not specified")
@@ -270,11 +265,9 @@ FQuantiles <- function(){
             return()
             }
         tail <- tclvalue(tailVar)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         doItAndPrint(paste("qf(c(", quantiles, "), df1=", df1, 
             ", df2=", df2, ", lower.tail=", tail == "lower",")", sep=""))
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="qf")
     tkgrid(tklabel(top, text="Probabilities"), quantilesEntry, sticky="e")
@@ -303,6 +296,7 @@ FProbabilities <- function(){
     lowerTailButton <- tkradiobutton(top, variable=tailVar, value="lower")
     upperTailButton <- tkradiobutton(top, variable=tailVar, value="upper")
     onOK <- function(){
+        closeDialog()
         probabilities <- gsub(" ", ",", tclvalue(probabilitiesVar))
         if ("" == probabilities) {
             errorCondition(recall=FProbabilities, message="Values not specified.")
@@ -315,11 +309,9 @@ FProbabilities <- function(){
             return()
             }
         tail <- tclvalue(tailVar)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         doItAndPrint(paste("pf(c(", probabilities, "), df1=", df1, 
             ", df2=", df2, ", lower.tail=", tail == "lower",")", sep=""))
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="pf")
     tkgrid(tklabel(top, text="Variable value(s)"), probabilitiesEntry, sticky="e")
@@ -348,6 +340,7 @@ binomialQuantiles <- function(){
     lowerTailButton <- tkradiobutton(top, variable=tailVar, value="lower")
     upperTailButton <- tkradiobutton(top, variable=tailVar, value="upper")
     onOK <- function(){
+        closeDialog()
         quantiles <- gsub(" ", ",", tclvalue(quantilesVar))
         trials <- as.numeric(tclvalue(trialsVar))
         prob <- as.numeric(tclvalue(probVar))
@@ -364,11 +357,9 @@ binomialQuantiles <- function(){
             return()
             }
         tail <- tclvalue(tailVar)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         doItAndPrint(paste("qbinom(c(", quantiles, "), size=", trials, 
             ", prob=", prob, ", lower.tail=", tail == "lower",")", sep=""))
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="qbinom")
     tkgrid(tklabel(top, text="Probabilities"), quantilesEntry, sticky="e")
@@ -397,6 +388,7 @@ binomialProbabilities <- function(){
     lowerTailButton <- tkradiobutton(top, variable=tailVar, value="lower")
     upperTailButton <- tkradiobutton(top, variable=tailVar, value="upper")
     onOK <- function(){
+        closeDialog()
         probabilities <- gsub(" ", ",", tclvalue(probabilitiesVar))
         trials <- as.numeric(tclvalue(trialsVar))
         prob <- as.numeric(tclvalue(probVar))
@@ -413,11 +405,9 @@ binomialProbabilities <- function(){
             return()
             }
         tail <- tclvalue(tailVar)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         doItAndPrint(paste("pbinom(c(", probabilities, "), size=", trials, 
             ", prob=", prob, ", lower.tail=", tail == "lower",")", sep=""))
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="pbinom")
     tkgrid(tklabel(top, text="Variable value(s)"), probabilitiesEntry, sticky="e")
@@ -445,6 +435,7 @@ binomialMass <- function(){
     probVar <- tclVar(".5")
     probEntry <- tkentry(top, width="6", textvariable=probVar)
     onOK <- function(){
+        closeDialog()
         trials <- as.numeric(tclvalue(trialsVar))
         if (is.na(trials)) {
             errorCondition(recall=binomialMass, message="Binomial trials not specified.")
@@ -452,7 +443,7 @@ binomialMass <- function(){
             }
         if (trials > 50){
             if ("no" == tclvalue(checkTrials(trials))){
-                if (.grab.focus) tkgrab.release(top)
+                if (getRcmdr("grab.focus")) tkgrab.release(top)
                 tkdestroy(top)
                 binomialMass()
                 return()
@@ -463,8 +454,6 @@ binomialMass <- function(){
             errorCondition(recall=binomialMass, message="Probability of success not specified.")
             return()
             }
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         command <- paste("data.frame(Pr=dbinom(0:", trials, ", size=", trials, 
             ", prob=", prob, "))", sep="")
         logger(paste(".Table <- ", command, sep=""))
@@ -474,7 +463,7 @@ binomialMass <- function(){
         doItAndPrint(".Table")
         logger("remove(.Table)") 
         remove(.Table, envir=.GlobalEnv)       
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="dbinom")
     tkgrid(tklabel(top, text="Binomial trials"), trialsEntry, sticky="e")
@@ -494,6 +483,7 @@ PoissonMass <- function(){
     meanVar <- tclVar("")
     meanEntry <- tkentry(top, width="6", textvariable=meanVar)
     onOK <- function(){
+        closeDialog()
         mean <- as.numeric(tclvalue(meanVar))
         if (is.na(mean)) {
             errorCondition(recall=PoissonMass, message="Poisson mean not specified.")
@@ -504,14 +494,12 @@ PoissonMass <- function(){
         range <- max - min
         if (range > 50){
             if ("no" == tclvalue(checkRange(range))){
-                if (.grab.focus) tkgrab.release(top)
+                if (getRcmdr("grab.focus")) tkgrab.release(top)
                 tkdestroy(top)
                 PoissonMass()
                 return()
                 }
             }
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
         command <- paste("data.frame(Pr=round(dpois(", min, ":", max, ", lambda=", mean, "), 4))", sep="")
         logger(paste(".Table <- ", command, sep=""))
         assign(".Table", justDoIt(command), envir=.GlobalEnv)
@@ -520,7 +508,7 @@ PoissonMass <- function(){
         doItAndPrint(".Table")
         logger("remove(.Table)") 
         remove(.Table, envir=.GlobalEnv)       
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="dpois")
     tkgrid(tklabel(top, text="Mean"), meanEntry, sticky="e")

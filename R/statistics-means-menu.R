@@ -1,17 +1,17 @@
 # Statistics Menu dialogs
 
-# last modified 10 July 04 by J. Fox
+# last modified 16 Mar 05 by J. Fox
 
     # Means menu
 
 independentSamplesTTest <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric()) return()
-    if (!checkTwoLevelFactors()) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric()) return()
+##    if (!checkTwoLevelFactors()) return()
     initializeDialog(title="Independent Samples t-Test")
     variablesFrame <- tkframe(top)
-    groupBox <- variableListBox(variablesFrame, .twoLevelFactors, title="Groups (pick one)")
-    responseBox <- variableListBox(variablesFrame, .numeric, title="Response Variable (pick one)")
+    groupBox <- variableListBox(variablesFrame, TwoLevelFactors(), title="Groups (pick one)")
+    responseBox <- variableListBox(variablesFrame, Numeric(), title="Response Variable (pick one)")
     onOK <- function(){
         group <- getSelection(groupBox)
         if (length(group) == 0) {
@@ -26,13 +26,12 @@ independentSamplesTTest <- function(){
         alternative <- as.character(tclvalue(alternativeVariable))
         level <- tclvalue(confidenceLevel)
         variances <- as.character(tclvalue(variancesVariable))
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        closeDialog()
         doItAndPrint(paste("t.test(", response, "~", group,
             ", alternative='", alternative, "', conf.level=", level,
             ", var.equal=", variances,
-            ", data=", .activeDataSet, ")", sep=""))
-        tkfocus(.commander)
+            ", data=", ActiveDataSet(), ")", sep=""))
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="t.test")
     optionsFrame <- tkframe(top)
@@ -56,9 +55,10 @@ independentSamplesTTest <- function(){
     }
 
 pairedTTest <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric(2)) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric(2)) return()
     initializeDialog(title="Paired t-Test")
+    .numeric <- Numeric()
     xBox <- variableListBox(top, .numeric, title="First variable (pick one)")
     yBox <- variableListBox(top, .numeric, title="Second variable (pick one)")
     onOK <- function(){
@@ -74,14 +74,13 @@ pairedTTest <- function(){
             }
         alternative <- as.character(tclvalue(alternativeVariable))
         level <- tclvalue(confidenceLevel)
-        tkdestroy(top)
+        closeDialog()
+        .activeDataSet <- ActiveDataSet()
         doItAndPrint(paste("t.test(", .activeDataSet, "$", x, ", ", 
             .activeDataSet, "$", y,
             ", alternative='", alternative, "', conf.level=", level, 
             ", paired=TRUE)", sep=""))
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="t.test")
     radioButtons(top, name="alternative", buttons=c("twosided", "less", "greater"), values=c("two.sided", "less", "greater"),
@@ -98,10 +97,10 @@ pairedTTest <- function(){
     }
 
 singleSampleTTest <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric()) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric()) return()
     initializeDialog(title="Single-Sample t-Test")
-    xBox <- variableListBox(top, .numeric, title="Variable (pick one)")
+    xBox <- variableListBox(top, Numeric(), title="Variable (pick one)")
     onOK <- function(){
         x <- getSelection(xBox)
         if (length(x) == 0){
@@ -111,13 +110,12 @@ singleSampleTTest <- function(){
         alternative <- as.character(tclvalue(alternativeVariable))
         level <- tclvalue(confidenceLevel)
         mu <- tclvalue(muVariable)
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
-        doItAndPrint(paste("t.test(", .activeDataSet, "$", x,
+        closeDialog()
+        doItAndPrint(paste("t.test(", ActiveDataSet(), "$", x,
             ", alternative='", alternative, "', mu=", mu, ", conf.level=", level, 
             ")", sep=""))
         tkdestroy(top)
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="t.test")
     radioButtons(top, name="alternative", buttons=c("twosided", "less", "greater"), values=c("two.sided", "less", "greater"),
@@ -143,18 +141,19 @@ singleSampleTTest <- function(){
     }
 
 oneWayAnova <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric()) return()
-    if (!checkFactors()) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric()) return()
+##    if (!checkFactors()) return()
     initializeDialog(title="One-Way Analysis of Variance")
-    groupBox <- variableListBox(top, .factors, title="Groups (pick one)")
-    responseBox <- variableListBox(top, .numeric, title="Response Variable (pick one)")
+    groupBox <- variableListBox(top, Factors(), title="Groups (pick one)")
+    responseBox <- variableListBox(top, Numeric(), title="Response Variable (pick one)")
     optionsFrame <- tkframe(top)
     pairwiseVariable <- tclVar("0")
     pairwiseCheckBox <- tkcheckbutton(optionsFrame, variable=pairwiseVariable)
     onOK <- function(){
         group <- getSelection(groupBox)
         response <- getSelection(responseBox)
+        closeDialog()
         if (length(group) == 0){
             errorCondition(recall=oneWayAnova, message="You must selection a groups factor.")
             return()
@@ -163,8 +162,7 @@ oneWayAnova <- function(){
             errorCondition(recall=oneWayAnova, message="You must selection a response variable.")
             return()
             }
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        .activeDataSet <- ActiveDataSet()
         doItAndPrint(paste("anova(lm(", response, " ~ ", group, ", data=", .activeDataSet, "))", sep=""))
         doItAndPrint(paste("tapply(", .activeDataSet, "$", response, ", ", .activeDataSet, "$", group, 
             ", mean, na.rm=TRUE) # means", sep=""))
@@ -175,12 +173,12 @@ oneWayAnova <- function(){
         pairwise <- tclvalue(pairwiseVariable)
         if (pairwise == 1) {
             if (eval(parse(text=paste("length(levels(", .activeDataSet, "$", group, ")) < 3")))) 
-                tkmessageBox (message="Factor has fewer than 3 levels; pairwise comparisons omitted.",
-                    icon="warning", type="ok")
+                Message(message="Factor has fewer than 3 levels; pairwise comparisons omitted.",
+                    type="warning")
             else doItAndPrint(paste("summary(simtest(", response, " ~ ", group, 
                 ', type="Tukey", data=', .activeDataSet, '))', sep=""))
             }
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="anova")
     tkgrid(getFrame(groupBox), getFrame(responseBox), sticky="nw")
@@ -191,15 +189,16 @@ oneWayAnova <- function(){
     }
     
 multiWayAnova <- function(){
-    if (!checkActiveDataSet()) return()
-    if (!checkNumeric()) return()
-    if (!checkFactors()) return()
+##    if (!checkActiveDataSet()) return()
+##    if (!checkNumeric()) return()
+##    if (!checkFactors()) return()
     initializeDialog(title="Multi-Way Analysis of Variance")
-    groupBox <- variableListBox(top, .factors, selectmode="multiple", title="Factors (pick one or more)")
-    responseBox <- variableListBox(top, .numeric, title="Response Variable (pick one)")
+    groupBox <- variableListBox(top, Factors(), selectmode="multiple", title="Factors (pick one or more)")
+    responseBox <- variableListBox(top, Numeric(), title="Response Variable (pick one)")
     onOK <- function(){
         groups <- getSelection(groupBox)
         response <- getSelection(responseBox)
+        closeDialog()
         if (length(groups) == 0){
             errorCondition(recall=multiWayAnova, message="You must selection at least one factor.")
             return()
@@ -208,8 +207,7 @@ multiWayAnova <- function(){
             errorCondition(recall=multiWayAnova, message="You must selection a response variable.")
             return()
             }
-        if (.grab.focus) tkgrab.release(top)
-        tkdestroy(top)
+        .activeDataSet <- ActiveDataSet()
         groups.list <- paste(paste(groups, "=", .activeDataSet, "$", groups, sep=""), collapse=", ")
         doItAndPrint(paste("Anova(lm(", response, " ~ ", paste(groups, collapse="*"),
              ", data=", .activeDataSet, "))", sep=""))
@@ -219,7 +217,7 @@ multiWayAnova <- function(){
              "), sd, na.rm=TRUE) # std. deviations", sep=""))
         doItAndPrint(paste("tapply(", .activeDataSet, "$", response, ", list(", groups.list,
              "), function(x) sum(!is.na(x))) # counts", sep=""))
-        tkfocus(.commander)
+        tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="Anova")
     tkgrid(getFrame(groupBox), getFrame(responseBox), sticky="nw")

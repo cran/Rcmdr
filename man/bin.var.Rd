@@ -10,7 +10,8 @@
 }
 
 \usage{
-bin.var(x, bins = 4, method = c("intervals", "proportions", "natural"), labels = FALSE)
+bin.var(x, bins = 4, method = c("intervals", "proportions", "natural"),
+    labels = FALSE)
 }
 
 \arguments{
