@@ -369,3 +369,7 @@ Version 1.0-0
    o  Change to svlogger (from Philippe Grosjean) to remove non-ascii characters (created problems with East Asian language version of R.)
    
    o  New introductory manual.
+   
+Version 1.0-1
+
+   o  Small bug fixes.

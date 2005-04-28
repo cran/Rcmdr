@@ -1,10 +1,10 @@
 # The R Commander and command logger
 
-# last modified 16 April 05 by J. Fox
+# last modified 26 April 05 by J. Fox
 #   slight changes 12 Aug 04 by Ph. Grosjean
 
 Commander <- function(){
-    version <- "1.0-0"
+    version <- "1.0-1"
     if (is.SciViews()) return(invisible(svCommander())) # +PhG
     setOption <- function(option, default, global=TRUE) {
         opt <- if (is.null(current[[option]])) default else current[[option]]
@@ -257,7 +257,7 @@ Commander <- function(){
                 else{
                     tkinsert(.output, "end", paste("+ ", lines[jline],"\n", sep=""))
                     tktag.add(.output, "currentLine", "end - 2 lines linestart", "end - 2 lines lineend")
-                    tktag.configure(.output, "currentLine", foreground=.command.text.color)
+                    tktag.configure(.output, "currentLine", foreground=getRcmdr("command.text.color"))
                     }
                 current.line <- paste(current.line, lines[jline])
                 jline <- jline + 1

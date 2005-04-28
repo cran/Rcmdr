@@ -117,7 +117,7 @@ listDataSets(envir = .GlobalEnv, ...)
 listFactors(dataSet=ActiveDataSet())
 listGeneralizedLinearModels(envir = .GlobalEnv, ...)
 listLinearModels(envir = .GlobalEnv, ...)
-listNumeric{dataSet=.activeDataSet}
+listNumeric(dataSet=ActiveDataSet())
 listTwoLevelFactors(dataSet=ActiveDataSet())
 listVariables(dataSet=ActiveDataSet())
 lmP()

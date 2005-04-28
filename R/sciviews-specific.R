@@ -2,7 +2,7 @@
 
 # last modified 19 April 2005 by Ph. Grosjean
 #  small fix to call to list.files() by J. Fox 17 Jan 05
-#  modifications 16 Mar 05 by J. Fox
+#  modifications 26 April 05 by J. Fox
 
 is.SciViews <- function() {
     # SciViews defines the option "SciViews.version".
@@ -250,10 +250,10 @@ refreshStatus <- function() {
             }
         }
         CmdFun <- getTemp(".guiCmd", mode = "function")
-        if (!is.null(CmdFun)) CmdFun("«Status")
+        if (!is.null(CmdFun)) CmdFun("$$$$Status")
         # Possibly update data in the object browser
         if (exists(".guiObjCallback", envir = TempEnv(), inherits = FALSE)) getTemp(".guiObjCallback")()
     } else {    # This should be SciViews Insider, or other similar client
-        cat("®StatusTextData: ", DataSet, ", Model: ", Model, Opts, "®", sep="")
+        cat("<<<<StatusTextData: ", DataSet, ", Model: ", Model, Opts, "<<<<", sep="")
     }
 }
