@@ -373,3 +373,11 @@ Version 1.0-0
 Version 1.0-1
 
    o  Small bug fixes.
+   
+Version 1.0-2
+
+   o  Can use tclServiceMode() for crisper dialog display; introduced corresponding crisp.dialogs option.
+   
+   o  Re-introduced code to handle X11 warnings properly (see changes under Version 0.9-12). The Rcmdr option name is now suppress.X11.warnings, and is set to TRUE when .Platform$GUI == "X11".
+   
+   o  Small bug fixes.

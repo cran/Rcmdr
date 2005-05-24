@@ -1,4 +1,4 @@
-# last modified 24 Mar 2005 by J. Fox
+# last modified 24 May 2005 by J. Fox
 
 # File menu dialogs
 
@@ -36,6 +36,7 @@ saveLog <- function() {
 saveLogAs <- function() {
     logFile <- tclvalue(tkgetSaveFile(filetypes='{"Script Files" {".R"}} {"All Files" {"*"}}',
         defaultextension="R", initialfile="RCommander.R"))
+    if (logFile == "") return()
     log <- tclvalue(tkget(LogWindow(), "1.0", "end"))
     fileCon <- file(logFile, "w")
     cat(log, file = fileCon)
@@ -60,6 +61,7 @@ saveOutput <- function() {
 saveOutputAs <- function() {
     outputFile <- tclvalue(tkgetSaveFile(filetypes='{"Output Files" {".txt"}} {"All Files" {"*"}}',
         defaultextension="txt", initialfile="RCommander.txt"))
+    if (outputFile == "") return()
     output <- tclvalue(tkget(OutputWindow(), "1.0", "end"))
     fileCon <- file(outputFile, "w")
     cat(output, file = fileCon)
@@ -108,6 +110,11 @@ closeCommander <- function(){
         if ("yes" == tclvalue(response3)) saveOutput()
         }
     if (.Platform$OS.type != "windows") options(getRcmdr("oldPager"))
+    if (getRcmdr("suppress.X11.warnings")) {
+        sink(type="message")
+        close(getRcmdr("messages.connection"))
+        remove(".messages", envir=.GlobalEnv)
+        }
     options(getRcmdr("saveOptions"))
     tkdestroy(CommanderWindow())
     tclvalue(.commander.done) <<- "1"

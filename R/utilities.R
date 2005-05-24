@@ -1,4 +1,4 @@
-# last modified 2 April 05 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 24 May 05 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
 
 # utility functions
 
@@ -680,7 +680,7 @@ RcmdrPager <- function (file, header, title, delete.file)
         tkwm.title(tt, if (length(title)) 
             title[(i - 1)%%length(title) + 1]
         else "")
-        txt <- tktext(tt, bg = "white", font = .logFont)
+        txt <- tktext(tt, bg = "white", font = getRcmdr("logFont"))
         scr <- tkscrollbar(tt, repeatinterval = 5, command = function(...) tkyview(txt, 
             ...))
         tkconfigure(txt, yscrollcommand = function(...) tkset(scr, 
@@ -886,6 +886,7 @@ commanderPosition <- function (){
 
 initializeDialog <- defmacro(window=top, title="", offset=10,
     expr={
+        if (getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
         window <- tktoplevel(borderwidth=10)
         tkwm.title(window, title)
         position <- if (is.SciViews()) -1 else commanderPosition() # +PhG
@@ -916,6 +917,7 @@ dialogSuffix <- defmacro(window=top, onOK=onOK, rows=1, columns=1, focus=top,
         if (GrabFocus() && (!preventGrabFocus)) tkgrab.set(window)
         tkfocus(focus)
         tkwait.window(window)
+        if (getRcmdr("crisp.dialogs")) tclServiceMode(on=TRUE)
         }
     )
             

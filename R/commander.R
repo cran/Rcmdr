@@ -1,10 +1,10 @@
 # The R Commander and command logger
 
-# last modified 26 April 05 by J. Fox
+# last modified 24 May 05 by J. Fox
 #   slight changes 12 Aug 04 by Ph. Grosjean
 
 Commander <- function(){
-    version <- "1.0-1"
+    version <- "1.0-2"
     if (is.SciViews()) return(invisible(svCommander())) # +PhG
     setOption <- function(option, default, global=TRUE) {
         opt <- if (is.null(current[[option]])) default else current[[option]]
@@ -137,15 +137,22 @@ Commander <- function(){
     setOption("error.text.color", "red")
     setOption("warning.text.color", "darkgreen")
     setOption("multiple.select.mode", "extended")
-    setOption("report.X11.warnings", FALSE) # to address problem in Linux
+    setOption("suppress.X11.warnings", .Platform$GUI == "X11") # to address problem in Linux
     setOption("showData.threshold", 100)
     setOption("retain.messages", FALSE)
+    setOption("crisp.dialogs",  (.Platform$OS.type == "windows") && (getRversion() >= "2.2.0"))
     if (.Platform$OS.type != "windows") {
         putRcmdr("oldPager", options(pager=RcmdrPager))
         default.font.size <- as.character(setOption("default.font.size", 12, global=FALSE))
         default.font <- setOption("default.font",
             paste("*helvetica-medium-r-normal-*-", default.font.size, "*", sep=""), global=FALSE)
         .Tcl(paste("option add *font ", default.font, sep=""))
+        }
+    if (getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
+    if (getRcmdr("suppress.X11.warnings")) {
+        putRcmdr("messages.connection", textConnection(".messages", open = "w", local=FALSE))
+        sink(getRcmdr("messages.connection"), type="message")
+        putRcmdr("length.messages", 0)
         }
     putRcmdr("commanderWindow", tktoplevel())
     .commander <- CommanderWindow()
@@ -174,9 +181,11 @@ Commander <- function(){
             if (Menus[m, 3] == "command"){
                 position <- position + 1
                 if (Menus[m, 6] == "")
-                    tkadd(eval(parse(text=Menus[m, 2])),"command", label=Menus[m, 4], command=eval(parse(text=Menus[m, 5])))
+                    tkadd(eval(parse(text=Menus[m, 2])),"command", label=Menus[m, 4],
+                        command=eval(parse(text=Menus[m, 5])))
                 else {
-                    tkadd(eval(parse(text=Menus[m, 2])),"command", label=Menus[m, 4], command=eval(parse(text=Menus[m, 5])),  state="disabled")
+                    tkadd(eval(parse(text=Menus[m, 2])),"command", label=Menus[m, 4],
+                        command=eval(parse(text=Menus[m, 5])),  state="disabled")
                     menuItems <- menuItems + 1
                     menus[[Menus[m, 2]]]$position <- position
                     .Menus[[menuItems]] <- list(ID=menus[[Menus[m, 2]]]$ID, position=position,
@@ -416,6 +425,7 @@ Commander <- function(){
     tkbind(.output, "<ButtonPress-3>", contextMenuOutput)
     tkwm.deiconify(.commander)
     tkfocus(.commander)
+    if (getRcmdr("crisp.dialogs")) tclServiceMode(on=TRUE)
     tkwait <- options("Rcmdr")[[1]]$tkwait  # to address problem in Debian Linux
     if ((!is.null(tkwait)) && tkwait) tkwait.variable(.commander.done)
     if (!packageLoaded("rgl")) Message("The rgl package is absent; 3D plots are unavailable.", type="warning")
@@ -444,12 +454,14 @@ logger <- function(command){
 
 justDoIt <- function(command) {
     Message()
-    messages.connection<- textConnection(".messages", open="w", local=TRUE)
-    sink(messages.connection, type="message")
-    on.exit({
-        sink(type="message")
-        close(messages.connection)
-        })
+    if (!getRcmdr("suppress.X11.warnings")){
+        messages.connection<- textConnection(".messages", open="w", local=TRUE)
+        sink(messages.connection, type="message")
+        on.exit({
+            sink(type="message")
+            close(messages.connection)
+            })
+        }
     capture.output(result <- try(eval(parse(text=command), envir=.GlobalEnv), silent=TRUE))
     if (class(result)[1] ==  "try-error"){
         Message(message=paste(strsplit(result, ":")[[1]][2]), type="error")
@@ -469,16 +481,20 @@ doItAndPrint <- function(command, log=TRUE) {
             as.numeric(tkfont.measure(tkcget(.output, font=NULL), "0"))    
         eval(parse(text=paste("options(width=", floor(width), ")", sep="")))
         }
-    messages.connection <- textConnection(".messages", open="w", local=TRUE)
-    sink(messages.connection, type="message")
+    if (!getRcmdr("suppress.X11.warnings")){
+        messages.connection <- textConnection(".messages", open="w", local=TRUE)
+        sink(messages.connection, type="message")
+        on.exit({
+            sink(type="message")
+            close(messages.connection)
+            })
+        }
     output.connection <- textConnection(".Output", open="w", local=TRUE)
     sink(output.connection, type="output")
     on.exit({
-        sink(type="message")
         if (!.console.output) sink(type="output") # if .console.output, output connection already closed
-        close(messages.connection)
         close(output.connection)
-        })
+        }, add=TRUE)
     if (log) logger(command)
     result <-  try(eval(parse(text=command), envir=.GlobalEnv), silent=TRUE)
     if (class(result)[1] ==  "try-error"){
@@ -501,25 +517,40 @@ doItAndPrint <- function(command, log=TRUE) {
             }
         }
     else if (.console.output) sink(type="output")
-    checkWarnings(.messages)  # errors already intercepted, display any warnings
+    # errors already intercepted, display any warnings
+    checkWarnings(.messages)
     result
     }
 
 checkWarnings <- function(messages){
     if (is.SciViews()) return(invisible()) # PhG: added for SciViews compatibility 
-    if (length(messages) == 0) return()
-    # suppress X11 warnings (origin at this point unclear)
-    X11.warning <- grep("^Warning\\: X11 protocol error\\: BadWindow \\(invalid Window parameter\\)", messages)
-    if ((length(X11.warning) > 0) && ! getRcmdr("report.X11.warnings")){
-        messages <-messages[-X11.warning]
-        if (length(messages) == 0) return()
+    if (getRcmdr("suppress.X11.warnings")){
+            length.messages <- length(messages)
+            last.length.messages <- getRcmdr("length.messages")
+            if (length.messages > last.length.messages){
+                current.messages <- messages[(last.length.messages + 1):length.messages]
+                putRcmdr("length.messages", length.messages)
+                # suppress X11 warnings (origin at this point unclear)
+                X11.warning <- grep("^Warning\\: X11 protocol error\\: BadWindow \\(invalid Window parameter\\)",
+                    current.messages)
+                if (length(X11.warning) > 0){
+                    current.messages <- current.messages[-X11.warning]
+                    if (length(current.messages) == 0) return()
+                    }
+                if (length(current.messages) > 10) current.messages <- c(paste(length(current.messages), "warnings."),
+                    "First and last 5 warnings:", head(current.messages,5), ". . .", tail(current.messages, 5))
+                Message(message=paste(current.messages, collapse="\n"), type="warning")
+            }
         }
-    if (length(messages) > 10) messages <- c(paste(length(messages), "warnings."),
-        "First and last 5 warnings:", head(messages, 5), ". . .", tail(messages, 5))
-    Message(message=paste(messages, collapse="\n"), type="warning")
+    else{
+        if (length(messages) == 0) return()
+        if (length(messages) > 10) messages <- c(paste(length(messages), "warnings."),
+            "First and last 5 warnings:", head(messages, 5), ". . .", tail(messages, 5))
+        Message(message=paste(messages, collapse="\n"), type="warning")
+        }
     tkfocus(CommanderWindow())
     }
-
+    
 Message <- function(message, type=c("note", "error", "warning")){
     if (is.SciViews()) return(svMessage(message, type))    # +PhG
     type <- match.arg(type)
