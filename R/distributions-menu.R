@@ -1,9 +1,9 @@
 # Distributions menu dialogs
 
-# last modified 2 April 05 by J. Fox
+# last modified 17 August 05 by J. Fox
 
 normalQuantiles <- function(){
-    initializeDialog(title="Normal Quantiles")
+    initializeDialog(title=gettextRcmdr("Normal Quantiles"))
     quantilesVar <- tclVar("")
     quantilesEntry <- tkentry(top, width="30", textvariable=quantilesVar)
     muVar <- tclVar("0")
@@ -17,7 +17,7 @@ normalQuantiles <- function(){
         closeDialog()
         quantiles <- gsub(" ", ",", tclvalue(quantilesVar))
         if ("" == quantiles) {
-            errorCondition(recall=normalQuantiles, message="No probabilities specified.")
+            errorCondition(recall=normalQuantiles, message=gettextRcmdr("No probabilities specified."))
             return()
             }
         mu <- as.numeric(tclvalue(muVar))
@@ -28,11 +28,11 @@ normalQuantiles <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="qnorm")
-    tkgrid(tklabel(top, text="Probabilities"), quantilesEntry, sticky="e")
-    tkgrid(tklabel(top, text="mu (mean)"), muEntry, sticky="e")
-    tkgrid(tklabel(top, text="sigma (standard deviation)"), sigmaEntry, sticky="e")
-    tkgrid(tklabel(top, text="Lower tail"), lowerTailButton, sticky="e")
-    tkgrid(tklabel(top, text="Upper tail"), upperTailButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Probabilities")), quantilesEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("mu (mean)")), muEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("sigma (standard deviation)")), sigmaEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Lower tail")), lowerTailButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Upper tail")), upperTailButton, sticky="e")
     tkgrid(buttonsFrame, sticky="w", columnspan=2)
     tkgrid.configure(quantilesEntry, sticky="w")
     tkgrid.configure(muEntry, sticky="w")
@@ -43,7 +43,7 @@ normalQuantiles <- function(){
     }
 
 normalProbabilities <- function(){
-    initializeDialog(title="Normal Probabilities")
+    initializeDialog(title=gettextRcmdr("Normal Probabilities"))
     probabilitiesVar <- tclVar("")
     probabilitiesEntry <- tkentry(top, width="30", textvariable=probabilitiesVar)
     muVar <- tclVar("0")
@@ -57,7 +57,7 @@ normalProbabilities <- function(){
         closeDialog()
         probabilities <- gsub(" ", ",", tclvalue(probabilitiesVar))
         if ("" == probabilities) {
-            errorCondition(recall=normalProbabilities, message="No values specified.")
+            errorCondition(recall=normalProbabilities, message=gettextRcmdr("No values specified."))
             return()
             }
         mu <- as.numeric(tclvalue(muVar))
@@ -68,11 +68,11 @@ normalProbabilities <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="pnorm")
-    tkgrid(tklabel(top, text="Variable value(s)"), probabilitiesEntry, sticky="e")
-    tkgrid(tklabel(top, text="mu (mean)"), muEntry, sticky="e")
-    tkgrid(tklabel(top, text="sigma (standard deviation)"), sigmaEntry, sticky="e")
-    tkgrid(tklabel(top, text="Lower tail"), lowerTailButton, sticky="e")
-    tkgrid(tklabel(top, text="Upper tail"), upperTailButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Variable value(s)")), probabilitiesEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("mu (mean)")), muEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("sigma (standard deviation)")), sigmaEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Lower tail")), lowerTailButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Upper tail")), upperTailButton, sticky="e")
     tkgrid(buttonsFrame, sticky="w", columnspan=2)
     tkgrid.configure(probabilitiesEntry, sticky="w")
     tkgrid.configure(muEntry, sticky="w")
@@ -83,7 +83,7 @@ normalProbabilities <- function(){
     }
     
 tQuantiles <- function(){
-    initializeDialog(title="t Quantiles")
+    initializeDialog(title=gettextRcmdr("t Quantiles"))
     quantilesVar <- tclVar("")
     quantilesEntry <- tkentry(top, width="30", textvariable=quantilesVar)
     dfVar <- tclVar("")
@@ -95,12 +95,12 @@ tQuantiles <- function(){
         closeDialog()
         quantiles <- gsub(" ", ",", tclvalue(quantilesVar))
         if ("" == quantiles) {
-            errorCondition(recall=tQuantiles, message="No probabilities specified.") 
+            errorCondition(recall=tQuantiles, message=gettextRcmdr("No probabilities specified.")) 
             return()
             }
         df <- as.numeric(tclvalue(dfVar))
         if (is.na(df)) {
-            errorCondition(recall=tQuantiles, message="Degrees of freedom not specified.")
+            errorCondition(recall=tQuantiles, message=gettextRcmdr("Degrees of freedom not specified."))
             return()
             }
         tail <- tclvalue(tailVar)
@@ -109,10 +109,10 @@ tQuantiles <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="qt")
-    tkgrid(tklabel(top, text="Probabilities"), quantilesEntry, sticky="e")
-    tkgrid(tklabel(top, text="Degrees of freedom"), dfEntry, sticky="e")
-    tkgrid(tklabel(top, text="Lower tail"), lowerTailButton, sticky="e")
-    tkgrid(tklabel(top, text="Upper tail"), upperTailButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Probabilities")), quantilesEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Degrees of freedom")), dfEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Lower tail")), lowerTailButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Upper tail")), upperTailButton, sticky="e")
     tkgrid(buttonsFrame, sticky="w", columnspan=2)
     tkgrid.configure(quantilesEntry, sticky="w")
     tkgrid.configure(dfEntry, sticky="w")
@@ -122,7 +122,7 @@ tQuantiles <- function(){
     }
     
 tProbabilities <- function(){
-    initializeDialog(title="t Probabilities")
+    initializeDialog(title=gettextRcmdr("t Probabilities"))
     probabilitiesVar <- tclVar("")
     probabilitiesEntry <- tkentry(top, width="30", textvariable=probabilitiesVar)
     dfVar <- tclVar("")
@@ -135,12 +135,12 @@ tProbabilities <- function(){
         probabilities <- gsub(" ", ",", tclvalue(probabilitiesVar))
         df <- as.numeric(tclvalue(dfVar))
         if ("" == probabilities) {
-            errorCondition(recall=tProbabilities, message="No values specified.")
+            errorCondition(recall=tProbabilities, message=gettextRcmdr("No values specified."))
             return()
             }
         df <- as.numeric(tclvalue(dfVar))
         if (is.na(df)) {
-            errorCondition(recall=tProbabilities, message="Degrees of freedom not specified.")
+            errorCondition(recall=tProbabilities, message=gettextRcmdr("Degrees of freedom not specified."))
             return()
             }
         tail <- tclvalue(tailVar)
@@ -149,10 +149,10 @@ tProbabilities <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="pt")
-    tkgrid(tklabel(top, text="Variable value(s)"), probabilitiesEntry, sticky="e")
-    tkgrid(tklabel(top, text="Degrees of freedom"), dfEntry, sticky="e")
-    tkgrid(tklabel(top, text="Lower tail"), lowerTailButton, sticky="e")
-    tkgrid(tklabel(top, text="Upper tail"), upperTailButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Variable value(s)")), probabilitiesEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Degrees of freedom")), dfEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Lower tail")), lowerTailButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Upper tail")), upperTailButton, sticky="e")
     tkgrid(buttonsFrame, sticky="w", columnspan=2)
     tkgrid.configure(probabilitiesEntry, sticky="w")
     tkgrid.configure(dfEntry, sticky="w")
@@ -162,7 +162,7 @@ tProbabilities <- function(){
     }
 
 chisqQuantiles <- function(){
-    initializeDialog(title="Chi-Squared Quantiles")
+    initializeDialog(title=gettextRcmdr("Chi-Squared Quantiles"))
     quantilesVar <- tclVar("")
     quantilesEntry <- tkentry(top, width="30", textvariable=quantilesVar)
     dfVar <- tclVar("")
@@ -174,12 +174,12 @@ chisqQuantiles <- function(){
         closeDialog()
         quantiles <- gsub(" ", ",", tclvalue(quantilesVar))
         if ("" == quantiles) {
-            errorCondition(recall=chisqQuantiles, message="No probabilities specified.")
+            errorCondition(recall=chisqQuantiles, message=gettextRcmdr("No probabilities specified."))
             return()
             }
         df <- as.numeric(tclvalue(dfVar))
         if (is.na(df)) {
-            errorCondition(recall=chisqQuantiles, message="Degrees of freedom not specified.")
+            errorCondition(recall=chisqQuantiles, message=gettextRcmdr("Degrees of freedom not specified."))
             return()
             }
         tail <- tclvalue(tailVar)
@@ -188,10 +188,10 @@ chisqQuantiles <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="qchisq")
-    tkgrid(tklabel(top, text="Probabilities"), quantilesEntry, sticky="e")
-    tkgrid(tklabel(top, text="Degrees of freedom"), dfEntry, sticky="e")
-    tkgrid(tklabel(top, text="Lower tail"), lowerTailButton, sticky="e")
-    tkgrid(tklabel(top, text="Upper tail"), upperTailButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Probabilities")), quantilesEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Degrees of freedom")), dfEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Lower tail")), lowerTailButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Upper tail")), upperTailButton, sticky="e")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(quantilesEntry, sticky="w")
     tkgrid.configure(dfEntry, sticky="w")
@@ -201,7 +201,7 @@ chisqQuantiles <- function(){
     }
     
 chisqProbabilities <- function(){
-    initializeDialog(title="Chi-Squared Probabilities")
+    initializeDialog(title=gettextRcmdr("Chi-Squared Probabilities"))
     probabilitiesVar <- tclVar("")
     probabilitiesEntry <- tkentry(top, width="30", textvariable=probabilitiesVar)
     dfVar <- tclVar("")
@@ -213,12 +213,12 @@ chisqProbabilities <- function(){
         closeDialog()
         probabilities <- gsub(" ", ",", tclvalue(probabilitiesVar))
         if ("" == probabilities) {
-            errorCondition(recall=chisqProbabilities, message="No values specified.")
+            errorCondition(recall=chisqProbabilities, message=gettextRcmdr("No values specified."))
             return()
             }
         df <- as.numeric(tclvalue(dfVar))
         if (is.na(df)) {
-            errorCondition(recall=chisqProbabilities, message="Degrees of freedom not specified.")
+            errorCondition(recall=chisqProbabilities, message=gettextRcmdr("Degrees of freedom not specified."))
             return()
             }
         tail <- tclvalue(tailVar)
@@ -227,10 +227,10 @@ chisqProbabilities <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="pchisq")
-    tkgrid(tklabel(top, text="Variable value(s)"), probabilitiesEntry, sticky="e")
-    tkgrid(tklabel(top, text="Degrees of freedom"), dfEntry, sticky="e")
-    tkgrid(tklabel(top, text="Lower tail"), lowerTailButton, sticky="e")
-    tkgrid(tklabel(top, text="Upper tail"), upperTailButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Variable value(s)")), probabilitiesEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Degrees of freedom")), dfEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Lower tail")), lowerTailButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Upper tail")), upperTailButton, sticky="e")
     tkgrid(OKbutton, cancelButton, sticky="w")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(probabilitiesEntry, sticky="w")
@@ -241,7 +241,7 @@ chisqProbabilities <- function(){
     }
 
 FQuantiles <- function(){
-    initializeDialog(title="F Quantiles")
+    initializeDialog(title=gettextRcmdr("F Quantiles"))
     quantilesVar <- tclVar("")
     quantilesEntry <- tkentry(top, width="30", textvariable=quantilesVar)
     df1Var <- tclVar("")
@@ -255,13 +255,13 @@ FQuantiles <- function(){
         closeDialog()
         quantiles <- gsub(" ", ",", tclvalue(quantilesVar))
         if ("" == quantiles) {
-            errorCondition(recall=FQuantiles, message="Probabilities not specified")
+            errorCondition(recall=FQuantiles, message=gettextRcmdr("Probabilities not specified"))
             return()
             }
         df1 <- as.numeric(tclvalue(df1Var))
         df2 <- as.numeric(tclvalue(df2Var))
         if (is.na(df1) || is.na(df2)) {
-            errorCondition(recall=FQuantiles, message="Degrees of freedom not specified.")
+            errorCondition(recall=FQuantiles, message=gettextRcmdr("Degrees of freedom not specified."))
             return()
             }
         tail <- tclvalue(tailVar)
@@ -270,11 +270,11 @@ FQuantiles <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="qf")
-    tkgrid(tklabel(top, text="Probabilities"), quantilesEntry, sticky="e")
-    tkgrid(tklabel(top, text="Numerator degrees of freedom"), df1Entry, sticky="e")
-    tkgrid(tklabel(top, text="Denominator degrees of freedom"), df2Entry, sticky="e")
-    tkgrid(tklabel(top, text="Lower tail"), lowerTailButton, sticky="e")
-    tkgrid(tklabel(top, text="Upper tail"), upperTailButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Probabilities")), quantilesEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Numerator degrees of freedom")), df1Entry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Denominator degrees of freedom")), df2Entry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Lower tail")), lowerTailButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Upper tail")), upperTailButton, sticky="e")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(quantilesEntry, sticky="w")
     tkgrid.configure(df1Entry, sticky="w")
@@ -285,7 +285,7 @@ FQuantiles <- function(){
     }
     
 FProbabilities <- function(){
-    initializeDialog(title="F Probabilities")
+    initializeDialog(title=gettextRcmdr("F Probabilities"))
     probabilitiesVar <- tclVar("")
     probabilitiesEntry <- tkentry(top, width="30", textvariable=probabilitiesVar)
     df1Var <- tclVar("")
@@ -299,13 +299,13 @@ FProbabilities <- function(){
         closeDialog()
         probabilities <- gsub(" ", ",", tclvalue(probabilitiesVar))
         if ("" == probabilities) {
-            errorCondition(recall=FProbabilities, message="Values not specified.")
+            errorCondition(recall=FProbabilities, message=gettextRcmdr("Values not specified."))
             return()
             }
         df1 <- as.numeric(tclvalue(df1Var))
         df2 <- as.numeric(tclvalue(df2Var))
         if (is.na(df1) || is.na(df2)) {
-            errorCondition(recall=FProbabilities, message="Degrees of freedom not specified.")
+            errorCondition(recall=FProbabilities, message=gettextRcmdr("Degrees of freedom not specified."))
             return()
             }
         tail <- tclvalue(tailVar)
@@ -314,11 +314,11 @@ FProbabilities <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="pf")
-    tkgrid(tklabel(top, text="Variable value(s)"), probabilitiesEntry, sticky="e")
-    tkgrid(tklabel(top, text="Numerator degrees of freedom"), df1Entry, sticky="e")
-    tkgrid(tklabel(top, text="Denominator degrees of freedom"), df2Entry, sticky="e")    
-    tkgrid(tklabel(top, text="Lower tail"), lowerTailButton, sticky="e")
-    tkgrid(tklabel(top, text="Upper tail"), upperTailButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Variable value(s)")), probabilitiesEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Numerator degrees of freedom")), df1Entry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Denominator degrees of freedom")), df2Entry, sticky="e")    
+    tkgrid(tklabel(top, text=gettextRcmdr("Lower tail")), lowerTailButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Upper tail")), upperTailButton, sticky="e")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(probabilitiesEntry, sticky="w")
     tkgrid.configure(df1Entry, sticky="w")
@@ -329,7 +329,7 @@ FProbabilities <- function(){
     }
 
 binomialQuantiles <- function(){
-    initializeDialog(title="Binomial Quantiles")
+    initializeDialog(title=gettextRcmdr("Binomial Quantiles"))
     quantilesVar <- tclVar("")
     quantilesEntry <- tkentry(top, width="30", textvariable=quantilesVar)
     trialsVar <- tclVar("")
@@ -345,15 +345,15 @@ binomialQuantiles <- function(){
         trials <- as.numeric(tclvalue(trialsVar))
         prob <- as.numeric(tclvalue(probVar))
         if ("" == quantiles) {
-            errorCondition(recall=binomialQuantiles, message="Probabilities not specified.")
+            errorCondition(recall=binomialQuantiles, message=gettextRcmdr("Probabilities not specified."))
             return()
             }
         if (is.na(trials)) {
-            errorCondition(recall=binomialQuantiles, message="Binomial trials not specified.")
+            errorCondition(recall=binomialQuantiles, message=gettextRcmdr("Binomial trials not specified."))
             return()
             }
         if (is.na(prob)) {
-            errorCondition(recall=binomialQuantiles, message="Probability of success not specified.")
+            errorCondition(recall=binomialQuantiles, message=gettextRcmdr("Probability of success not specified."))
             return()
             }
         tail <- tclvalue(tailVar)
@@ -362,11 +362,11 @@ binomialQuantiles <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="qbinom")
-    tkgrid(tklabel(top, text="Probabilities"), quantilesEntry, sticky="e")
-    tkgrid(tklabel(top, text="Binomial trials"), trialsEntry, sticky="e")
-    tkgrid(tklabel(top, text="Probability of success"), probEntry, sticky="e")
-    tkgrid(tklabel(top, text="Lower tail"), lowerTailButton, sticky="e")
-    tkgrid(tklabel(top, text="Upper tail"), upperTailButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Probabilities")), quantilesEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Binomial trials")), trialsEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Probability of success")), probEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Lower tail")), lowerTailButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Upper tail")), upperTailButton, sticky="e")
     tkgrid(buttonsFrame,columnspan=2, sticky="w")
     tkgrid.configure(quantilesEntry, sticky="w")
     tkgrid.configure(trialsEntry, sticky="w")
@@ -377,7 +377,7 @@ binomialQuantiles <- function(){
     }
     
 binomialProbabilities <- function(){
-    initializeDialog(title="Cumulative Binomial Probabilities")
+    initializeDialog(title=gettextRcmdr("Cumulative Binomial Probabilities"))
     probabilitiesVar <- tclVar("")
     probabilitiesEntry <- tkentry(top, width="30", textvariable=probabilitiesVar)
     trialsVar <- tclVar("")
@@ -393,15 +393,15 @@ binomialProbabilities <- function(){
         trials <- as.numeric(tclvalue(trialsVar))
         prob <- as.numeric(tclvalue(probVar))
         if ("" == probabilities) {
-            errorCondition(recall=binomialProbabilities, message="Values not specified.") 
+            errorCondition(recall=binomialProbabilities, message=gettextRcmdr("Values not specified.")) 
             return()
             }
         if (is.na(trials)) {
-            errorCondition(recall=binomialProbabilities, message="Binomial trials not specified.")
+            errorCondition(recall=binomialProbabilities, message=gettextRcmdr("Binomial trials not specified."))
             return()
             }
         if (is.na(prob)) {
-            errorCondition(recall=binomialProbabilities, message="Probability of success not specified.")
+            errorCondition(recall=binomialProbabilities, message=gettextRcmdr("Probability of success not specified."))
             return()
             }
         tail <- tclvalue(tailVar)
@@ -410,11 +410,11 @@ binomialProbabilities <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="pbinom")
-    tkgrid(tklabel(top, text="Variable value(s)"), probabilitiesEntry, sticky="e")
-    tkgrid(tklabel(top, text="Binomial trials"), trialsEntry, sticky="e")
-    tkgrid(tklabel(top, text="Probability of success"), probEntry, sticky="e")    
-    tkgrid(tklabel(top, text="Lower tail"), lowerTailButton, sticky="e")
-    tkgrid(tklabel(top, text="Upper tail"), upperTailButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Variable value(s)")), probabilitiesEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Binomial trials")), trialsEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Probability of success")), probEntry, sticky="e")    
+    tkgrid(tklabel(top, text=gettextRcmdr("Lower tail")), lowerTailButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Upper tail")), upperTailButton, sticky="e")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(probabilitiesEntry, sticky="w")
     tkgrid.configure(trialsEntry, sticky="w")
@@ -426,10 +426,10 @@ binomialProbabilities <- function(){
 
 binomialMass <- function(){
     checkTrials <- function(trials){
-        tkmessageBox(message=paste("Number of trials", trials, "is large.\nCreate long output?"),
+        RcmdrTkmessageBox(message=sprintf(gettextRcmdr("Number of trials, %d, is large.\nCreate long output?"), trials),
             icon="warning", type="yesno", default="no")
         }
-    initializeDialog(title="Binomial Probabilities")
+    initializeDialog(title=gettextRcmdr("Binomial Probabilities"))
     trialsVar <- tclVar("")
     trialsEntry <- tkentry(top, width="6", textvariable=trialsVar)
     probVar <- tclVar(".5")
@@ -438,7 +438,7 @@ binomialMass <- function(){
         closeDialog()
         trials <- as.numeric(tclvalue(trialsVar))
         if (is.na(trials)) {
-            errorCondition(recall=binomialMass, message="Binomial trials not specified.")
+            errorCondition(recall=binomialMass, message=gettextRcmdr("Binomial trials not specified."))
             return()
             }
         if (trials > 50){
@@ -451,7 +451,7 @@ binomialMass <- function(){
             }
         prob <- as.numeric(tclvalue(probVar))
         if (is.na(prob)) {
-            errorCondition(recall=binomialMass, message="Probability of success not specified.")
+            errorCondition(recall=binomialMass, message=gettextRcmdr("Probability of success not specified."))
             return()
             }
         command <- paste("data.frame(Pr=dbinom(0:", trials, ", size=", trials, 
@@ -466,8 +466,8 @@ binomialMass <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="dbinom")
-    tkgrid(tklabel(top, text="Binomial trials"), trialsEntry, sticky="e")
-    tkgrid(tklabel(top, text="Probability of success"), probEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Binomial trials")), trialsEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Probability of success")), probEntry, sticky="e")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(trialsEntry, sticky="w")
     tkgrid.configure(probEntry, sticky="w")
@@ -476,17 +476,17 @@ binomialMass <- function(){
 
 PoissonMass <- function(){
     checkRange <- function(range){
-        tkmessageBox(message=paste("Range of values over which to plot,", range, ", is large.\nCreate long output?"),
+        RcmdrTkmessageBox(message=sprintf(gettextRcmdr("Range of values over which to plot, %d, is large.\nCreate long output?"), range),
             icon="warning", type="yesno", default="no")
         }
-    initializeDialog(title="Poisson Probabilities")
+    initializeDialog(title=gettextRcmdr("Poisson Probabilities"))
     meanVar <- tclVar("")
     meanEntry <- tkentry(top, width="6", textvariable=meanVar)
     onOK <- function(){
         closeDialog()
         mean <- as.numeric(tclvalue(meanVar))
         if (is.na(mean)) {
-            errorCondition(recall=PoissonMass, message="Poisson mean not specified.")
+            errorCondition(recall=PoissonMass, message=gettextRcmdr("Poisson mean not specified."))
             return()
             }
         min <- qpois(.00005, lambda=mean)
@@ -511,7 +511,7 @@ PoissonMass <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="dpois")
-    tkgrid(tklabel(top, text="Mean"), meanEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Mean")), meanEntry, sticky="e")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(meanEntry, sticky="w")
     dialogSuffix(rows=2, columns=2, focus=meanEntry)

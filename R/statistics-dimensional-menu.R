@@ -1,19 +1,17 @@
 # Statistics Menu dialogs
 
-# last modified 13 Mar 05 by J. Fox
+# last modified 1 July 05 by J. Fox
 
     # Dimensional-analysis menu
     
 Reliability <- function(){
-##    if(!checkActiveDataSet()) return()
-##    if (!checkNumeric(3)) return()
-    initializeDialog(title="Scale Reliability")
-    xBox <- variableListBox(top, Numeric(), selectmode="multiple", title="Variables (pick three or more)")
+    initializeDialog(title=gettextRcmdr("Scale Reliability"))
+    xBox <- variableListBox(top, Numeric(), selectmode="multiple", title=gettextRcmdr("Variables (pick three or more)"))
     onOK <- function(){
         x <- getSelection(xBox)
         closeDialog()
         if (3 > length(x)) {
-            errorCondition(recall=Reliability, message="Fewer than 3 variables selected.")
+            errorCondition(recall=Reliability, message=gettextRcmdr("Fewer than 3 variables selected."))
             return()
             }
         x <- paste('"', x, '"', sep="")
@@ -28,13 +26,11 @@ Reliability <- function(){
     }
 
 principalComponents <- function(){
-##    if(!checkActiveDataSet()) return()
-##    if(!checkNumeric(2)) return()
-    initializeDialog(title="Principal Components Analysis")
-    xBox <- variableListBox(top, Numeric(), selectmode="multiple", title="Variables (pick two or more)")
+    initializeDialog(title=gettextRcmdr("Principal Components Analysis"))
+    xBox <- variableListBox(top, Numeric(), selectmode="multiple", title=gettextRcmdr("Variables (pick two or more)"))
     subsetBox()
     checkBoxes(frame="optionsFrame", boxes=c("correlations", "screeplot", "addPC"), initialValues=c("1", "0", "0"),
-        labels=c("Analyze correlation matrix", "Screeplot", "Add principal components to data set"))
+        labels=gettextRcmdr(c("Analyze correlation matrix", "Screeplot", "Add principal components to data set")))
     onOK <- function(){
         putRcmdr("ncomponents", 0)
         x <- getSelection(xBox)
@@ -45,10 +41,10 @@ principalComponents <- function(){
         addPC <- tclvalue(addPCVariable)
         closeDialog()
         if (2 > length(x)) {
-            errorCondition(recall=principalComponents, message="Fewer than 2 variables selected.")
+            errorCondition(recall=principalComponents, message=gettextRcmdr("Fewer than 2 variables selected."))
             return()
             }
-        subset <- if (trim.blanks(subset) == "<all valid cases>") "" else paste(", subset=", subset, sep="")
+        subset <- if (trim.blanks(subset) == gettextRcmdr("<all valid cases>")) "" else paste(", subset=", subset, sep="")
         correlations <- if (correlations == "1") "TRUE" else "FALSE"
         .activeDataSet <- ActiveDataSet()
         command <- paste("princomp(~", paste(x, collapse="+"), ", cor=", correlations,
@@ -62,8 +58,8 @@ principalComponents <- function(){
             logger("screeplot(.PC)")
             }
         if (addPC == "1") {
-            initializeDialog(subdialog, title="Number of Components")
-            tkgrid(tklabel(subdialog, text="Number of components to retain:", fg="blue"), sticky="w")    
+            initializeDialog(subdialog, title=gettextRcmdr("Number of Components"))
+            tkgrid(tklabel(subdialog, text=gettextRcmdr("Number of components to retain:"), fg="blue"), sticky="w")    
             sliderFrame <- tkframe(subdialog)
             sliderValue <- tclVar("1")
             componentsSlider <- tkscale(sliderFrame, from=1, to=nvar, showvalue=FALSE, variable=sliderValue,
@@ -103,19 +99,17 @@ principalComponents <- function(){
     }
 
 factorAnalysis <- function(){
-##    if(!checkActiveDataSet()) return()
-##    if(!checkNumeric(3)) return()
-    initializeDialog(title="Factor Analysis")
-    xBox <- variableListBox(top, Numeric(), selectmode="multiple", title="Variables (pick three or more)")
+    initializeDialog(title=gettextRcmdr("Factor Analysis"))
+    xBox <- variableListBox(top, Numeric(), selectmode="multiple", title=gettextRcmdr("Variables (pick three or more)"))
     subsetBox()
     optionsFrame <- tkframe(top)
     checkFrame <- tkframe(top)
     radioButtons(checkFrame, name="rotation", buttons=c("noRotate", "varimax", "promax"), 
-        values=c("none", "varimax", "promax"), initialValue="varimax", labels=c("None", "Varimax", "Promax"),
-        title="Factor Rotation")
+        values=c("none", "varimax", "promax"), initialValue="varimax", labels=gettextRcmdr(c("None", "Varimax", "Promax")),
+        title=gettextRcmdr("Factor Rotation"))
     radioButtons(checkFrame, name="scores", buttons=c("noScores", "bartlett", "regression"),
-        values=c("none", "Bartlett", "regression"), labels=c("None", "Bartlett's method", "Regression method"),
-        title="Factor Scores")
+        values=c("none", "Bartlett", "regression"), labels=gettextRcmdr(c("None", "Bartlett's method", "Regression method")),
+        title=gettextRcmdr("Factor Scores"))
     onOK <- function(){
         x <- getSelection(xBox)
         nvar <- length(x)
@@ -124,13 +118,13 @@ factorAnalysis <- function(){
         scores <- tclvalue(scoresVariable)
         closeDialog()
         if (3 > length(x)) {
-            errorCondition(recall=factorAnalysis, message="Fewer than 3 variables selected.")
+            errorCondition(recall=factorAnalysis, message=gettextRcmdr("Fewer than 3 variables selected."))
             return()
             }
         f <- function(k, p) ((p - k)^2 - p - k)^2
         max.factors <- floor(optimize(f, c(0, nvar), tol=.0001, p=nvar)$minimum)
-        initializeDialog(subdialog, title="Number of Factors")
-        tkgrid(tklabel(subdialog, text="Number of factors to extract:", fg="blue"), sticky="w")    
+        initializeDialog(subdialog, title=gettextRcmdr("Number of Factors"))
+        tkgrid(tklabel(subdialog, text=gettextRcmdr("Number of factors to extract:"), fg="blue"), sticky="w")    
         sliderFrame <- tkframe(subdialog)
         sliderValue <- tclVar("1")
         componentsSlider <- tkscale(sliderFrame, from=1, to=max.factors, showvalue=FALSE, variable=sliderValue,
@@ -145,7 +139,7 @@ factorAnalysis <- function(){
         tkgrid(sliderFrame, sticky="w")
         tkgrid(subButtonsFrame, sticky="w")
         dialogSuffix(subdialog, onOK=onOKsub, rows=2, columns=1, focus=subdialog)
-        subset <- if (trim.blanks(subset) == "<all valid cases>") "" else paste(", subset=", subset, sep="")
+        subset <- if (trim.blanks(subset) == gettextRcmdr("<all valid cases>")) "" else paste(", subset=", subset, sep="")
         .activeDataSet <- ActiveDataSet()
         command <- paste("factanal(~", paste(x, collapse="+"), ", factors=", getRcmdr("nfactors"), ', rotation="', rotation,
             '", scores="', scores, '", data=', .activeDataSet, subset, ")", sep="")

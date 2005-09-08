@@ -1,33 +1,42 @@
-# last modified 16 April 05 by J. Fox
+# last modified 17 August 05 by J. Fox
 
 .onAttach <- function(...){
     Commander()
-    cat("\nRcmdr Version", getRcmdr("version"), "\n")
+    cat(gettext("\nRcmdr Version", domain="R-Rcmdr"), getRcmdr("version"), "\n")
     }
 
 .onLoad <- function(...){
+    packagesAvailable <- function(packages){
+        sapply(sapply(packages, .find.package, quiet=TRUE), 
+            function(x) length(x) != 0)
+        }
     save.options <- options(warn=-1)
     on.exit(options(save.options))
     tcltk <- require(tcltk)
-    if (!tcltk) stop("The tcltk package is absent. The R Commander cannot function.")
-    require(rgl)
-    check <- options("Rcmdr")[[1]]$check.packages
+    if (!tcltk) stop(gettext("The tcltk package is absent. The R Commander cannot function.", domain="R-Rcmdr"))
     required.packages <- rev(c("abind", "car", "effects", "foreign", "grid", "lattice", "lmtest", 
         "MASS", "mgcv", "multcomp", "mvtnorm", "nlme", "nnet", "relimp", "sandwich", "strucchange",
         "zoo"))
-    for (package in required.packages) assign(package, require(package, character.only=TRUE))
+    packages.to.load <- options("Rcmdr")[[1]]$load.at.startup
+    if (is.null(packages.to.load)) packages.to.load <- "car"
+    for (package in packages.to.load){ 
+        if (length(.find.package(package, quiet=TRUE)) != 0) 
+            require(package, character.only=TRUE)
+        }
+    check <- options("Rcmdr")[[1]]$check.packages
     if (length(check) > 0 && !check) return()
-    absent <- !sapply(required.packages, function(package) eval(parse(text=package)))
-    missing.packages <- required.packages[absent]
-    if (any(absent)) {
-        response <- tkmessageBox(message=paste("The following packages used by Rcmdr are missing:\n",
+    packages.to.check <- union(required.packages, packages.to.load)
+    available.packages <- packagesAvailable(packages.to.check)
+    missing.packages <- packages.to.check[!available.packages]
+    if (any(!available.packages)) {
+        response <- RcmdrTkmessageBox(message=paste(gettext("The following packages used by Rcmdr are missing:\n", domain="R-Rcmdr"),
                             paste(missing.packages, collapse=", "), 
-                            "\nWithout these packages, some features will not be available.",
-                            "\nInstall these packages?"), 
+                            gettext("\nWithout these packages, some features will not be available.", domain="R-Rcmdr"),
+                            gettext("\nInstall these packages?", domain="R-Rcmdr")), 
                         icon="error", type="yesno")
-        if (as.character(response) == "yes") {
+        if (tclvalue(response) == "yes") {
             top <- tktoplevel(borderwidth=10)
-            tkwm.title(top, "Install Missing Packages")
+            tkwm.title(top, gettext("Install Missing Packages", domain="R-Rcmdr"))
             locationFrame <- tkframe(top)
             locationVariable <- tclVar("CRAN")
             CRANbutton <- tkradiobutton(locationFrame, variable=locationVariable, value="CRAN")
@@ -39,25 +48,25 @@
             onBrowse <- function(){
                 tclvalue(directoryVariable) <- tclvalue(tkchooseDirectory())
                 }
-            browseButton <- tkbutton(directoryFrame, text="Browse...", width="12", command=onBrowse, borderwidth=3)
+            browseButton <- tkbutton(directoryFrame, text=gettext("Browse...", domain="R-Rcmdr"), width="12", command=onBrowse, borderwidth=3)
             locationField <- tkentry(directoryFrame, width="20", textvariable=directoryVariable)
             locationScroll <- tkscrollbar(directoryFrame, orient="horizontal",
                 repeatinterval=5, command=function(...) tkxview(locationField, ...))
             tkconfigure(locationField, xscrollcommand=function(...) tkset(locationScroll, ...))
-            tkgrid(tklabel(top, text="Install Packages From:", fg="blue"), sticky="nw")
-            tkgrid(tklabel(directoryFrame, text="Specify package  \ndirectory:", justify="left"), 
+            tkgrid(tklabel(top, text=gettext("Install Packages From:", domain="R-Rcmdr"), fg="blue"), sticky="nw")
+            tkgrid(tklabel(directoryFrame, text=gettext("Specify package  \ndirectory:", domain="R-Rcmdr"), justify="left"), 
                 locationField, sticky="w")
             tkgrid(browseButton, locationScroll, sticky="w")
             tkgrid(locationScroll, sticky="ew")
             tkgrid(tklabel(locationFrame, text="CRAN"), CRANbutton, sticky="w")
 #            tkgrid(tklabel(locationFrame, text="Bioconductor"), BioconductorButton, sticky="w")
-            tkgrid(tklabel(locationFrame, text="Local package directory\n(must include PACKAGES index file)", 
+            tkgrid(tklabel(locationFrame, text=gettext("Local package directory\n(must include PACKAGES index file)", domain="R-Rcmdr"), 
                 justify="left"), localButton, directoryFrame, sticky="nw")
             tkgrid(locationFrame, sticky="w")
             tkgrid(tklabel(top, text=""))
             onOK <- function(){
-                errorMessage <- function() tkmessageBox(message=paste(
-                    "The following packages were not found at the specified location:\n",
+                errorMessage <- function() RcmdrTkmessageBox(message=paste(
+                    gettext("The following packages were not found at the specified location:\n", domain="R-Rcmdr"),
                     paste(missing.packages[!present], collapse=", ")),  icon="warning", type="ok")
                 tkgrab.release(top)
                 tkdestroy(top)
@@ -84,7 +93,6 @@
                     if (!any(present)) return()
                     utils:::install.packages(missing.packages[present], contriburl=directory, lib=.libPaths()[1])
                     }
-                for (package in missing.packages[present]) require(package, character.only=TRUE)
                 }
             onCancel <- function(){
                 tkgrab.release(top)
@@ -95,9 +103,9 @@
             buttonsFrame <- tkframe(top)
             OKbutton <- tkbutton(buttonsFrame, text="OK", fg="darkgreen", width="12", command=onOK, default="active",
                     borderwidth=3)
-            cancelButton <- tkbutton(buttonsFrame, text="Cancel", fg="red", width="12", command=onCancel,
+            cancelButton <- tkbutton(buttonsFrame, text=gettext("Cancel", domain="R-Rcmdr"), fg="red", width="12", command=onCancel,
                     borderwidth=3)
-            helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp, borderwidth=3)
+            helpButton <- tkbutton(buttonsFrame, text=gettext("Help", domain="R-Rcmdr"), width="12", command=onHelp, borderwidth=3)
             tkgrid(OKbutton, tklabel(buttonsFrame, text="  "), cancelButton, tklabel(buttonsFrame, text="            "), 
                 helpButton, sticky="w")
             tkgrid(buttonsFrame, sticky="w")

@@ -1,11 +1,11 @@
 # The R Commander and command logger
 
-# last modified 24 May 05 by J. Fox
+# last modified 4 Sept 05 by J. Fox
 #   slight changes 12 Aug 04 by Ph. Grosjean
 
 Commander <- function(){
-    version <- "1.0-2"
-    if (is.SciViews()) return(invisible(svCommander())) # +PhG
+    version <- "1.1-1"
+    if (is.SciViews()) return(invisible(svCommander(Version=version))) # +PhG
     setOption <- function(option, default, global=TRUE) {
         opt <- if (is.null(current[[option]])) default else current[[option]]
         if (global) putRcmdr(option, opt)
@@ -46,18 +46,18 @@ Commander <- function(){
         focused <- tkfocus()
         if ((tclvalue(focused) != LogWindow()$ID) && (tclvalue(focused) != OutputWindow()$ID))
             focused <- LogWindow()
-        initializeDialog(title="Find")
+        initializeDialog(title=gettextRcmdr("Find"))
         textFrame <- tkframe(top)
         textVar <- tclVar("")
         textEntry <- tkentry(textFrame, width="20", textvariable=textVar)
         checkBoxes(frame="optionsFrame", boxes=c("regexpr", "case"), initialValues=c("0", "1"),
-            labels=c("Regular-expression search", "Case sensitive"))
-        radioButtons(name="direction", buttons=c("foward", "backward"), labels=c("Forward", "Backward"),
-            values=c("-forward", "-backward"), title="Search Direction")
+            labels=gettextRcmdr(c("Regular-expression search", "Case sensitive"))) 
+        radioButtons(name="direction", buttons=c("foward", "backward"), labels=gettextRcmdr(c("Forward", "Backward")),
+            values=c("-forward", "-backward"), title=gettextRcmdr("Search Direction"))
         onOK <- function(){
             text <- tclvalue(textVar)
             if (text == ""){
-                errorCondition(recall=onFind, message="No search text specified.")
+                errorCondition(recall=onFind, message=gettextRcmdr("No search text specified."))
                 return()
                 }
             type <- if (tclvalue(regexprVariable) == 1) "-regexp" else "-exact"
@@ -68,7 +68,7 @@ Commander <- function(){
                         else tksearch(focused, type, direction, "-nocase", "--", text, "insert", stop)
             where <- tclvalue(where)
             if (where == "") {
-                Message(message="Text not found.",
+                Message(message=gettextRcmdr("Text not found."),
                     type="note")
                 if (GrabFocus()) tkgrab.release(top)
                 tkdestroy(top)
@@ -82,7 +82,7 @@ Commander <- function(){
             tkdestroy(top)
             }
         OKCancelHelp()
-        tkgrid(tklabel(textFrame, text="Search for:"), textEntry, sticky="w")
+        tkgrid(tklabel(textFrame, text=gettextRcmdr("Search for:")), textEntry, sticky="w")
         tkgrid(textFrame, sticky="w")
         tkgrid(optionsFrame, sticky="w")
         tkgrid(directionFrame, sticky="w")
@@ -109,14 +109,18 @@ Commander <- function(){
     putRcmdr("saveFileName", NULL)
     putRcmdr("modelNumber", 0)
     putRcmdr("rgl", FALSE)
+    putRcmdr("Identify3d", NULL)
     current <- options("Rcmdr")[[1]]
     setOption("log.font.size", if (.Platform$OS.type == "windows") 10 else 12)
     putRcmdr("logFont", tkfont.create(family="courier", size=getRcmdr("log.font.size")))
     putRcmdr("operatorFont", tkfont.create(family="courier", size=getRcmdr("log.font.size")))
     scale.factor <- current$scale.factor
     if (!is.null(scale.factor)) .Tcl(paste("tk scaling ", scale.factor, sep=""))
-    if (packageLoaded("car")) setOption("contrasts", c("contr.Treatment", "contr.poly"))
-        else setOption("contrasts", c("contr.treatment", "contr.poly"))
+    if (packageAvailable("car")){
+        require("car") 
+        setOption("contrasts", c("contr.Treatment", "contr.poly"))
+        }
+    else setOption("contrasts", c("contr.treatment", "contr.poly"))
     setOption("log.commands", TRUE)
     setOption("console.output", FALSE)
     log.height <- as.character(setOption("log.height", if (!getRcmdr("log.commands")) 0 else 10, global=FALSE))
@@ -140,7 +144,7 @@ Commander <- function(){
     setOption("suppress.X11.warnings", .Platform$GUI == "X11") # to address problem in Linux
     setOption("showData.threshold", 100)
     setOption("retain.messages", FALSE)
-    setOption("crisp.dialogs",  (.Platform$OS.type == "windows") && (getRversion() >= "2.2.0"))
+    setOption("crisp.dialogs",  (.Platform$OS.type == "windows") && (getRversion() >= "2.1.1"))
     if (.Platform$OS.type != "windows") {
         putRcmdr("oldPager", options(pager=RcmdrPager))
         default.font.size <- as.character(setOption("default.font.size", 12, global=FALSE))
@@ -158,7 +162,7 @@ Commander <- function(){
     .commander <- CommanderWindow()
     placement <- setOption("placement", "-40+20", global=FALSE)
     tkwm.geometry(.commander, placement)
-    tkwm.title(.commander, "R Commander")
+    tkwm.title(.commander, gettextRcmdr("R Commander"))
     tkwm.protocol(.commander, "WM_DELETE_WINDOW", closeCommander)
     topMenu <- tkmenu(.commander)
     tkconfigure(.commander, menu=topMenu)
@@ -166,7 +170,7 @@ Commander <- function(){
     source.files <- list.files(etc, pattern="\\.[Rr]$")
     for (file in source.files) {
         source(file.path(etc, file))
-        cat(paste("Sourced:", file, "\n"))
+        cat(paste(gettextRcmdr("Sourced:"), file, "\n"))
         }
     Menus <- read.table(file.path(etc, "Rcmdr-menus.txt"), as.is=TRUE)
     .Menus <- menus <- list()
@@ -181,10 +185,10 @@ Commander <- function(){
             if (Menus[m, 3] == "command"){
                 position <- position + 1
                 if (Menus[m, 6] == "")
-                    tkadd(eval(parse(text=Menus[m, 2])),"command", label=Menus[m, 4],
+                    tkadd(eval(parse(text=Menus[m, 2])),"command", label=gettextRcmdr(Menus[m, 4]),
                         command=eval(parse(text=Menus[m, 5])))
                 else {
-                    tkadd(eval(parse(text=Menus[m, 2])),"command", label=Menus[m, 4],
+                    tkadd(eval(parse(text=Menus[m, 2])),"command", label=gettextRcmdr(Menus[m, 4]),
                         command=eval(parse(text=Menus[m, 5])),  state="disabled")
                     menuItems <- menuItems + 1
                     menus[[Menus[m, 2]]]$position <- position
@@ -193,10 +197,12 @@ Commander <- function(){
                     }
                 }
             else if (Menus[m, 3] == "cascade")
-                tkadd(eval(parse(text=Menus[m, 2])),"cascade", label=Menus[m, 4], menu=eval(parse(text=Menus[m, 5])))
-            else stop(paste("menu definition error:", Menus[m, ], collapse=" "))
+                tkadd(eval(parse(text=Menus[m, 2])),"cascade", label=gettextRcmdr(Menus[m, 4]), menu=eval(parse(text=Menus[m, 5])))
+            else stop(paste(gettextRcmdr("menu definition error:"), Menus[m, ], collapse=" "),
+                domain=NA)
             }
-        else stop(paste("menu defintion error:", Menus[m, ], collapse=" "))
+        else stop(paste(gettextRcmdr("menu definition error:"), Menus[m, ], collapse=" "),
+            domain=NA)
         }
     putRcmdr("Menus", .Menus)
     activateMenus()
@@ -221,10 +227,12 @@ Commander <- function(){
             }
         view.height <- max(as.numeric(output.height) + as.numeric(log.height), 10)
         ncols <- eval(parse(text=paste("ncol(", ActiveDataSet(), ")")))
-        command <- if (packageLoaded("relimp") && ncols <= getRcmdr("showData.threshold"))
+        command <- if (packageAvailable("relimp") && ncols <= getRcmdr("showData.threshold")){
+            require("relimp")
             paste("showData(", ActiveDataSet(), ", placement='-20+200', font=getRcmdr('logFont'), maxwidth=",
                 log.width, ", maxheight=", view.height, ")", sep="")
-            else paste("invisible(edit(", ActiveDataSet(), "))", sep="")
+            }
+        else paste("invisible(edit(", ActiveDataSet(), "))", sep="")
         logger(command)
         justDoIt(command)
         tkwm.deiconify(CommanderWindow())
@@ -238,7 +246,7 @@ Commander <- function(){
             selection <- strsplit(tclvalue(tktag.ranges(.log, "currentLine")), " ")[[1]]
             tktag.delete(.log, "currentLine")
             if (is.na(selection[1])) {
-                Message(message=paste("Nothing is selected."),
+                Message(message=gettextRcmdr("Nothing is selected."),
                     type="error")
                 tkfocus(CommanderWindow())
                 return()
@@ -294,32 +302,32 @@ Commander <- function(){
     contextMenuLog <- function(){
         .log <- LogWindow()
         contextMenu <- tkmenu(tkmenu(.log), tearoff=FALSE)
-        tkadd(contextMenu, "command", label="Clear window", command=onClear)
-        tkadd(contextMenu, "command", label="Submit", command=onSubmit)
-        tkadd(contextMenu, "command", label="Cut", command=onCut)
-        tkadd(contextMenu, "command", label="Copy", command=onCopy)
-        tkadd(contextMenu, "command", label="Paste", command=onPaste)
-        tkadd(contextMenu, "command", label="Delete", command=onDelete)
-        tkadd(contextMenu, "command", label="Find...", command=onFind)
-        tkadd(contextMenu, "command", label="Select all", command=onSelectAll)
+        tkadd(contextMenu, "command", label=gettextRcmdr("Clear window"), command=onClear)
+        tkadd(contextMenu, "command", label=gettextRcmdr("Submit"), command=onSubmit)
+        tkadd(contextMenu, "command", label=gettextRcmdr("Cut"), command=onCut)
+        tkadd(contextMenu, "command", label=gettextRcmdr("Copy"), command=onCopy)
+        tkadd(contextMenu, "command", label=gettextRcmdr("Paste"), command=onPaste)
+        tkadd(contextMenu, "command", label=gettextRcmdr("Delete"), command=onDelete)
+        tkadd(contextMenu, "command", label=gettextRcmdr("Find..."), command=onFind)
+        tkadd(contextMenu, "command", label=gettextRcmdr("Select all"), command=onSelectAll)
         tkpopup(contextMenu, tkwinfo("pointerx", .log), tkwinfo("pointery", .log))
         }
     contextMenuOutput <- function(){
         .output <- OutputWindow()
         contextMenu <- tkmenu(tkmenu(.output), tearoff=FALSE)
-        tkadd(contextMenu, "command", label="Clear window", command=onClear)
-        tkadd(contextMenu, "command", label="Cut", command=onCut)
-        tkadd(contextMenu, "command", label="Copy", command=onCopy)
-        tkadd(contextMenu, "command", label="Paste", command=onPaste)
-        tkadd(contextMenu, "command", label="Delete", command=onDelete)
-        tkadd(contextMenu, "command", label="Find...", command=onFind)
-        tkadd(contextMenu, "command", label="Select all", command=onSelectAll)
+        tkadd(contextMenu, "command", label=gettextRcmdr("Clear window"), command=onClear)
+        tkadd(contextMenu, "command", label=gettextRcmdr("Cut"), command=onCut)
+        tkadd(contextMenu, "command", label=gettextRcmdr("Copy"), command=onCopy)
+        tkadd(contextMenu, "command", label=gettextRcmdr("Paste"), command=onPaste)
+        tkadd(contextMenu, "command", label=gettextRcmdr("Delete"), command=onDelete)
+        tkadd(contextMenu, "command", label=gettextRcmdr("Find..."), command=onFind)
+        tkadd(contextMenu, "command", label=gettextRcmdr("Select all"), command=onSelectAll)
         tkpopup(contextMenu, tkwinfo("pointerx", .output), tkwinfo("pointery", .output))
         }
     controlsFrame <- tkframe(CommanderWindow())
-    editButton <- tkbutton(controlsFrame, text="Edit data set", command=onEdit)
-    viewButton <- tkbutton(controlsFrame, text="View data set", command=onView)
-    putRcmdr("dataSetName", tclVar("<No active dataset>"))
+    editButton <- tkbutton(controlsFrame, text=gettextRcmdr("Edit data set"), command=onEdit)
+    viewButton <- tkbutton(controlsFrame, text=gettextRcmdr("View data set"), command=onView)
+    putRcmdr("dataSetName", tclVar(gettextRcmdr("<No active dataset>")))
     putRcmdr("dataSetLabel", tkbutton(controlsFrame, textvariable=getRcmdr("dataSetName"), fg="red",
         relief="groove", command=selectActiveDataSet))
     logFrame <- tkframe(CommanderWindow())
@@ -334,10 +342,12 @@ Commander <- function(){
     tkconfigure(.log, yscrollcommand=function(...) tkset(logYscroll, ...))
     outputFrame <- tkframe(.commander)
     if (getRcmdr("console.output"))
-        submitButton <- tkbutton(logFrame, bitmap=paste("@", file.path(etc, "submit.xbm"), sep=""),
+        submitButton <- if (English()) tkbutton(logFrame, bitmap=paste("@", file.path(etc, "submit.xbm"), sep=""),
             borderwidth="2", command=onSubmit)
-    else submitButton <- tkbutton(outputFrame, bitmap=paste("@", file.path(etc, "submit.xbm"), sep=""),
+        else tkbutton(logFrame, text=gettextRcmdr("Submit"), borderwidth="2", command=onSubmit)
+    else submitButton <- if (English())tkbutton(outputFrame, bitmap=paste("@", file.path(etc, "submit.xbm"), sep=""),
             borderwidth="2", command=onSubmit)
+        else tkbutton(outputFrame, text=gettextRcmdr("Submit"), borderwidth="2", command=onSubmit)
     putRcmdr("outputWindow", tktext(outputFrame, bg="white", fg=getRcmdr("output.text.color"),
         font=getRcmdr("logFont"), height=output.height, width=log.width, wrap="none"))
     .output <- OutputWindow()
@@ -357,29 +367,29 @@ Commander <- function(){
         command=function(...) tkyview(.messages, ...))
     tkconfigure(.messages, xscrollcommand=function(...) tkset(messagesXscroll, ...))
     tkconfigure(.messages, yscrollcommand=function(...) tkset(messagesYscroll, ...))
-    putRcmdr("modelName", tclVar("<No active model>"))
+    putRcmdr("modelName", tclVar(gettextRcmdr("<No active model>")))
     putRcmdr("modelLabel", tkbutton(controlsFrame, textvariable=getRcmdr("modelName"), fg="red",
         relief="groove", command=selectActiveModel))
     show.edit.button <- options("Rcmdr")[[1]]$show.edit.button
     show.edit.button <- if (is.null(show.edit.button)) TRUE else show.edit.button
     tkgrid(tklabel(controlsFrame, bitmap=paste("@", file.path(etc, "Rcmdr.xbm"), sep=""), fg="red"),
-        tklabel(controlsFrame, text="Data set:"), getRcmdr("dataSetLabel"),
+        tklabel(controlsFrame, text=gettextRcmdr("Data set:")), getRcmdr("dataSetLabel"),
         tklabel(controlsFrame, text="  "), if(show.edit.button) editButton, viewButton,
-        tklabel(controlsFrame, text="    Model: "), getRcmdr("modelLabel"), sticky="w")
+        tklabel(controlsFrame, text=gettextRcmdr("    Model: ")), getRcmdr("modelLabel"), sticky="w")
     tkgrid(controlsFrame, sticky="w")
     .log.commands <-  getRcmdr("log.commands")
     .console.output <- getRcmdr("console.output")
-    if (.log.commands) tkgrid(tklabel(logFrame, text="Script Window", fg="blue"),
+    if (.log.commands) tkgrid(tklabel(logFrame, text=gettextRcmdr("Script Window"), fg="blue"),
         if (.log.commands && .console.output) submitButton, sticky="w")
     tkgrid(.log, logYscroll, sticky="news", columnspan=2)
     tkgrid(logXscroll)
     if (.log.commands) tkgrid(logFrame, sticky="news", padx=10, pady=0, columnspan=2)
-    tkgrid(tklabel(outputFrame, text="Output Window", fg="blue"),
+    tkgrid(tklabel(outputFrame, text=gettextRcmdr("Output Window"), fg="blue"),
         if (.log.commands && !.console.output) submitButton, sticky="w")
     tkgrid(.output, outputYscroll, sticky="news", columnspan=2)
     tkgrid(outputXscroll, columnspan=1 + (.log.commands && !.console.output))
     if (!.console.output) tkgrid(outputFrame, sticky="news", padx=10, pady=0, columnspan=2)
-    tkgrid(tklabel(messagesFrame, text="Messages", fg=getRcmdr("error.text.color")), sticky="w")
+    tkgrid(tklabel(messagesFrame, text=gettextRcmdr("Messages"), fg=getRcmdr("error.text.color")), sticky="w")
     tkgrid(.messages, messagesYscroll, sticky="news", columnspan=2)
     tkgrid(messagesXscroll)
     tkgrid(messagesFrame, sticky="news", padx=10, pady=0, columnspan=2)
@@ -428,8 +438,8 @@ Commander <- function(){
     if (getRcmdr("crisp.dialogs")) tclServiceMode(on=TRUE)
     tkwait <- options("Rcmdr")[[1]]$tkwait  # to address problem in Debian Linux
     if ((!is.null(tkwait)) && tkwait) tkwait.variable(.commander.done)
-    if (!packageLoaded("rgl")) Message("The rgl package is absent; 3D plots are unavailable.", type="warning")
-    Message(paste("R Commander Version ", getRcmdr("version"), ": ", date(), sep=""))
+    if (!packageAvailable("rgl")) Message(gettextRcmdr("The rgl package is absent; 3D plots are unavailable."), type="warning")
+    Message(paste(gettextRcmdr("R Commander Version "), getRcmdr("version"), ": ", date(), sep=""))
     }
 
 logger <- function(command){
@@ -523,7 +533,7 @@ doItAndPrint <- function(command, log=TRUE) {
     }
 
 checkWarnings <- function(messages){
-    if (is.SciViews()) return(invisible()) # PhG: added for SciViews compatibility 
+#    if (is.SciViews()) return(invisible()) # PhG: added for SciViews compatibility 
     if (getRcmdr("suppress.X11.warnings")){
             length.messages <- length(messages)
             last.length.messages <- getRcmdr("length.messages")
@@ -538,14 +548,14 @@ checkWarnings <- function(messages){
                     if (length(current.messages) == 0) return()
                     }
                 if (length(current.messages) > 10) current.messages <- c(paste(length(current.messages), "warnings."),
-                    "First and last 5 warnings:", head(current.messages,5), ". . .", tail(current.messages, 5))
+                    gettextRcmdr("First and last 5 warnings:"), head(current.messages,5), ". . .", tail(current.messages, 5))
                 Message(message=paste(current.messages, collapse="\n"), type="warning")
             }
         }
     else{
         if (length(messages) == 0) return()
         if (length(messages) > 10) messages <- c(paste(length(messages), "warnings."),
-            "First and last 5 warnings:", head(messages, 5), ". . .", tail(messages, 5))
+            gettextRcmdr("First and last 5 warnings:"), head(messages, 5), ". . .", tail(messages, 5))
         Message(message=paste(messages, collapse="\n"), type="warning")
         }
     tkfocus(CommanderWindow())
@@ -561,7 +571,7 @@ Message <- function(message, type=c("note", "error", "warning")){
         }
     else if (type == "note"){
         lastMessage <- tclvalue(tkget(MessagesWindow(),  "end - 2 lines", "end"))
-        if (length(c(grep("ERROR:", lastMessage), grep("WARNING:", lastMessage))) == 0)
+        if (length(c(grep(gettextRcmdr("ERROR:"), lastMessage), grep(gettextRcmdr("WARNING:"), lastMessage))) == 0)
             tkdelete(.message, "1.0", "end")
         }
     else tkdelete(.message, "1.0", "end")
@@ -569,7 +579,7 @@ Message <- function(message, type=c("note", "error", "warning")){
     col <- if (type == "error") getRcmdr("error.text.color")
             else if (type == "warning") getRcmdr("warning.text.color")
             else getRcmdr("output.text.color")
-    prefix <- switch(type, error="ERROR", warning="WARNING", note="NOTE")
+    prefix <- switch(type, error=gettextRcmdr("ERROR"), warning=gettextRcmdr("WARNING"), note=gettextRcmdr("NOTE"))
     message <- paste(prefix, ": ", message, sep="")
     lines <- strsplit(message, "\n")[[1]]
     for (line in lines){

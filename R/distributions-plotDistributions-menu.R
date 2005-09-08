@@ -1,9 +1,9 @@
 # Distributions  -> Plot Distributions menu dialogs
 
-# last modified 12 Mar 05 by J. Fox
+# last modified 1 July 05 by J. Fox
 
 normalDistributionPlot <- function(){
-    initializeDialog(title="Normal Distribution")
+    initializeDialog(title=gettextRcmdr("Normal Distribution"))
     muVar <- tclVar("0")
     muEntry <- tkentry(top, width="6", textvariable=muVar)
     sigmaVar <- tclVar("1")
@@ -32,10 +32,10 @@ normalDistributionPlot <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="dnorm")
-    tkgrid(tklabel(top, text="mu (mean)"), muEntry, sticky="e")
-    tkgrid(tklabel(top, text="sigma (standard deviation)"), sigmaEntry, sticky="e")
-    tkgrid(tklabel(top, text="Plot density function"), densityButton, sticky="e")
-    tkgrid(tklabel(top, text="Plot distribution function"), distributionButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("mu (mean)")), muEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("sigma (standard deviation)")), sigmaEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Plot density function")), densityButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Plot distribution function")), distributionButton, sticky="e")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(muEntry, sticky="w")
     tkgrid.configure(sigmaEntry, sticky="w")
@@ -45,7 +45,7 @@ normalDistributionPlot <- function(){
     }
 
 tDistributionPlot <- function(){
-    initializeDialog(title="t Distribution")
+    initializeDialog(title=gettextRcmdr("t Distribution"))
     dfVar <- tclVar("")
     dfEntry <- tkentry(top, width="6", textvariable=dfVar)
     functionVar <- tclVar("Density")
@@ -55,7 +55,7 @@ tDistributionPlot <- function(){
         closeDialog()
         df <- as.numeric(tclvalue(dfVar))
         if (is.na(df)) {
-            errorCondition(recall=tDistributionPlot, message="Degrees of freedom not specified.")
+            errorCondition(recall=tDistributionPlot, message=gettextRcmdr("Degrees of freedom not specified."))
             return()
             }
         fun <- tclvalue(functionVar)
@@ -74,9 +74,9 @@ tDistributionPlot <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="dt")
-    tkgrid(tklabel(top, text="Degrees of freedom"), dfEntry, sticky="e")
-    tkgrid(tklabel(top, text="Plot density function"), densityButton, sticky="e")
-    tkgrid(tklabel(top, text="Plot distribution function"), distributionButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Degrees of freedom")), dfEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Plot density function")), densityButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Plot distribution function")), distributionButton, sticky="e")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(dfEntry, sticky="w")
     tkgrid.configure(densityButton, sticky="w")
@@ -85,7 +85,7 @@ tDistributionPlot <- function(){
     }
 
 chisquareDistributionPlot <- function(){
-    initializeDialog(title="Chi-squared Distribution")
+    initializeDialog(title=gettextRcmdr("Chi-squared Distribution"))
     dfVar <- tclVar("")
     dfEntry <- tkentry(top, width="6", textvariable=dfVar)
     functionVar <- tclVar("Density")
@@ -95,7 +95,7 @@ chisquareDistributionPlot <- function(){
         closeDialog()
         df <- as.numeric(tclvalue(dfVar))
         if (is.na(df)) {
-            errorCondition(recall=chisquareDistributionPlot,message="Degrees of freedom not specified.")
+            errorCondition(recall=chisquareDistributionPlot,message=gettextRcmdr("Degrees of freedom not specified."))
             return()
             }
         fun <- tclvalue(functionVar)
@@ -114,9 +114,9 @@ chisquareDistributionPlot <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="dchisq")
-    tkgrid(tklabel(top, text="Degrees of freedom"), dfEntry, sticky="e")
-    tkgrid(tklabel(top, text="Plot density function"), densityButton, sticky="e")
-    tkgrid(tklabel(top, text="Plot distribution function"), distributionButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Degrees of freedom")), dfEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Plot density function")), densityButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Plot distribution function")), distributionButton, sticky="e")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(dfEntry, sticky="w")
     tkgrid.configure(densityButton, sticky="w")
@@ -125,7 +125,7 @@ chisquareDistributionPlot <- function(){
     }
 
 FDistributionPlot <- function(){
-    initializeDialog(title="F Distribution")
+    initializeDialog(title=gettextRcmdr("F Distribution"))
     df1Var <- tclVar("")
     df2Var <- tclVar("")
     df1Entry <- tkentry(top, width="6", textvariable=df1Var)
@@ -138,11 +138,11 @@ FDistributionPlot <- function(){
         df1 <- as.numeric(tclvalue(df1Var))
         df2 <- as.numeric(tclvalue(df2Var))
         if (is.na(df1)) {
-            errorCondition(recall=FDistributionPlot, message="Numerator degrees of freedom not specified.")
+            errorCondition(recall=FDistributionPlot, message=gettextRcmdr("Numerator degrees of freedom not specified."))
             return()
             }
         if (is.na(df2)) {
-             errorCondition(recall=FDistributionPlot, message="Denominator degrees of freedom not specified.")
+             errorCondition(recall=FDistributionPlot, message=gettextRcmdr("Denominator degrees of freedom not specified."))
             return()
             }
         fun <- tclvalue(functionVar)
@@ -162,10 +162,10 @@ FDistributionPlot <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="df")
-    tkgrid(tklabel(top, text="Numerator degrees of freedom"), df1Entry, sticky="e")
-    tkgrid(tklabel(top, text="Denominator degrees of freedom"), df2Entry, sticky="e")
-    tkgrid(tklabel(top, text="Plot density function"), densityButton, sticky="e")
-    tkgrid(tklabel(top, text="Plot distribution function"), distributionButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Numerator degrees of freedom")), df1Entry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Denominator degrees of freedom")), df2Entry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Plot density function")), densityButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Plot distribution function")), distributionButton, sticky="e")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(df1Entry, sticky="w")
     tkgrid.configure(df2Entry, sticky="w")
@@ -175,7 +175,7 @@ FDistributionPlot <- function(){
     }
 
 binomialDistributionPlot <- function(){
-    initializeDialog(title="Binomial Distribution")
+    initializeDialog(title=gettextRcmdr("Binomial Distribution"))
     trialsVar <- tclVar("")
     trialsEntry <- tkentry(top, width="6", textvariable=trialsVar)
     probVar <- tclVar(".5")
@@ -187,12 +187,12 @@ binomialDistributionPlot <- function(){
         closeDialog()
         trials <- as.numeric(tclvalue(trialsVar))
         if (is.na(trials)) {
-            errorCondition(recall=binomialDistributionPlot, message="Binomial trials not specified.")
+            errorCondition(recall=binomialDistributionPlot, message=gettextRcmdr("Binomial trials not specified."))
             return()
             }
         prob <- as.numeric(tclvalue(probVar))
         if (is.na(prob)) {
-            errorCondition(recall=binomialDistributionPlot, message="Probability of success not specified.")
+            errorCondition(recall=binomialDistributionPlot, message=gettextRcmdr("Probability of success not specified."))
             return()
             }
         fun <- tclvalue(functionVar)
@@ -222,10 +222,10 @@ binomialDistributionPlot <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="dbinom")
-    tkgrid(tklabel(top, text="Binomial trials"), trialsEntry, sticky="e")
-    tkgrid(tklabel(top, text="Probability of success"), probEntry, sticky="e")
-    tkgrid(tklabel(top, text="Plot probability mass function"), densityButton, sticky="e")
-    tkgrid(tklabel(top, text="Plot distribution function"), distributionButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Binomial trials")), trialsEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Probability of success")), probEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Plot probability mass function")), densityButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Plot distribution function")), distributionButton, sticky="e")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(trialsEntry, sticky="w")
     tkgrid.configure(probEntry, sticky="w")
@@ -235,7 +235,7 @@ binomialDistributionPlot <- function(){
     }
 
 PoissonDistributionPlot <- function(){
-    initializeDialog(title="Poisson Distribution")
+    initializeDialog(title=gettextRcmdr("Poisson Distribution"))
     meanVar <- tclVar("")
     meanEntry <- tkentry(top, width="6", textvariable=meanVar)
     functionVar <- tclVar("Probability")
@@ -245,7 +245,7 @@ PoissonDistributionPlot <- function(){
         closeDialog()
         mean <- as.numeric(tclvalue(meanVar))
         if (is.na(mean)) {
-            errorCondition(recall=PoissonDistributionPlot, message="Mean not specified.")
+            errorCondition(recall=PoissonDistributionPlot, message=gettextRcmdr("Mean not specified."))
             return()
             }
         fun <- tclvalue(functionVar)
@@ -275,9 +275,9 @@ PoissonDistributionPlot <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="dpois")
-    tkgrid(tklabel(top, text="mean"), meanEntry, sticky="e")
-    tkgrid(tklabel(top, text="Plot probability mass function"), densityButton, sticky="e")
-    tkgrid(tklabel(top, text="Plot distribution function"), distributionButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("mean")), meanEntry, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Plot probability mass function")), densityButton, sticky="e")
+    tkgrid(tklabel(top, text=gettextRcmdr("Plot distribution function")), distributionButton, sticky="e")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     tkgrid.configure(meanEntry, sticky="w")
     tkgrid.configure(densityButton, sticky="w")

@@ -1,25 +1,40 @@
 \name{scatter3d}
 \alias{scatter3d}
-\title{Three-Dimensional Scatterplots}
+\alias{identify3d}
+\title{Three-Dimensional Scatterplots and Point Identification}
 
 \description{
-  This function uses the \code{rgl} package to draw 3D scatterplots
-  with various regression surfaces.
+  The \code{scatter3d} function uses the \code{rgl} package to draw 3D scatterplots
+  with various regression surfaces. The function \code{identify3d} 
+  allows you to label points interactively with the mouse:
+  Press the right mouse button (on a two-button mouse) or the centre button (on a
+  three-button mouse), drag a 
+  rectangle around the points to be identified, and release the button. 
+  Repeat this procedure for each point or
+  set of ``nearby'' points to be identified. To exit from point-identification mode,
+  click the right (or centre) button an empty region of the plot.
 }
 
 \usage{
-scatter3d(x, y, z, xlab=deparse(substitute(x)), ylab=deparse(substitute(y)),
-    zlab=deparse(substitute(z)), revolutions=0,
-    bg.col=c("black", "white"), axis.col=NULL,
-    surface.col=c("blue", "green", "orange", "magenta", "cyan", "red",
-        "yellow", "gray"),
+scatter3d(x, y, z, 
+    xlab=deparse(substitute(x)), ylab=deparse(substitute(y)),
+    zlab=deparse(substitute(z)),
+    revolutions=0, bg.col=c("white", "black"), 
+    axis.col=if (bg.col == "white") "black" else "white",
+    surface.col=c("blue", "green", "orange", "magenta", 
+        "cyan", "red", "yellow", "gray"),
     neg.res.col="red", pos.res.col="green", point.col="yellow",
-    text.col=axis.col, grid.col=if (bg.col == "white") "black" else "gray", 
-    fogtype=c("exp2", "linear", "exp", "none"), 
-    residuals=(length(fit) == 1), surface=TRUE, grid=TRUE, grid.lines=26,
-    df.smooth=NULL, df.additive=NULL,
-    sphere.size=1, threshold=0.01, speed=1, fov=60, 
+    text.col=axis.col, 
+    grid.col=if (bg.col == "white") "black" else "gray",
+    fogtype=c("exp2", "linear", "exp", "none"),
+    residuals=(length(fit) == 1), surface=TRUE, grid=TRUE, 
+    grid.lines=26, df.smooth=NULL, df.additive=NULL,
+    sphere.size=1, threshold=0.01, speed=1, fov=60,
     fit="linear", groups=NULL, parallel=TRUE, model.summary=FALSE)
+    
+identify3d(x, y, z, groups=NULL, labels=1:length(x), 
+    col=c("blue", "green", "orange", "magenta", "cyan", "red", "yellow", "gray"),
+    offset = ((100/length(x))^(1/3)) * 0.02)
 }
 
 \note{
@@ -75,11 +90,18 @@ You have to install the \code{rgl} and \code{mgcv} packages to produce 3D plots.
     parallel? A logical value, with default \code{TRUE}.}
   \item{model.summary}{print summary or summaries of the model(s) fit 
     (\code{TRUE} or \code{FALSE}).}
+  \item{labels}{text labels for the points, one for each point; defaults to
+    the observation indices.}
+  \item{col}{colours for the point labels, given by group. There must be at
+    least as many colours as groups; if there are no groups, the first colour is used. Normally, the colours
+    would correspond to the \code{plane.col} argument to \code{scatter3d}.}
+  \item{offset}{vertical displacement for point labels (to avoid overplotting by points).}
 }
 
 \value{
-  Does not return a useful value; used for its side-effect of
-  creating a 3D scatterplot.
+  \code{scatter3d} not return a useful value; it is used for its side-effect of
+  creating a 3D scatterplot. \code{indentify3d} returns the labels of the
+  identified points.
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}}
@@ -88,9 +110,9 @@ You have to install the \code{rgl} and \code{mgcv} packages to produce 3D plots.
 
 \examples{
     \dontrun{
-data(state)
 State.x77 <- as.data.frame(state.x77)
 with(State.x77, scatter3d(Income, Murder, Illiteracy))
+with(State.x77, identify3d(Income, Murder, Illiteracy, labels=row.names(State.x77)))
 with(State.x77,  scatter3d(Income, Murder, Illiteracy, fit=c("linear", "quadratic")))
     }
 }

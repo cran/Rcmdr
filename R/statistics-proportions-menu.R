@@ -1,18 +1,16 @@
 # Statistics Menu dialogs
 
-# last modified 13 Mar 05 by J. Fox
+# last modified 1 July 05 by J. Fox
 
     # Proportions menu
     
 singleProportionTest <- function(){
-##    if (!checkActiveDataSet()) return()
-##    if (!checkTwoLevelFactors()) return()
-    initializeDialog(title="Single-Sample Proportion Test")
-    xBox <- variableListBox(top, TwoLevelFactors(), title="Variable (pick one)")
+    initializeDialog(title=gettextRcmdr("Single-Sample Proportion Test"))
+    xBox <- variableListBox(top, TwoLevelFactors(), title=gettextRcmdr("Variable (pick one)"))
     onOK <- function(){
         x <- getSelection(xBox)
         if (length(x) == 0) {
-            errorCondition(recall=singleProportionTest, message="You must select a variable.")
+            errorCondition(recall=singleProportionTest, message=gettextRcmdr("You must select a variable."))
             return()
             }
         alternative <- as.character(tclvalue(alternativeVariable))
@@ -34,7 +32,7 @@ singleProportionTest <- function(){
         }
     OKCancelHelp(helpSubject="prop.test")
     radioButtons(top, name="alternative", buttons=c("twosided", "less", "greater"), values=c("two.sided", "less", "greater"),
-        labels=c("Population proportion = p0", "Population proportion < p0", "Population proportion > p0"), title="Alternative Hypothesis")
+        labels=gettextRcmdr(c("Population proportion = p0", "Population proportion < p0", "Population proportion > p0")), title=gettextRcmdr("Alternative Hypothesis"))
     rightFrame <- tkframe(top)
     confidenceFrame <- tkframe(rightFrame)
     confidenceLevel <- tclVar(".95")
@@ -43,13 +41,13 @@ singleProportionTest <- function(){
     pVariable <- tclVar(".5")
     pField <- tkentry(pFrame, width="6", textvariable=pVariable)
     radioButtons(name="test", buttons=c("normal", "corrected", "exact"), 
-        labels=c("Normal approximation", "Normal approximation with\ncontinuity correction", "Exact binomial"), 
+        labels=gettextRcmdr(c("Normal approximation", "Normal approximation with\ncontinuity correction", "Exact binomial")), 
         title="Type of Test")
     tkgrid(getFrame(xBox), sticky="nw")    
-    tkgrid(tklabel(pFrame, text="Null hypothesis: p = ", fg="blue"), pField, sticky="w")
+    tkgrid(tklabel(pFrame, text=gettextRcmdr("Null hypothesis: p = "), fg="blue"), pField, sticky="w")
     tkgrid(pFrame, sticky="w")
     tkgrid(tklabel(rightFrame, text=""))
-    tkgrid(tklabel(confidenceFrame, text="Confidence Level: ", fg="blue"), confidenceField, sticky="w")
+    tkgrid(tklabel(confidenceFrame, text=gettextRcmdr("Confidence Level: "), fg="blue"), confidenceField, sticky="w")
     tkgrid(confidenceFrame, sticky="w")
     tkgrid(alternativeFrame, rightFrame, sticky="nw")
     tkgrid(testFrame, sticky="w")
@@ -59,25 +57,23 @@ singleProportionTest <- function(){
     }
 
 twoSampleProportionsTest <- function(){
-##    if (!checkActiveDataSet()) return()
-##    if (!checkTwoLevelFactors(2)) return()
-    initializeDialog(title="Two-Sample Proportions Test")
+    initializeDialog(title=gettextRcmdr("Two-Sample Proportions Test"))
     .twoLevelFactors <- TwoLevelFactors()
-    groupsBox <- variableListBox(top, .twoLevelFactors, title="Groups (pick one)")
-    xBox <- variableListBox(top, .twoLevelFactors, title="Response Variable (pick one)")
+    groupsBox <- variableListBox(top, .twoLevelFactors, title=gettextRcmdr("Groups (pick one)"))
+    xBox <- variableListBox(top, .twoLevelFactors, title=gettextRcmdr("Response Variable (pick one)"))
     onOK <- function(){
         groups <- getSelection(groupsBox)
         if (length(groups) == 0) {
-            errorCondition(recall=twoSampleProportionsTest, message="You must select a groups variable.")
+            errorCondition(recall=twoSampleProportionsTest, message=gettextRcmdr("You must select a groups variable."))
             return()
             }
         x <- getSelection(xBox)
         if (length(x) == 0) {
-            errorCondition(recall=twoSampleProportionsTest, message="You must select a response variable.")
+            errorCondition(recall=twoSampleProportionsTest, message=gettextRcmdr("You must select a response variable."))
             return()
             }
         if (x == groups) {
-            errorCondition(recall=twoSampleProportionsTest, message="Groups and response variables must be different.")
+            errorCondition(recall=twoSampleProportionsTest, message=gettextRcmdr("Groups and response variables must be different."))
             return()
             }
         alternative <- as.character(tclvalue(alternativeVariable))
@@ -98,16 +94,16 @@ twoSampleProportionsTest <- function(){
         }
     OKCancelHelp(helpSubject="prop.test")
     radioButtons(name="alternative", buttons=c("twosided", "less", "greater"), values=c("two.sided", "less", "greater"),
-        labels=c("Two-sided", "Difference < 0", "Difference > 0"), title="Alternative Hypothesis")
+        labels=gettextRcmdr(c("Two-sided", "Difference < 0", "Difference > 0")), title=gettextRcmdr("Alternative Hypothesis"))
     rightFrame <- tkframe(top)
     confidenceFrame <- tkframe(rightFrame)
     confidenceLevel <- tclVar(".95")
     confidenceField <- tkentry(confidenceFrame, width="6", textvariable=confidenceLevel)
     radioButtons(name="test", buttons=c("normal", "corrected"), 
-        labels=c("Normal approximation", "Normal approximation with\ncontinuity correction"), title="Type of Test")
+        labels=gettextRcmdr(c("Normal approximation", "Normal approximation with\ncontinuity correction")), title=gettextRcmdr("Type of Test"))
     tkgrid(getFrame(groupsBox), getFrame(xBox), sticky="nw")    
     groupsLabel(columnspan=2)
-    tkgrid(tklabel(confidenceFrame, text="Confidence Level: ", fg="blue"), confidenceField, sticky="w")
+    tkgrid(tklabel(confidenceFrame, text=gettextRcmdr("Confidence Level: "), fg="blue"), confidenceField, sticky="w")
     tkgrid(confidenceFrame, sticky="w")
     tkgrid(alternativeFrame, rightFrame, sticky="nw")
     tkgrid(testFrame, sticky="w")

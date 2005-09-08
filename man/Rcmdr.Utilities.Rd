@@ -29,6 +29,7 @@
 \alias{getRcmdr}
 \alias{getSelection}
 \alias{getSelection.listbox}
+\alias{gettextRcmdr}
 \alias{glmP}
 \alias{GrabFocus}
 \alias{groupsBox}
@@ -55,10 +56,11 @@
 \alias{numericP}
 \alias{OKCancelHelp}
 \alias{OutputWindow}
-\alias{packageLoaded}
+\alias{packageAvailable}
 \alias{putRcmdr}
 \alias{radioButtons}
 \alias{RcmdrTclSet}
+\alias{RcmdrTkmessageBox}
 \alias{subOKCancelHelp}
 \alias{subsetBox}
 \alias{TwoLevelFactors}
@@ -88,14 +90,14 @@ checkActiveModel()
 checkBoxes(window=top, frame, boxes, initialValues=NULL, labels)  # macro
 checkFactors(n=1)
 checkNumeric(n=1)
-checkReplace(name, type="Variable")
+checkReplace(name, type=gettextRcmdr("Variable"))
 checkTwoLevelFactors(n=1)
 checkVariables(n=1)
 closeDialog(window, release=TRUE)  # macro
 CommanderWindow()
 dataSetsP()
 dialogSuffix(window=top, onOK=onOK, rows=1, columns=1, focus=top, bindReturn=TRUE, 
-    preventGrabFocus=FALSE, preventDoubleClick=FALSE)  # macro
+    preventGrabFocus=FALSE, preventDoubleClick=FALSE, preventCrisp=FALSE)  # macro
 doItAndPrint(command, log=TRUE)
 errorCondition(window=top, recall=NULL, message, model=FALSE)  # macro
 Factors(names)
@@ -103,14 +105,16 @@ factorsP()
 \method{getFrame}{listbox}(object)
 \method{getSelection}{listbox}(object)
 getRcmdr(x, mode="any")
+gettextRcmdr(...)
 glmP()
 GrabFocus(value)
-groupsBox(recall=NULL, label="Plot by:", initialLabel="Plot by groups",
+groupsBox(recall=NULL, label=gettextRcmdr("Plot by:"), 
+    initialLabel=gettextRcmdr("Plot by groups"),
     plotLinesByGroup=FALSE, positionLegend=FALSE, 
-    plotLinesByGroupsText="Plot lines by group")  # macro
+    plotLinesByGroupsText=gettextRcmdr("Plot lines by group"))  # macro
 groupsLabel(frame=top, groupsBox=groupsBox, columnspan=1)  # macro
 hclustSolutionsP()
-initializeDialog(window=top, title="", offset=10)  # macro
+initializeDialog(window=top, title="", offset=10, preventCrisp=FALSE)  # macro
 is.valid.name(x)
 justDoIt(command)
 listDataSets(envir = .GlobalEnv, ...)
@@ -131,11 +135,13 @@ Numeric(names)
 numericP()
 OKCancelHelp(window=top, helpSubject=NULL, model=FALSE)  # macro
 OutputWindow()
-packageLoaded(name)
+packageAvailable(name)
 putRcmdr(x, value)
 radioButtons(window=top, name, buttons, values=NULL, initialValue=..values[1], 
     labels, title)  # macro
 RcmdrTclSet(name, value)
+RcmdrTkmessageBox(message, icon=c("info", "question", "warning",
+    "error"), type=c("okcancel", "yesno", "ok"), default)
 subOKCancelHelp(window=subdialog, helpSubject=NULL)  # macro
 subsetBox(window=top, model=FALSE)  # macro
 TwoLevelFactors(names)
@@ -160,6 +166,7 @@ commanderPosition()
   \item{columnspan}{number of dialog-box columns to be spanned by frame.}
   \item{command}{a character string that evaluates to an R command.}
   \item{dataSet, dsname}{the quoted name of a data frame in memory.}
+  \item{default}{default button: if not specified, "ok" for "okcancel", "yes" for "yesno", and "ok" for "ok".}
   \item{envir}{the environment to be searched; should generally be left at the default.}
   \item{export}{export selection?}
   \item{flushModel}{set (or reset) the active model to NULL? Should normally be \code{TRUE} when the active 
@@ -171,6 +178,7 @@ commanderPosition()
   \item{hasLhs}{does the model formula have a left-hand side?}
   \item{helpSubject}{the quoted name of a help subject, to be called as \code{help(helpSubject)}
     when the dialog \emph{Help} button is pressed.}
+  \item{icon}{Message-box icon.}
   \item{increment}{increment to model number; -1 to set back after error.}
   \item{initialLabel}{label for groups button before a selection is made.}
   \item{initialSelection}{index of item initially selected, 0-base indexing.}
@@ -197,6 +205,8 @@ commanderPosition()
   \item{preventDoubleClick}{prevent double-clicking from pressing the OK button, even when the
     double.click option is set; necessary for statistical modelling dialogs, which use double-clicking
     to build the model formula.}
+  \item{preventCrisp}{prevent call to \code{tclServiceMode}, which (rarely) causes
+    problems with some dialogs.}
   \item{recall}{function to call after error --- usually the function that initiates the dialog.}
   \item{release}{release the focus if the grab.focus option has been set.}
   \item{rows, columns}{numbers of rows and columns of widgets in the dialog box.}
@@ -209,7 +219,8 @@ commanderPosition()
   \item{variableList}{a vector of variable names.}
   \item{window, parentWindow}{a Tk window.}
   \item{x}{an R object name, as a character string.}
-  \item{\dots}{Disregard.}
+  \item{\dots}{For \code{gettextRcmdr}, text string or vector of text strings
+    to translate; otherwise disregard.}
 }
 
 \details{
@@ -242,6 +253,8 @@ commanderPosition()
   \code{listTwoLevelFactors},
   \code{listVariables}. The functions \code{activeDataSet} and \code{activeModel} respectively report or set the active
   data set and model.
+  The function \code{packageAvailable} reports whether the named package is 
+  available to be loaded (or has possibly already been loaded).
   
   \emph{Building dialog boxes: }
   Several functions simplify the process of constructing Tk dialogs: 
@@ -255,6 +268,10 @@ commanderPosition()
   a dialog-box structure for entering a model formula, \code{modelFormula};
   a text box for entering a subsetting expression, \code{subsetBox};
   \emph{OK}, \emph{Cancel}, and \emph{Help} buttons for dialogs, \code{OKCancelHelp}, and subdialogs, \code{subOKCancelHelp}.
+  
+  \emph{Translating text:}
+  The \code{gettextRcmdr} function simply passes its argument(s) to
+   \code{\link[base]{gettext}}, adding the argument \code{domain="R-Rcmdr"}.
   
   Some of these functions, marked \code{# macro} under \emph{Usage}, are "macro-like" in their behaviour, in that they 
   execute in the environment from which they are called. These were defined with an adaptation (used with permission) of

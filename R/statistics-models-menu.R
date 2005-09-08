@@ -1,18 +1,16 @@
 # Statistics Menu dialogs
 
-# last modified 17 Mar 05 by J. Fox
+# last modified 1 July 05 by J. Fox
 
     # Models menu
     
 linearRegressionModel <- function(){
-##    if (!checkActiveDataSet()) return()
-##    if (!checkNumeric(2)) return()
-    initializeDialog(title="Linear Regression")
+    initializeDialog(title=gettextRcmdr("Linear Regression"))
     variablesFrame <- tkframe(top)
     .numeric <- Numeric()
     xBox <- variableListBox(variablesFrame, .numeric, selectmode="multiple", 
-        title="Explanatory variables (pick one or more)")
-    yBox <- variableListBox(variablesFrame, .numeric, title="Response variable (pick one)")
+        title=gettextRcmdr("Explanatory variables (pick one or more)"))
+    yBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("Response variable (pick one)"))
     UpdateModelNumber()
     modelName <- tclVar(paste("RegModel.", getRcmdr("modelNumber"), sep=""))
     modelFrame <- tkframe(top)
@@ -24,21 +22,21 @@ linearRegressionModel <- function(){
         closeDialog()
         if (0 == length(y)) {
             UpdateModelNumber(-1)
-            errorCondition(recall=linearRegressionModel, message="You must select a response variable.")
+            errorCondition(recall=linearRegressionModel, message=gettextRcmdr("You must select a response variable."))
             return()
             }
         if (0 == length(x)) {
             UpdateModelNumber(-1)
-            errorCondition(recall=linearRegressionModel, message="No explanatory variables selected.")
+            errorCondition(recall=linearRegressionModel, message=gettextRcmdr("No explanatory variables selected."))
             return()
             }        
         if (is.element(y, x)) {
             UpdateModelNumber(-1)
-            errorCondition(recall=linearRegressionModel, message="Response and explanatory variables must be different.")
+            errorCondition(recall=linearRegressionModel, message=gettextRcmdr("Response and explanatory variables must be different."))
             return()
             }
         subset <- tclvalue(subsetVariable)
-        if (trim.blanks(subset) == "<all valid cases>" || trim.blanks(subset) == ""){
+        if (trim.blanks(subset) == gettextRcmdr("<all valid cases>") || trim.blanks(subset) == ""){
             subset <- ""
             putRcmdr("modelWithSubset", FALSE)
             }
@@ -49,11 +47,11 @@ linearRegressionModel <- function(){
         modelValue <- trim.blanks(tclvalue(modelName))
         if (!is.valid.name(modelValue)){
             UpdateModelNumber(-1)
-            errorCondition(recall=linearRegressionModel, message=paste('"', modelValue, '" is not a valid name.', sep=""))
+            errorCondition(recall=linearRegressionModel, message=sprintf(gettextRcmdr('"%s" is not a valid name.'), modelValue))
             return()
             }
         if (is.element(modelValue, listLinearModels())) {
-            if ("no" == tclvalue(checkReplace(modelValue, type="Model"))){
+            if ("no" == tclvalue(checkReplace(modelValue, type=gettextRcmdr("Model")))){
                 UpdateModelNumber(-1)
                 linearRegressionModel()
                 return()
@@ -68,7 +66,7 @@ linearRegressionModel <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="lm", model=TRUE)
-    tkgrid(tklabel(modelFrame, text="Enter name for model:"), model, sticky="w")
+    tkgrid(tklabel(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
     tkgrid(modelFrame, sticky="w")
     tkgrid(getFrame(yBox), tklabel(variablesFrame, text="    "), getFrame(xBox), sticky="nw")
     tkgrid(variablesFrame, sticky="w")    
@@ -79,10 +77,7 @@ linearRegressionModel <- function(){
     }
 
 linearModel <- function(){
-##    if (!checkActiveDataSet()) return()
-##    if (!checkNumeric()) return()
-##    if (!checkVariables(2)) return()
-    initializeDialog(title="Linear Model")
+    initializeDialog(title=gettextRcmdr("Linear Model"))
     .activeModel <- ActiveModel()
     currentModel <- if (!is.null(.activeModel)) 
         eval(parse(text=paste("class(", .activeModel, ")[1] == 'lm'", sep="")), 
@@ -101,11 +96,11 @@ linearModel <- function(){
         modelValue <- trim.blanks(tclvalue(modelName))
         closeDialog()
         if (!is.valid.name(modelValue)){
-            errorCondition(recall=linearModel, message=paste('"', modelValue, '" is not a valid name.', sep=""), model=TRUE)
+            errorCondition(recall=linearModel, message=sprintf(gettextRcmdr('"%s" is not a valid name.'), modelValue), model=TRUE)
             return()
             }
         subset <- tclvalue(subsetVariable)
-        if (trim.blanks(subset) == "<all valid cases>" || trim.blanks(subset) == ""){
+        if (trim.blanks(subset) == gettextRcmdr("<all valid cases>") || trim.blanks(subset) == ""){
             subset <- ""
             putRcmdr("modelWithSubset", FALSE)
             }
@@ -115,16 +110,16 @@ linearModel <- function(){
             }
         check.empty <- gsub(" ", "", tclvalue(lhsVariable))
         if ("" == check.empty) {
-            errorCondition(recall=linearModel, message="Left-hand side of model empty.", model=TRUE) 
+            errorCondition(recall=linearModel, message=gettextRcmdr("Left-hand side of model empty."), model=TRUE) 
             return()
             }
         check.empty <- gsub(" ", "", tclvalue(rhsVariable))
         if ("" == check.empty) {
-            errorCondition(recall=linearModel, message="Right-hand side of model empty.", model=TRUE)
+            errorCondition(recall=linearModel, message=gettextRcmdr("Right-hand side of model empty."), model=TRUE)
             return()
             }
         if (is.element(modelValue, listLinearModels())) {
-            if ("no" == tclvalue(checkReplace(modelValue, type="Model"))){
+            if ("no" == tclvalue(checkReplace(modelValue, type=gettextRcmdr("Model")))){
                 UpdateModelNumber(-1)
                 linearModel()
                 return()
@@ -140,7 +135,7 @@ linearModel <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="linearModel", model=TRUE)
-    tkgrid(tklabel(modelFrame, text="Enter name for model:"), model, sticky="w")
+    tkgrid(tklabel(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
     tkgrid(modelFrame, sticky="w")
     modelFormula()
     subsetBox(model=TRUE)
@@ -170,9 +165,7 @@ generalizedLinearModel <- function(){
     colnames(availableLinks) <- links
     canonicalLinks <- c("identity", "logit", "log", "inverse", "1/mu^2", "logit", "log")
     names(canonicalLinks) <- families
-##    if (!checkActiveDataSet()) return()
-##    if (!checkVariables(2)) return()
-    initializeDialog(title="Generalized Linear Model")
+    initializeDialog(title=gettextRcmdr("Generalized Linear Model"))
     .activeModel <- ActiveModel()
     currentModel <- if (!is.null(.activeModel)) 
         eval(parse(text=paste("class(", .activeModel, ")[1] == 'glm'", sep="")), 
@@ -212,21 +205,21 @@ generalizedLinearModel <- function(){
     onOK <- function(){
         check.empty <- gsub(" ", "", tclvalue(lhsVariable))
         if ("" == check.empty) {
-            errorCondition(recall=generalizedLinearModel, model=TRUE, message="Left-hand side of model empty.")
+            errorCondition(recall=generalizedLinearModel, model=TRUE, message=gettextRcmdr("Left-hand side of model empty."))
             return()
             }
         check.empty <- gsub(" ", "", tclvalue(rhsVariable))
         if ("" == check.empty) {
-            errorCondition(recall=generalizedLinearModel, model=TRUE, message="Right-hand side of model empty.")
+            errorCondition(recall=generalizedLinearModel, model=TRUE, message=gettextRcmdr("Right-hand side of model empty."))
             return()
             }
         modelValue <- trim.blanks(tclvalue(modelName))
         if (!is.valid.name(modelValue)){
-            errorCondition(recall=generalizedLinearModel, model=TRUE, message=paste('"', modelValue, '" is not a valid name.', sep=""))
+            errorCondition(recall=generalizedLinearModel, model=TRUE, message=sprintf(gettextRcmdr('"%s" is not a valid name.'), modelValue))
             return()
             }
         if (is.element(modelValue, listGeneralizedLinearModels())) {
-            if ("no" == tclvalue(checkReplace(modelValue))){
+            if ("no" == tclvalue(checkReplace(modelValue, type=gettextRcmdr("Model")))){
                 UpdateModelNumber(-1)
                 closeDialog()
                 generalizedLinearModel()
@@ -239,7 +232,7 @@ generalizedLinearModel <- function(){
         link <- availLinks[as.numeric(tkcurselection(linkBox)) + 1]
         subset <- tclvalue(subsetVariable)
         closeDialog()
-        if (trim.blanks(subset) == "<all valid cases>" || trim.blanks(subset) == ""){
+        if (trim.blanks(subset) == gettextRcmdr("<all valid cases>") || trim.blanks(subset) == ""){
             subset <- ""
             putRcmdr("modelWithSubset", FALSE)
             }
@@ -257,14 +250,14 @@ generalizedLinearModel <- function(){
         }
     OKCancelHelp(helpSubject="generalizedLinearModel")
     helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
-    tkgrid(tklabel(modelFrame, text="Enter name for model:"), model, sticky="w")
+    tkgrid(tklabel(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
     tkgrid(modelFrame, sticky="w")    
     tkgrid(getFrame(xBox), sticky="w")
     tkgrid(outerOperatorsFrame, sticky="w")
     tkgrid(formulaFrame, sticky="w")
     tkgrid(subsetFrame, sticky="w")
-        tkgrid(tklabel(linkFamilyFrame, text="Family (double-click to select)", fg="blue"), 
-        tklabel(linkFamilyFrame, text="   "), tklabel(linkFamilyFrame, text="Link function", fg="blue"), sticky="w")
+        tkgrid(tklabel(linkFamilyFrame, text=gettextRcmdr("Family (double-click to select)"), fg="blue"), 
+        tklabel(linkFamilyFrame, text="   "), tklabel(linkFamilyFrame, text=gettextRcmdr("Link function"), fg="blue"), sticky="w")
     tkgrid(familyBox, familyScroll, sticky="nw")
     tkgrid(linkBox, sticky="nw")
     tkgrid(familyFrame, tklabel(linkFamilyFrame, text="   "), linkFrame, sticky="nw")
@@ -285,9 +278,8 @@ generalizedLinearModel <- function(){
     }
 
 proportionalOddsModel <- function(){
-##    if (!checkActiveDataSet()) return()
-##    if (!checkVariables(2)) return()
-    initializeDialog(title="Proportional-Odds Logit Model")
+    require("MASS")
+    initializeDialog(title=gettextRcmdr("Proportional-Odds Logit Model"))
     .activeModel <- ActiveModel()
     .activeDataSet <- ActiveDataSet()
     currentModel <- if (!is.null(.activeModel)) 
@@ -307,11 +299,11 @@ proportionalOddsModel <- function(){
         modelValue <- trim.blanks(tclvalue(modelName))
         closeDialog()
         if (!is.valid.name(modelValue)){
-            errorCondition(recall=proportionalOddsModel, message=paste('"', modelValue, '" is not a valid name.', sep=""), model=TRUE)
+            errorCondition(recall=proportionalOddsModel, message=sprintf(gettextRcmdr('"%s" is not a valid name.'), modelValue), model=TRUE)
             return()
             }
         subset <- tclvalue(subsetVariable)
-        if (trim.blanks(subset) == "<all valid cases>" || trim.blanks(subset) == ""){
+        if (trim.blanks(subset) == gettextRcmdr("<all valid cases>") || trim.blanks(subset) == ""){
             subset <- ""
             putRcmdr("modelWithSubset", FALSE)
             }
@@ -321,20 +313,20 @@ proportionalOddsModel <- function(){
             }
         check.empty <- gsub(" ", "", tclvalue(lhsVariable))
         if ("" == check.empty) {
-            errorCondition(recall=proportionalOddsModel, message="Left-hand side of model empty.", model=TRUE) 
+            errorCondition(recall=proportionalOddsModel, message=gettextRcmdr("Left-hand side of model empty."), model=TRUE) 
             return()
             }
         check.empty <- gsub(" ", "", tclvalue(rhsVariable))
         if ("" == check.empty) {
-            errorCondition(recall=proportionalOddsModel, message="Right-hand side of model empty.", model=TRUE)
+            errorCondition(recall=proportionalOddsModel, message=gettextRcmdr("Right-hand side of model empty."), model=TRUE)
             return()
             }
         if (!is.factor(eval(parse(text=tclvalue(lhsVariable)), envir=eval(parse(text=.activeDataSet), envir=.GlobalEnv)))){
-            errorCondition(recall=proportionalOddsModel, message="Response variable must be a factor")
+            errorCondition(recall=proportionalOddsModel, message=gettextRcmdr("Response variable must be a factor"))
             return()
             }
         if (is.element(modelValue, listProportionalOddsModels())) {
-            if ("no" == tclvalue(checkReplace(modelValue, type="Model"))){
+            if ("no" == tclvalue(checkReplace(modelValue, type=gettextRcmdr("Model")))){
                 UpdateModelNumber(-1)
                 proportionalOddsModel()
                 return()
@@ -350,7 +342,7 @@ proportionalOddsModel <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="polr", model=TRUE)
-    tkgrid(tklabel(modelFrame, text="Enter name for model:"), model, sticky="w")
+    tkgrid(tklabel(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
     tkgrid(modelFrame, sticky="w")
     modelFormula()
     subsetBox(model=TRUE)
@@ -363,9 +355,8 @@ proportionalOddsModel <- function(){
     }
     
 multinomialLogitModel <- function(){
-##    if (!checkActiveDataSet()) return()
-##    if (!checkVariables(2)) return()
-    initializeDialog(title="Multinomial Logit Model")
+    require("nnet")
+    initializeDialog(title=gettextRcmdr("Multinomial Logit Model"))
     .activeModel <- ActiveModel()
     .activeDataSet <- ActiveDataSet()
     currentModel <- if (!is.null(.activeModel)) 
@@ -385,11 +376,11 @@ multinomialLogitModel <- function(){
         modelValue <- trim.blanks(tclvalue(modelName))
         closeDialog()
         if (!is.valid.name(modelValue)){
-            errorCondition(recall=multinomialLogitModel, message=paste('"', modelValue, '" is not a valid name.', sep=""), model=TRUE)
+            errorCondition(recall=multinomialLogitModel, message=sprintf(gettextRcmdr('"%s" is not a valid name.'), modelValue), model=TRUE)
             return()
             }
         subset <- tclvalue(subsetVariable)
-        if (trim.blanks(subset) == "<all valid cases>" || trim.blanks(subset) == ""){
+        if (trim.blanks(subset) == gettextRcmdr("<all valid cases>") || trim.blanks(subset) == ""){
             subset <- ""
             putRcmdr("modelWithSubset", FALSE)
             }
@@ -399,20 +390,20 @@ multinomialLogitModel <- function(){
             }
         check.empty <- gsub(" ", "", tclvalue(lhsVariable))
         if ("" == check.empty) {
-            errorCondition(recall=multinomialLogitModel, message="Left-hand side of model empty.", model=TRUE) 
+            errorCondition(recall=multinomialLogitModel, message=gettextRcmdr("Left-hand side of model empty."), model=TRUE) 
             return()
             }
         check.empty <- gsub(" ", "", tclvalue(rhsVariable))
         if ("" == check.empty) {
-            errorCondition(recall=multinomialLogitModel, message="Right-hand side of model empty.", model=TRUE)
+            errorCondition(recall=multinomialLogitModel, message=gettextRcmdr("Right-hand side of model empty."), model=TRUE)
             return()
             }
         if (!is.factor(eval(parse(text=tclvalue(lhsVariable)), envir=eval(parse(text=.activeDataSet), envir=.GlobalEnv)))){
-            errorCondition(recall=multinomialLogitModel, message="Response variable must be a factor")
+            errorCondition(recall=multinomialLogitModel, message=gettextRcmdr("Response variable must be a factor"))
             return()
             }
         if (is.element(modelValue, listMultinomialLogitModels())) {
-            if ("no" == tclvalue(checkReplace(modelValue, type="Model"))){
+            if ("no" == tclvalue(checkReplace(modelValue, type=gettextRcmdr("Model")))){
                 UpdateModelNumber(-1)
                 multinomialLogitModel()
                 return()
@@ -428,7 +419,7 @@ multinomialLogitModel <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="multinom", model=TRUE)
-    tkgrid(tklabel(modelFrame, text="Enter name for model:"), model, sticky="w")
+    tkgrid(tklabel(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
     tkgrid(modelFrame, sticky="w")
     modelFormula()
     subsetBox(model=TRUE)

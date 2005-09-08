@@ -2,7 +2,7 @@
 
 # last modified 19 April 2005 by Ph. Grosjean
 #  small fix to call to list.files() by J. Fox 17 Jan 05
-#  modifications 26 April 05 by J. Fox
+#  modifications 2 July 05 by J. Fox
 
 is.SciViews <- function() {
     # SciViews defines the option "SciViews.version".
@@ -23,7 +23,7 @@ tkfocus <- function(...){
     if (!is.SciViews()) tcltk:::tkfocus(...)
     }
 
-svCommander <- function(){
+svCommander <- function(Version = "1.1-0"){
     # The SciViews specific Commander() function
     if (is.SciViews()) {
         # TO DO: automatically generate the menu from "Rcmdr-menus.txt"
@@ -38,7 +38,9 @@ svCommander <- function(){
         # Do NOT sink error messages!
         #assign(".messages.connection", textConnection(".messages", open = "w"), envir=.GlobalEnv)
         #sink(.messages.connection, type="message")
-		putRcmdr("length.messages", 0)
+        messageTag(reset=TRUE)
+		putRcmdr("version", Version)
+		#putRcmdr("length.messages", 0)
         putRcmdr(".activeDataSet", NULL)
         putRcmdr(".activeModel", NULL)
         putRcmdr("logFileName", NULL)
@@ -47,17 +49,20 @@ svCommander <- function(){
         putRcmdr("modelNumber", 0)
         putRcmdr("rgl", FALSE)
         current <- options("Rcmdr")[[1]]
-        putRcmdr("log.font.size", 10)
-		putRcmdr("logFont", tkfont.create(family="courier", size=getRcmdr("log.font.size")))
+        setOption("log.font.size", if (.Platform$OS.type == "windows") 10 else 12)
+        putRcmdr("logFont", tkfont.create(family="courier", size=getRcmdr("log.font.size")))
     	putRcmdr("operatorFont", tkfont.create(family="courier", size=getRcmdr("log.font.size")))
 		scale.factor <- current$scale.factor
         if (!is.null(scale.factor)) .Tcl(paste("tk scaling ", scale.factor, sep=""))
-        if (packageLoaded("car")) setOption("contrasts", c("contr.Treatment", "contr.poly"))
-        	else setOption("contrasts", c("contr.treatment", "contr.poly"))
+        if (packageAvailable("car")) {
+            require("car")
+            setOption("contrasts", c("contr.Treatment", "contr.poly"))
+            }
+        else setOption("contrasts", c("contr.treatment", "contr.poly"))
         setOption("log.commands", TRUE)
-        assign("logCommands", if (log.commands) tclVar("1") else tclVar("0"))
+        #assign("logCommands", if (log.commands) tclVar("1") else tclVar("0"))
         setOption("console.output", TRUE) # Must be set to TRUE for SciViews app!
-        log.height <- as.character(setOption("log.height", if (!log.commands) 0 else 10, global=FALSE))
+        log.height <- as.character(setOption("log.height", if (!getRcmdr("log.commands")) 0 else 10, global=FALSE))
         log.width <- as.character(setOption("log.width", 80, global=FALSE))
     	output.height <- as.character(setOption("output.height",
         	if (getRcmdr("console.output")) 0
@@ -73,29 +78,38 @@ svCommander <- function(){
         setOption("log.text.color", "black")
         setOption("command.text.color", "red")
         setOption("output.text.color", "darkblue")
+        setOption("error.text.color", "red")
+        setOption("warning.text.color", "darkgreen")
         setOption("multiple.select.mode", "extended")
-        setOption("report.X11.warnings", FALSE) # to address problem in Linux
-    	setOption("showData.threshold", 100)
+        setOption("suppress.X11.warnings", .Platform$GUI == "X11") # to address problem in Linux
+        setOption("showData.threshold", 100)
     	setOption("retain.messages", FALSE)
-        if (.Platform$OS.type != "windows") {
+        setOption("crisp.dialogs",  (.Platform$OS.type == "windows") && (getRversion() >= "2.1.1"))
+		if (.Platform$OS.type != "windows") {
         	putRcmdr("oldPager", options(pager=RcmdrPager))
-        	default.font.size <- as.character(setOption("default.font.size", 10, global=FALSE))
+        	default.font.size <- as.character(setOption("default.font.size", 12, global=FALSE))
         	default.font <- setOption("default.font",
             	paste("*helvetica-medium-r-normal-*-", default.font.size, "*", sep=""), global=FALSE)
         	.Tcl(paste("option add *font ", default.font, sep=""))
         	}
+    	#if (getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
+    	#if (getRcmdr("suppress.X11.warnings")) {
+        #	putRcmdr("messages.connection", textConnection(".messages", open = "w", local=FALSE))
+        #	sink(getRcmdr("messages.connection"), type="message")
+        #	putRcmdr("length.messages", 0)
+        #	}
         putRcmdr("commanderWindow", NULL)
         .commander <- NULL
 		placement <- setOption("placement", "-40+20", global=FALSE)
 #        source.files <- list.files(etc, pattern="\\.R$")  # duplicate line commented out by J. Fox
 #        .commander.done <<- tclVar("0")
-        source.files <- list.files(etc, pattern="\\.[Rr]$")
-        for (file in source.files) {
-             source(file.path(etc, file))
-             cat(paste("Sourced:", file, "\n"))
-             }
-        Menus <- read.table(file.path(etc, "Rcmdr-menus.txt"), as.is=TRUE)
-        # TO DO: we need another treatment for this!
+   #     source.files <- list.files(etc, pattern="\\.[Rr]$")
+   #     for (file in source.files) {
+   #          source(file.path(etc, file))
+   #          cat(paste("Sourced:", file, "\n"))
+   #          }
+   #     Menus <- read.table(file.path(etc, "Rcmdr-menus.txt"), as.is=TRUE)
+	    # TO DO: we need another treatment for this!
         #for (m in 1:nrow(Menus)){
         #    if (Menus[m, 1] == "menu") assign(Menus[m, 2], tkmenu(eval(parse(text=Menus[m, 3])), tearoff=FALSE))
         #    else if (Menus[m, 1] == "item") {
@@ -119,7 +133,9 @@ svCommander <- function(){
         putRcmdr("modelLabel", NULL)
 		show.edit.button <- options("Rcmdr")[[1]]$show.edit.button
         show.edit.button <- if (is.null(show.edit.button)) TRUE else show.edit.button
-        }
+        if (!packageAvailable("rgl")) Message(gettextRcmdr("The rgl package is absent; 3D plots are unavailable."), type="warning")
+    	Message(paste(gettextRcmdr("R Commander Version "), getRcmdr("version"), ": ", date(), sep=""))
+		}
     }
 
 svlogger <- function(command){
@@ -142,7 +158,7 @@ svlogger <- function(command){
                  if (!is.null(CmdFun)) CmdFun(paste("<<<<Log\n", command))
              }
              lines <- strsplit(command, "\n")[[1]]
-             for (line in lines) cat(paste("\n>>>> Rcmdr >>>>", line, "\n"))
+             for (line in lines) cat(paste("\n> Rcmdr >", line, "\n"))
              command
          } else {    # plug SciViews client
              lines <- strsplit(command, "\n")[[1]]
@@ -159,15 +175,17 @@ svlogger <- function(command){
     
 svMessage <- function(message, type = c("note", "error", "warning")) {
 	# the SciViews specific Message function
+    if (sink.number() > 0) sink(type="output")   # Make sure output is not diverted!
 	type <- match.arg(type)
     type <- type[1]
 	if (type == "note") return()    # Currently we display nothing if it is a note!
 	if (type != "note") tkbell()
-    prefix <- switch(type, error="ERROR", warning="WARNING", note="NOTE", "RCMDR")
+    prefix <- switch(type, error="Rcmdr Error", warning="Rcmdr Warning", note="Rcmdr Note", "Rcmdr")
     if (missing(message)) return()
     message <- paste(prefix, ": ", message, sep="")
     lines <- strsplit(message, "\n")[[1]]
     for (line in lines) cat(line, "\n")
+    return(NULL)
 	}
 
 activeDataSetEdit <- function() {
@@ -184,14 +202,20 @@ activeDataSetEdit <- function() {
 
 activeDataSetView <- function() {
     # This is SciViews equivalent to onView function of Commander()
-    if (activeDataSet() == FALSE)
+    if (activeDataSet() == FALSE) {
         return()
+        }
     view.height <- 30 #max(as.numeric(output.height) + as.numeric(log.height), 10)
-    command <- paste("showData(", ActiveDataSet(), ", placement='-20+200', font=getRcmdr('logFont'), maxwidth=",
-    80, ", maxheight=", view.height, ")", sep="")
+    ncols <- eval(parse(text=paste("ncol(", ActiveDataSet(), ")")))
+    command <- if (packageAvailable("relimp") && ncols <= getRcmdr("showData.threshold")){
+        require("relimp")
+        paste("showData(", ActiveDataSet(), ", placement='-20+200', font=getRcmdr('logFont'), maxwidth=",
+        80, ", maxheight=", view.height, ")", sep="")
+        }
+    else paste("invisible(edit(", ActiveDataSet(), "))", sep="")
     justDoIt(command)
     invisible(svlogger(command))
-    }
+	}
 
 optionLogCommand <- function() {
     # Change log option in SciViews
@@ -250,10 +274,15 @@ refreshStatus <- function() {
             }
         }
         CmdFun <- getTemp(".guiCmd", mode = "function")
-        if (!is.null(CmdFun)) CmdFun("$$$$Status")
+        if (!is.null(CmdFun)) CmdFun("<<<<Status")
         # Possibly update data in the object browser
         if (exists(".guiObjCallback", envir = TempEnv(), inherits = FALSE)) getTemp(".guiObjCallback")()
     } else {    # This should be SciViews Insider, or other similar client
         cat("<<<<StatusTextData: ", DataSet, ", Model: ", Model, Opts, "<<<<", sep="")
     }
 }
+
+helpSciViews <- function() {
+    if (as.numeric(R.Version()$major) >= 2) print(help("Rcmdr.sciviews-specific"))
+    else help("Rcmdr.sciviews-specific")
+    }

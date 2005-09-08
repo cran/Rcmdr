@@ -5,7 +5,8 @@
 
 \description{
   This dialog sets up a call to the \code{\link{scatter3d}} function to draw a
-  three-dimensional scatterplot.  
+  three-dimensional scatterplot, and optionally to \code{\link{identify3d}} to label
+  points interactively with the mouse.
 }
 
 \details{
@@ -30,11 +31,25 @@ separate surface or set of surfaces is plotted for each level of the groups fact
 surfaces can be constrained to be parallel.
   
 The completed plot can be manipulated with the mouse: Click, hold, drag the left mouse button to rotate
-the display; click, hold, and drag the right button to zoom in and out.
+the display; click, hold, and drag the right button (or centre button on a three-button mouse)
+to zoom in and out.
+
+If the box labelled \emph{Identify observations with mouse} is checked, you may use
+the mouse to identify points interactively: Press the right mouse button (or the centre button
+on a three-button mouse), drag a 
+rectangle around the points to be identified, and release the button. 
+Repeat this procedure for each point or
+set of "nearby" points to be identified. To exit from point-identification mode,
+right-click (or centre-click) in an empty region of the plot.
+
+Points may also be identified subsequently by selecting \emph{Identify observations with mouse}
+from the R Commander \emph{3D graph} menu: As above, click and drag the left mouse button to
+rotate the display, and click and drag the right (or centre) button to identify points. 
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}}
 
-\seealso{\code{\link{scatter3d}}, \code{\link[rgl]{rgl.open}}, \code{\link[mgcv]{gam}}}
+\seealso{\code{\link{scatter3d}}, \code{\link{identify3d}},  
+  \code{\link[rgl]{rgl.open}}, \code{\link[mgcv]{gam}}}
 
 \keyword{hplot}

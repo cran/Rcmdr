@@ -125,7 +125,7 @@ set none, one, several, or all options. The available options are as follows:
     
     \item{\code{crisp.dialogs}}{If \code{TRUE}, dialogs should appear on the screen fully drawn, rather than built up
     widget by widget. This option should affect the Windows version of R only, but should in any event be harmless.
-    The default is \code{TRUE} under Windows for R versions 2.2.0 and above, and \code{FALSE} otherwise.
+    The default is \code{TRUE} under Windows for R versions 2.1.1 and above, and \code{FALSE} otherwise.
     If you're working on Windows and encounter increased stability problems, trying setting this option to
     \code{FALSE}.}
     
@@ -147,6 +147,10 @@ set none, one, several, or all options. The available options are as follows:
     "grab" the focus --- that is, to prevent the focus from being changed to another Tk window.
     On some systems, grabbing the focus in this manner apparently causes problems. The default is \code{TRUE}. 
     If you experience focus problems, try setting this option to \code{FALSE}.}
+    
+    \item{\code{load.at.startup}}{A character vector of names of packages to be loaded 
+when the \code{Rcmdr} package is loaded; the default is to load only the \code{car} package. Other required packages will be loaded as needed. If it is available, the 
+\code{car} package will be loaded at when the Commander starts in any event.}
       
     \item{\code{log.commands}}{If \code{TRUE} (the default), commands are echoed to the script window;
     if \code{FALSE}, the script window is not displayed.}
@@ -216,6 +220,10 @@ set none, one, several, or all options. The available options are as follows:
     One can still enter commands via the script window, however. In particular, there is no reason to use this option
     under Windows, and it should not be used with the Windows R GUI with buffered output when output is directed to the
     R console.}
+    
+    \item{\code{use.rgl}}{If \code{TRUE} (the default), the \code{rgl} package will be loaded if it is present in an
+    accessible library; if \code{FALSE}, the \code{rgl} package will be ignored even if it is available. 
+    The \code{rgl} package can sometimes cause problems when running R under X11.} 
     
     \item{\code{warning.text.color}}{Color for warning messages; the default is \code{"darkgreen"}.}
     }

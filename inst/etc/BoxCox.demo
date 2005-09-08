@@ -1,4 +1,5 @@
 BoxCox <- function(){
+    require("car")
     initializeDialog(title="Box-Cox Transformations")
     variablesBox <- variableListBox(top, Numeric(), selectmode="multiple",
         title="Select variables (one or more)")

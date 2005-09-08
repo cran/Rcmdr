@@ -1,6 +1,6 @@
 # this code by Dan Putler, used with permission
 
-# last modified 16 Mar 05 by J. Fox
+# last modified 1 July 05 by J. Fox
 
 assignCluster <- function(clusterData, origData, clusterVec){
     rowsDX <- row.names(clusterData)
@@ -44,12 +44,10 @@ listKmeansSolutions <- function(envir=.GlobalEnv, ...) {
     }
 
 kmeansClustering <- function(){
-##    if(!checkActiveDataSet()) return()
-##    if(!checkNumeric()) return()
-    initializeDialog(title="KMeans Clustering")
+    initializeDialog(title=gettextRcmdr("KMeans Clustering"))
     dataFrame <- tkframe(top)
     xBox <- variableListBox(dataFrame, Numeric(), selectmode="multiple",
-      title="Variables (pick one or more)")
+      title=gettextRcmdr("Variables (pick one or more)"))
     subsetBox(dataFrame)
     optionsFrame <- tkframe(top)
     clusterNumber <- tclVar("2")
@@ -95,13 +93,13 @@ kmeansClustering <- function(){
            } 
         if (length(x)==0) {
             errorCondition(recall=kmeansClustering, 
-              message="No variables selected.")
+              message==gettextRcmdr("No variables selected."))
             return()
             }
         varFormula <- paste(x, collapse=" + ")
         vars <- paste(x, collapse=",", sep="")
         .activeDataSet <- ActiveDataSet()
-        dset <- if (trim.blanks(subset) == "<all valid cases>") .activeDataSet
+        dset <- if (trim.blanks(subset) == gettextRcmdr("<all valid cases>")) .activeDataSet
           else {paste(.activeDataSet, "[", .activeDataSet, "$", subset, ", ]",
             sep="")}
         xmat <- paste("model.matrix(~-1 + ", varFormula, ", ", dset, ")",
@@ -141,20 +139,20 @@ kmeansClustering <- function(){
     OKCancelHelp(helpSubject="KMeans")
     tkgrid(getFrame(xBox), sticky="nw")
     tkgrid(subsetFrame, sticky="w")
-    tkgrid(tklabel(optionsFrame, text="Number of clusters:"),
+    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Number of clusters:")),
       clusterNumSlider, sticky="sw")
-    tkgrid(tklabel(optionsFrame, text="Number of starting seeds:"),
+    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Number of starting seeds:")),
       seedNumSlider, sticky="sw")
-    tkgrid(tklabel(optionsFrame, text="Maximum iterations:"),
+    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Maximum iterations:")),
       iterNumSlider, sticky="sw")
     tkgrid(tklabel(optionsFrame, 
-      text="Print cluster summary"), summaryCB, sticky="w")
+      text=gettextRcmdr("Print cluster summary")), summaryCB, sticky="w")
     tkgrid(tklabel(optionsFrame, 
-      text="Bi-plot of clusters"), plotCB, sticky="w")
+      text=gettextRcmdr("Bi-plot of clusters")), plotCB, sticky="w")
     tkgrid(tklabel(optionsFrame, 
-      text="Assign clusters to\nthe data set         "),
+      text=gettextRcmdr("Assign clusters to\nthe data set         ")),
       assignCB, sticky="w")
-    tkgrid(tklabel(optionsFrame, text="Assignment variable: "),
+    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Assignment variable: ")),
       assignField, sticky="w")
     tkgrid(dataFrame, tklabel(top, text="  "), optionsFrame,
         sticky="nw")
@@ -170,10 +168,8 @@ listHclustSolutions <- function(envir=.GlobalEnv, ...) {
     }
 
 hierarchicalCluster <- function(){
-##    if(!checkActiveDataSet()) return()
-##    if(!checkNumeric()) return()
     solutionNumber=length(listHclustSolutions())
-    initializeDialog(title="Hierarchical Clustering")
+    initializeDialog(title=gettextRcmdr("Hierarchical Clustering"))
     solutionFrame <- tkframe(top)
     solutionName <- tclVar(paste("HClust.", (solutionNumber+1),
         sep=""))
@@ -181,17 +177,17 @@ hierarchicalCluster <- function(){
       textvariable=solutionName)
     dataFrame <- tkframe(top)
     xBox <- variableListBox(dataFrame, Numeric(), selectmode="multiple",
-      title="Variables (pick one or more)")
+      title=gettextRcmdr("Variables (pick one or more)"))
     subsetBox(dataFrame)
     radioButtons(name="method",
       buttons=c("ward", "single", "complete","average", "mcquitty", "median",
-      "centroid"), labels=c("Ward's Method", "Single Linkage",
+      "centroid"), labels=gettextRcmdr(c("Ward's Method", "Single Linkage",
       "Complete Linkage", "Average Linkage", "McQuitty's Method",
-      "Median Linkage", "Centroid Linkage"), title="Clustering Method")
+      "Median Linkage", "Centroid Linkage")), title=gettextRcmdr("Clustering Method"))
     optionsFrame <- tkframe(top)
     radioButtons(optionsFrame, name="distanceType", buttons=c("euc", "euc2",
-      "city", "none"), labels=c("Euclidean", "Squared-Euclidian", 
-      "Manhattan (City Block)", "No Transformation"), title="Distance Measure")
+      "city", "none"), labels=gettextRcmdr(c("Euclidean", "Squared-Euclidian", 
+      "Manhattan (City Block)", "No Transformation")), title=gettextRcmdr("Distance Measure"))
     checkFrame <- tkframe(optionsFrame)
     plotDendro <- tclVar("1")
     plotCB <- tkcheckbutton(checkFrame)
@@ -206,14 +202,14 @@ hierarchicalCluster <- function(){
         solution <- trim.blanks(tclvalue(solutionName))
         if (length(x)==0) {
             errorCondition(recall=hierarchicalCluster, 
-              message="No variables selected.")
+              message=gettextRcmdr("No variables selected."))
             return()
             }
         closeDialog()
         varFormula <- paste(x, collapse="+")
         vars <- paste(x, collapse=",", sep="")
         .activeDataSet <- ActiveDataSet()
-        dset <- if (subset == "<all valid cases>") .activeDataSet
+        dset <- if (subset == gettextRcmdr("<all valid cases>")) .activeDataSet
           else {paste(.activeDataSet, "[", .activeDataSet, "$", subset, ", ]",
             sep="")}
         xmat <- paste("model.matrix(~-1 + ", varFormula, ", ", dset, ")",
@@ -257,13 +253,13 @@ hierarchicalCluster <- function(){
         }
     OKCancelHelp(helpSubject="hclust")
     tkgrid(solutionField, sticky="w")
-    tkgrid(tklabel(top, text="Clustering solution name:"),
+    tkgrid(tklabel(top, text=gettextRcmdr("Clustering solution name:")),
       solutionFrame, sticky="w")
     tkgrid(getFrame(xBox), sticky="nw")
     tkgrid(subsetFrame, sticky="w")
     tkgrid(distanceTypeFrame, sticky="w")
     tkgrid(tklabel(checkFrame, text="  "), sticky="w")
-    tkgrid(tklabel(checkFrame, text="Plot Dendrogram  "), plotCB,
+    tkgrid(tklabel(checkFrame, text=gettextRcmdr("Plot Dendrogram  ")), plotCB,
       sticky="w")
     tkgrid(checkFrame, sticky="w")
     tkgrid(dataFrame, methodFrame, optionsFrame, sticky="nw")
@@ -272,7 +268,6 @@ hierarchicalCluster <- function(){
     }
 
 hclustSummary <- function(){
-##    if(!checkActiveDataSet()) return()
     parseDataSet <- function(x) {
         y <- eval(parse(text=paste(x, "$call", sep="")))
         string1 <- unlist(strsplit(as.character(y)[2], "\\("))
@@ -293,9 +288,9 @@ hclustSummary <- function(){
     .activeDataSet <- ActiveDataSet()
     validHclust <- hclustObjects[testDataSet==.activeDataSet]
     initializeDialog(
-      title="Hierarchical Cluster Summary")
+      title=gettextRcmdr("Hierarchical Cluster Summary"))
     hclustBox <- variableListBox(top, validHclust, selectmode="single",
-      title="Select One Clustering Solution")
+      title=gettextRcmdr("Select One Clustering Solution"))
     optionsFrame <- tkframe(top)
     clusterNumber <- tclVar("2")
     slider <- tkscale(optionsFrame, from=2, to=10, showvalue=TRUE,
@@ -308,17 +303,17 @@ hclustSummary <- function(){
     tkconfigure(plotCB, variable=plotClusters)
     if(length(hclustObjects)==0) {
         errorCondition(recall=return,
-          message="There are no hierachical clustering solutions")
+          message=gettextRcmdr("There are no hierachical clustering solutions"))
         }
     if(length(validHclust)==0) {
         errorCondition(recall=return, message=
-     "No hierachical clustering solutions are associated with this data set.")
+     gettextRcmdr("No hierachical clustering solutions are associated with this data set."))
         }
    onOK <- function(){
         solution <- getSelection(hclustBox)
         if(length(solution)==0) {
           errorCondition(recall=hclustSummary,
-            message="A clustering solution has not been selected.")
+            message=gettextRcmdr("A clustering solution has not been selected."))
           return()
             }
         clusters <- as.numeric(tclvalue(clusterNumber))
@@ -356,19 +351,18 @@ hclustSummary <- function(){
         tkfocus(CommanderWindow())
         } 
     OKCancelHelp(helpSubject="biplot")
-    tkgrid(tklabel(optionsFrame, text="Number of clusters:"), slider,
+    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Number of clusters:")), slider,
       sticky="sw")
     tkgrid(tklabel(optionsFrame, 
-      text="Print cluster summary"), summaryCB, sticky="w")
+      text=gettextRcmdr("Print cluster summary")), summaryCB, sticky="w")
     tkgrid(tklabel(optionsFrame, 
-      text="Bi-plot of clusters"), plotCB, sticky="w")
+      text=gettextRcmdr("Bi-plot of clusters")), plotCB, sticky="w")
     tkgrid(getFrame(hclustBox), optionsFrame, sticky="nw")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     dialogSuffix(rows=2, columns=3)
     }
 
 appendHclustGroup <- function(){
-##    if(!checkActiveDataSet()) return()
     parseDataSet <- function(x) {
         y <- eval(parse(text=paste(x, "$call", sep="")))
         string1 <- unlist(strsplit(as.character(y)[2], "\\("))
@@ -385,7 +379,7 @@ appendHclustGroup <- function(){
         }
     hclustObjects <- listHclustSolutions()
     if(length(hclustObjects)==0) {
-        Message(message="There are no hierachical clustering solutions",
+        Message(message=gettextRcmdr("There are no hierachical clustering solutions"),
             type = "error")
         return()
         }    
@@ -394,14 +388,14 @@ appendHclustGroup <- function(){
     .activeDataSet <- ActiveDataSet()
     validHclust <- hclustObjects[testDataSet==.activeDataSet]
     if(length(validHclust)==0) {
-        Message(message="No hierachical clustering solutions are associated with this data set.",
+        Message(message=gettextRcmdr("No hierachical clustering solutions are associated with this data set."),
             type = "error")
         return()
         }
     initializeDialog(
-      title="Append Cluster Groups to the Active Data Set")
+      title=gettextRcmdr("Append Cluster Groups to the Active Data Set"))
     hclustBox <- variableListBox(top, validHclust, selectmode="single",
-      title="Select One Clustering Solution")
+      title=gettextRcmdr("Select One Clustering Solution"))
     optionsFrame <- tkframe(top)
     labelName <- tclVar("hclus.label")
     labelNameField <- tkentry(optionsFrame, width="15",
@@ -413,7 +407,7 @@ appendHclustGroup <- function(){
         solution <- getSelection(hclustBox)
         if(length(solution)==0) {
           errorCondition(recall=appendHclustGroup,
-            message="A clustering solution has not been selected.")
+            message=gettextRcmdr("A clustering solution has not been selected."))
           return()
             }
         clusters <- as.numeric(tclvalue(clusterNumber))
@@ -448,9 +442,9 @@ appendHclustGroup <- function(){
         tkfocus(CommanderWindow())
         } 
     OKCancelHelp(helpSubject="assignCluster")
-    tkgrid(tklabel(optionsFrame, text="  Assigned cluster label:"),
+    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("  Assigned cluster label:")),
       labelNameField, sticky="w")
-    tkgrid(tklabel(optionsFrame, text="  Number of clusters:"),
+    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("  Number of clusters:")),
         slider, sticky="sw")
     tkgrid(getFrame(hclustBox), optionsFrame, sticky="nw")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")

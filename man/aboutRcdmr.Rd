@@ -3,7 +3,7 @@
 
 \title{About the Rcmdr Package}
 \description{
-  Rcmdr Version 1.0-2
+  Rcmdr Version 1.1-1
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}, with contributions from Michael Ash, Philippe Grosjean, Martin Maechler, Dan Putler, and Peter Wolf}

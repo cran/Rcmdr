@@ -1,26 +1,23 @@
 # Statistics Menu dialogs
 
-# last modified 16 Mar 05 by J. Fox
+# last modified 3 July 05 by J. Fox
 
     # Means menu
 
 independentSamplesTTest <- function(){
-##    if (!checkActiveDataSet()) return()
-##    if (!checkNumeric()) return()
-##    if (!checkTwoLevelFactors()) return()
-    initializeDialog(title="Independent Samples t-Test")
+    initializeDialog(title=gettextRcmdr("Independent Samples t-Test"))
     variablesFrame <- tkframe(top)
-    groupBox <- variableListBox(variablesFrame, TwoLevelFactors(), title="Groups (pick one)")
-    responseBox <- variableListBox(variablesFrame, Numeric(), title="Response Variable (pick one)")
+    groupBox <- variableListBox(variablesFrame, TwoLevelFactors(), title=gettextRcmdr("Groups (pick one)"))
+    responseBox <- variableListBox(variablesFrame, Numeric(), title=gettextRcmdr("Response Variable (pick one)"))
     onOK <- function(){
         group <- getSelection(groupBox)
         if (length(group) == 0) {
-            errorCondition(recall=independentSamplesTTest, message="You must select a groups variable.")
+            errorCondition(recall=independentSamplesTTest, message=gettextRcmdr("You must select a groups variable."))
             return()
             }
         response <- getSelection(responseBox)
         if (length(response) == 0) {
-            errorCondition(recall=independentSamplesTTest, message="You must select a response variable.")
+            errorCondition(recall=independentSamplesTTest, message=gettextRcmdr("You must select a response variable."))
             return()
             }
         alternative <- as.character(tclvalue(alternativeVariable))
@@ -36,15 +33,15 @@ independentSamplesTTest <- function(){
     OKCancelHelp(helpSubject="t.test")
     optionsFrame <- tkframe(top)
     radioButtons(optionsFrame, name="alternative", buttons=c("twosided", "less", "greater"), values=c("two.sided", "less", "greater"),
-        labels=c("Two-sided", "Difference < 0", "Difference > 0"), title="Alternative Hypothesis")
+        labels=gettextRcmdr(c("Two-sided", "Difference < 0", "Difference > 0")), title=gettextRcmdr("Alternative Hypothesis"))
     confidenceFrame <- tkframe(optionsFrame)
     confidenceLevel <- tclVar(".95")
     confidenceField <- tkentry(confidenceFrame, width="6", textvariable=confidenceLevel)
     radioButtons(optionsFrame, name="variances", buttons=c("yes", "no"), values=c("TRUE", "FALSE"), initialValue="FALSE",
-        labels=c("Yes", "No"), title="Assume equal variances?")
+        labels=gettextRcmdr(c("Yes", "No")), title=gettextRcmdr("Assume equal variances?"))
     tkgrid(getFrame(groupBox), tklabel(variablesFrame, text="    "), getFrame(responseBox), sticky="nw")
     tkgrid(variablesFrame, sticky="nw")
-    tkgrid(tklabel(confidenceFrame, text="Confidence Level", fg="blue"),sticky="w")
+    tkgrid(tklabel(confidenceFrame, text=gettextRcmdr("Confidence Level"), fg="blue"),sticky="w")
     tkgrid(confidenceField, sticky="w")
     groupsLabel(groupsBox=groupBox)
     tkgrid(alternativeFrame, tklabel(optionsFrame, text="    "), confidenceFrame, tklabel(optionsFrame, text="    "),
@@ -55,21 +52,19 @@ independentSamplesTTest <- function(){
     }
 
 pairedTTest <- function(){
-##    if (!checkActiveDataSet()) return()
-##    if (!checkNumeric(2)) return()
-    initializeDialog(title="Paired t-Test")
+    initializeDialog(title=gettextRcmdr("Paired t-Test"))
     .numeric <- Numeric()
-    xBox <- variableListBox(top, .numeric, title="First variable (pick one)")
-    yBox <- variableListBox(top, .numeric, title="Second variable (pick one)")
+    xBox <- variableListBox(top, .numeric, title=gettextRcmdr("First variable (pick one)"))
+    yBox <- variableListBox(top, .numeric, title=gettextRcmdr("Second variable (pick one)"))
     onOK <- function(){
         x <- getSelection(xBox)
         y <- getSelection(yBox)
         if (length(x) == 0 | length(y) == 0){
-            errorCondition(recall=pairedTTest, message="You must select two variables.")
+            errorCondition(recall=pairedTTest, message=gettextRcmdr("You must select two variables."))
             return()
             }
         if (x == y){
-            errorCondition(recall=pairedTTest, message="Variables must be different.")
+            errorCondition(recall=pairedTTest, message=gettextRcmdr("Variables must be different."))
             return()
             }
         alternative <- as.character(tclvalue(alternativeVariable))
@@ -84,12 +79,12 @@ pairedTTest <- function(){
         }
     OKCancelHelp(helpSubject="t.test")
     radioButtons(top, name="alternative", buttons=c("twosided", "less", "greater"), values=c("two.sided", "less", "greater"),
-        labels=c("Two-sided", "Difference < 0", "Difference > 0"), title="Alternative Hypothesis")
+        labels=gettextRcmdr(c("Two-sided", "Difference < 0", "Difference > 0")), title=gettextRcmdr("Alternative Hypothesis"))
     confidenceFrame <- tkframe(top)
     confidenceLevel <- tclVar(".95")
     confidenceField <- tkentry(confidenceFrame, width="6", textvariable=confidenceLevel)
     tkgrid(getFrame(xBox), getFrame(yBox), sticky="nw")    
-    tkgrid(tklabel(confidenceFrame, text="Confidence Level", fg="blue"))
+    tkgrid(tklabel(confidenceFrame, text=gettextRcmdr("Confidence Level"), fg="blue"))
     tkgrid(confidenceField, sticky="w")
     tkgrid(alternativeFrame, confidenceFrame, sticky="nw")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
@@ -97,14 +92,12 @@ pairedTTest <- function(){
     }
 
 singleSampleTTest <- function(){
-##    if (!checkActiveDataSet()) return()
-##    if (!checkNumeric()) return()
-    initializeDialog(title="Single-Sample t-Test")
-    xBox <- variableListBox(top, Numeric(), title="Variable (pick one)")
+    initializeDialog(title=gettextRcmdr("Single-Sample t-Test"))
+    xBox <- variableListBox(top, Numeric(), title=gettextRcmdr("Variable (pick one)"))
     onOK <- function(){
         x <- getSelection(xBox)
         if (length(x) == 0){
-            errorCondition(recall=singleSampleTTest, message="You must select a variable.")
+            errorCondition(recall=singleSampleTTest, message=gettextRcmdr("You must select a variable."))
             return()
             }
         alternative <- as.character(tclvalue(alternativeVariable))
@@ -119,8 +112,8 @@ singleSampleTTest <- function(){
         }
     OKCancelHelp(helpSubject="t.test")
     radioButtons(top, name="alternative", buttons=c("twosided", "less", "greater"), values=c("two.sided", "less", "greater"),
-        labels=c("Population mean = mu0", "Population mean < mu0", text="Population mean > mu0"), 
-        title="Alternative Hypothesis")
+        labels=gettextRcmdr(c("Population mean = mu0", "Population mean < mu0", "Population mean > mu0")), 
+        title=gettextRcmdr("Alternative Hypothesis"))
     rightFrame <- tkframe(top)
     confidenceFrame <- tkframe(rightFrame)
     confidenceLevel <- tclVar(".95")
@@ -130,9 +123,9 @@ singleSampleTTest <- function(){
     muField <- tkentry(muFrame, width="8", textvariable=muVariable)
     tkgrid(getFrame(xBox), sticky="nw") 
     tkgrid(tklabel(rightFrame, text=""), sticky="w")   
-    tkgrid(tklabel(muFrame, text="Null hypothesis: mu = "), muField, sticky="w")
+    tkgrid(tklabel(muFrame, text=gettextRcmdr("Null hypothesis: mu = ")), muField, sticky="w")
     tkgrid(muFrame, sticky="w")
-    tkgrid(tklabel(confidenceFrame, text="Confidence Level: "), confidenceField, sticky="w")
+    tkgrid(tklabel(confidenceFrame, text=gettextRcmdr("Confidence Level: ")), confidenceField, sticky="w")
     tkgrid(confidenceFrame, sticky="w")
     tkgrid(alternativeFrame, rightFrame, sticky="nw")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
@@ -141,12 +134,10 @@ singleSampleTTest <- function(){
     }
 
 oneWayAnova <- function(){
-##    if (!checkActiveDataSet()) return()
-##    if (!checkNumeric()) return()
-##    if (!checkFactors()) return()
-    initializeDialog(title="One-Way Analysis of Variance")
-    groupBox <- variableListBox(top, Factors(), title="Groups (pick one)")
-    responseBox <- variableListBox(top, Numeric(), title="Response Variable (pick one)")
+    require("multcomp")
+    initializeDialog(title=gettextRcmdr("One-Way Analysis of Variance"))
+    groupBox <- variableListBox(top, Factors(), title=gettextRcmdr("Groups (pick one)"))
+    responseBox <- variableListBox(top, Numeric(), title=gettextRcmdr("Response Variable (pick one)"))
     optionsFrame <- tkframe(top)
     pairwiseVariable <- tclVar("0")
     pairwiseCheckBox <- tkcheckbutton(optionsFrame, variable=pairwiseVariable)
@@ -155,11 +146,11 @@ oneWayAnova <- function(){
         response <- getSelection(responseBox)
         closeDialog()
         if (length(group) == 0){
-            errorCondition(recall=oneWayAnova, message="You must selection a groups factor.")
+            errorCondition(recall=oneWayAnova, message=gettextRcmdr("You must selection a groups factor."))
             return()
             }
         if (length(response) == 0){
-            errorCondition(recall=oneWayAnova, message="You must selection a response variable.")
+            errorCondition(recall=oneWayAnova, message=gettextRcmdr("You must selection a response variable."))
             return()
             }
         .activeDataSet <- ActiveDataSet()
@@ -173,7 +164,7 @@ oneWayAnova <- function(){
         pairwise <- tclvalue(pairwiseVariable)
         if (pairwise == 1) {
             if (eval(parse(text=paste("length(levels(", .activeDataSet, "$", group, ")) < 3")))) 
-                Message(message="Factor has fewer than 3 levels; pairwise comparisons omitted.",
+                Message(message=gettextRcmdr("Factor has fewer than 3 levels; pairwise comparisons omitted."),
                     type="warning")
             else doItAndPrint(paste("summary(simtest(", response, " ~ ", group, 
                 ', type="Tukey", data=', .activeDataSet, '))', sep=""))
@@ -182,29 +173,26 @@ oneWayAnova <- function(){
         }
     OKCancelHelp(helpSubject="anova")
     tkgrid(getFrame(groupBox), getFrame(responseBox), sticky="nw")
-    tkgrid(tklabel(optionsFrame, text="Pairwise comparisons of means"), pairwiseCheckBox, sticky="w")
+    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Pairwise comparisons of means")), pairwiseCheckBox, sticky="w")
     tkgrid(optionsFrame, sticky="w")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     dialogSuffix(rows=4, columns=2)
     }
     
 multiWayAnova <- function(){
-##    if (!checkActiveDataSet()) return()
-##    if (!checkNumeric()) return()
-##    if (!checkFactors()) return()
-    initializeDialog(title="Multi-Way Analysis of Variance")
-    groupBox <- variableListBox(top, Factors(), selectmode="multiple", title="Factors (pick one or more)")
-    responseBox <- variableListBox(top, Numeric(), title="Response Variable (pick one)")
+    initializeDialog(title=gettextRcmdr("Multi-Way Analysis of Variance"))
+    groupBox <- variableListBox(top, Factors(), selectmode="multiple", title=gettextRcmdr("Factors (pick one or more)"))
+    responseBox <- variableListBox(top, Numeric(), title=gettextRcmdr("Response Variable (pick one)"))
     onOK <- function(){
         groups <- getSelection(groupBox)
         response <- getSelection(responseBox)
         closeDialog()
         if (length(groups) == 0){
-            errorCondition(recall=multiWayAnova, message="You must selection at least one factor.")
+            errorCondition(recall=multiWayAnova, message=gettextRcmdr("You must selection at least one factor."))
             return()
             }
         if (length(response) == 0){
-            errorCondition(recall=multiWayAnova, message="You must selection a response variable.")
+            errorCondition(recall=multiWayAnova, message=gettextRcmdr("You must selection a response variable."))
             return()
             }
         .activeDataSet <- ActiveDataSet()

@@ -381,3 +381,20 @@ Version 1.0-2
    o  Re-introduced code to handle X11 warnings properly (see changes under Version 0.9-12). The Rcmdr option name is now suppress.X11.warnings, and is set to TRUE when .Platform$GUI == "X11".
    
    o  Small bug fixes.
+   
+Version 1.1-0
+
+   o  Changes to support internationalization, using the new features of R 2.1.x. The following translations are provided with the package: Catalan (courtesy of Manel Salamero); French (courtesy of Philippe Grosjean); and Slovenian translation (courtesy of Jaro Lajovic).
+   
+   o  Added RcmdrTkmessageBox() to replace direct calls to tkmessageBox() so that button text gets translated on non-English Windows systems.
+   
+   o  Changes to the way packages are handled at startup, including a new Rcmdr option, use.rgl, which if FALSE suppresses the loading of the rgl package even if it is present in an acessible library; this addresses crashes sometimes caused by rgl when R is run under X11. As well, with the exception of the car package, packages are loaded only when they needed. There is also a new option, packages.to.load (defaulting to "car"), which lists the packages to be loaded at startup. See ?Commander for details.  
+   
+Version 1.1-1
+
+   o  SciViews compatibility re-established (thanks to Philippe Grosjean). 
+   
+   o  Made scatter3d() compatible with version 0.65 of rgl, and added interactive point-identification for 3D plots, via new function identify3d().
+   
+   o  Added a Japanese translation, courtesy of Takaharu Araki.
+   

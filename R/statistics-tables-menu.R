@@ -1,27 +1,26 @@
 # Statistics Menu dialogs
 
-# last modified 9 April 05 by J. Fox
+# last modified 3 July 05 by J. Fox
 
     # Tables menu
     
 twoWayTable <- function(){
-##    if (!checkActiveDataSet()) return()
-##    if (!checkFactors(2)) return()
-    initializeDialog(title="Two-Way Table")
+    require("abind")
+    initializeDialog(title=gettextRcmdr("Two-Way Table"))
     variablesFrame <- tkframe(top)
     .factors <- Factors()
-    rowBox <- variableListBox(variablesFrame, .factors, title="Row variable (pick one)")
-    columnBox <- variableListBox(variablesFrame, .factors, title="Column variable (pick one)")
+    rowBox <- variableListBox(variablesFrame, .factors, title=gettextRcmdr("Row variable (pick one)"))
+    columnBox <- variableListBox(variablesFrame, .factors, title=gettextRcmdr("Column variable (pick one)"))
     subsetBox()
     onOK <- function(){
         row <- getSelection(rowBox)
         column <- getSelection(columnBox)
         if (length(row) == 0 || length(column) == 0){
-            errorCondition(recall=twoWayTable, message="You must select two variables.")
+            errorCondition(recall=twoWayTable, message=gettextRcmdr("You must select two variables."))
             return()
             }
         if (row == column) {
-            errorCondition(recall=twoWayTable, message="Row and column variables are the same.")
+            errorCondition(recall=twoWayTable, message=gettextRcmdr("Row and column variables are the same."))
             return()
             }        
         percents <- as.character(tclvalue(percentsVariable))
@@ -29,7 +28,7 @@ twoWayTable <- function(){
         expected <- tclvalue(expFreqVariable)
         fisher <- tclvalue(fisherTestVariable)
         subset <- tclvalue(subsetVariable)
-        subset <- if (trim.blanks(subset) == "<all valid cases>") "" 
+        subset <- if (trim.blanks(subset) == gettextRcmdr("<all valid cases>")) "" 
             else paste(", subset=", subset, sep="")
         closeDialog()
         command <- paste("xtabs(~", row, "+", column, ", data=", ActiveDataSet(),
@@ -47,9 +46,9 @@ twoWayTable <- function(){
             if (expected == 1) doItAndPrint(".Test$expected # Expected Counts")
             warnText <- NULL
             if (0 < (nlt1 <- sum(.Test$expected < 1))) warnText <- paste(nlt1,
-                "expected frequencies are less than 1")
+                gettextRcmdr("expected frequencies are less than 1"))
             if (0 < (nlt5 <- sum(.Test$expected < 5))) warnText <- paste(warnText, "\n", nlt5,
-                " expected frequencies are less than 5", sep="")
+                gettextRcmdr(" expected frequencies are less than 5"), sep="")
             if (!is.null(warnText)) Message(message=warnText,
                 type="warning")
             logger("remove(.Test)") 
@@ -63,13 +62,13 @@ twoWayTable <- function(){
     OKCancelHelp(helpSubject="xtabs")
     radioButtons(name="percents", buttons=c("rowPercents", "columnPercents", "nonePercents"), 
         values=c("row", "column", "none"), initialValue="none", 
-        labels=c("Row percentages", "Column percentages", "No percentages"), title="Compute Percentages")
+        labels=gettextRcmdr(c("Row percentages", "Column percentages", "No percentages")), title=gettextRcmdr("Compute Percentages"))
     checkBoxes(frame="testsFrame", boxes=c("chisqTest", "expFreq", "fisherTest"), initialValues=c("1", "0", "0"),
-        labels=c("Chisquare test of independence", "Print expected frequencies", "Fisher's exact test"))
+        labels=gettextRcmdr(c("Chisquare test of independence", "Print expected frequencies", "Fisher's exact test")))
     tkgrid(getFrame(rowBox), tklabel(variablesFrame, text="    "), getFrame(columnBox), sticky="nw")
     tkgrid(variablesFrame, sticky="w")
     tkgrid(percentsFrame, sticky="w")
-    tkgrid(tklabel(top, text="Hypothesis Tests", fg="blue"), sticky="w")
+    tkgrid(tklabel(top, text=gettextRcmdr("Hypothesis Tests"), fg="blue"), sticky="w")
     tkgrid(testsFrame, sticky="w")
     tkgrid(subsetFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
@@ -77,31 +76,30 @@ twoWayTable <- function(){
     }
 
 multiWayTable <- function(){
-##    if (!checkActiveDataSet()) return()
-##    if (!checkFactors(3)) return()
-    initializeDialog(title="Multi-Way Table")
+    require("abind")
+    initializeDialog(title=gettextRcmdr("Multi-Way Table"))
     variablesFrame <- tkframe(top)
     .factors <- Factors()
-    rowBox <- variableListBox(variablesFrame, .factors, title="Row variable (pick one)")
-    columnBox <- variableListBox(variablesFrame, .factors, title="Column variable (pick one)")
+    rowBox <- variableListBox(variablesFrame, .factors, title=gettextRcmdr("Row variable (pick one)"))
+    columnBox <- variableListBox(variablesFrame, .factors, title=gettextRcmdr("Column variable (pick one)"))
     controlBox <- variableListBox(variablesFrame, .factors, selectmode="multiple", 
-        title="Control variable(s) (pick one or more)")
+        title=gettextRcmdr("Control variable(s) (pick one or more)"))
     subsetBox()
     onOK <- function(){
         row <- getSelection(rowBox)
         column <- getSelection(columnBox)
         controls <- getSelection(controlBox)
         if (length(row) == 0 || length(column) == 0 || length(controls) == 0) {
-            errorCondition(recall=multiWayTable, message="You must select row, column, and control variables")
+            errorCondition(recall=multiWayTable, message=gettextRcmdr("You must select row, column, and control variables"))
             return()
             }
         if ((row == column) || is.element(row, controls) || is.element(column, controls)) {
-            errorCondition(recall=multiWayTable, message="Row, column, and control variables must be different.")
+            errorCondition(recall=multiWayTable, message=gettextRcmdr("Row, column, and control variables must be different."))
             return()
             }
         percents <- as.character(tclvalue(percentsVariable))
         subset <- tclvalue(subsetVariable)
-        subset <- if (trim.blanks(subset) == "<all valid cases>") "" 
+        subset <- if (trim.blanks(subset) == gettextRcmdr("<all valid cases>")) "" 
             else paste(", subset=", subset, sep="")
         closeDialog()
         command <- paste("xtabs(~", row, "+", column, "+", paste(controls, collapse="+"),
@@ -117,7 +115,7 @@ multiWayTable <- function(){
         }
     OKCancelHelp(helpSubject="xtabs")
     radioButtons(name="percents", buttons=c("rowPercents", "columnPercents", "nonePercents"), values=c("row", "column", "none"),
-        initialValue="none", labels=c("Row percentages", "Column percentages", "No percentages"), title="Compute Percentages")
+        initialValue="none", labels=gettextRcmdr(c("Row percentages", "Column percentages", "No percentages")), title=gettextRcmdr("Compute Percentages"))
     tkgrid(getFrame(rowBox), tklabel(variablesFrame, text="    "), getFrame(columnBox), tklabel(variablesFrame, text="    "), 
         getFrame(controlBox), sticky="nw")
     tkgrid(variablesFrame, sticky="w")
@@ -128,8 +126,9 @@ multiWayTable <- function(){
     }
 
 enterTable <- function(){
+    require("abind")
     env <- environment()
-    initializeDialog(title="Enter Two-Way Table")
+    initializeDialog(title=gettextRcmdr("Enter Two-Way Table"))
     outerTableFrame <- tkframe(top)
     assign(".tableFrame", tkframe(outerTableFrame), envir=env)
     setUpTable <- function(...){
@@ -193,16 +192,15 @@ enterTable <- function(){
             }
         counts <- na.omit(counts)
         if (length(counts) != nrows*ncols){
-            errorCondition(recall=enterTable, message=paste("Number of valid entries (", length(counts), ")\n",
-                "not equal to number of rows (", nrows,") * number of columns (", ncols,").", sep=""))
+            errorCondition(recall=enterTable, message=sprintf(gettextRcmdr("Number of valid entries (%d)\nnot equal to number of rows (%d) * number of columns (%d)."), length(counts), nrows, ncols))
             return()
             }
         if (length(unique(row.names)) != nrows){
-            errorCondition(recall=enterTable, message="Row names are not unique.")
+            errorCondition(recall=enterTable, message=gettextRcmdr("Row names are not unique."))
             return()
             }     
         if (length(unique(col.names)) != ncols){
-            errorCondition(recall=enterTable, message="Column names are not unique.")
+            errorCondition(recall=enterTable, message=gettextRcmdr("Column names are not unique."))
             return()
             }     
         percents <- as.character(tclvalue(percentsVariable))
@@ -231,9 +229,9 @@ enterTable <- function(){
             if (expected == 1) doItAndPrint(".Test$expected # Expected Counts")
             warnText <- NULL
             if (0 < (nlt1 <- sum(.Test$expected < 1))) warnText <- paste(nlt1,
-                "expected frequencies are less than 1")
+                gettextRcmdr("expected frequencies are less than 1"))
             if (0 < (nlt5 <- sum(.Test$expected < 5))) warnText <- paste(warnText, "\n", nlt5,
-                " expected frequencies are less than 5", sep="")
+                gettextRcmdr(" expected frequencies are less than 5"), sep="")
             if (!is.null(warnText)) Message(message=warnText,
                 type="warning")
             logger("remove(.Test)") 
@@ -246,16 +244,16 @@ enterTable <- function(){
         }
     OKCancelHelp(helpSubject="chisq.test")
     radioButtons(name="percents", buttons=c("rowPercents", "columnPercents", "nonePercents"), values=c("row", "column", "none"),
-        initialValue="none", labels=c("Row percentages", "Column percentages", "No percentages"), title="Compute Percentages")
-    checkBoxes(frame="testsFrame", boxes=c("chisq", "expFreq", "fisher"), initialValues=c("1", "0", "0"),
-        labels=c("Chisquare test of independence", "Print expected frequencies", "Fisher's exact test"))
-    tkgrid(tklabel(rowColFrame, text="Number of Rows:"), rowsSlider, rowsShow, sticky="w")
-    tkgrid(tklabel(rowColFrame, text="Number of Columns:"), colsSlider, colsShow, sticky="w")
+        initialValue="none", labels=gettextRcmdr(c("Row percentages", "Column percentages", "No percentages")), title=gettextRcmdr("Compute Percentages"))
+    checkBoxes(frame="testsFrame", boxes=c("chisq", "expFreq", "fisher"), initialValues=c("1", "0", "0"),                               
+        labels=gettextRcmdr(c("Chisquare test of independence", "Print expected frequencies", "Fisher's exact test")))
+    tkgrid(tklabel(rowColFrame, text=gettextRcmdr("Number of Rows:")), rowsSlider, rowsShow, sticky="w")
+    tkgrid(tklabel(rowColFrame, text=gettextRcmdr("Number of Columns:")), colsSlider, colsShow, sticky="w")
     tkgrid(rowColFrame, sticky="w")
-    tkgrid(tklabel(top, text="Enter counts:", fg="blue"), sticky="w")
+    tkgrid(tklabel(top, text=gettextRcmdr("Enter counts:"), fg="blue"), sticky="w")
     tkgrid(outerTableFrame, sticky="w")
     tkgrid(percentsFrame, sticky="w")
-    tkgrid(tklabel(top, text="Hypothesis Tests", fg="blue"), sticky="w")
+    tkgrid(tklabel(top, text=gettextRcmdr("Hypothesis Tests"), fg="blue"), sticky="w")
     tkgrid(testsFrame, sticky="w")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     dialogSuffix(rows=7, columns=2)

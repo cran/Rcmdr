@@ -1,16 +1,14 @@
 # Statistics Menu dialogs
 
-# last modified 12 Apr 05 by J. Fox
+# last modified 17 August 05 by J. Fox
 
     # Summaries menu
     
 summarizeDataSet <- function(){
-##    if (!checkActiveDataSet()) return()
     nvar <- length(Variables())
     .activeDataSet <- ActiveDataSet()
     if (nvar > 10){
-        response <- tkmessageBox(message=paste("There are ", nvar, " variables in the data set ",
-            .activeDataSet, ".\nDo you want to proceed?", sep=""),
+        response <- RcmdrTkmessageBox(message=sprintf(gettextRcmdr("There are %d variables in the data set %s.\nDo you want to proceed?"), nvar, .activeDataSet),
             icon="question", type="okcancel", default="cancel")
         if ("cancel" == tclvalue(response)) {
             tkfocus(CommanderWindow())
@@ -23,19 +21,19 @@ summarizeDataSet <- function(){
 numericalSummaries <- function(){
 ##    if (!checkActiveDataSet()) return()
 ##    if (!checkNumeric()) return()
-    initializeDialog(title="Numerical Summaries")
-    xBox <- variableListBox(top, Numeric(), title="Variable (pick one)")
-    checkBoxes(frame="checkBoxFrame", boxes=c("mean", "sd"), initialValues=c("1", "1"), labels=c("Mean", "Standard Deviation"))
+    initializeDialog(title=gettextRcmdr("Numerical Summaries"))
+    xBox <- variableListBox(top, Numeric(), title=gettextRcmdr("Variable (pick one)"))
+    checkBoxes(frame="checkBoxFrame", boxes=c("mean", "sd"), initialValues=c("1", "1"), labels=gettextRcmdr(c("Mean", "Standard Deviation")))
     quantilesVariable <- tclVar("1")
     quantilesFrame <- tkframe(top)
     quantilesCheckBox <- tkcheckbutton(quantilesFrame, variable=quantilesVariable)
     quantiles <- tclVar("0,.25,.5,.75,1")
     quantilesEntry <- tkentry(quantilesFrame, width="20", textvariable=quantiles)
-    groupsBox(recall=numericalSummaries, label="Summarize by:", initialLabel="Summarize by groups")
+    groupsBox(recall=numericalSummaries, label=gettextRcmdr("Summarize by:"), initialLabel=gettextRcmdr("Summarize by groups"))
     onOK <- function(){
         x <- getSelection(xBox)
         if (length(x) == 0){
-            errorCondition(recall=numericalSummaries, message="You must select a variable.")
+            errorCondition(recall=numericalSummaries, message=gettextRcmdr("You must select a variable."))
             return()
             }
         quants <- paste("c(", gsub(" ", ",", tclvalue(quantiles)), ")")
@@ -62,8 +60,8 @@ numericalSummaries <- function(){
     OKCancelHelp(helpSubject="quantile")
     tkgrid(getFrame(xBox), sticky="nw")    
     tkgrid(checkBoxFrame, sticky="w")
-    tkgrid(tklabel(quantilesFrame, text="Quantiles"), quantilesCheckBox,
-        tklabel(quantilesFrame, text=" quantiles:"), quantilesEntry, sticky="w")
+    tkgrid(tklabel(quantilesFrame, text=gettextRcmdr("Quantiles")), quantilesCheckBox,
+        tklabel(quantilesFrame, text=gettextRcmdr(" quantiles:")), quantilesEntry, sticky="w")
     tkgrid(quantilesFrame, sticky="w")
     tkgrid(groupsFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
@@ -71,17 +69,15 @@ numericalSummaries <- function(){
     }
 
 frequencyDistribution <- function(){
-##    if (!checkActiveDataSet()) return()
-##    if (!checkFactors()) return()
-    initializeDialog(title="Frequency Distribution")
-    xBox <- variableListBox(top, Factors(), title="Variable (pick one)")
+    initializeDialog(title=gettextRcmdr("Frequency Distribution"))
+    xBox <- variableListBox(top, Factors(), title=gettextRcmdr("Variable (pick one)"))
     optionsFrame <- tkframe(top)
     goodnessOfFitVariable <- tclVar("0")
     goodnessOfFitCheckBox <- tkcheckbutton(optionsFrame, variable=goodnessOfFitVariable)
     onOK <- function(){
         x <- getSelection(xBox)
         if (length(x) == 0){
-            errorCondition(recall=frequencyDistribution, message="You must select a variable.")
+            errorCondition(recall=frequencyDistribution, message=gettextRcmdr("You must select a variable."))
             return()
             }
         goodnessOfFit <- tclvalue(goodnessOfFitVariable)
@@ -94,7 +90,7 @@ frequencyDistribution <- function(){
         doItAndPrint("100*.Table/sum(.Table)  # percentages")
         env <- environment()
         if (goodnessOfFit == 1){
-            initializeDialog(subwin, title="Goodness-of-Fit Test")
+            initializeDialog(subwin, title=gettextRcmdr("Goodness-of-Fit Test"))
             hypothesisFrame <- tkframe(subwin)
             levs <- eval(parse(text=paste("levels(", .activeDataSet, "$", x, ")", sep="")))
             n.levs <- length(levs)
@@ -119,11 +115,11 @@ frequencyDistribution <- function(){
                         entry <- eval(parse(text=eval(parse(text=paste("tclvalue(", entry.varname,")", sep="")), envir=env))),
                         silent=TRUE)
                     if (class(res) == "try-error"){
-                        errorCondition(subwin, message="Invalid entry.")
+                        errorCondition(subwin, message=gettextRcmdr("Invalid entry."))
                         return()
                         }
                     if (length(entry) == 0){
-                        errorCondition(subwin, message="Missing entry.")
+                        errorCondition(subwin, message=gettextRcmdr("Missing entry."))
                         return()
                         }
                     opts <- options(warn=-1)
@@ -132,16 +128,16 @@ frequencyDistribution <- function(){
                     }
                 probs <- na.omit(probs)
                 if (length(probs) != n.levs){
-                    errorCondition(subwin, message=paste("Number of valid entries (", length(probs), ")\n",
-                        "not equal to number levels (", n.levs,").", sep=""))
+                    errorCondition(subwin, message=sprintf(gettextRcmdr("Number of valid entries (%d)\nnot equal to number levels (%d)."), length(probs), 
+                        n.levs))
                     return()
                     }
                 if (any(probs < 0)){
-                    errorCondition(subwin, message="Negative probabilities not allowed.")
+                    errorCondition(subwin, message=gettextRcmdr("Negative probabilities not allowed."))
                     return()
                     }
                 if (abs(sum(probs) - 1) > 0.001){
-                    Message(message="Probabilities rescaled to sum to 1.", type="warning")
+                    Message(message=gettextRcmdr("Probabilities rescaled to sum to 1."), type="warning")
                     probs <- probs/sum(probs)
                     }
                 closeDialog(subwin)
@@ -162,34 +158,31 @@ frequencyDistribution <- function(){
         }
     OKCancelHelp(helpSubject="table")
     tkgrid(getFrame(xBox), sticky="nw")    
-    tkgrid(tklabel(optionsFrame, text="Chi-square goodness-of-fit test"), goodnessOfFitCheckBox, sticky="w")
+    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Chi-square goodness-of-fit test")), goodnessOfFitCheckBox, sticky="w")
     tkgrid(optionsFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix(rows=3, columns=2)
     }
 
 statisticsTable <- function(){
-##    if (!checkActiveDataSet()) return()
-##    if (!checkNumeric()) return()
-##    if (!checkFactors()) return()
-    initializeDialog(title="Table of Statistics")
+    initializeDialog(title=gettextRcmdr("Table of Statistics"))
     variablesFrame <- tkframe(top)
-    groupBox <- variableListBox(variablesFrame, Factors(), selectmode="multiple", title="Factors (pick one or more)")
-    responseBox <- variableListBox(variablesFrame, Numeric(), title="Response Variable (pick one)")
-    radioButtons(name="statistic", buttons=c("mean", "median", "sd"), labels=c("Mean", "Median", "Standard deviation"), title="Statistic")
+    groupBox <- variableListBox(variablesFrame, Factors(), selectmode="multiple", title=gettextRcmdr("Factors (pick one or more)"))
+    responseBox <- variableListBox(variablesFrame, Numeric(), title=gettextRcmdr("Response Variable (pick one)"))
+    radioButtons(name="statistic", buttons=c("mean", "median", "sd"), labels=gettextRcmdr(c("Mean", "Median", "Standard deviation")), title=gettextRcmdr("Statistic"))
     otherVariable <- tclVar("")
     otherButton <- tkradiobutton(statisticFrame, variable=statisticVariable, value="other")
     otherEntry <- tkentry(statisticFrame, width="20", textvariable=otherVariable)   
-    tkgrid(tklabel(statisticFrame, text="Other (specify)"), otherButton, otherEntry, sticky="w")
+    tkgrid(tklabel(statisticFrame, text=gettextRcmdr("Other (specify)")), otherButton, otherEntry, sticky="w")
     onOK <- function(){
         groups <- getSelection(groupBox)
         if (0 == length(groups)) {
-            errorCondition(recall=statisticsTable, message="No factors selected.")
+            errorCondition(recall=statisticsTable, message=gettextRcmdr("No factors selected."))
             return()
             }
         response <- getSelection(responseBox)
         if (0 == length(response)) {
-            errorCondition(recall=statisticsTable, message="You must select a response variable.")
+            errorCondition(recall=statisticsTable, message=gettextRcmdr("You must select a response variable."))
             return()
             }
         statistic <- tclvalue(statisticVariable)
@@ -210,21 +203,19 @@ statisticsTable <- function(){
     }
     
 correlationMatrix <- function(){
-##    if (!checkActiveDataSet()) return()
-##    if (!checkNumeric(2)) return()
-    initializeDialog(title="Correlation Matrix")
-    xBox <- variableListBox(top, Numeric(), selectmode="multiple", title="Variables (pick two or more)")
+    initializeDialog(title=gettextRcmdr("Correlation Matrix"))
+    xBox <- variableListBox(top, Numeric(), selectmode="multiple", title=gettextRcmdr("Variables (pick two or more)"))
     radioButtons(name="correlations", buttons=c("pearson", "spearman", "partial"), values=c("Pearson", "Spearman", "partial"),
-        labels=c("Pearson product-moment", "Spearman rank-order", "Partial"), title="Type of Correlations")
+        labels=gettextRcmdr(c("Pearson product-moment", "Spearman rank-order", "Partial")), title=gettextRcmdr("Type of Correlations"))
     onOK <- function(){
         correlations <- tclvalue(correlationsVariable)
         x <- getSelection(xBox)
         if (2 > length(x)) {
-            errorCondition(recall=correlationMatrix, message="Fewer than 2 variables selected.")
+            errorCondition(recall=correlationMatrix, message=gettextRcmdr("Fewer than 2 variables selected."))
             return()
             }
         if ((correlations == "partial") && (3 > length(x))) {
-            errorCondition(recall=correlationMatrix, message="Fewer than 3 variables selected\nfor partial correlations.")
+            errorCondition(recall=correlationMatrix, message=gettextRcmdr("Fewer than 3 variables selected\nfor partial correlations."))
             return()
             }
         closeDialog()
@@ -235,8 +226,8 @@ correlationMatrix <- function(){
                 ')], use="complete.obs")', sep=""))
         else if (correlations == "Spearman"){
             logger("# Spearman rank-order correlations")
-             doItAndPrint(paste("cor(apply(", .activeDataSet, "[,c(", paste(x, collapse=","),
-                ')], 2, rank), use="complete.obs")', sep="")) 
+            doItAndPrint(paste("cor(", .activeDataSet, "[,c(", paste(x, collapse=","),
+                ')], use="complete.obs", method="spearman")', sep=""))
              }
         else doItAndPrint(paste("partial.cor(", .activeDataSet, "[,c(", paste(x, collapse=","),
                 ')], use="complete.obs")', sep=""))    

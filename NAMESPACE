@@ -1,4 +1,4 @@
-# last modified 7 April 05 by J. Fox
+# last modified 4 September 05 by J. Fox
 
 export(activateMenus, activeDataSet, ActiveDataSet, activeDataSetP, activeModel,
 ActiveModel, activeModelP, assignCluster, bin.var, checkActiveDataSet,
@@ -6,14 +6,14 @@ checkActiveModel, checkBoxes, checkFactors, checkNumeric, checkReplace,
 checkTwoLevelFactors, checkVariables, closeDialog, colPercents, Commander,
 commanderPosition, CommanderWindow, Confint, dataSetsP,
 dialogSuffix, doItAndPrint, errorCondition,
-Factors, factorsP, getFrame, getRcmdr, getSelection,
-glmP, GrabFocus, groupsBox, groupsLabel, hclustSolutionsP,
-Hist, initializeDialog, is.valid.name, is.SciViews, justDoIt, KMeans,
+Factors, factorsP, getFrame, getRcmdr, getSelection, gettextRcmdr,
+glmP, GrabFocus, groupsBox, groupsLabel, hclustSolutionsP, Hist, 
+identify3d, initializeDialog, is.valid.name, is.SciViews, justDoIt, KMeans,
 listDataSets, listFactors, listGeneralizedLinearModels, listLinearModels,
 listNumeric, listTwoLevelFactors, listVariables, lmP, logger, LogWindow,
 Message, MessagesWindow, modelFormula, modelsP, Numeric,
-numericP, OKCancelHelp, OutputWindow, packageLoaded, partial.cor,
-plotMeans, putRcmdr, radioButtons, RcmdrPager, RcmdrTclSet,
+numericP, OKCancelHelp, OutputWindow, packageAvailable, partial.cor,
+plotMeans, putRcmdr, radioButtons, RcmdrPager, RcmdrTclSet, RcmdrTkmessageBox,
 reliability, rowPercents, scatter3d, stem.leaf, subOKCancelHelp,
 subsetBox, TwoLevelFactors, twoLevelFactorsP, UpdateModelNumber,
 variableListBox, Variables)
