@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 3 July 05 by J. Fox
+# last modified 12 September 05 by J. Fox
 
     # Tables menu
     
@@ -64,7 +64,7 @@ twoWayTable <- function(){
         values=c("row", "column", "none"), initialValue="none", 
         labels=gettextRcmdr(c("Row percentages", "Column percentages", "No percentages")), title=gettextRcmdr("Compute Percentages"))
     checkBoxes(frame="testsFrame", boxes=c("chisqTest", "expFreq", "fisherTest"), initialValues=c("1", "0", "0"),
-        labels=gettextRcmdr(c("Chisquare test of independence", "Print expected frequencies", "Fisher's exact test")))
+        labels=gettextRcmdr(c("Chi-square test of independence", "Print expected frequencies", "Fisher's exact test")))
     tkgrid(getFrame(rowBox), tklabel(variablesFrame, text="    "), getFrame(columnBox), sticky="nw")
     tkgrid(variablesFrame, sticky="w")
     tkgrid(percentsFrame, sticky="w")
@@ -246,7 +246,7 @@ enterTable <- function(){
     radioButtons(name="percents", buttons=c("rowPercents", "columnPercents", "nonePercents"), values=c("row", "column", "none"),
         initialValue="none", labels=gettextRcmdr(c("Row percentages", "Column percentages", "No percentages")), title=gettextRcmdr("Compute Percentages"))
     checkBoxes(frame="testsFrame", boxes=c("chisq", "expFreq", "fisher"), initialValues=c("1", "0", "0"),                               
-        labels=gettextRcmdr(c("Chisquare test of independence", "Print expected frequencies", "Fisher's exact test")))
+        labels=gettextRcmdr(c("Chi-square test of independence", "Print expected frequencies", "Fisher's exact test")))
     tkgrid(tklabel(rowColFrame, text=gettextRcmdr("Number of Rows:")), rowsSlider, rowsShow, sticky="w")
     tkgrid(tklabel(rowColFrame, text=gettextRcmdr("Number of Columns:")), colsSlider, colsShow, sticky="w")
     tkgrid(rowColFrame, sticky="w")

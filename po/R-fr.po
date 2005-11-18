@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Rcmdr 1.0-2\n"
 "Report-Msgid-Bugs-To: jfox@mcmaster.ca\n"
 "POT-Creation-Date: 2005-06-30 16:10\n"
-"PO-Revision-Date: 2005-07-20 14:51\n"
+"PO-Revision-Date: 2005-09-12 10:29\n"
 "Last-Translator: Philippe Grosjean <phgrosjean@sciviews.org>\n"
 "Language-Team: French <phgrosjean@sciviews.org>\n"
 "MIME-Version: 1.0\n"
@@ -1218,9 +1218,6 @@ msgstr "Variables explicatives (deux)"
 msgid "Response variable (pick one)"
 msgstr "Variable réponse (une)"
 
-msgid "You must select a response variable."
-msgstr "Vous devez sélectionner une variable réponse."
-
 msgid "You must select 2 explanatory variables."
 msgstr "Vous devez sélectionner 2 variables explicatives."
 
@@ -1673,10 +1670,10 @@ msgstr "Hypothèse nulle : mu ="
 msgid "One-Way Analysis of Variance"
 msgstr "Analyse de la variance à un facteur"
 
-msgid "You must selection a groups factor."
+msgid "You must select a groups factor."
 msgstr "Vous devez sélectionner un facteur de regroupement."
 
-msgid "You must selection a response variable."
+msgid "You must select a response variable."
 msgstr "Vous devez sélectionner une variable réponse."
 
 msgid "Factor has fewer than 3 levels; pairwise comparisons omitted."
@@ -1691,7 +1688,7 @@ msgstr "Analyse de la variance à plusieurs facteurs"
 msgid "Factors (pick one or more)"
 msgstr "Facteurs (un ou plusieurs)"
 
-msgid "You must selection at least one factor."
+msgid "You must select at least one factor."
 msgstr "Vous devez sélectionner au moins un facteur."
 
 msgid "Linear Regression"
@@ -1908,7 +1905,7 @@ msgstr "Pas de pourcentages"
 msgid "Compute Percentages"
 msgstr "Calculer les pourcentages"
 
-msgid "Chisquare test of independence"
+msgid "Chi-square test of independence"
 msgstr "Test Chi-deux d'indépendance"
 
 msgid "Print expected frequencies"

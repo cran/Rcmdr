@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 1 July 05 by J. Fox
+# last modified 15 September 05 by J. Fox
 
     # Proportions menu
     
@@ -42,7 +42,7 @@ singleProportionTest <- function(){
     pField <- tkentry(pFrame, width="6", textvariable=pVariable)
     radioButtons(name="test", buttons=c("normal", "corrected", "exact"), 
         labels=gettextRcmdr(c("Normal approximation", "Normal approximation with\ncontinuity correction", "Exact binomial")), 
-        title="Type of Test")
+        title=gettextRcmdr("Type of Test"))
     tkgrid(getFrame(xBox), sticky="nw")    
     tkgrid(tklabel(pFrame, text=gettextRcmdr("Null hypothesis: p = "), fg="blue"), pField, sticky="w")
     tkgrid(pFrame, sticky="w")

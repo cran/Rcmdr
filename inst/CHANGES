@@ -398,3 +398,13 @@ Version 1.1-1
    
    o  Added a Japanese translation, courtesy of Takaharu Araki.
    
+Version 1.1-2
+
+   o  Small fixes of typos in messages and correspondingly in R-Rcmdr.pot file (and .po files).
+   
+   o  Cleaned up packages "suggested" by the Rcmdr to remove dependencies of suggested packages.
+   
+   o  Added Romanian translation, contributed by Adrian Dusa.
+   
+   o  Added Russian translation, contributed by Alexey Shipunov.
+   

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Rcmdr Japanese Translation\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2005-08-26 14:02+0900\n"
+"PO-Revision-Date: 2005-09-12 10:29\n"
 "Last-Translator: Takaharu Araki <arakit@kansai-u.ac.jp>\n"
 "Language-Team: Japanese <arakit@kansai-u.ac.jp>\n"
 "MIME-Version: 1.0\n"
@@ -1210,9 +1210,6 @@ msgstr "説明変数 (2つ選択)"
 msgid "Response variable (pick one)"
 msgstr "目的変数 (1つ選択)"
 
-msgid "You must select a response variable."
-msgstr "目的変数を選択してください"
-
 msgid "You must select 2 explanatory variables."
 msgstr "説明変数を2つ選択してください"
 
@@ -1668,10 +1665,10 @@ msgstr "仮説: mu ="
 msgid "One-Way Analysis of Variance"
 msgstr "1元配置分散分析"
 
-msgid "You must selection a groups factor."
+msgid "You must select a groups factor."
 msgstr "質的因子を１つ選択してください"
 
-msgid "You must selection a response variable."
+msgid "You must select a response variable."
 msgstr "目的変数を選択してください"
 
 msgid "Factor has fewer than 3 levels; pairwise comparisons omitted."
@@ -1686,7 +1683,7 @@ msgstr "多元配置分散分析"
 msgid "Factors (pick one or more)"
 msgstr "因子 (１つ以上選択)"
 
-msgid "You must selection at least one factor."
+msgid "You must select at least one factor."
 msgstr "因子を1つ以上選択してください"
 
 msgid "Linear Regression"
@@ -1903,7 +1900,7 @@ msgstr "パーセント表示無し"
 msgid "Compute Percentages"
 msgstr "パーセントの計算"
 
-msgid "Chisquare test of independence"
+msgid "Chi-square test of independence"
 msgstr "独立性のカイ２乗検定"
 
 msgid "Print expected frequencies"

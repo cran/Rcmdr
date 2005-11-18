@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: R 2.1.0\n"
 "Report-Msgid-Bugs-To: bugs@r-project.org\n"
-"POT-Creation-Date: 2005-09-04 15:35\n"
+"POT-Creation-Date: 2005-09-12 10:14\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1592,10 +1592,7 @@ msgstr ""
 msgid "One-Way Analysis of Variance"
 msgstr ""
 
-msgid "You must selection a groups factor."
-msgstr ""
-
-msgid "You must selection a response variable."
+msgid "You must select a groups factor."
 msgstr ""
 
 msgid "Factor has fewer than 3 levels; pairwise comparisons omitted."
@@ -1610,7 +1607,7 @@ msgstr ""
 msgid "Factors (pick one or more)"
 msgstr ""
 
-msgid "You must selection at least one factor."
+msgid "You must select at least one factor."
 msgstr ""
 
 msgid "Linear Regression"
@@ -1811,7 +1808,7 @@ msgstr ""
 msgid "Compute Percentages"
 msgstr ""
 
-msgid "Chisquare test of independence"
+msgid "Chi-square test of independence"
 msgstr ""
 
 msgid "Print expected frequencies"

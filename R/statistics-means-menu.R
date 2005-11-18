@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 3 July 05 by J. Fox
+# last modified 12 September 05 by J. Fox
 
     # Means menu
 
@@ -146,11 +146,11 @@ oneWayAnova <- function(){
         response <- getSelection(responseBox)
         closeDialog()
         if (length(group) == 0){
-            errorCondition(recall=oneWayAnova, message=gettextRcmdr("You must selection a groups factor."))
+            errorCondition(recall=oneWayAnova, message=gettextRcmdr("You must select a groups factor."))
             return()
             }
         if (length(response) == 0){
-            errorCondition(recall=oneWayAnova, message=gettextRcmdr("You must selection a response variable."))
+            errorCondition(recall=oneWayAnova, message=gettextRcmdr("You must select a response variable."))
             return()
             }
         .activeDataSet <- ActiveDataSet()
@@ -188,11 +188,11 @@ multiWayAnova <- function(){
         response <- getSelection(responseBox)
         closeDialog()
         if (length(groups) == 0){
-            errorCondition(recall=multiWayAnova, message=gettextRcmdr("You must selection at least one factor."))
+            errorCondition(recall=multiWayAnova, message=gettextRcmdr("You must select at least one factor."))
             return()
             }
         if (length(response) == 0){
-            errorCondition(recall=multiWayAnova, message=gettextRcmdr("You must selection a response variable."))
+            errorCondition(recall=multiWayAnova, message=gettextRcmdr("You must select a response variable."))
             return()
             }
         .activeDataSet <- ActiveDataSet()

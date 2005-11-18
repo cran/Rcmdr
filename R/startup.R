@@ -15,8 +15,7 @@
     tcltk <- require(tcltk)
     if (!tcltk) stop(gettext("The tcltk package is absent. The R Commander cannot function.", domain="R-Rcmdr"))
     required.packages <- rev(c("abind", "car", "effects", "foreign", "grid", "lattice", "lmtest", 
-        "MASS", "mgcv", "multcomp", "mvtnorm", "nlme", "nnet", "relimp", "sandwich", "strucchange",
-        "zoo"))
+        "MASS", "mgcv", "multcomp", "nlme", "nnet", "relimp"))
     packages.to.load <- options("Rcmdr")[[1]]$load.at.startup
     if (is.null(packages.to.load)) packages.to.load <- "car"
     for (package in packages.to.load){ 
@@ -76,7 +75,7 @@
                     present <- missing.packages %in% packages
                     if (!all(present)) errorMessage()
                     if (!any(present)) return()
-                    utils:::install.packages(missing.packages[present], lib=.libPaths()[1])
+                    utils:::install.packages(missing.packages[present], dependencies=TRUE, lib=.libPaths()[1])
                     }
 #                else if (location == "Bioconductor") {
 #                    packages <- CRAN.packages(CRAN=getOption("BIOC"))[,1]
@@ -91,7 +90,8 @@
                     present <- missing.packages %in% packages
                     if (!all(present)) errorMessage()
                     if (!any(present)) return()
-                    utils:::install.packages(missing.packages[present], contriburl=directory, lib=.libPaths()[1])
+                    utils:::install.packages(missing.packages[present], contriburl=directory,
+                        dependencies=TRUE, lib=.libPaths()[1])
                     }
                 }
             onCancel <- function(){
