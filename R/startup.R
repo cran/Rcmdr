@@ -1,4 +1,4 @@
-# last modified 17 August 05 by J. Fox
+# last modified 1 December 05 by J. Fox
 
 .onAttach <- function(...){
     Commander()
@@ -28,7 +28,7 @@
     available.packages <- packagesAvailable(packages.to.check)
     missing.packages <- packages.to.check[!available.packages]
     if (any(!available.packages)) {
-        response <- RcmdrTkmessageBox(message=paste(gettext("The following packages used by Rcmdr are missing:\n", domain="R-Rcmdr"),
+        response <- tkmessageBox(message=paste(gettext("The following packages used by Rcmdr are missing:\n", domain="R-Rcmdr"),
                             paste(missing.packages, collapse=", "), 
                             gettext("\nWithout these packages, some features will not be available.", domain="R-Rcmdr"),
                             gettext("\nInstall these packages?", domain="R-Rcmdr")), 
@@ -64,7 +64,7 @@
             tkgrid(locationFrame, sticky="w")
             tkgrid(tklabel(top, text=""))
             onOK <- function(){
-                errorMessage <- function() RcmdrTkmessageBox(message=paste(
+                errorMessage <- function() tkmessageBox(message=paste(
                     gettext("The following packages were not found at the specified location:\n", domain="R-Rcmdr"),
                     paste(missing.packages[!present], collapse=", ")),  icon="warning", type="ok")
                 tkgrab.release(top)

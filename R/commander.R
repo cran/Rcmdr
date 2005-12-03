@@ -1,10 +1,10 @@
 # The R Commander and command logger
 
-# last modified 12 Sept 05 by J. Fox
+# last modified 3 Dec 05 by J. Fox
 #   slight changes 12 Aug 04 by Ph. Grosjean
 
 Commander <- function(){
-    version <- "1.1-2"
+    version <- "1.1-4"
     if (is.SciViews()) return(invisible(svCommander(Version=version))) # +PhG
     setOption <- function(option, default, global=TRUE) {
         opt <- if (is.null(current[[option]])) default else current[[option]]
