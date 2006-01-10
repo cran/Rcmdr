@@ -10,7 +10,9 @@
 \alias{checkActiveDataSet}
 \alias{checkActiveModel}
 \alias{checkBoxes}
+\alias{checkClass}
 \alias{checkFactors}
+\alias{checkMethod}
 \alias{checkNumeric}
 \alias{checkReplace}
 \alias{checkTwoLevelFactors}
@@ -22,6 +24,7 @@
 \alias{dialogSuffix}
 \alias{doItAndPrint}
 \alias{errorCondition}
+\alias{exists.method}
 \alias{Factors}
 \alias{factorsP}
 \alias{getFrame}
@@ -38,11 +41,14 @@
 \alias{initializeDialog}
 \alias{is.valid.name}
 \alias{justDoIt}
+\alias{listAllModels}
 \alias{listDataSets}
 \alias{listGeneralizedLinearModels}
 \alias{listFactors}
 \alias{listLinearModels}
+\alias{listMultinomialLogitModels}
 \alias{listNumeric}
+\alias{listProportionalOddsModels}
 \alias{listTwoLevelFactors}
 \alias{listVariables}
 \alias{lmP}
@@ -63,6 +69,7 @@
 \alias{RcmdrTkmessageBox}
 \alias{subOKCancelHelp}
 \alias{subsetBox}
+\alias{trim.blanks}
 \alias{TwoLevelFactors}
 \alias{twoLevelFactorsP}
 \alias{UpdateModelNumber}
@@ -88,7 +95,10 @@ activeModelP()
 checkActiveDataSet()
 checkActiveModel()
 checkBoxes(window=top, frame, boxes, initialValues=NULL, labels)  # macro
+checkClass(object, class, message=NULL)  # macro
 checkFactors(n=1)
+checkMethod(generic, object, message=NULL, default=FALSE, strict=FALSE, 
+    reportError=TRUE)  # macro
 checkNumeric(n=1)
 checkReplace(name, type=gettextRcmdr("Variable"))
 checkTwoLevelFactors(n=1)
@@ -100,6 +110,7 @@ dialogSuffix(window=top, onOK=onOK, rows=1, columns=1, focus=top, bindReturn=TRU
     preventGrabFocus=FALSE, preventDoubleClick=FALSE, preventCrisp=FALSE)  # macro
 doItAndPrint(command, log=TRUE)
 errorCondition(window=top, recall=NULL, message, model=FALSE)  # macro
+exists.method(generic, object, default=TRUE, strict=FALSE)
 Factors(names)
 factorsP()
 \method{getFrame}{listbox}(object)
@@ -117,11 +128,14 @@ hclustSolutionsP()
 initializeDialog(window=top, title="", offset=10, preventCrisp=FALSE)  # macro
 is.valid.name(x)
 justDoIt(command)
-listDataSets(envir = .GlobalEnv, ...)
+listAllModels(envir=.GlobalEnv, ...)
+listDataSets(envir=.GlobalEnv, ...)
 listFactors(dataSet=ActiveDataSet())
-listGeneralizedLinearModels(envir = .GlobalEnv, ...)
-listLinearModels(envir = .GlobalEnv, ...)
+listGeneralizedLinearModels(envir=.GlobalEnv, ...)
+listLinearModels(envir=.GlobalEnv, ...)
+listMultinomialLogitModels(envir=.GlobalEnv, ...)
 listNumeric(dataSet=ActiveDataSet())
+listProportionalOddsModels(envir=.GlobalEnv, ...)
 listTwoLevelFactors(dataSet=ActiveDataSet())
 listVariables(dataSet=ActiveDataSet())
 lmP()
@@ -144,6 +158,7 @@ RcmdrTkmessageBox(message, icon=c("info", "question", "warning",
     "error"), type=c("okcancel", "yesno", "ok"), default)
 subOKCancelHelp(window=subdialog, helpSubject=NULL)  # macro
 subsetBox(window=top, model=FALSE)  # macro
+trim.blanks(text)
 TwoLevelFactors(names)
 twoLevelFactorsP()
 UpdateModelNumber(increment=1)
@@ -152,7 +167,7 @@ variableListBox(parentWindow, variableList=Variables(), bg="white",
     listHeight = 4, title)
 Variables(names)
 
-# the following two function is exported for technical reasons,
+# the following function is exported for technical reasons,
 # but is not meant to be called directly
 
 commanderPosition()
@@ -163,10 +178,12 @@ commanderPosition()
   \item{bindReturn}{if \code{TRUE}, the \emph{Return} key is bound to the \code{onOK} function in the dialog.}
   \item{boxes}{vector of quoted names for check boxes, used to generate each box and its associated variable.}
   \item{buttons}{vector of quoted names for buttons in a set of related radio buttons.}
+  \item{class}{quoted name of class.}
   \item{columnspan}{number of dialog-box columns to be spanned by frame.}
   \item{command}{a character string that evaluates to an R command.}
   \item{dataSet, dsname}{the quoted name of a data frame in memory.}
-  \item{default}{default button: if not specified, "ok" for "okcancel", "yes" for "yesno", and "ok" for "ok".}
+  \item{default}{default button: if not specified, "ok" for "okcancel", "yes" for "yesno", and "ok" for "ok";
+    or look for a default method.}
   \item{envir}{the environment to be searched; should generally be left at the default.}
   \item{export}{export selection?}
   \item{flushModel}{set (or reset) the active model to NULL? Should normally be \code{TRUE} when the active 
@@ -174,6 +191,7 @@ commanderPosition()
     the data set set.}
   \item{focus}{Tk window to get the focus.}
   \item{frame}{frame or quoted name for frame depending upon the function.}
+  \item{generic}{quoted name of generic function.}
   \item{groupsBox}{listbox object for selecting groups variable.}
   \item{hasLhs}{does the model formula have a left-hand side?}
   \item{helpSubject}{the quoted name of a help subject, to be called as \code{help(helpSubject)}
@@ -195,7 +213,7 @@ commanderPosition()
   \item{name}{quoted name.}
   \item{names}{optional names to be stored.}
   \item{n}{number of variables to check for.}
-  \item{object}{a \code{listbox} object.}
+  \item{object}{an object (depends on context).}
   \item{offset}{in pixels, from top-left of Commander window.}
   \item{onOK}{function to execute when the \emph{OK} button is pressed.}
   \item{plotLinesByGroup}{include a check box for plotting lines by group?}
@@ -209,9 +227,12 @@ commanderPosition()
     problems with some dialogs.}
   \item{recall}{function to call after error --- usually the function that initiates the dialog.}
   \item{release}{release the focus if the grab.focus option has been set.}
+  \item{reportError}{if \code{TRUE}, report an error message.}
   \item{rows, columns}{numbers of rows and columns of widgets in the dialog box.}
   \item{values}{vector of quoted values associated with radio buttons or check boxes.}
   \item{selectmode}{\code{"single"} or \code{"multiple"}.}
+  \item{strict}{if \code{TRUE}, only use first element of class vector.}
+  \item{text}{a text string.}
   \item{title}{Window or dialog-box-element title.}
   \item{type}{quoted type of object to check; used to generate check-replace dialog box;
     or type of message to print in Message window.}
@@ -240,21 +261,27 @@ commanderPosition()
   The function \code{is.valid.name} checks whether a character string specifies a valid name
   for an R object. The functions \code{checkActiveDataSet}, \code{checkActiveModel},
   \code{checkFactors}, \code{checkNumeric}, \code{checkTwoLevelFactors}, and \code{checkVariables}
-  check for the existence of objects and bring up an error-information dialog if they are absent
+  check for the existence of objects and write an error message to the log if they are absent
   (or insufficiently numerous, in the case of different kinds of variables). The function 
   \code{checkReplace} opens a dialog to query whether an existing object should be replaced.
+  The function \code{checkMethod}, checks whether a method exists for a particular generic that is
+  appropriate for a particular object. The function \code{checkClass} checks whether an object is of
+  a specific class. Both of these functions write error messages to the log if the condition fails.
   The function \code{errorCondition} reports an error to the user and (optionally) re-starts
   a dialog.
   
   \emph{Information: }
-  Several functions return vectors of object names: \code{listDataSets},\cr
-  \code{listGeneralizedLinearModels},
-  \code{listFactors}, \code{listLinearModels}, \code{listNumeric},\cr
+  Several functions return vectors of object names: \code{listAllModels}, \cr
+  \code{listDataSets}, \code{listGeneralizedLinearModels},
+  \code{listFactors}, \code{listLinearModels}, \code{listMultinomialLogitModels},
+  \code{listNumeric}, \code{listProportionalOddsModels},
   \code{listTwoLevelFactors},
   \code{listVariables}. The functions \code{activeDataSet} and \code{activeModel} respectively report or set the active
   data set and model.
   The function \code{packageAvailable} reports whether the named package is 
   available to be loaded (or has possibly already been loaded).
+  The function \code{exists.method} checks whether a method exists for a particular generic that is
+  appropriate for a particular object, and returns \code{TRUE} or \code{FALSE}.
   
   \emph{Building dialog boxes: }
   Several functions simplify the process of constructing Tk dialogs: 
@@ -272,6 +299,9 @@ commanderPosition()
   \emph{Translating text:}
   The \code{gettextRcmdr} function simply passes its argument(s) to
    \code{\link[base]{gettext}}, adding the argument \code{domain="R-Rcmdr"}.
+   
+  \emph{Miscelaneous:}
+  The function \code{trim.blanks} removes spaces from the beginning and end of a character string.
   
   Some of these functions, marked \code{# macro} under \emph{Usage}, are "macro-like" in their behaviour, in that they 
   execute in the environment from which they are called. These were defined with an adaptation (used with permission) of

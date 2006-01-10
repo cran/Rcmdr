@@ -418,4 +418,12 @@ Version 1.1-4
 
    o  Fixed version number!
    
+Version 1.1-5
+
+   o  Updated French translation (thanks again to Philippe Grosjean).
+   
+   o  Compiled Italian translation (from Stefano Calza), which was inadvertently not done in the previous version.
+   
+   o  Some additional utility functions are now exported from the Rcmdr namespace.
+   
    

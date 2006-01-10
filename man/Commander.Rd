@@ -234,6 +234,9 @@ Many options can also be set via the \emph{File -> Options} menu, which will res
 \note{
   This version is compatible with SciViews, which currently runs only under Windows systems:
    \url{http://www.sciviews.org/SciViews-R}; see \code{\link{Rcmdr.sciviews-specific}}.
+  Under Windows, the \code{Rcmdr} package can also be run under the Rgui in SDI (single-document
+  interface) mode, or under \code{rterm.exe}; you might experience problems running the \code{Rcmdr} under
+  \code{ESS} withNTEmacs or XEmacs.
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}}
