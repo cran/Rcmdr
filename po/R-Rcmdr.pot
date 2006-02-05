@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: R 2.1.0\n"
+"Project-Id-Version: Rcmdr 1.1-6\n"
 "Report-Msgid-Bugs-To: bugs@r-project.org\n"
-"POT-Creation-Date: 2005-09-12 10:14\n"
+"POT-Creation-Date: 2006-02-01 21:27\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2435,4 +2435,12 @@ msgid "There is no current RGL graphics device."
 msgstr ""
 
 msgid "3D graph"
+msgstr ""
+
+## messages added to Rcmdr version 1.1-6
+
+msgid " contains non-standard variable names:\n"
+msgstr ""
+
+msgid "\nThese have been changed to:\n"
 msgstr ""

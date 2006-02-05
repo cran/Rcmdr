@@ -426,4 +426,12 @@ Version 1.1-5
    
    o  Some additional utility functions are now exported from the Rcmdr namespace.
    
+Version 1.1-6
+
+   o  Nonstandard variable names are changed to valid names, and a warning is printed, when the data frame is made the active data set (suggested by Richard Heiberger).
+   
+   o  The global variable .commander.done is only written if the Rcmdr tkwait option is set to TRUE (to address problem reported by Dan Putler in OS/X).
+   
+   o  Added Rcmdr-package.Rd file. 
+   
    

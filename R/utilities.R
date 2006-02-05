@@ -1,4 +1,4 @@
-# last modified 6 Sept 05 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 4 Feb 06 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
                                                                                        
 # utility functions
 
@@ -61,6 +61,14 @@ activeDataSet <- function(dsname, flushModel=TRUE){
         tkfocus(CommanderWindow())
         return()
         }
+    varnames <- names(eval(parse(text=dsname), envir=.GlobalEnv))
+    newnames <- make.names(varnames)
+    badnames <- varnames != newnames
+    if (any(badnames)){
+        command <- paste("names(", dsname, ") <- make.names(names(",
+            dsname, "))", sep="")
+        doItAndPrint(command)
+        }
     if (!is.null(.activeDataSet) && getRcmdr("attach.data.set")
         && (length(grep(.activeDataSet, search())) !=0)) {
         detach(pos = match(.activeDataSet, search()))
@@ -74,6 +82,10 @@ activeDataSet <- function(dsname, flushModel=TRUE){
     ActiveDataSet(dsname)
     Message(sprintf(gettextRcmdr("The dataset %s has %d rows and %d columns."), dsname, 
         nrow(eval(parse(text=dsname))), ncol(eval(parse(text=dsname)))), type="note")
+    if (any(badnames)) Message(message=paste(dsname, gettextRcmdr(" contains non-standard variable names:\n"),
+        paste(varnames[badnames], collapse=", "), 
+        gettextRcmdr("\nThese have been changed to:\n"), paste(newnames[badnames], collapse=", "),
+        sep=""), type="warning")
     Variables(listVariables())
     Numeric(listNumeric())
     Factors(listFactors())
@@ -774,8 +786,8 @@ helpCommander <- function() {
     }
 
 helpAboutCommander <- function() {
-    if (as.numeric(R.Version()$major) >= 2) print(help("aboutRcmdr"))
-    else help("aboutRcmdr")
+    if (as.numeric(R.Version()$major) >= 2) print(help("Rcmdr"))
+    else help("Rcmdr")
     }
 
 browseManual <- function() {
@@ -1584,4 +1596,3 @@ RcmdrTkmessageBox <- function(message, icon=c("info", "question", "warning",
     dialogSuffix(messageBox, rows=2, focus=messageBox, bindReturn=FALSE)
     result
     }
-

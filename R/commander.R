@@ -1,10 +1,10 @@
 # The R Commander and command logger
 
-# last modified 10 Jan 06 by J. Fox
+# last modified 2 Feb 06 by J. Fox
 #   slight changes 12 Aug 04 by Ph. Grosjean
 
 Commander <- function(){
-    version <- "1.1-5"
+    version <- "1.1-6"
     if (is.SciViews()) return(invisible(svCommander(Version=version))) # +PhG
     setOption <- function(option, default, global=TRUE) {
         opt <- if (is.null(current[[option]])) default else current[[option]]
@@ -166,7 +166,7 @@ Commander <- function(){
     tkwm.protocol(.commander, "WM_DELETE_WINDOW", closeCommander)
     topMenu <- tkmenu(.commander)
     tkconfigure(.commander, menu=topMenu)
-    .commander.done <<- tclVar("0") # to address problem in Debian Linux
+#    .commander.done <<- tclVar("0") # to address problem in Debian Linux
     source.files <- list.files(etc, pattern="\\.[Rr]$")
     for (file in source.files) {
         source(file.path(etc, file))
@@ -437,7 +437,10 @@ Commander <- function(){
     tkfocus(.commander)
     if (getRcmdr("crisp.dialogs")) tclServiceMode(on=TRUE)
     tkwait <- options("Rcmdr")[[1]]$tkwait  # to address problem in Debian Linux
-    if ((!is.null(tkwait)) && tkwait) tkwait.variable(.commander.done)
+    if ((!is.null(tkwait)) && tkwait) {
+        .commander.done <<- tclVar("0") 
+        tkwait.variable(.commander.done)
+        }
     if (!packageAvailable("rgl")) Message(gettextRcmdr("The rgl package is absent; 3D plots are unavailable."), type="warning")
     Message(paste(gettextRcmdr("R Commander Version "), getRcmdr("version"), ": ", date(), sep=""))
     }

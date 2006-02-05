@@ -1,4 +1,4 @@
-# last modified 4 September 2005 by J. Fox
+# last modified 2 February 2006 by J. Fox
 
 # File menu dialogs
 
@@ -118,7 +118,8 @@ closeCommander <- function(){
         }
     options(getRcmdr("saveOptions"))
     tkdestroy(CommanderWindow())
-    tclvalue(.commander.done) <<- "1"
+    tkwait <- options("Rcmdr")[[1]]$tkwait  # to address problem in Debian Linux
+    if ((!is.null(tkwait)) && tkwait) tclvalue(.commander.done) <<- "1"
     return(invisible(response))
     }
     
