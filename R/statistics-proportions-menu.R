@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 15 September 05 by J. Fox
+# last modified 24 February 06 by J. Fox
 
     # Proportions menu
     
@@ -57,6 +57,7 @@ singleProportionTest <- function(){
     }
 
 twoSampleProportionsTest <- function(){
+    require("abind")
     initializeDialog(title=gettextRcmdr("Two-Sample Proportions Test"))
     .twoLevelFactors <- TwoLevelFactors()
     groupsBox <- variableListBox(top, .twoLevelFactors, title=gettextRcmdr("Groups (pick one)"))

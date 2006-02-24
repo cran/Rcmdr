@@ -1,4 +1,4 @@
-# last modified 4 Feb 06 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 23 Feb 06 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
                                                                                        
 # utility functions
 

@@ -1,4 +1,4 @@
-# last modified 21 August 2005 by J. Fox
+# last modified 19 February 2006 by J. Fox
 
 # Data menu dialogs
 
@@ -1091,7 +1091,8 @@ subsetDataSet <- function(){
             return()
             }
         if (is.element(newName, listDataSets())) {
-            if ("no" == tclvalue(checkReplace(newName))){
+            if ("no" == tclvalue(checkReplace(newName, type=gettextRcmdr("Data set")))){
+                closeDialog()
                 subsetDataSet()
                 return()
                 }

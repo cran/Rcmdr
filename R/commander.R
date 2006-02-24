@@ -1,10 +1,10 @@
 # The R Commander and command logger
 
-# last modified 2 Feb 06 by J. Fox
+# last modified 18 Feb 06 by J. Fox
 #   slight changes 12 Aug 04 by Ph. Grosjean
 
 Commander <- function(){
-    version <- "1.1-6"
+    version <- "1.1-7"
     if (is.SciViews()) return(invisible(svCommander(Version=version))) # +PhG
     setOption <- function(option, default, global=TRUE) {
         opt <- if (is.null(current[[option]])) default else current[[option]]
@@ -101,7 +101,7 @@ Commander <- function(){
         onDelete()
         }
     messageTag(reset=TRUE)
-    putRcmdr("version", version)
+    putRcmdr("RcmdrVersion", version)
     putRcmdr(".activeDataSet", NULL)
     putRcmdr(".activeModel", NULL)
     putRcmdr("logFileName", NULL)
@@ -442,7 +442,7 @@ Commander <- function(){
         tkwait.variable(.commander.done)
         }
     if (!packageAvailable("rgl")) Message(gettextRcmdr("The rgl package is absent; 3D plots are unavailable."), type="warning")
-    Message(paste(gettextRcmdr("R Commander Version "), getRcmdr("version"), ": ", date(), sep=""))
+    Message(paste(gettextRcmdr("R Commander Version "), getRcmdr("RcmdrVersion"), ": ", date(), sep=""))
     }
 
 logger <- function(command){

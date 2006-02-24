@@ -2,7 +2,7 @@
 
 .onAttach <- function(...){
     Commander()
-    cat(gettext("\nRcmdr Version", domain="R-Rcmdr"), getRcmdr("version"), "\n")
+    cat(gettext("\nRcmdr Version", domain="R-Rcmdr"), getRcmdr("RcmdrVersion"), "\n")
     }
 
 .onLoad <- function(...){

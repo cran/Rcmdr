@@ -434,4 +434,12 @@ Version 1.1-6
    
    o  Added Rcmdr-package.Rd file. 
    
+Version 1.1-7
+
+   o  Added a Spanish traslation, thanks to Jose Castano and Carlos Carleos.
+
+   o  Changed variable "version" in the RcmdrEnv to "RcmdrVersion" to avoid shadowing "version" in the base package (suggested by Richard Heiberger).
+   
+   o  Small bug fixes.
+   
    

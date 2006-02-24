@@ -1,6 +1,6 @@
 # R Commander Menu Definitions
 
-# last modified 4 Sept 2005 by J. Fox
+# last modified 24 February 2006 by J. Fox
 
 #   type    menu/item      operation/parent  label                                          command/menu                activation
 
@@ -78,7 +78,7 @@
     item    meansMenu       command         "Multi-way ANOVA..."                            multiWayAnova               "numericP() && factorsP()"
     menu    proportionsMenu statisticsMenu  ""                                              ""                          ""
     item    proportionsMenu command         "Single-sample proportion test..."              singleProportionTest        "twoLevelFactorsP()"
-    item    proportionsMenu command         "Two-sample proportions test..."                twoSampleProportionsTest    "twoLevelFactorsP(2)"
+    item    proportionsMenu command         "Two-sample proportions test..."                twoSampleProportionsTest    "twoLevelFactorsP(2) && packageAvailable('abind')"
     menu    variancesMenu   statisticsMenu  ""                                              ""                          ""
     item    variancesMenu   command         "Two-variances F-test..."                       twoVariancesFTest           "numericP() && twoLevelFactorsP()"
     item    variancesMenu   command         "Bartlett's test..."                            BartlettTest                "numericP() && factorsP()"

@@ -231,6 +231,11 @@ when the \code{Rcmdr} package is loaded; the default is to load only the \code{c
 Many options can also be set via the \emph{File -> Options} menu, which will restart the Commander after options are set.
 }
 
+\section{Known Problem}{
+  Occasionally, under Windows, after typing some text into a dialog box (e.g., a subsetting expression in the Subset  Data Set dialog), buttons in the dialog (e.g., the OK button) will have no effect when they are pressed. Clicking anywhere inside or outside of the dialog box should restore the function of the buttons. As far as I have been able to ascertain, this is a problem with Tcl/Tk for Windows.
+}
+
+
 \note{
   This version is compatible with SciViews, which currently runs only under Windows systems:
    \url{http://www.sciviews.org/SciViews-R}; see \code{\link{Rcmdr.sciviews-specific}}.

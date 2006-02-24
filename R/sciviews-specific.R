@@ -2,7 +2,7 @@
 
 # last modified 19 April 2005 by Ph. Grosjean
 #  small fix to call to list.files() by J. Fox 17 Jan 05
-#  modifications 2 July 05 by J. Fox
+#  modifications 18 Feb 06 by J. Fox
 
 is.SciViews <- function() {
     # SciViews defines the option "SciViews.version".
@@ -39,7 +39,7 @@ svCommander <- function(Version = "1.1-0"){
         #assign(".messages.connection", textConnection(".messages", open = "w"), envir=.GlobalEnv)
         #sink(.messages.connection, type="message")
         messageTag(reset=TRUE)
-		putRcmdr("version", Version)
+		putRcmdr("RcmdrVersion", Version)
 		#putRcmdr("length.messages", 0)
         putRcmdr(".activeDataSet", NULL)
         putRcmdr(".activeModel", NULL)
@@ -134,7 +134,7 @@ svCommander <- function(Version = "1.1-0"){
 		show.edit.button <- options("Rcmdr")[[1]]$show.edit.button
         show.edit.button <- if (is.null(show.edit.button)) TRUE else show.edit.button
         if (!packageAvailable("rgl")) Message(gettextRcmdr("The rgl package is absent; 3D plots are unavailable."), type="warning")
-    	Message(paste(gettextRcmdr("R Commander Version "), getRcmdr("version"), ": ", date(), sep=""))
+    	Message(paste(gettextRcmdr("R Commander Version "), getRcmdr("RcmdrVersion"), ": ", date(), sep=""))
 		}
     }
 
