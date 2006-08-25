@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 12 September 05 by J. Fox
+# last modified 28 July 06 by J. Fox
 
     # Tables menu
     
@@ -25,6 +25,7 @@ twoWayTable <- function(){
             }        
         percents <- as.character(tclvalue(percentsVariable))
         chisq <- tclvalue(chisqTestVariable)
+        chisqComp <- tclvalue(chisqComponentsVariable)
         expected <- tclvalue(expFreqVariable)
         fisher <- tclvalue(fisherTestVariable)
         subset <- tclvalue(subsetVariable)
@@ -38,6 +39,7 @@ twoWayTable <- function(){
         doItAndPrint(".Table")
         if (percents == "row") doItAndPrint("rowPercents(.Table) # Row Percentages")
         if (percents == "column") doItAndPrint("colPercents(.Table) # Column Percentages")
+        if (percents == "total") doItAndPrint("totPercents(.Table) # Percentage of Total")
         if (chisq == 1) {
             command <- "chisq.test(.Table, correct=FALSE)"
             logger(paste(".Test <- ", command, sep=""))
@@ -51,6 +53,10 @@ twoWayTable <- function(){
                 gettextRcmdr(" expected frequencies are less than 5"), sep="")
             if (!is.null(warnText)) Message(message=warnText,
                 type="warning")
+            if (chisqComp == 1) {
+                command <- "round(.Test$residuals^2, 2) # Chi-square Components"
+                doItAndPrint(command)
+                }
             logger("remove(.Test)") 
             remove(.Test, envir=.GlobalEnv) 
             }
@@ -60,11 +66,13 @@ twoWayTable <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="xtabs")
-    radioButtons(name="percents", buttons=c("rowPercents", "columnPercents", "nonePercents"), 
-        values=c("row", "column", "none"), initialValue="none", 
-        labels=gettextRcmdr(c("Row percentages", "Column percentages", "No percentages")), title=gettextRcmdr("Compute Percentages"))
-    checkBoxes(frame="testsFrame", boxes=c("chisqTest", "expFreq", "fisherTest"), initialValues=c("1", "0", "0"),
-        labels=gettextRcmdr(c("Chi-square test of independence", "Print expected frequencies", "Fisher's exact test")))
+    radioButtons(name="percents", 
+        buttons=c("rowPercents", "columnPercents", "totalPercents", "nonePercents"), 
+        values=c("row", "column", "total", "none"), initialValue="none", 
+        labels=gettextRcmdr(c("Row percentages", "Column percentages", "Percentages of total", "No percentages")), title=gettextRcmdr("Compute Percentages"))
+    checkBoxes(frame="testsFrame", boxes=c("chisqTest", "chisqComponents", "expFreq", "fisherTest"), initialValues=c("1", "0", "0", "0"),
+        labels=gettextRcmdr(c("Chi-square test of independence", "Components of chi-square statistic", 
+            "Print expected frequencies", "Fisher's exact test")))
     tkgrid(getFrame(rowBox), tklabel(variablesFrame, text="    "), getFrame(columnBox), sticky="nw")
     tkgrid(variablesFrame, sticky="w")
     tkgrid(percentsFrame, sticky="w")
@@ -205,6 +213,7 @@ enterTable <- function(){
             }     
         percents <- as.character(tclvalue(percentsVariable))
         chisq <- tclvalue(chisqVariable)
+        chisqComp <- tclvalue(chisqComponentsVariable)
         expected <- tclvalue(expFreqVariable)
         fisher <- tclvalue(fisherVariable)
         closeDialog()
@@ -221,6 +230,7 @@ enterTable <- function(){
         doItAndPrint(".Table  # Counts")
         if (percents == "row") doItAndPrint("rowPercents(.Table) # Row Percentages")
         if (percents == "column") doItAndPrint("colPercents(.Table) # Column Percentages")
+        if (percents == "total") doItAndPrint("totPercents(.Table) # Percentage of Total")
         if (chisq == 1) {
             command <- "chisq.test(.Table, correct=FALSE)"
             logger(paste(".Test <- ", command, sep=""))
@@ -234,6 +244,10 @@ enterTable <- function(){
                 gettextRcmdr(" expected frequencies are less than 5"), sep="")
             if (!is.null(warnText)) Message(message=warnText,
                 type="warning")
+            if (chisqComp == 1) {
+                command <- "round(.Test$residuals^2, 2) # Chi-square Components"
+                doItAndPrint(command)
+                }
             logger("remove(.Test)") 
             remove(.Test, envir=.GlobalEnv) 
             }
@@ -243,10 +257,11 @@ enterTable <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="chisq.test")
-    radioButtons(name="percents", buttons=c("rowPercents", "columnPercents", "nonePercents"), values=c("row", "column", "none"),
-        initialValue="none", labels=gettextRcmdr(c("Row percentages", "Column percentages", "No percentages")), title=gettextRcmdr("Compute Percentages"))
-    checkBoxes(frame="testsFrame", boxes=c("chisq", "expFreq", "fisher"), initialValues=c("1", "0", "0"),                               
-        labels=gettextRcmdr(c("Chi-square test of independence", "Print expected frequencies", "Fisher's exact test")))
+    radioButtons(name="percents", buttons=c("rowPercents", "columnPercents", "totalPercents", "nonePercents"), values=c("row", "column", "total", "none"),
+        initialValue="none", labels=gettextRcmdr(c("Row percentages", "Column percentages",  "Percentages of total", "No percentages")), title=gettextRcmdr("Compute Percentages"))
+    checkBoxes(frame="testsFrame", boxes=c("chisq", "chisqComponents", "expFreq", "fisher"), initialValues=c("1", "0", "0", "0"),                               
+        labels=gettextRcmdr(c("Chi-square test of independence", "Components of chi-square statistic", 
+            "Print expected frequencies", "Fisher's exact test")))
     tkgrid(tklabel(rowColFrame, text=gettextRcmdr("Number of Rows:")), rowsSlider, rowsShow, sticky="w")
     tkgrid(tklabel(rowColFrame, text=gettextRcmdr("Number of Columns:")), colsSlider, colsShow, sticky="w")
     tkgrid(rowColFrame, sticky="w")

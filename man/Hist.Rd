@@ -3,7 +3,7 @@
 \title{Plot a Histogram}
 
 \description{
-  This function is a wrapper for the \code{\link[base]{hist}} function in
+  This function is a wrapper for the \code{\link[graphics]{hist}} function in
   the \code{base} package, permitting percentage scaling of the
   vertical axis in addition to frequency and density scaling.
 }
@@ -28,7 +28,7 @@ Hist(x, scale = c("frequency", "percent", "density"), ...)
 
 \author{John Fox \email{jfox@mcmaster.ca}}
 
-\seealso{\code{\link[base]{hist}}}
+\seealso{\code{\link[graphics]{hist}}}
 
 \examples{
     data(Prestige)

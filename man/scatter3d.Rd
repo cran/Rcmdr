@@ -17,22 +17,23 @@
 
 \usage{
 scatter3d(x, y, z, 
-    xlab=deparse(substitute(x)), ylab=deparse(substitute(y)),
-    zlab=deparse(substitute(z)),
-    revolutions=0, bg.col=c("white", "black"), 
-    axis.col=if (bg.col == "white") "black" else "white",
-    surface.col=c("blue", "green", "orange", "magenta", 
-        "cyan", "red", "yellow", "gray"),
-    neg.res.col="red", pos.res.col="green", point.col="yellow",
-    text.col=axis.col, 
-    grid.col=if (bg.col == "white") "black" else "gray",
-    fogtype=c("exp2", "linear", "exp", "none"),
-    residuals=(length(fit) == 1), surface=TRUE, grid=TRUE, 
-    grid.lines=26, df.smooth=NULL, df.additive=NULL,
-    sphere.size=1, threshold=0.01, speed=1, fov=60,
-    fit="linear", groups=NULL, parallel=TRUE, model.summary=FALSE)
+        xlab=deparse(substitute(x)), ylab=deparse(substitute(y)),
+        axis.scales=TRUE,                          
+        zlab=deparse(substitute(z)), revolutions=0, bg.col=c("white", "black"), 
+        axis.col=if (bg.col == "white") c("darkmagenta", "black", "darkcyan") 
+            else c("darkmagenta", "white", "darkcyan"),
+        surface.col=c("blue", "green", "orange", "magenta", "cyan", "red", "yellow", "gray"),
+        neg.res.col="red", pos.res.col="green", 
+        square.col=if (bg.col == "white") "black" else "gray", point.col="yellow",
+        text.col=axis.col, grid.col=if (bg.col == "white") "black" else "gray",
+        fogtype=c("exp2", "linear", "exp", "none"),
+        residuals=(length(fit) == 1), surface=TRUE, fill=TRUE, grid=TRUE, grid.lines=26,
+        df.smooth=NULL, df.additive=NULL,
+        sphere.size=1, threshold=0.01, speed=1, fov=60,
+        fit="linear", groups=NULL, parallel=TRUE, ellipsoid=FALSE, level=0.5,
+        model.summary=FALSE)
     
-identify3d(x, y, z, groups=NULL, labels=1:length(x), 
+identify3d(x, y, z, axis.scales=TRUE, groups=NULL, labels=1:length(x), 
     col=c("blue", "green", "orange", "magenta", "cyan", "red", "yellow", "gray"),
     offset = ((100/length(x))^(1/3)) * 0.02)
 }
@@ -46,22 +47,28 @@ You have to install the \code{rgl} and \code{mgcv} packages to produce 3D plots.
   \item{y}{variable for vertical axis (response).}
   \item{z}{variable for out-of-screen axis.}
   \item{xlab, ylab, zlab}{axis labels.}
+  \item{axis.scales}{if \code{TRUE}, label the values of the ends of the axes.
+    \emph{Note:} For \code{identify3d} to work properly, the value of this argument must
+    be the same as in \code{scatter3d}.}
   \item{revolutions}{number of full revolutions of the display.}
   \item{bg.col}{background colour; one of \code{"white"}, \code{"black"}.}
-  \item{axis.col}{colour for axes; default is \code{"white"} for black background, 
-    \code{"black"} for white background.}
+  \item{axis.col}{colours for axes; if \code{axis.scales} is \code{FALSE}, then
+    the second colour is used for all three axes.}
   \item{surface.col}{vector of colours for regression planes, 
     used in the order specified by \code{fit}.}
   \item{neg.res.col, pos.res.col}{colours for lines representing negative 
     and positive residuals.}
+  \item{square.col}{colour to use to plot squared residuals.}
   \item{point.col}{colour of points.}
   \item{text.col}{colour of axis labels.}
   \item{grid.col}{colour of grid lines on the regression surface(s).}
   \item{fogtype}{type of fog effect; one of \code{"exp2"}, \code{"linear"}, 
     \code{"exp"}, \code{"none".}}
-  \item{residuals}{plot residuals (\code{TRUE} or \code{FALSE}); available only 
-    when there is one surface plotted.}
+  \item{residuals}{plot residuals if \code{TRUE}; if  \code{residuals="squares"},
+    then the squared residuals are shown as squares (using code adapted from Richard
+    Heiberger). Residuals are available only when there is one surface plotted.}
   \item{surface}{plot surface(s) (\code{TRUE} or \code{FALSE}).}
+  \item{fill}{fill the plotted surface(s) with colour (\code{TRUE} or \code{FALSE}).}
   \item{grid}{plot grid lines on the regression surface(s) (\code{TRUE} or \code{FALSE}).}
   \item{grid.lines}{number of lines (default, 26) forming the grid, in each of the x and y directions.}
   \item{df.smooth}{degrees of freedom for the two-dimensional smooth regression surface;
@@ -88,6 +95,9 @@ You have to install the \code{rgl} and \code{mgcv} packages to produce 3D plots.
     each level of the factor.}
   \item{parallel}{when plotting surfaces by \code{groups}, should the surfaces be constrained to be
     parallel? A logical value, with default \code{TRUE}.}
+  \item{ellipsoid}{plot concentration ellipsoid(s) (\code{TRUE} or \code{FALSE}).}
+  \item{level}{expected proportion of bivariate-normal observations included in the
+    concentration ellipsoid(s); default is 0.5.}
   \item{model.summary}{print summary or summaries of the model(s) fit 
     (\code{TRUE} or \code{FALSE}).}
   \item{labels}{text labels for the points, one for each point; defaults to

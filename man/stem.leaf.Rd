@@ -43,7 +43,7 @@ stem.leaf(data, unit, m, Min, Max,
 \details{
   Unlike the \code{stem} function in the \code{base} package, this function produces
   classic stem-and-leaf displays, as described in Tukey's \emph{Exploratory Data Analysis}.
-  Outliers are determined using the rule for boxplots (see \code{\link[base]{boxplot.stats}}).
+  Outliers are determined using the rule for boxplots (see \code{\link[grDevices]{boxplot.stats}}).
 }
 
 \value{
@@ -59,7 +59,7 @@ stem.leaf(data, unit, m, Min, Max,
 \author{Peter Wolf, slightly modified by John Fox \email{jfox@mcmaster.ca}
     with the original author's permission.}
 
-\seealso{\code{\link[base]{stem}}}
+\seealso{\code{\link[graphics]{stem}}}
 
 \examples{
 data(Prestige)

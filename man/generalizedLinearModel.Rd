@@ -4,7 +4,7 @@
 \title{Rcmdr Generalized Linear Model Dialog}
 \description{
   This dialog is used to specify a generalized linear model to be fit by the 
-  \code{\link[base]{glm}} function.
+  \code{\link[stats]{glm}} function.
 }
 
 \details{
@@ -13,7 +13,7 @@ may be a variable name or an expression evaluating to the response variable, suc
 \code{working == "Fulltime"}.
 
 The right model-formula box specifies the right-hand (i.e., predictor) side of the model.
-See \code{\link[base]{glm}} for details.
+See \code{\link[stats]{glm}} for details.
 
 You can type directly in the model formula boxes. Alternatively, double-clicking the left mouse
 button on a variable in the variable-list transfers it to the left-hand side of the model (if
@@ -24,7 +24,7 @@ above the formula.
 
 Double-click the left mouse button to select a family in the "Family" box and the corresponding
 permissible link functions appear in the "Link function" box to the right. Initially, the
-canonical link for the family is selected. See \code{\link[base]{family}} for details.
+canonical link for the family is selected. See \code{\link[stats]{family}} for details.
 
 Specifying a subset expression allows you to fit the model to a subset of observations
 in the active data set. For example, assuming that \code{gender} is a variable in the
@@ -37,6 +37,6 @@ right-hand-side, family, link, and subset fields are retained from the active mo
 
 \author{John Fox \email{jfox@mcmaster.ca}}
 
-\seealso{\code{\link[base]{glm}}, \code{\link[base]{family}}, \code{\link[base]{Comparison}}}
+\seealso{\code{\link[stats]{glm}}, \code{\link[stats]{family}}, \code{\link[base]{Comparison}}}
 
 \keyword{models}

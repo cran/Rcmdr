@@ -101,28 +101,32 @@ closeCommander <- function(){
     putRcmdr(".activeDataSet", NULL)
     putRcmdr(".activeModel", NULL)
     if (getRcmdr("log.commands") && tclvalue(tkget(LogWindow(), "1.0", "end")) != "\n"){
-        response2 <- RcmdrTkmessageBox(message=gettextRcmdr("Save script file?"),
-                icon="question", type="yesno", default="yes")
-        if ("yes" == tclvalue(response2)) saveLog()
-        }
+         response2 <- RcmdrTkmessageBox(message=gettextRcmdr("Save script file?"),
+                 icon="question", type="yesno", default="yes")
+         if ("yes" == tclvalue(response2)) saveLog()
+         }
     if (!getRcmdr("console.output") && tclvalue(tkget(OutputWindow(), "1.0", "end")) != "\n"){
-        response3 <- RcmdrTkmessageBox(message=gettextRcmdr("Save output file?"),
-                icon="question", type="yesno", default="yes")
-        if ("yes" == tclvalue(response3)) saveOutput()
-        }
+         response3 <- RcmdrTkmessageBox(message=gettextRcmdr("Save output file?"),
+                 icon="question", type="yesno", default="yes")
+         if ("yes" == tclvalue(response3)) saveOutput()
+         }
     if (.Platform$OS.type != "windows") options(getRcmdr("oldPager"))
     if (getRcmdr("suppress.X11.warnings")) {
-        sink(type="message")
-        close(getRcmdr("messages.connection"))
-        remove(".messages", envir=.GlobalEnv)
-        }
+         sink(type="message")
+         close(getRcmdr("messages.connection"))
+         remove(".messages", envir=.GlobalEnv)
+         }
     options(getRcmdr("saveOptions"))
     tkdestroy(CommanderWindow())
+    putRcmdr("commanderWindow", NULL)
+    putRcmdr("logWindow", NULL)
+    putRcmdr("messagesWindow", NULL)
+    putRcmdr("outputWindow", NULL)
     tkwait <- options("Rcmdr")[[1]]$tkwait  # to address problem in Debian Linux
     if ((!is.null(tkwait)) && tkwait) tclvalue(.commander.done) <<- "1"
     return(invisible(response))
     }
-    
+
 closeCommanderAndR <- function(){
     response <- closeCommander()
     if (response == "cancel") return()

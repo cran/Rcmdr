@@ -12,11 +12,11 @@ user interface) for R, based on the tcltk package.
 \details{
 \tabular{ll}{
 Package: \tab Rcmdr\cr
-Version: \tab 1.1-6\cr
-Date: \tab 2006/2/5\cr
+Version: \tab 1.2-0\cr
+Date: \tab 2006/8/25\cr
 Depends: \tab R (>= 2.1.0), tcltk\cr
-Suggests: \tab abind, car (>= 1.0-15), effects (>= 1.0-7), foreign, grid,
-lattice, lmtest, MASS, mgcv, multcomp, nlme, nnet, relimp\cr
+Suggests: \tab abind, car (>= 1.1-1), effects (>= 1.0-7), foreign, grid,
+lattice, lmtest, MASS, mgcv, multcomp, nlme, nnet, relimp, RODBC\cr
 LazyLoad: \tab no\cr
 License: \tab GPL version 2 or newer\cr
 URL: \tab http://www.r-project.org,
@@ -40,7 +40,7 @@ aboutRcmdr              About the Rcmdr Package
 assignCluster           Append a Cluster Membership Variable to a
                         Dataframe
 bin.var                 Bin a Numeric Varisible
-colPercents             Row and Column Percentage Tables
+colPercents             Row, Column, and Total Percentage Tables
 generalizedLinearModel
                         Rcmdr Generalized Linear Model Dialog
 hierarchicalCluster     Rcmdr Hierarchical Clustering Dialog
@@ -54,9 +54,7 @@ stem.leaf               Stem-and-Leaf Display
 }
 }
 \author{
-John Fox <jfox@mcmaster.ca>, with contributions from Michael
-Ash, Philippe Grosjean, Martin Maechler, Dan Putler, and Peter
-Wolf.
+John Fox <jfox@mcmaster.ca>, with contributions from Michael Ash, Theophilius Boye, Stefano Calza, Andy Chang, Philippe Grosjean, Richard Heiberger, G. Jay Kerns, Renaud Lancelot, Matthieu Lesnoff, Martin Maechler, Dan Putler, Miroslav Ristic, and Peter Wolf.
 
 Maintainer: John Fox <jfox@mcmaster.ca>
 }

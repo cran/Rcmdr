@@ -1,6 +1,6 @@
 # Model menu dialogs
 
-# last modified 4 September 05 by J. Fox
+# last modified 20 August 06 by J. Fox
 
 selectActiveModel <- function(){
     models <- listAllModels()
@@ -231,8 +231,9 @@ testLinearHypothesis <- function(){
             make.col.names <- paste(make.col.names, ", ", 
                 "tklabel(.tableFrame, text='", col.names[j], "')", sep="")
             }
+        rhsText <- gettextRcmdr("Right-hand side")
         make.col.names <- paste(make.col.names, ", tklabel(.tableFrame, text='          ')",
-            ", tklabel(.tableFrame, text='Right-hand side')", sep="")
+            ", tklabel(.tableFrame, text='", rhsText, "')", sep="")
         eval(parse(text=paste("tkgrid(", make.col.names, ")", sep="")), envir=env)
         for (i in 1:nrows){   
             varname <- paste(".tab.", i, ".1", sep="") 

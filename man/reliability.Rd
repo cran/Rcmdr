@@ -37,7 +37,7 @@ reliability(S)
 
 \author{John Fox \email{jfox@mcmaster.ca}}
 
-\seealso{\code{\link[base]{cov}}}
+\seealso{\code{\link[stats]{cov}}}
 
 \examples{
 data(DavisThin)

@@ -1,6 +1,6 @@
 # this code by Dan Putler, used with permission
 
-# last modified 1 July 05 by J. Fox
+# last modified 2 March 06 by J. Fox
 
 assignCluster <- function(clusterData, origData, clusterVec){
     rowsDX <- row.names(clusterData)
@@ -93,7 +93,7 @@ kmeansClustering <- function(){
            } 
         if (length(x)==0) {
             errorCondition(recall=kmeansClustering, 
-              message==gettextRcmdr("No variables selected."))
+              message=gettextRcmdr("No variables selected."))
             return()
             }
         varFormula <- paste(x, collapse=" + ")

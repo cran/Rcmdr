@@ -22,7 +22,7 @@ partial.cor(X, ...)
 
 \author{John Fox \email{jfox@mcmaster.ca}}
 
-\seealso{\code{\link[base]{cor}}}
+\seealso{\code{\link[stats]{cor}}}
 
 \examples{
     data(DavisThin)

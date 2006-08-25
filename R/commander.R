@@ -1,17 +1,26 @@
 # The R Commander and command logger
 
-# last modified 18 Feb 06 by J. Fox
-#   slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 4 August 06 by J. Fox
+#   slight changes 12 Aug 04 by Ph. Grosjean 
 
 Commander <- function(){
-    version <- "1.1-7"
-    if (is.SciViews()) return(invisible(svCommander(Version=version))) # +PhG
+    # the following test suggested by Richard Heiberger
+    if ("RcmdrEnv" %in% search() &&
+        exists("commanderWindow", "RcmdrEnv") &&
+        !is.null(get("commanderWindow", "RcmdrEnv"))) {
+      warning("The R Commander is already open.")
+      return(invisible(NULL))
+    }
+    RcmdrVersion <- "1.2-0"
+    if (is.SciViews()) return(invisible(svCommander(Version=RcmdrVersion))) # +PhG
     setOption <- function(option, default, global=TRUE) {
         opt <- if (is.null(current[[option]])) default else current[[option]]
         if (global) putRcmdr(option, opt)
         else opt
         }
-    etc <- file.path(.path.package(package="Rcmdr")[1], "etc")
+    current <- options("Rcmdr")[[1]]
+    etc <- setOption("etc", file.path(.path.package(package="Rcmdr")[1], "etc"), global=FALSE)
+    etcMenus <- setOption("etcMenus", etc, global=FALSE)
     onCopy <- function(){
         focused <- tkfocus()
         if ((tclvalue(focused) != LogWindow()$ID) && (tclvalue(focused) != OutputWindow()$ID))
@@ -101,7 +110,7 @@ Commander <- function(){
         onDelete()
         }
     messageTag(reset=TRUE)
-    putRcmdr("RcmdrVersion", version)
+    putRcmdr("RcmdrVersion", RcmdrVersion)
     putRcmdr(".activeDataSet", NULL)
     putRcmdr(".activeModel", NULL)
     putRcmdr("logFileName", NULL)
@@ -110,7 +119,6 @@ Commander <- function(){
     putRcmdr("modelNumber", 0)
     putRcmdr("rgl", FALSE)
     putRcmdr("Identify3d", NULL)
-    current <- options("Rcmdr")[[1]]
     setOption("log.font.size", if (.Platform$OS.type == "windows") 10 else 12)
     putRcmdr("logFont", tkfont.create(family="courier", size=getRcmdr("log.font.size")))
     putRcmdr("operatorFont", tkfont.create(family="courier", size=getRcmdr("log.font.size")))
@@ -143,7 +151,7 @@ Commander <- function(){
     setOption("multiple.select.mode", "extended")
     setOption("suppress.X11.warnings", .Platform$GUI == "X11") # to address problem in Linux
     setOption("showData.threshold", 100)
-    setOption("retain.messages", FALSE)
+    setOption("retain.messages", TRUE)
     setOption("crisp.dialogs",  (.Platform$OS.type == "windows") && (getRversion() >= "2.1.1"))
     if (.Platform$OS.type != "windows") {
         putRcmdr("oldPager", options(pager=RcmdrPager))
@@ -172,7 +180,7 @@ Commander <- function(){
         source(file.path(etc, file))
         cat(paste(gettextRcmdr("Sourced:"), file, "\n"))
         }
-    Menus <- read.table(file.path(etc, "Rcmdr-menus.txt"), as.is=TRUE)
+    Menus <- read.table(file.path(etcMenus, "Rcmdr-menus.txt"), as.is=TRUE)
     .Menus <- menus <- list()
     menuItems <- 0
     for (m in 1:nrow(Menus)){
@@ -431,6 +439,8 @@ Commander <- function(){
     tkbind(.commander, "<Control-F>", onFind)
     tkbind(.commander, "<Control-s>", saveLog)
     tkbind(.commander, "<Control-S>", saveLog)
+    tkbind(.commander, "<Control-a>", onSelectAll)
+    tkbind(.commander, "<Control-A>", onSelectAll)
     tkbind(.log, "<ButtonPress-3>", contextMenuLog)
     tkbind(.output, "<ButtonPress-3>", contextMenuOutput)
     tkwm.deiconify(.commander)
@@ -548,29 +558,41 @@ checkWarnings <- function(messages){
                     current.messages)
                 if (length(X11.warning) > 0){
                     current.messages <- current.messages[-X11.warning]
-                    if (length(current.messages) == 0) return()
+                    if (length(current.messages) == 0) Message()
                     }
-                if (length(current.messages) > 10) current.messages <- c(paste(length(current.messages), "warnings."),
-                    gettextRcmdr("First and last 5 warnings:"), head(current.messages,5), ". . .", tail(current.messages, 5))
-                Message(message=paste(current.messages, collapse="\n"), type="warning")
+                else if (length(current.messages) > 10) {
+                    current.messages <- c(paste(length(current.messages), "warnings."),
+                        gettextRcmdr("First and last 5 warnings:"), 
+                            head(current.messages,5), ". . .", tail(current.messages, 5))
+                    Message(message=paste(current.messages, collapse="\n"), type="warning")
+                }
             }
         }
     else{
-        if (length(messages) == 0) return()
-        if (length(messages) > 10) messages <- c(paste(length(messages), "warnings."),
-            gettextRcmdr("First and last 5 warnings:"), head(messages, 5), ". . .", tail(messages, 5))
-        Message(message=paste(messages, collapse="\n"), type="warning")
+#        if (length(messages) == 0) return()
+        if (length(messages == 0)) Message()
+        else if (length(messages) > 10){ 
+            messages <- c(paste(length(messages), "warnings."),
+                gettextRcmdr("First and last 5 warnings:"), 
+                    head(messages, 5), ". . .", tail(messages, 5))
+            Message(message=paste(messages, collapse="\n"), type="warning")
+            }
         }
     tkfocus(CommanderWindow())
     }
     
 Message <- function(message, type=c("note", "error", "warning")){
     if (is.SciViews()) return(svMessage(message, type))    # +PhG
+    .message <- MessagesWindow()
     type <- match.arg(type)
     if (type != "note") tkbell()
-    .message <- MessagesWindow()
     if (getRcmdr("retain.messages")) {
-        tkinsert(.message, "end", "\n")
+        if (!missing(message)) tkinsert(.message, "end", "\n")
+        else if (!is.null(getRcmdr("last.message"))) {
+            tkinsert(.message, "end", "\n\n")
+            putRcmdr("last.message", NULL)
+            tkyview.moveto(.message, 1.0)
+            }
         }
     else if (type == "note"){
         lastMessage <- tclvalue(tkget(MessagesWindow(),  "end - 2 lines", "end"))
@@ -578,19 +600,22 @@ Message <- function(message, type=c("note", "error", "warning")){
             tkdelete(.message, "1.0", "end")
         }
     else tkdelete(.message, "1.0", "end")
-    if (missing(message)) return()
     col <- if (type == "error") getRcmdr("error.text.color")
             else if (type == "warning") getRcmdr("warning.text.color")
             else getRcmdr("output.text.color")
     prefix <- switch(type, error=gettextRcmdr("ERROR"), warning=gettextRcmdr("WARNING"), note=gettextRcmdr("NOTE"))
+    if (missing(message)){
+        return()
+        }
+    putRcmdr("last.message", type)
     message <- paste(prefix, ": ", message, sep="")
     lines <- strsplit(message, "\n")[[1]]
     for (line in lines){
         tagName <- messageTag()
-        tkinsert(.message, "end", paste(line,"\n", sep=""))
+        tkinsert(.message, "end", paste(line, "\n", sep=""))
         tktag.add(.message, tagName, "end - 2 lines linestart", "end - 2 lines lineend")
         tktag.configure(.message, tagName, foreground=col)
-        tkyview.moveto(.message, 1)
+        tkyview.moveto(.message, 1.0)
         }
     }
 

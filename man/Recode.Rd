@@ -11,11 +11,12 @@
 }
 
 \details{
-The name of the new variable must be
+The name of each new variable must be
 a valid R object name (consisting only of upper and lower-case letters, numerals, and
 periods, and not starting with a numeral).
 
-Enter recode directives in the box at the right. Directives are normally entered one per line, 
+Enter recode directives in the box near the bottom of the dialog. 
+Directives are normally entered one per line, 
 but may also be separated by semicolons. Each directive is of the form \code{input = output} 
 (see the examples below). If an input value satisfies more than one specification, then the 
 first (from top to bottom, and left to right) applies. If no specification is satisfied, then 
@@ -36,7 +37,13 @@ Several recode specifications are supported:
     }
 
 If all of the output values are numeric, and the "Make new variable a factor" check box is 
-unchecked, then a numeric result is returned. 
+unchecked, then a numeric result is returned.
+
+If several variables are selected for recoding, then each is recoded using the same recode
+directives. In this case, the name entered in the box labelled
+"New variable name or prefix for multiple recodes" will be prefixed to the name of each
+variable being recoded. Setting an empty prefix (i.e., "") will cause the recoded variables
+to replace the original variables. 
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}}

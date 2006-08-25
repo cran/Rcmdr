@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 12 September 05 by J. Fox
+# last modified 30 July 06 by J. Fox
 
     # Means menu
 
@@ -166,8 +166,18 @@ oneWayAnova <- function(){
             if (eval(parse(text=paste("length(levels(", .activeDataSet, "$", group, ")) < 3")))) 
                 Message(message=gettextRcmdr("Factor has fewer than 3 levels; pairwise comparisons omitted."),
                     type="warning")
-            else doItAndPrint(paste("summary(simtest(", response, " ~ ", group, 
-                ', type="Tukey", data=', .activeDataSet, '))', sep=""))
+            # the following lines modified by Richard Heiberger and subsequently by J. Fox
+            else {
+                command <- paste(".Pairs <- simint(", response, " ~ ", group, 
+                                 ', type="Tukey", data=', .activeDataSet, ')', sep="")
+                justDoIt(command)
+                logger(command)
+                doItAndPrint("summary(.Pairs)")
+                justDoIt("plot(.Pairs)")
+                logger("plot(.Pairs)")
+                logger("remove(.Pairs)")
+                remove(.Pairs, envir=.GlobalEnv)
+                }
             }
         tkfocus(CommanderWindow())
         }

@@ -69,19 +69,24 @@ window.
 
 Pressing \emph{Control-S} will save the script or output window.
 
+Pressing \emph{Control-A} selects all of the text in the script or output window.
+
 Right-clicking the mouse (clicking button 3 on a three-button mouse) in the script or output window brings up
 a "context" menu with the \emph{Edit}-menu items, plus (in the script window) a \emph{Submit} item.
 
 When you
 execute commands from the \emph{Commander} window, you must ensure that the sequence of commands
 is logical. For example, it makes no sense to fit a statistical model to a data set that has
-not been read into memory. 
+not been read into memory.
+
+Pressing a letter key (e.g., "a") in a list box will scroll the list box to bring the next entry 
+starting with that letter to the top of the box. 
 
 Exit from the Commander via the \emph{File -> Exit} menu or by closing the \emph{Commander} window.
 
 \bold{Customization and Configuration}
 
-Configuration files reside in the \code{etc} subdirectory of the package.
+Configuration files reside in the \code{etc} subdirectory of the package, or in the locations given by the \code{etc} and \code{etcMenus} options (see below).
 
 The \code{Rcmdr} menus can be customized by editing the file \code{Rcmdr-menus.txt}.
 
@@ -140,8 +145,14 @@ set none, one, several, or all options. The available options are as follows:
     
     \item{\code{double.click}}{Set to \code{TRUE} if you want a double-click of the left mouse
     button to press the default button in all dialogs. The default is \code{FALSE}.}
-
+    
     \item{\code{error.text.color}}{Color for error messages; the default is \code{"red"}.}
+    
+    \item{\code{etc}}{Set to the path of the directory containing the Rcmdr 
+    configuration files; defaults to the \code{etc} subdirectory of the installed Rcmdr package.}
+    
+    \item{\code{etcMenus}}{Set to the path of the directory containing the Rcmdr menu file 
+    \code{Rcmdr-menus.txt}; defaults to the value given by the \code{etc} option.}
 
     \item{\code{grab.focus}}{Set to \code{TRUE} for the current Tk window to 
     "grab" the focus --- that is, to prevent the focus from being changed to another Tk window.

@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Rcmdr Japanese Translation\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2005-09-12 10:29\n"
-"Last-Translator: Takaharu Araki <arakit@kansai-u.ac.jp>\n"
-"Language-Team: Japanese <arakit@kansai-u.ac.jp>\n"
+"PO-Revision-Date: 2006-08-25 04:45+0900\n"
+"Last-Translator: Takaharu ARAKI <arakit@kansai-u.ac.jp>\n"
+"Language-Team: Rcmdr Japanese Translation <arakit@kansai-u.ac.jp>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -115,10 +115,10 @@ msgid "Append Cluster Groups to the Active Data Set"
 msgstr "アクティブデータセットにクラスタグループに関するデータを加える"
 
 msgid "Assigned cluster label:"
-msgstr "クラスタの割り当てられたラベル:"
+msgstr "割り当てられたクラスタのラベル:"
 
 msgid "Find"
-msgstr "見つける"
+msgstr "検索"
 
 msgid "Regular-expression search"
 msgstr "正規表現による検索"
@@ -139,7 +139,7 @@ msgid "No search text specified."
 msgstr "検索するテキストが指定されていません"
 
 msgid "Text not found."
-msgstr "テキストがありませんでした。"
+msgstr "テキストがありませんでした"
 
 msgid "Search for:"
 msgstr "検索:"
@@ -154,7 +154,7 @@ msgid "menu definition error:"
 msgstr "メニュー定義エラー:"
 
 msgid "Nothing is selected."
-msgstr "何も選択されていませ"
+msgstr "何も選択されていません"
 
 msgid "Clear window"
 msgstr "ウィンドウをクリア"
@@ -175,7 +175,7 @@ msgid "Delete"
 msgstr "削除"
 
 msgid "Find..."
-msgstr "見つける..."
+msgstr "検索..."
 
 msgid "Select all"
 msgstr "全てを選択"
@@ -208,7 +208,7 @@ msgid "Messages"
 msgstr "メッセージ"
 
 msgid "The rgl package is absent; 3D plots are unavailable."
-msgstr "パッケージ rgl がありません; 3Ｄプロットを作成できません"
+msgstr "パッケージ rgl がありません。 ３Ｄプロットを作成できません"
 
 msgid "R Commander Version"
 msgstr "Rコマンダーのバージョン"
@@ -333,13 +333,13 @@ msgstr ""
 "確認してください"
 
 msgid "Read Data From Text File"
-msgstr "テキストファイルからデータの読み込み"
+msgstr "テキストファイルからデータを読み込む"
 
 msgid "White space"
 msgstr "空白"
 
 msgid "Commas"
-msgstr "コンマ"
+msgstr "カンマ"
 
 msgid "Tabs"
 msgstr "タブ"
@@ -351,7 +351,7 @@ msgid "Period [.]"
 msgstr "ピリオド[.]"
 
 msgid "Comma [,]"
-msgstr "コンマ[,]"
+msgstr "カンマ[,]"
 
 msgid "Decimal-Point Character"
 msgstr "小数点の記号"
@@ -412,7 +412,7 @@ msgid ""
 "to factor levels"
 msgstr ""
 "値のラベルを \n"
-"因子水準に変換"
+"因子の水準に変換"
 
 msgid ""
 "Maximum number\n"
@@ -433,8 +433,8 @@ msgid ""
 "Minitab data set contains elements of unequal length.\n"
 "Data set cannot be converted."
 msgstr ""
-"Minitabデータセットが長さの異なる要素を含んでいます。\n"
-"データセットを変換できません。"
+"Minitabデータセットが長さの異なる要素を含んでいます\n"
+"データセットを変換できません"
 
 msgid "Import STATA Data Set"
 msgstr "STATAデータセットのインポート"
@@ -652,7 +652,7 @@ msgid "Treatment (dummy) contrasts"
 msgstr "処理(ダミー)対比"
 
 msgid "Sum (deviation) contrasts"
-msgstr "Sum (deviation) contrasts"
+msgstr "零和対比"
 
 msgid "Helmert contrasts"
 msgstr "ヘルマート対比"
@@ -701,7 +701,7 @@ msgid "mu (mean)"
 msgstr "μ (平均)"
 
 msgid "sigma (standard deviation)"
-msgstr "σ(標準偏差)"
+msgstr "σ（標準偏差）"
 
 msgid "Lower tail"
 msgstr "下側確率"
@@ -719,7 +719,7 @@ msgid "Variable value(s)"
 msgstr "変数の値"
 
 msgid "t Quantiles"
-msgstr "ｔ分位点"
+msgstr "ｔ分布の分位点"
 
 msgid "Degrees of freedom not specified."
 msgstr "自由度を指定していません"
@@ -752,19 +752,19 @@ msgid "F Probabilities"
 msgstr "F分布の確率"
 
 msgid "Values not specified."
-msgstr "値を指定していません。"
+msgstr "値が指定されていません"
 
 msgid "Binomial Quantiles"
-msgstr "2項分布の分位点"
+msgstr "２項分布の分位点"
 
 msgid "Probabilities not specified."
-msgstr "確率を指定していません。"
+msgstr "確率が指定されていません。"
 
 msgid "Binomial trials not specified."
-msgstr "試行数を指定していません"
+msgstr "試行数が指定されていません"
 
 msgid "Probability of success not specified."
-msgstr "成功の確率を指定していません"
+msgstr "成功の確率が指定されていません"
 
 msgid "Binomial trials"
 msgstr "試行回数"
@@ -789,14 +789,14 @@ msgid ""
 "Range of values over which to plot, %d, is large.\n"
 "Create long output?"
 msgstr ""
-"プロットする範囲, %d, が大きい。\n"
-"長い出力を実行しますか?"
+"プロットする値の範囲, %d, が広い。\n"
+"出力が長くなっても良いですか?"
 
 msgid "Poisson Probabilities"
 msgstr "ポアソン分布の確率"
 
 msgid "Poisson mean not specified."
-msgstr "ポアソン分布の平均を指定していません"
+msgstr "ポアソン分布の平均が指定されていません"
 
 msgid "Mean"
 msgstr "平均"
@@ -898,7 +898,7 @@ msgid "Ordered factors"
 msgstr "順序のある因子"
 
 msgid "Active window grabs focus"
-msgstr "アクティブウィンドウへフォーカス"
+msgstr "アクティブウィンドウにフォーカス"
 
 msgid "Double-click presses OK button"
 msgstr "ダブルクリックでOK"
@@ -1038,13 +1038,13 @@ msgid "Marginal boxplots"
 msgstr "周辺箱ひげ図"
 
 msgid "Least-squares line"
-msgstr "最小2乗直線"
+msgstr "最小２乗直線"
 
 msgid "Smooth Line"
 msgstr "平滑線"
 
 msgid "You must select two variables"
-msgstr "2つの変数を選択してください"
+msgstr "２つの変数を選択してください"
 
 msgid "x and y variables must be different"
 msgstr "x 変数とy 変数は異なっている必要があります"
@@ -1083,7 +1083,7 @@ msgid "On Diagonal"
 msgstr "対角位置に"
 
 msgid "Fewer than 3 variable selected."
-msgstr "3つ以上の変数を選択してください"
+msgstr "変数を３つ以上選択してください"
 
 msgid "Bar Graph"
 msgstr "棒グラフ"
@@ -1098,7 +1098,7 @@ msgid "x variable (pick one)"
 msgstr "x 変数 (１つ選択)"
 
 msgid "y variables (pick one or more)"
-msgstr "y 変数 (2つ以上選択)"
+msgstr "y 変数 (２つ以上選択)"
 
 msgid "<use y-variable names>"
 msgstr "<y変数名を用いる>"
@@ -1116,7 +1116,7 @@ msgid ""
 "x-values are not in order.\n"
 "Continue?"
 msgstr ""
-"xの値が順番に並んでいません。\n"
+"xの値が大きさの順に並んでいません。\n"
 "続けますか?"
 
 msgid "Label for y-axis"
@@ -1151,7 +1151,7 @@ msgid "Normal"
 msgstr "正規"
 
 msgid "Chi-square"
-msgstr "カイ2乗"
+msgstr "カイ２乗"
 
 msgid "Numerator df ="
 msgstr "分子の自由度 ="
@@ -1166,16 +1166,16 @@ msgid "Plot Means"
 msgstr "平均のプロット"
 
 msgid "Factors (pick one or two)"
-msgstr "因子 (1～2個選択)"
+msgstr "因子(1または2個選択）"
 
 msgid "Response Variable (pick one)"
-msgstr "目的変数(1つ選択)"
+msgstr "目的変数(１つ選択)"
 
 msgid "No factors selected."
 msgstr "因子が選択されていません"
 
 msgid "More than two factors selected."
-msgstr "2つ以上の因子が選択されました"
+msgstr "因子が２つ以上選択されました"
 
 msgid "No response variable selected."
 msgstr "目的変数が選択されていません"
@@ -1202,16 +1202,19 @@ msgid "No error bars"
 msgstr "エラーバーなし"
 
 msgid "3D Scatterplot"
-msgstr "3次元散布図"
+msgstr "３次元散布図"
 
 msgid "Explanatory variables (pick two)"
-msgstr "説明変数 (2つ選択)"
+msgstr "説明変数（２つ選択)"
 
 msgid "Response variable (pick one)"
-msgstr "目的変数 (1つ選択)"
+msgstr "目的変数 (１つ選択)"
+
+msgid "You must select a response variable."
+msgstr "目的変数を選択してください"
 
 msgid "You must select 2 explanatory variables."
-msgstr "説明変数を2つ選択してください"
+msgstr "説明変数を２つ選択してください"
 
 msgid "Response and explanatory variables must be different."
 msgstr "目的変数と説明変数は異なっている必要があります"
@@ -1226,10 +1229,10 @@ msgid "Surfaces to Fit"
 msgstr "表面の当てはめ"
 
 msgid "Linear least-squares"
-msgstr "線形最小2乗"
+msgstr "線形最小２乗"
 
 msgid "Quadratic least-squares"
-msgstr "2次の最小2乗"
+msgstr "２次の最小２乗"
 
 msgid "Smooth regression"
 msgstr "スムーズ回帰"
@@ -1310,7 +1313,7 @@ msgid "{\"PNG Bitmap Files\" {\".png\" \".PNG\"}} {\"All Files\" {\"*\"}}"
 msgstr "{\"PNG Bitmap ファイル\" {\".png\" \".PNG\"}} {\"全てのファイル\" {\"*\"}}"
 
 msgid "There is only one model in memory."
-msgstr "メモリにモデルが１つしかありません。"
+msgstr "メモリにモデルが1つしかありません。"
 
 msgid "There are no models from which to choose."
 msgstr "選択できるモデルがありません"
@@ -1381,7 +1384,7 @@ msgid ""
 "not equal to number of rows (%d) * number of columns (%d)."
 msgstr ""
 "仮説行列(%d)内の有効な要素数\n"
-"が、行の数 (%d) *列の数 (%d)と異なる"
+"が、行の数 (%d) *列の数 (%d)と異なっています"
 
 msgid "Hypothesis matrix is not of full row rank."
 msgstr "仮説行列が、full row rankではありません"
@@ -1400,16 +1403,16 @@ msgid "Enter hypothesis matrix and right-hand side vector:"
 msgstr "仮説の行列と右辺の値（ベクトル）を入力してください:"
 
 msgid "There are fewer than two models."
-msgstr "2つ以上のモデルが必要です"
+msgstr "２つ以上のモデルが必要です"
 
 msgid "Compare Models"
 msgstr "モデルの比較"
 
 msgid "First model (pick one)"
-msgstr "第1のモデル(1つ選択)"
+msgstr "第１のモデル(１つ選択)"
 
 msgid "Second model (pick one)"
-msgstr "第2のモデル(1つ選択)"
+msgstr "第２のモデル(１つ選択)"
 
 msgid "You must select two models."
 msgstr "モデルを2つ選択してください"
@@ -1436,7 +1439,7 @@ msgid "Durbin-Waton Test"
 msgstr "ダービン・ワトソン検定"
 
 msgid "Test for First-Order Error Autocorrelation"
-msgstr "1次の誤差の自己回帰の検定"
+msgstr "１次の誤差の自己回帰の検定"
 
 msgid "Alternative Hypothesis"
 msgstr "対立仮説"
@@ -1451,7 +1454,7 @@ msgid "No powers are checked."
 msgstr "検出力をチェックしていません"
 
 msgid "First principal component"
-msgstr "第1主成分"
+msgstr "第１主成分"
 
 msgid "Type of Test"
 msgstr "検定のタイプ"
@@ -1460,10 +1463,10 @@ msgid "Powers to Include"
 msgstr "パワー（巾）"
 
 msgid "2 (squares)"
-msgstr "2(平方)"
+msgstr "２（平方）"
 
 msgid "3 (cubes)"
-msgstr "3(立方)"
+msgstr "３（立方）"
 
 msgid "There is no appropriate outlier.test method for a model of this class."
 msgstr "このタイプのモデルに対する適切な外れ値の検定がありません"
@@ -1543,7 +1546,7 @@ msgid "Scale Reliability"
 msgstr "尺度の信頼性"
 
 msgid "Variables (pick three or more)"
-msgstr "変数 (3つ以上選択)"
+msgstr "変数（３つ以上選択）"
 
 msgid "Fewer than 3 variables selected."
 msgstr "選択した変数が3つ未満で"
@@ -1552,7 +1555,7 @@ msgid "Principal Components Analysis"
 msgstr "主成分分析"
 
 msgid "Variables (pick two or more)"
-msgstr "変数 (2つ以上選択)"
+msgstr "変数（２つ以上選択）"
 
 msgid "Analyze correlation matrix"
 msgstr "相関行列の分析"
@@ -1564,7 +1567,7 @@ msgid "Add principal components to data set"
 msgstr "データセットに主成分得点を保存"
 
 msgid "Fewer than 2 variables selected."
-msgstr "変数を2つ以上選択してください"
+msgstr "変数を２つ以上選択してください"
 
 msgid "Number of Components"
 msgstr "主成分の数"
@@ -1603,10 +1606,10 @@ msgid "Number of factors to extract:"
 msgstr "抽出する因子数:"
 
 msgid "Independent Samples t-Test"
-msgstr "独立サンプルのｔ検定"
+msgstr "独立サンプルの ｔ 検定"
 
 msgid "Groups (pick one)"
-msgstr "グループ (１つ選択)"
+msgstr "グループ（１つ選択）"
 
 msgid "You must select a groups variable."
 msgstr "質的変数を選択してください"
@@ -1633,43 +1636,40 @@ msgid "Confidence Level"
 msgstr "信頼水準"
 
 msgid "Paired t-Test"
-msgstr "対応のあるｔ検定"
+msgstr "対応のある ｔ 検定"
 
 msgid "First variable (pick one)"
-msgstr "第1の変数（1つ選択）"
+msgstr "第１の変数（１つ選択）"
 
 msgid "Second variable (pick one)"
-msgstr "第2の変数（1つ選択）"
+msgstr "第２の変数（１つ選択）"
 
 msgid "You must select two variables."
-msgstr "1つの変数を選択してください"
+msgstr "１つの変数を選択してください"
 
 msgid "Variables must be different."
 msgstr "変数は違っていないといけません。"
 
 msgid "Single-Sample t-Test"
-msgstr "1標本のｔ検定"
+msgstr "１標本の ｔ 検定"
 
 msgid "Population mean = mu0"
-msgstr "母平均 mu ≠ mu0"
+msgstr "母平均 μ≠ μ0"
 
 msgid "Population mean < mu0"
-msgstr "母平均 mu < mu0"
+msgstr "母平均 μ < μ0"
 
 msgid "Population mean > mu0"
-msgstr "母平均 mu > mu0"
+msgstr "母平均 μ > μ0"
 
 msgid "Null hypothesis: mu ="
-msgstr "仮説: mu ="
+msgstr "仮説: μ ="
 
 msgid "One-Way Analysis of Variance"
-msgstr "1元配置分散分析"
+msgstr "１元配置分散分析"
 
 msgid "You must select a groups factor."
 msgstr "質的因子を１つ選択してください"
-
-msgid "You must select a response variable."
-msgstr "目的変数を選択してください"
 
 msgid "Factor has fewer than 3 levels; pairwise comparisons omitted."
 msgstr "因子の水準が３未満です。多重比較は省略します"
@@ -1681,16 +1681,16 @@ msgid "Multi-Way Analysis of Variance"
 msgstr "多元配置分散分析"
 
 msgid "Factors (pick one or more)"
-msgstr "因子 (１つ以上選択)"
+msgstr "因子（１つ以上選択）"
 
 msgid "You must select at least one factor."
-msgstr "因子を1つ以上選択してください"
+msgstr "因子を１つ以上選択してください"
 
 msgid "Linear Regression"
 msgstr "線形回帰"
 
 msgid "Explanatory variables (pick one or more)"
-msgstr "説明変数（1つ以上選択）"
+msgstr "説明変数（１つ以上選択）"
 
 msgid "No explanatory variables selected."
 msgstr "説明変数を選択していません"
@@ -1717,7 +1717,7 @@ msgid "Generalized Linear Model"
 msgstr "一般化線形モデル"
 
 msgid "Family (double-click to select)"
-msgstr "リンク関数族 (ダブルクリックで選択)"
+msgstr "リンク関数族（ダブルクリックで選択）"
 
 msgid "Link function"
 msgstr "リンク関数"
@@ -1732,7 +1732,7 @@ msgid "Multinomial Logit Model"
 msgstr "多項ロジットモデル"
 
 msgid "Two-Sample Wilcoxon Test"
-msgstr "2標本ウィルコクソン検定"
+msgstr "２標本ウィルコクソン検定"
 
 msgid "Default"
 msgstr "デフォルト"
@@ -1747,29 +1747,29 @@ msgid ""
 "Normal approximation with\n"
 "continuity correction"
 msgstr ""
-"連続修正による\n"
+"連続修正を用いた\n"
 "正規近似"
 
 msgid "Paired Wilcoxon Test"
 msgstr "対応のあるウィルコクソン検定"
 
 msgid "The two variables must be different."
-msgstr "2つの変数は異なっていないとだめです"
+msgstr "２つの変数は異なっていないとだめです"
 
 msgid "Kruskal-Wallis Rank Sum Test"
 msgstr "クラスカル-ウォリスの順位和検定"
 
 msgid "Single-Sample Proportion Test"
-msgstr "1標本の比率の検定(母不良率の検定)"
+msgstr "１標本の比率の検定(母不良率の検定)"
 
 msgid "Population proportion = p0"
-msgstr "母集団比率 P ≠ p0"
+msgstr "母集団比率 P ≠ P0"
 
 msgid "Population proportion < p0"
-msgstr "母集団比率 P < p0"
+msgstr "母集団比率 P < P0"
 
 msgid "Population proportion > p0"
-msgstr "母集団比率 P > p0"
+msgstr "母集団比率 P > P0"
 
 msgid "Exact binomial"
 msgstr "正確２項"
@@ -1778,7 +1778,7 @@ msgid "Null hypothesis: p ="
 msgstr "帰無仮説 : P ="
 
 msgid "Two-Sample Proportions Test"
-msgstr "2標本の比率の検定"
+msgstr "２標本の比率の検定"
 
 msgid "Groups and response variables must be different."
 msgstr "質的変数と目的変数は違っていなければならない"
@@ -1818,7 +1818,7 @@ msgid "Invalid entry."
 msgstr "入力が誤っています"
 
 msgid "Missing entry."
-msgstr "入力がありません"
+msgstr "入力されていません"
 
 msgid ""
 "Number of valid entries (%d)\n"
@@ -1834,7 +1834,7 @@ msgid "Probabilities rescaled to sum to 1."
 msgstr "確率に負の値を指定できません"
 
 msgid "Chi-square goodness-of-fit test"
-msgstr "カイ2乗適合度検定"
+msgstr "カイ２乗適合度検定"
 
 msgid "Table of Statistics"
 msgstr "統計量の表"
@@ -1874,25 +1874,25 @@ msgid "Two-Way Table"
 msgstr "２元表"
 
 msgid "Row variable (pick one)"
-msgstr "行の変数(1つ選択)"
+msgstr "行の変数（１つ選択）"
 
 msgid "Column variable (pick one)"
-msgstr "列の変数(1つ選択)"
+msgstr "列の変数（１つ選択）"
 
 msgid "Row and column variables are the same."
 msgstr "行の変数と列の変数が同じです"
 
 msgid "expected frequencies are less than 1"
-msgstr "期待度数が1より小さい"
+msgstr "期待度数が１より小さい"
 
 msgid "expected frequencies are less than 5"
-msgstr "期待度数が5より小さい"
+msgstr "期待度数が５より小さい"
 
 msgid "Row percentages"
 msgstr "行のパーセント"
 
 msgid "Column percentages"
-msgstr "列のパーセン"
+msgstr "列のパーセント"
 
 msgid "No percentages"
 msgstr "パーセント表示無し"
@@ -1916,7 +1916,7 @@ msgid "Multi-Way Table"
 msgstr "多元分割表"
 
 msgid "Control variable(s) (pick one or more)"
-msgstr "コントロール変数(１つ以上を選択)"
+msgstr "コントロール変数（１つ以上を選択）"
 
 msgid "You must select row, column, and control variables"
 msgstr "行、列、コントロール変数を選択してください"
@@ -1925,7 +1925,7 @@ msgid "Row, column, and control variables must be different."
 msgstr "行、列、コントロール変数は異なっている必要があります"
 
 msgid "Enter Two-Way Table"
-msgstr "2元表を入力"
+msgstr "２元表を入力"
 
 msgid ""
 "Number of valid entries (%d)\n"
@@ -1945,7 +1945,7 @@ msgid "Enter counts:"
 msgstr "数を入力:"
 
 msgid "Two Variances F-Test"
-msgstr "２つの分散の比のF検定"
+msgstr "２つの分散の比の F 検定"
 
 msgid "Bartlett's Test"
 msgstr "バートレットの検定"
@@ -2030,7 +2030,7 @@ msgid ""
 "Overwrite %s?"
 msgstr ""
 "%s %s がすでに存在します。\n"
-" %s を上書きしますか?"
+" %s に上書きしますか?"
 
 msgid "Plot by:"
 msgstr "層別:"
@@ -2048,7 +2048,7 @@ msgid "Groups"
 msgstr "質的変数"
 
 msgid "Groups variable (pick one)"
-msgstr "層別変数 (1つ選択)"
+msgstr "層別変数 （１つ選択）"
 
 msgid "Position legend with mouse click"
 msgstr "凡例の位置をマウスで指定"
@@ -2060,7 +2060,7 @@ msgid "Difference:"
 msgstr "差:"
 
 msgid "Variables (double-click to formula)"
-msgstr "変数(ダブルクリックして式に入れる)"
+msgstr "変数（ダブルクリックして式に入れる）"
 
 msgid "Model Formula:"
 msgstr "モデル式:"
@@ -2148,16 +2148,16 @@ msgid "Variables in active data set"
 msgstr "アクティブデータセット内の変数"
 
 msgid "Set case names..."
-msgstr "ケース名の設定"
+msgstr "ケース名の設定..."
 
 msgid "Subset active data set..."
-msgstr "アクティブデータセットの部分集合を抽出"
+msgstr "アクティブデータセットの部分集合を抽出..."
 
 msgid "Remove cases with missing data..."
 msgstr "欠測値のあるケースを削除..."
 
 msgid "Export active data set..."
-msgstr "アクティブデータセットのエクスポート"
+msgstr "アクティブデータセットのエクスポート..."
 
 msgid "Active data set"
 msgstr "アクティブデータセット"
@@ -2166,13 +2166,13 @@ msgid "Recode variable..."
 msgstr "変数を再コード化"
 
 msgid "Compute new variable..."
-msgstr "新しい変数を計算.."
+msgstr "新しい変数を計算..."
 
 msgid "Standardize variables..."
 msgstr "変数の標準化..."
 
 msgid "Convert numeric variable to factor..."
-msgstr "数値変数を因子に変換"
+msgstr "数値変数を因子に変換..."
 
 msgid "Bin numeric variable..."
 msgstr "数値変数を区間で区分..."
@@ -2208,49 +2208,49 @@ msgid "Correlation matrix..."
 msgstr "相関行列..."
 
 msgid "Two-way table..."
-msgstr "2元表..."
+msgstr "２元表..."
 
 msgid "Multi-way table..."
 msgstr "多元表..."
 
 msgid "Enter and analyze two-way table..."
-msgstr "2元表の入力と分析..."
+msgstr "２元表の入力と分析..."
 
 msgid "Single-sample t-test..."
-msgstr "1標本ｔ検定"
+msgstr "１標本 ｔ 検定..."
 
 msgid "Independent samples t-test..."
-msgstr "独立サンプルt検定..."
+msgstr "独立サンプルの ｔ 検定..."
 
 msgid "Paired t-test..."
-msgstr "対応のあるt検定..."
+msgstr "対応のある t 検定..."
 
 msgid "One-way ANOVA..."
-msgstr "1元配置分散分析"
+msgstr "１元配置分散分析..."
 
 msgid "Multi-way ANOVA..."
-msgstr "多元配置分散分析"
+msgstr "多元配置分散分析..."
 
 msgid "Single-sample proportion test..."
-msgstr "1標本比率の検定"
+msgstr "１標本比率の検定..."
 
 msgid "Two-sample proportions test..."
-msgstr "2標本比率の検定"
+msgstr "２標本比率の検定..."
 
 msgid "Two-variances F-test..."
-msgstr "分散の比のF検定"
+msgstr "分散の比の F 検定..."
 
 msgid "Bartlett's test..."
-msgstr "バートレットの検定"
+msgstr "バートレットの検定..."
 
 msgid "Levene's test..."
-msgstr "ルビーンの検定"
+msgstr "ルビーンの検定..."
 
 msgid "Two-sample Wilcoxon test..."
-msgstr "2標本ウィルコクソン検定"
+msgstr "２標本ウィルコクソン検定..."
 
 msgid "Paired-samples Wilcoxon test..."
-msgstr "対応のあるウィルコクソン検定"
+msgstr "対応のあるウィルコクソン検定..."
 
 msgid "Kruskal-Wallis test..."
 msgstr "クラスカル-ウォリスの検定..."
@@ -2265,7 +2265,7 @@ msgid "Factor analysis..."
 msgstr "因子分析..."
 
 msgid "k-means cluster analysis..."
-msgstr "k-平均クラスタ分析"
+msgstr "k-平均クラスタ分析..."
 
 msgid "Hierarchical cluster analysis..."
 msgstr "階層的クラスタ分析..."
@@ -2274,7 +2274,7 @@ msgid "Summarize hierarchical clustering..."
 msgstr "階層的クラスタリングの要約..."
 
 msgid "Add hierarchical clustering to data set..."
-msgstr "階層的クラスタリングの結果をデータセットに保存"
+msgstr "階層的クラスタリングの結果をデータセットに保存..."
 
 msgid "Cluster analysis"
 msgstr "クラスタ分析"
@@ -2343,7 +2343,7 @@ msgid "Scatterplot matrix..."
 msgstr "散布図行列..."
 
 msgid "3D scatterplot..."
-msgstr "3次元散布図"
+msgstr "３次元散布図"
 
 msgid "Line graph..."
 msgstr "折れ線グラフ"
@@ -2364,7 +2364,7 @@ msgid "as PDF/Postscript/EPS..."
 msgstr "PDF/Postscript/EPSとして..."
 
 msgid "3D RGL graph..."
-msgstr "3次元RGLグラフ..."
+msgstr "３次元RGLグラフ..."
 
 msgid "Save graph to file"
 msgstr "グラフをファイルで保存"
@@ -2391,7 +2391,7 @@ msgid "ANOVA table"
 msgstr "分散分析表"
 
 msgid "Compare two models..."
-msgstr "2つのモデルを比較..."
+msgstr "２つのモデルを比較..."
 
 msgid "Linear hypothesis..."
 msgstr "線形仮説..."
@@ -2406,7 +2406,7 @@ msgid "Breusch-Pagan test for heteroscedasticity..."
 msgstr "ブルーシュ・ペーガンの分散の不均一性の検定..."
 
 msgid "Durbin-Watson test for autocorrelation..."
-msgstr "自己相関のダービン-ワトソン検定"
+msgstr "自己相関のダービン-ワトソン検定..."
 
 msgid "RESET test for nonlinearity..."
 msgstr "非線形性のRESET検定..."
@@ -2487,10 +2487,10 @@ msgid "Binomial distribution"
 msgstr "２項分布"
 
 msgid "Binomial quantiles..."
-msgstr "２項分布の分位点"
+msgstr "２項分布の分位点..."
 
 msgid "Binomial tail probabilities..."
-msgstr "２項分布の裾の確率"
+msgstr "２項分布の裾の確率..."
 
 msgid "Binomial probabilities..."
 msgstr "２項分布..."
@@ -2502,16 +2502,16 @@ msgid "Poisson distribution"
 msgstr "ポアソン分布"
 
 msgid "Poisson probabilities..."
-msgstr "ポアソン分布の確率"
+msgstr "ポアソン分布の確率..."
 
 msgid "Plot Poisson distribution..."
-msgstr "ポアソン分布の作図"
+msgstr "ポアソン分布の作図..."
 
 msgid "Distributions"
 msgstr "分布"
 
 msgid "Load package(s)..."
-msgstr "パッケージのロード"
+msgstr "パッケージのロード..."
 
 msgid "Options..."
 msgstr "オプション..."
@@ -2530,4 +2530,815 @@ msgstr "Rcmdrについて"
 
 msgid "df ="
 msgstr "df ="
+
+# # messages added to Rcmdr version 1.1-1
+msgid "There is no current RGL graphics device."
+msgstr "最新のRGLグラフィックスデバイスがありません"
+
+msgid "3D graph"
+msgstr "３次元グラフ"
+
+# # messages added to Rcmdr version 1.1-6
+msgid " contains non-standard variable names:\n"
+msgstr "標準的でない変数名を含んでいます：\n"
+
+msgid ""
+"\n"
+"These have been changed to:\n"
+msgstr ""
+"\n"
+"これらは次に変更されました:\n"
+
+# # messages added to Rcmdr version 1.2-0
+# importRODBCtable dialog
+msgid "This function requires the RODBC package.\n"
+msgstr "この関数にはRODBCパッケージが必要です\n"
+
+msgid "Import from Excel, Access or dBase data set"
+msgstr "Excel、Access、ｄBaseデータセットから読み込む"
+
+msgid "{\"MS Excel file\" {*.xls \".XLS\"}}{\"MS Access database\" {*.mdb \".MDB\"}}{\"dBase-like file\" {*.dbf \".DBF\"}}{\"All Files\" {\"*\"}}"
+msgstr "{\"MS Excel file\" {*.xls \".XLS\"}}{\"MS Access database\" {*.mdb \".MDB\"}}{\"dBase-like file\" {*.dbf \".DBF\"}}{\"All Files\" {\"*\"}}"
+
+msgid "Select one table"
+msgstr "表を一つ選択"
+
+msgid "No table selected"
+msgstr "表が選択されていません"
+
+msgid "Enter name of data set:  "
+msgstr "データセット名を入力："
+
+msgid "from Excel, Access or dBase data set ..."
+msgstr "ExcelまたはAccess、ｄBaseのデータセットから"
+
+# probability distributions
+msgid "Standard deviation must be positive."
+msgstr "標準偏差は正の値でなくてはいけません"
+
+msgid "Degrees of freedom must be positive."
+msgstr "自由度は正の値でなくてはいけません"
+
+msgid "Numerator degrees of freedom must be positive."
+msgstr "分子の自由度は正の値でないとだめです"
+
+msgid "Denominator degrees of freedom must be positive."
+msgstr "分母の自由度は正の値でないとだめです"
+
+msgid "Exponential Distribution"
+msgstr "指数分布"
+
+msgid "Rate must be positive."
+msgstr "比率は正の値でないとだめです"
+
+msgid "Rate"
+msgstr "比率"
+
+msgid "Uniform Distribution"
+msgstr "一様分布"
+
+msgid "Lower limit must be less than upper limit."
+msgstr "下限値は上限値より小さい必要があります"
+
+msgid "Minimum"
+msgstr "最小"
+
+msgid "Maximum"
+msgstr "最大"
+
+msgid "Beta Distribution"
+msgstr "ベータ分布"
+
+msgid "Shapes not specified."
+msgstr "形状パラメータが指定されていません"
+
+msgid "Shapes must be positive."
+msgstr "形状パラメータは正の値である必要があります"
+
+msgid "Shape"
+msgstr "形状パラメータ"
+
+msgid "Cauchy Distribution"
+msgstr "コーシー分布"
+
+msgid "Scale must be positive."
+msgstr "尺度パラメータは正の値である必要があります"
+
+msgid "Location"
+msgstr "位置パラメータ"
+
+msgid "Scale"
+msgstr "尺度パラメータ"
+
+msgid "Logistic Distribution"
+msgstr "ロジスティック分布"
+
+msgid "Lognormal Distribution"
+msgstr "対数正規分布"
+
+msgid "Mean (log scale)"
+msgstr "平均（対数スケール）"
+
+msgid "Standard deviation (log scale)"
+msgstr "標準偏差（対数スケール）"
+
+msgid "Gamma Distribution"
+msgstr "ガンマ分布"
+
+msgid "Shape not specified."
+msgstr "形状パラメータが指定されていません"
+
+msgid "Shape must be positive."
+msgstr "形状パラメータは正の値である必要があります"
+
+msgid "Weibull Distribution"
+msgstr "ワイブル分布"
+
+msgid "Exponential Quantiles"
+msgstr "指数分布の分位点"
+
+msgid "Exponential Probabilities"
+msgstr "指数分布の確率"
+
+msgid "Uniform Quantiles"
+msgstr "一様分布の分位点"
+
+msgid "Uniform Probabilities"
+msgstr "一様分布の確率"
+
+msgid "Beta Quantiles"
+msgstr "ベータ分布の分位点"
+
+msgid "Beta Probabilities"
+msgstr "ベータ分布の確率"
+
+msgid "Cauchy Quantiles"
+msgstr "コーシー分布の分位点"
+
+msgid "Cauchy Probabilities"
+msgstr "コーシー分布の確率"
+
+msgid "Logistic Quantiles"
+msgstr "ロジスティック分布の分位点"
+
+msgid "Logistic Probabilities"
+msgstr "ロジスティック分布の確率"
+
+msgid "Lognormal Quantiles"
+msgstr "対数正規分布の分位点"
+
+msgid "Lognormal Probabilities"
+msgstr "対数正規分布の確率"
+
+msgid "Gamma Quantiles"
+msgstr "ガンマ分布の分位点"
+
+msgid "Gamma Probabilities"
+msgstr "ガンマ分布の確率"
+
+msgid "Weibull Quantiles"
+msgstr "ワイブル分布の分位点"
+
+msgid "Weibull Probabilities"
+msgstr "ワイブル分布の確率"
+
+msgid "Gumbel Distribution"
+msgstr "ガンベル分布"
+
+msgid "Shape (log shape)"
+msgstr "形状パラメータ（対数）"
+
+msgid "Scale (log scale)"
+msgstr "尺度パラメータ（対数）"
+
+msgid "Gumbel Probabilities"
+msgstr "ガンベル分布の確率"
+
+msgid "Probability of success must be between 0 and 1."
+msgstr "成功の確率は０から１の範囲にしてください"
+
+msgid "Poisson Quantiles"
+msgstr "ポアソン分布の分位点"
+
+msgid "Geometric Quantiles"
+msgstr "幾何分布の分位点"
+
+msgid "Geometric Probabilities"
+msgstr "幾何分布の確率"
+
+msgid "Hypergeometric Quantiles"
+msgstr "超幾何分布の分位点"
+
+msgid "The m parameter was not specified."
+msgstr "パラメータｍが指定されていません"
+
+msgid "The m parameter cannot be negative."
+msgstr "パラメータｍは負になってはだめです"
+
+msgid "The n parameter was not specified."
+msgstr "パラメータｎが指定されていません"
+
+msgid "The n parameter cannot be negative."
+msgstr "パラメータｎは負になってはだめです"
+
+msgid "The k parameter was not specified."
+msgstr "パラメータｋが指定されていません"
+
+msgid "The k parameter cannot be greater than m + n."
+msgstr "パラメータｋは、ｍ＋ｎを超えてはだめです"
+
+msgid "The k parameter cannot be negative."
+msgstr "パラメータｋは負になってはだめです"
+
+msgid "m (number of white balls in the urn)"
+msgstr "ｍ（壺の中の白球の数））"
+
+msgid "n (number of black balls in the urn)"
+msgstr "ｎ（壺の中の黒球の数）"
+
+msgid "k (number of balls drawn from the urn)"
+msgstr "ｋ（壺から取り出された球の数））"
+
+msgid "Hypergeometric Probabilities"
+msgstr "超幾何分布の確率"
+
+msgid "Negative Binomial Quantiles"
+msgstr "負の２項分布の分位点"
+
+msgid "Target number of successes not specified."
+msgstr "成功の目標数が指定されていません"
+
+msgid "Target number of successes cannot be negative."
+msgstr "成功の目標数は正の値である必要があります"
+
+msgid "Target number of successes"
+msgstr "成功の目標数"
+
+msgid "Negative Binomial Probabilities"
+msgstr "負の２項分布の確率"
+
+msgid "Geometric Distribution"
+msgstr "幾何分布"
+
+msgid "Hypergeometric Distribution"
+msgstr "超幾何分布"
+
+msgid "Negative Binomial Distribution"
+msgstr "負の２項分布"
+
+msgid "Sample from Normal Distribution"
+msgstr "正規分布からのサンプル"
+
+msgid "NormalSamples"
+msgstr "正規サンプル"
+
+msgid "Sample means"
+msgstr "標本平均"
+
+msgid "Sample sums"
+msgstr "標本和"
+
+msgid "Sample standard deviations"
+msgstr "標本標準偏差"
+
+msgid "Sample size must be positive."
+msgstr "サンプルサイズは正の値でないとだめです"
+
+msgid "Number of samples must be positive."
+msgstr "標本の数は正でないとだめです"
+
+msgid "Number of samples (rows) "
+msgstr "サンプル数（行）"
+
+msgid "Number of observations (columns) "
+msgstr "観測数（列）"
+
+msgid "Add to Data Set:"
+msgstr "データセットに追加する："
+
+msgid "Sample from t Distributio"
+msgstr "ｔ 分布からのサンプル"
+
+msgid "tSamples"
+msgstr "ｔ 分布のサンプル"
+
+msgid "Sample from Chi-squared Distribution"
+msgstr "カイ２乗分布からのサンプル"
+
+msgid "ChisquareSamples"
+msgstr "カイ２乗分布からのサンプル"
+
+msgid "Sample from F Distribution"
+msgstr "F分布からのサンプル"
+
+msgid "FSamples"
+msgstr "Fサンプル"
+
+msgid "Sample from Exponential Distribution"
+msgstr "指数分布からのサンプル"
+
+msgid "ExponentialSamples"
+msgstr "指数サンプル"
+
+msgid "Sample from Uniform Distribution"
+msgstr "一様分布からのサンプル"
+
+msgid "UniformSamples"
+msgstr "一様サンプル"
+
+msgid "Sample from Beta Distribution"
+msgstr "ベータ分布からのサンプル"
+
+msgid "BetaSamples"
+msgstr "ベータサンプル"
+
+msgid "Sample from Cauchy Distribution"
+msgstr "コーシー分布からのサンプル"
+
+msgid "CauchySamples"
+msgstr "コーシーサンプル"
+
+msgid "Sample from Logistic Distribution"
+msgstr "ロジスティック分布からのサンプル"
+
+msgid "LogisticSamples"
+msgstr "ロジスティックサンプル"
+
+msgid "Sample from Log-Normal Distribution"
+msgstr "対数正規分布からのサンプル"
+
+msgid "LogNormalSamples"
+msgstr "対数正規分布のサンプル"
+
+msgid "Sample from Gamma Distribution"
+msgstr "ガンマ分布からのサンプル"
+
+msgid "GammaSamples"
+msgstr "ガンマ分布のサンプル"
+
+msgid "Sample from Weibull Distribution"
+msgstr "ワイブル分布からのサンプル"
+
+msgid "WeibullSamples"
+msgstr "ワイブル分布のサンプル"
+
+msgid "Sample from Gumbel Distribution"
+msgstr "ガンベル分布からのサンプル"
+
+msgid "GumbelSamples"
+msgstr "ガンベル分布のサンプル"
+
+msgid "Sample from Binomial Distribution"
+msgstr "２項分布からのサンプル"
+
+msgid "BinomialSamples"
+msgstr "２項分布のサンプル"
+
+msgid "Poisson mean cannot be negative."
+msgstr "ポアソン分布の平均パラメータは正の値である必要があります"
+
+msgid "Sample from Poisson Distribution"
+msgstr "ポアソン分布からのサンプル"
+
+msgid "PoissonSamples"
+msgstr "ポアソン分布のサンプル"
+
+msgid "Sample from Geometric Distribution"
+msgstr "幾何分布からのサンプル"
+
+msgid "GeometricSamples"
+msgstr "幾何分布のサンプル"
+
+msgid "Sample from Hypergeometric Distribution"
+msgstr "超幾何分布からのサンプル"
+
+msgid "HypergeometricSamples"
+msgstr "超幾何サンプル"
+
+msgid "Sample from Negative Binomial Distribution"
+msgstr "負の２項分布からのサンプル"
+
+msgid "NegativeBinomialSamples"
+msgstr "負の２項分布のサンプル"
+
+msgid "Sample from normal distribution..."
+msgstr "正規分布からのサンプル..."
+
+msgid "Sample from t distribution..."
+msgstr "ｔ分布からのサンプル..."
+
+msgid "Sample from chi-squared distribution..."
+msgstr "カイ２乗分布からのサンプル..."
+
+msgid "Sample from F distribution..."
+msgstr "F分布からのサンプル..."
+
+msgid "Exponential distribution"
+msgstr "指数分布"
+
+msgid "Exponential quantiles..."
+msgstr "指数分布の分位点..."
+
+msgid "Exponential probabilities..."
+msgstr "指数分布の確率..."
+
+msgid "Plot exponential distribution..."
+msgstr "指数分布を描く..."
+
+msgid "Sample from exponential distribution..."
+msgstr "指数分布からのサンプル..."
+
+msgid "Uniform distribution"
+msgstr "一様分布"
+
+msgid "Uniform quantiles..."
+msgstr "一様分布の分位..."
+
+msgid "Uniform probabilities..."
+msgstr "一様分布の確率..."
+
+msgid "Plot uniform distribution..."
+msgstr "一様分布を描く..."
+
+msgid "Sample from uniform distribution..."
+msgstr "一様分布からのサンプル..."
+
+msgid "Beta distribution"
+msgstr "ベータ分布"
+
+msgid "Beta quantiles..."
+msgstr "ベータ分布の分位点..."
+
+msgid "Beta probabilities..."
+msgstr "ベータ分布の確率..."
+
+msgid "Plot beta distribution..."
+msgstr "ベータ分布を描く..."
+
+msgid "Sample from beta distribution..."
+msgstr "ベータ分布からのサンプル..."
+
+msgid "Cauchy distribution"
+msgstr "コーシー分布"
+
+msgid "Cauchy quantiles..."
+msgstr "コーシー分布の分位点..."
+
+msgid "Cauchy probabilities..."
+msgstr "コーシー分布の確率..."
+
+msgid "Plot Cauchy distribution..."
+msgstr "コーシー分布を描く..."
+
+msgid "Sample from Cauchy distribution..."
+msgstr "コーシー分布からのサンプル..."
+
+msgid "Logistic distribution"
+msgstr "ロジスティック分布"
+
+msgid "Logistic quantiles..."
+msgstr "ロジスティック分布の分位点..."
+
+msgid "Logistic probabilities..."
+msgstr "ロジスティック分布の確率..."
+
+msgid "Plot logistic distribution..."
+msgstr "ロジスティック分布を描く..."
+
+msgid "Sample from logistic distribution..."
+msgstr "ロジスティック分布からのサンプル..."
+
+msgid "Lognormal distribution"
+msgstr "対数正規分布"
+
+msgid "Lognormal quantiles..."
+msgstr "対数正規分布の分位点..."
+
+msgid "Lognormal probabilities..."
+msgstr "対数正規分布の確率..."
+
+msgid "Plot lognormal distribution..."
+msgstr "対数正規分布を描く..."
+
+msgid "Sample from lognormal distribution..."
+msgstr "対数正規分布からのサンプル..."
+
+msgid "Gamma distribution"
+msgstr "ガンマ分布"
+
+msgid "Gamma quantiles..."
+msgstr "ガンマ分布の分位点..."
+
+msgid "Gamma probabilities..."
+msgstr "ガンマ分布の確率..."
+
+msgid "Plot gamma distribution..."
+msgstr "ガンマ分布を描く..."
+
+msgid "Sample from gamma distribution..."
+msgstr "ガンマ分布からのサンプル..."
+
+msgid "Weibull distribution"
+msgstr "ワイブル分布"
+
+msgid "Weibull quantiles..."
+msgstr "ワイブル分位点..."
+
+msgid "Weibull probabilities..."
+msgstr "ワイブル確率..."
+
+msgid "Plot Weibull distribution..."
+msgstr "ワイブル分布を描く..."
+
+msgid "Sample from Weibull distribution..."
+msgstr "ワイブル分布からのサンプル..."
+
+msgid "Gumbel distribution"
+msgstr "ガンベル分布"
+
+msgid "Gumbel quantiles..."
+msgstr "ガンベル分布の分位点..."
+
+msgid "Gumbel probabilities..."
+msgstr "ガンベル分布の確率..."
+
+msgid "Plot Gumbel distribution..."
+msgstr "ガンベル分布を描く..."
+
+msgid "Sample from Gumbel distribution..."
+msgstr "ガンベル分布からのサンプル..."
+
+msgid "Sample from binomial distribution..."
+msgstr "２項分布からのサンプル..."
+
+msgid "Poisson quantiles..."
+msgstr "ポアソン分布の分位点..."
+
+msgid "Poisson tail probabilities..."
+msgstr "ポアソン分布の裾の確率..."
+
+msgid "Sample from Poisson distribution..."
+msgstr "ポアソン分布からのサンプル..."
+
+msgid "Geometric distribution"
+msgstr "幾何分布"
+
+msgid "Geometric quantiles..."
+msgstr "幾何分布の分位点..."
+
+msgid "Geometric tail probabilities..."
+msgstr "幾何分布の裾の確率..."
+
+msgid "Geometric probabilities..."
+msgstr "幾何分布の確率..."
+
+msgid "Plot geometric distribution..."
+msgstr "幾何分布を描く..."
+
+msgid "Sample from geometric distribution..."
+msgstr "幾何分布からのサンプル..."
+
+msgid "Hypergeometric distribution"
+msgstr "超幾何分布"
+
+msgid "Hypergeometric quantiles..."
+msgstr "超幾何分布の分位点..."
+
+msgid "Hypergeometric tail probabilities..."
+msgstr "超幾何分布の裾の確率..."
+
+msgid "Hypergeometric probabilities..."
+msgstr "超幾何分布の確率..."
+
+msgid "Plot hypergeometric distribution..."
+msgstr "超幾何分布を描く..."
+
+msgid "Sample from hypergeometric distribution..."
+msgstr "超幾何分布からのサンプル..."
+
+msgid "Negative binomial distribution"
+msgstr "負の２項分布"
+
+msgid "Negative binomial quantiles..."
+msgstr "負の２項分布の分位点..."
+
+msgid "Negative binomial tail probabilities..."
+msgstr "負の２項分布の裾の確率..."
+
+msgid "Negative binomial probabilities..."
+msgstr "負の２項分布の確率..."
+
+msgid "Plot negative binomial distribution..."
+msgstr "負の２項分布を描く..."
+
+msgid "Sample from negative binomial distribution..."
+msgstr "負の２項分布からのサンプル..."
+
+msgid "Continuous distributions"
+msgstr "連続分布"
+
+msgid "Discrete distributions"
+msgstr "離散分布"
+
+# Xyplot dialog
+msgid "XY Conditioning Plot"
+msgstr "条件付き散布図"
+
+msgid "Response variables (pick one or more)"
+msgstr "目的変数（１つ以上選択）"
+
+msgid "Groups (pick zero or more)"
+msgstr "グループ（０個以上選択）"
+
+msgid "Automatically draw key"
+msgstr "自動的にキーを描く"
+
+msgid "Different panels for different responses"
+msgstr "異なる目的変数には異なるパネルを適用"
+
+msgid "Identical"
+msgstr "同じ"
+
+msgid "Free"
+msgstr "自由"
+
+msgid "Same range"
+msgstr "同じ範囲"
+
+msgid "X-Axis Scales in Different Panels"
+msgstr "異なるパネルに対するX軸のスケール"
+
+msgid "Y-Axis Scales in Different Panels"
+msgstr "異なるパネルに対するY軸のスケール"
+
+msgid "At least one response variable must be selected."
+msgstr "少なくとも１つの目的変数を選択してください"
+
+msgid "At least one explanatory variable must be selected."
+msgstr "少なくとも１つの説明変数を選択してください"
+
+# contingency tables dialog
+msgid "Percentages of total"
+msgstr "総計のパーセント"
+
+msgid "Components of chi-square statistic"
+msgstr "カイ２乗統計量の要素"
+
+# 3D scatterplots dialog
+msgid "Show squared residuals"
+msgstr "残差の平方を表示する"
+
+msgid "Show axis scales"
+msgstr "軸のスケールを表示"
+
+msgid "Plot 50% concentration ellipsoid"
+msgstr "50%集中楕円のプロット"
+
+# scatterplot matrices dialog
+msgid "One-dimensional scatterplots"
+msgstr "１次元散布図"
+
+# count NAs (menu item)
+msgid "Count missing observations"
+msgstr "欠測値を数える"
+
+# Correlation test dialog
+msgid "Correlation Test"
+msgstr "相関の検定"
+
+msgid "Variables (pick two)"
+msgstr "変数（２つ選択）"
+
+msgid "Kendall's tau"
+msgstr "ケンドールのタウ"
+
+msgid "Type of Correlation"
+msgstr "相関のタイプ"
+
+msgid "Correlation < 0"
+msgstr "相関＜０"
+
+msgid "Correlation > 0"
+msgstr "相関＞０"
+
+msgid "More than 2 variables selected."
+msgstr "変数が２つより多く選択されています"
+
+msgid "Correlation test..."
+msgstr "相関の検定..."
+
+# Recode dialog
+msgid "Recode Variables"
+msgstr "変数を再コード化"
+
+msgid "Variables to recode (pick one or more)"
+msgstr "再コード化の変数（１つ以上選択）"
+
+msgid "New variable name or prefix for multiple recodes: "
+msgstr "新しい変数名または複数の再コード化に対する接頭文字列："
+
+msgid "Make (each) new variable a factor"
+msgstr "新しい変数を因子に変更"
+
+msgid "Recode variables..."
+msgstr "変数の再コード化..."
+
+# Frequency distributions dialog
+msgid "Frequency Distributions"
+msgstr "頻度分布"
+
+msgid "Chi-square goodness-of-fit test (for one variable only)"
+msgstr "カイ２乗適合度検定"
+
+msgid "Goodness-of-fit test not available when more than one variable is selected."
+msgstr "１つ以上の変数が選択されたとき、適合度検定を利用することはできません"
+
+msgid "Frequency distributions..."
+msgstr "頻度分布..."
+
+# Numeric to factor dialog
+msgid "Convert Numeric Variables to Factors"
+msgstr "数値変数を因子に変換"
+
+msgid "<same as variables>"
+msgstr "<変数と同じ>"
+
+msgid "Level Names for"
+msgstr "水準名"
+
+msgid "Factors"
+msgstr "因子"
+
+msgid "New variable name or prefix for multiple variables:"
+msgstr "新しい変数名または複数の変数に対する接頭文字列："
+
+msgid "Convert numeric variables to factors..."
+msgstr "数値変数を因子に変換..."
+
+# Stack dialog
+msgid "Stack Variables"
+msgstr "変数を積み重ねて結合する"
+
+msgid "factor"
+msgstr "因子"
+
+msgid "StackedData"
+msgstr "積み重ねられたデータ"
+
+msgid "You must select at least two variables."
+msgstr "少なくとも２つ以上の変数を選択してください"
+
+msgid "Name for stacked data set:"
+msgstr "積み重ねたデータセットの名前"
+
+msgid "Name for variable:"
+msgstr "変数名"
+
+msgid "Name for factor:"
+msgstr "因子名"
+
+msgid "Stack variables in active data set..."
+msgstr "アクティブなデータセット内の変数を積み重ねて結合する..."
+
+# miscelaneous
+msgid "Identify Points"
+msgstr "点を特定"
+
+msgid ""
+"Use left mouse button to identify points,\n"
+"right button to exit."
+msgstr ""
+"点を特定するには左クリック、\n"
+"右クリックで終了"
+
+msgid ""
+"Drag right mouse button to identify points,\n"
+"click right button to exit."
+msgstr ""
+"点を識別するためにマウスの右ボタンでドラッグ\n"
+"右ボタンのクリックで終了"
+
+msgid "Read Data From Text File or Clipboard"
+msgstr "テキストファイルまたはクリップボードからデータを読み込む"
+
+msgid "Read data from clipboard:"
+msgstr "クリップボードからデータを読み込む："
+
+msgid "from text file or clipboard..."
+msgstr "テキストファイルまたはクリップボードから..."
+
+msgid "Add observation numbers to data set"
+msgstr "データセットに観測値番号を追加"
+
+msgid "Refresh active data set"
+msgstr "アクティブデータセットを新しくする"
+
+msgid "No statistics selected."
+msgstr "統計量を選択していません"
+
+msgid "Variable (pick one or more)"
+msgstr "変数（１つ以上選択）"
+
+msgid "XY conditioning plot..."
+msgstr "条件付き散布図..."
 

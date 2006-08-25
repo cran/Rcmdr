@@ -442,4 +442,45 @@ Version 1.1-7
    
    o  Small bug fixes.
    
+Version 1.1-8
+
+   o  Small bug fixes.
+   
+   o  Updated Spanish translation (courtesy of Jose Castano and Carlos Carleos)
+   
+Version 1.2-0
+
+   o  Added ability to import from Excel, Access or dBase files (contributed by Matthieu Lesnoff and Renaud Lancelot).
+   
+   o  Added many probability distributions, courtesy of Miroslav Ristic and G. Jay Kerns, Andy Chang, and  Theophilius Boye.
+   
+   o  Added dialogs to sample from probability distributions; divided distributions menus into Continuous and Discrete.
+   
+   o  Added totPercents function. Added total percentages and components of chi-square to two-way tables (suggested by Richard Heiberger).
+   
+   o XY conditioning plots dialog added, courtesy of Richard Heiberger.
+   
+   o Added "Statistics -> Summaries -> Count missing observations".
+   
+   o Added "Statistics -> Summaries -> Correlation test", contributed by Stefano Calza.
+   
+   o Added "Data -> Active data set -> Stack variables in active data set", (suggested by Richard Heiberger).
+   
+   o The numerical summaries, table of statistics, frequency distributions, numeric to factor, and recode dialogs will now process multiple variables in parallel (suggested by Bo Sommerlund).
+   
+   o Added function numSummaries for neater output from "Statistics -> Summaries -> Numerical summaries" (motivated by comments from Bo Sommerlund).
+   
+   o Small interface improvements (e.g., pressing letter key in a list box moves to next entry starting with that letter).
+   
+   o Cleaned up links to help files in standard packages.
+   
+   o Enhancements to 3D scatterplots.
+   
+   o Added ability to read data from the clipboard (suggested by Graham Smith).
+   
+   o Other small changes.
+   
+   o Updated R-Rcmdr.pot file for translaters.
+   
+   
    

@@ -1,4 +1,4 @@
-# last modified 23 Feb 06 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 17 August 06 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
                                                                                        
 # utility functions
 
@@ -179,6 +179,20 @@ rowPercents <- function(tab, digits=1){
     tab <- aperm(tab, c(2,1,3:dim))
     aperm(colPercents(tab, digits=digits), c(2,1,3:dim))
     }
+    
+totPercents <- function(tab, digits=1){
+    dim <- length(dim(tab))
+    if (is.null(dimnames(tab))){
+        dims <- dim(tab)
+        dimnames(tab) <- lapply(1:dim, function(i) 1:dims[i])
+        }
+    tab <- 100*tab/sum(tab)
+    tab <- cbind(tab, rowSums(tab))
+    tab <- rbind(tab, colSums(tab))
+    rownames(tab)[nrow(tab)] <- "Total"
+    colnames(tab)[ncol(tab)] <- "Total"
+    round(tab, digits=digits)
+    }
 
 reliability <- function(S){
     reliab <- function(S, R){
@@ -304,6 +318,171 @@ confint.multinom <- function (object, parm, level=0.95, ...){
     dimnames(ci)[[3]] <- paste(round(100 * a, 1), "%")
     aperm(ci, c(2,3,1))
     }
+
+numSummary <- function(data, statistics=c("mean", "sd", "quantiles"), 
+    quantiles=c(0, .25, .5, .75, 1), groups){
+    if(!require(abind)) stop("abind package missing")
+    data <- as.data.frame(data)
+    if (!missing(groups)) groups <- as.factor(groups)
+    variables <- names(data)
+    statistics <- match.arg(statistics, c("mean", "sd", "quantiles"),
+        several.ok=TRUE)
+    ngroups <- if(missing(groups)) 1 else length(grps <- levels(groups))
+    quantiles <- if ("quantiles" %in% statistics) quantiles else NULL
+    quants <- if (length(quantiles) > 1) paste(100*quantiles, "%", sep="")
+        else NULL
+    nquants <- length(quants)
+    stats <- c(c("mean", "sd")[c("mean", "sd") %in% statistics], quants)
+    nstats <- length(stats)        
+    nvars <- length(variables)
+    result <- list()
+    if ((ngroups == 1) && (nvars == 1) && (length(statistics) == 1)){
+        if (statistics == "quantiles")
+            table <- quantile(data[,variables], probs=quantiles, na.rm=TRUE)
+        else {
+            table <- do.call(statistics, list(x=data[,variables], na.rm=TRUE))
+            names(table) <- statistics
+            }
+        NAs <- sum(is.na(data[,variables]))
+        n <- nrow(data) - NAs
+        result$type <- 1
+        }
+    else if ((ngroups > 1)  && (nvars == 1) && (length(statistics) == 1)){
+        if (statistics == "quantiles"){ 
+            table <- matrix(unlist(tapply(data[, variables], groups,
+                    quantile, probs=quantiles, na.rm=TRUE)), ngroups, nquants, 
+                    byrow=TRUE)
+            rownames(table) <- grps
+            colnames(table) <- quants
+            }
+        else table <- tapply(data[,variables], groups, statistics, 
+            na.rm=TRUE)
+        NAs <- tapply(data[, variables], groups, function(x) 
+                sum(is.na(x)))
+        n <- table(groups) - NAs
+        result$type <- 2
+        }
+    else if ((ngroups == 1) ){
+        table <- matrix(0, nvars, nstats)
+        rownames(table) <- if (length(variables) > 1) variables else ""
+        colnames(table) <- stats
+        if ("mean" %in% stats) table[,"mean"] <- mean(data[, variables], 
+            na.rm=TRUE)
+        if ("sd" %in% stats) table[,"sd"] <- sd(data[, variables], na.rm=TRUE)
+        if ("quantiles" %in% statistics){
+            table[,quants] <- t(apply(data[, variables, drop=FALSE], 2, quantile,
+                probs=quantiles, na.rm=TRUE))
+            }
+        NAs <- colSums(is.na(data[,variables, drop=FALSE]))
+        n <- nrow(data) - NAs
+        result$type <- 3
+        }        
+    else { 
+        table <- array(0, c(ngroups, nstats, nvars), 
+            dimnames=list(Group=grps, Statistic=stats, Variable=variables))
+        NAs <- matrix(0, nvars, ngroups)
+        rownames(NAs) <- variables
+        colnames(NAs) <- grps
+        for (variable in variables){                    
+            if ("mean" %in% stats) 
+                table[, "mean", variable] <- tapply(data[, variable],
+                    groups, mean, na.rm=TRUE)
+            if ("sd" %in% stats) 
+                table[, "sd", variable] <- tapply(data[, variable],
+                    groups, sd, na.rm=TRUE)
+            if ("quantiles" %in% statistics) {
+                res <- matrix(unlist(tapply(data[, variable], groups,
+                    quantile, probs=quantiles, na.rm=TRUE)), ngroups, nquants, 
+                    byrow=TRUE)
+                table[, quants, variable] <- res
+                }
+            NAs[variable,] <- tapply(data[, variable], groups, function(x) 
+                    sum(is.na(x)))
+            }
+        if (nstats == 1) table <- table[,1,]
+        if (nvars == 1) table <- table[,,1]
+        n <- table(groups)
+        n <- matrix(n, nrow=nrow(NAs), ncol=ncol(NAs), byrow=TRUE)
+        n <- n - NAs
+        result$type <- 4
+        }
+    result$table <- table
+    result$statistics <- statistics
+    result$n <- n
+    if (any(NAs > 0)) result$NAs <- NAs
+    class(result) <- "numSummary"
+    result
+    }
+
+print.numSummary <- function(x, ...){
+    NAs <- x$NAs
+    table <- x$table
+    n <- x$n
+    statistics <- x$statistics
+    switch(x$type,
+        "1" = {
+            if (!is.null(NAs)) {
+                table <- c(table, n, NAs)
+                names(table)[length(table) - 1:0] <- c("n", "NA")
+                }
+        print(table)
+        },
+        "2" = {
+            if (statistics == "quantiles") {
+                table <- cbind(table, n)
+                colnames(table)[ncol(table)] <- "n"
+                if (!is.null(NAs)) {
+                    table <- cbind(table, NAs)
+                    colnames(table)[ncol(table)] <- "NA"
+                    }
+                }
+            else {
+                table <- rbind(table, n)
+                rownames(table)[c(1, nrow(table))] <- c(statistics, "n")
+                if (!is.null(NAs)) {
+                    table <- rbind(table, NAs)
+                    rownames(table)[nrow(table)] <- "NA"
+                    }
+                table <- t(table)
+                }
+            print(table)
+            },
+        "3" = {
+            table <- cbind(table, n)
+            colnames(table)[ncol(table)] <- "n"
+            if (!is.null(NAs)) {
+                table <- cbind(table, NAs)
+                colnames(table)[ncol(table)] <- "NA"
+                }
+            print(table)
+            },
+        "4" = {
+            if (length(dim(table)) == 2){
+                table <- cbind(table, t(n))
+                colnames(table)[ncol(table)] <- "n"
+                if (!is.null(NAs)) {
+                    table <- cbind(table, t(NAs))
+                    colnames(table)[ncol(table)] <- "NA"
+                    }                   
+                print(table)
+                }
+            else {
+                table <- abind(table, t(n), along=2)
+                dimnames(table)[[2]][dim(table)[2]] <- "n"
+                if (!is.null(NAs)) {
+                    table <- abind(table, t(NAs), along=2)
+                    dimnames(table)[[2]][dim(table)[2]] <- "NA"
+                    }
+                nms <- dimnames(table)[[3]]
+                for (name in nms){
+                    cat("\nVariable:", name, "\n")
+                    print(table[,,name])
+                    }
+               } 
+            }   
+        )
+    invisible(x)       
+    }           
 
     # wrapper function for histograms
 
@@ -527,19 +706,45 @@ bin.var <- function (x, bins=4, method=c("intervals", "proportions", "natural"),
     
 # 3D scatterplots and point identification via rgl
 
-scatter3d <- function(x, y, z, xlab=deparse(substitute(x)), ylab=deparse(substitute(y)),
-                      zlab=deparse(substitute(z)), revolutions=0, bg.col=c("white", "black"), 
-                      axis.col=if (bg.col == "white") "black" else "white",
-                      surface.col=c("blue", "green", "orange", "magenta", "cyan", "red", "yellow", "gray"),
-                      neg.res.col="red", pos.res.col="green", point.col="yellow",
-                      text.col=axis.col, grid.col=if (bg.col == "white") "black" else "gray",
-                      fogtype=c("exp2", "linear", "exp", "none"),
-                      residuals=(length(fit) == 1), surface=TRUE, grid=TRUE, grid.lines=26,
-                      df.smooth=NULL, df.additive=NULL,
-                      sphere.size=1, threshold=0.01, speed=1, fov=60,
-                      fit="linear", groups=NULL, parallel=TRUE, model.summary=FALSE){
+ellipsoid <- function(center=c(0, 0, 0), radius=1, shape=diag(3), n=30){
+# adapted from the shapes3d demo in the rgl package
+  degvec <- seq(0, 2*pi, length=n)
+  ecoord2 <- function(p) c(cos(p[1])*sin(p[2]), sin(p[1])*sin(p[2]), cos(p[2]))
+  v <- t(apply(expand.grid(degvec,degvec), 1, ecoord2))
+  v <- center + radius * t(v %*% chol(shape))
+  v <- rbind(v, rep(1,ncol(v))) 
+  e <- expand.grid(1:(n-1), 1:n)
+  i1 <- apply(e, 1, function(z) z[1] + n*(z[2] - 1))
+  i2 <- i1 + 1
+  i3 <- (i1 + n - 1) %% n^2 + 1
+  i4 <- (i2 + n - 1) %% n^2 + 1
+  i <- rbind(i1, i2, i4, i3)
+  qmesh3d(v, i)
+  }
+  
+scatter3d <- function(x, y, z, 
+        xlab=deparse(substitute(x)), ylab=deparse(substitute(y)),
+        axis.scales=TRUE,                          
+        zlab=deparse(substitute(z)), revolutions=0, bg.col=c("white", "black"), 
+        axis.col=if (bg.col == "white") c("darkmagenta", "black", "darkcyan") 
+            else c("darkmagenta", "white", "darkcyan"),
+        surface.col=c("blue", "green", "orange", "magenta", "cyan", "red", "yellow", "gray"),
+        neg.res.col="red", pos.res.col="green", 
+        square.col=if (bg.col == "white") "black" else "gray", point.col="yellow",
+        text.col=axis.col, grid.col=if (bg.col == "white") "black" else "gray",
+        fogtype=c("exp2", "linear", "exp", "none"),
+        residuals=(length(fit) == 1), surface=TRUE, fill=TRUE, grid=TRUE, grid.lines=26,
+        df.smooth=NULL, df.additive=NULL,
+        sphere.size=1, threshold=0.01, speed=1, fov=60,
+        fit="linear", groups=NULL, parallel=TRUE, ellipsoid=FALSE, level=0.5,
+        model.summary=FALSE){
     require(rgl)
     require(mgcv)
+    if (residuals == "squares"){
+        residuals <- TRUE
+        squares <- TRUE
+        }
+    else squares <- FALSE
     summaries <- list()
     if ((!is.null(groups)) && (nlevels(groups) > length(surface.col))) 
         stop(sprintf(gettextRcmdr("Number of groups (%d) exceeds number of colors (%d)."),
@@ -560,10 +765,36 @@ scatter3d <- function(x, y, z, xlab=deparse(substitute(x)), ylab=deparse(substit
     x <- x[valid]
     y <- y[valid]
     z <- z[valid]
+    minx <- min(x)
+    maxx <- max(x)
+    miny <- min(y)
+    maxy <- max(y)
+    minz <- min(z)
+    maxz <- max(z)
+    if (axis.scales){
+        lab.min.x <- nice(minx)
+        lab.max.x <- nice(maxx)
+        lab.min.y <- nice(miny)
+        lab.max.y <- nice(maxy)
+        lab.min.z <- nice(minz)
+        lab.max.z <- nice(maxz)
+        minx <- min(lab.min.x, minx)
+        maxx <- max(lab.max.x, maxx)
+        miny <- min(lab.min.y, miny)
+        maxy <- max(lab.max.y, maxy)
+        minz <- min(lab.min.z, minz)
+        maxz <- max(lab.max.z, maxz)
+        min.x <- (lab.min.x - minx)/(maxx - minx)
+        max.x <- (lab.max.x - minx)/(maxx - minx)
+        min.y <- (lab.min.y - miny)/(maxy - miny)
+        max.y <- (lab.max.y - miny)/(maxy - miny)
+        min.z <- (lab.min.z - minz)/(maxz - minz)
+        max.z <- (lab.max.z - minz)/(maxz - minz)        
+        }
     if (!is.null(groups)) groups <- groups[valid]
-    x <- (x - min(x))/(max(x) - min(x))
-    y <- (y - min(y))/(max(y) - min(y))
-    z <- (z - min(z))/(max(z) - min(z))
+    x <- (x - minx)/(maxx - minx)
+    y <- (y - miny)/(maxy - miny)
+    z <- (z - minz)/(maxz - minz)
     size <- sphere.size*((100/length(x))^(1/3))*0.015
     if (is.null(groups)){
         if (size > threshold) rgl.spheres(x, y, z, color=point.col, radius=size)
@@ -573,19 +804,56 @@ scatter3d <- function(x, y, z, xlab=deparse(substitute(x)), ylab=deparse(substit
         if (size > threshold) rgl.spheres(x, y, z, color=surface.col[as.numeric(groups)], radius=size)
             else rgl.points(x, y, z, color=surface.col[as.numeric(groups)])
             }
-    rgl.lines(c(0,1), c(0,0), c(0,0), color=axis.col)
-    rgl.lines(c(0,0), c(0,1), c(0,0), color=axis.col)
-    rgl.lines(c(0,0), c(0,0), c(0,1), color=axis.col)
-    rgl.texts(1, 0, 0, xlab, adj=1, color=text.col)
-    rgl.texts(0, 1, 0, ylab, adj=1, color=text.col)
-    rgl.texts(0, 0, 1, zlab, adj=1, color=text.col)
+    if (!axis.scales) axis.col[1] <- axis.col[3] <- axis.col[2]
+    rgl.lines(c(0,1), c(0,0), c(0,0), color=axis.col[1])
+    rgl.lines(c(0,0), c(0,1), c(0,0), color=axis.col[2])
+    rgl.lines(c(0,0), c(0,0), c(0,1), color=axis.col[3])
+    rgl.texts(1, 0, 0, xlab, adj=1, color=axis.col[1])
+    rgl.texts(0, 1.05, 0, ylab, adj=1, color=axis.col[2])
+    rgl.texts(0, 0, 1, zlab, adj=1, color=axis.col[3])
+    if (axis.scales){
+        rgl.texts(min.x, -0.05, 0, lab.min.x, col=axis.col[1]) 
+        rgl.texts(max.x, -0.05, 0, lab.max.x, col=axis.col[1])
+        rgl.texts(0, -0.1, min.z, lab.min.z, col=axis.col[3])
+        rgl.texts(0, -0.1, max.z, lab.max.z, col=axis.col[3])
+        rgl.texts(-0.05, min.y, -0.05, lab.min.y, col=axis.col[2])
+        rgl.texts(-0.05, max.y, -0.05, lab.max.y, col=axis.col[2])
+        }
+    if (ellipsoid) {
+        dfn <- 3
+        if (is.null(groups)){
+            dfd <- length(x) - 1
+            radius <- sqrt(dfn * qf(level, dfn, dfd))
+            ellips <- ellipsoid(center=c(mean(x), mean(y), mean(z)), 
+                shape=cov(cbind(x,y,z)), radius=radius)
+            if (fill) shade3d(ellips, col=surface.col[1], alpha=0.1, lit=FALSE)
+            if (grid) wire3d(ellips, col=surface.col[1], lit=FALSE)
+            }
+        else{
+            levs <- levels(groups)
+            for (j in 1:length(levs)){
+                group <- levs[j]
+                select.obs <- groups == group
+                xx <- x[select.obs]
+                yy <- y[select.obs]
+                zz <- z[select.obs]
+                dfd <- length(xx) - 1
+                radius <- sqrt(dfn * qf(level, dfn, dfd))
+                ellips <- ellipsoid(center=c(mean(xx), mean(yy), mean(zz)), 
+                    shape=cov(cbind(xx,yy,zz)), radius=radius)
+                if (fill) shade3d(ellips, col=surface.col[j], alpha=0.1, lit=FALSE)
+                if (grid) wire3d(ellips, col=surface.col[j], lit=FALSE)
+                coords <- ellips$vb[, which.max(ellips$vb[1,])]
+                if (!surface) rgl.texts(coords[1] + 0.05, coords[2], coords[3], group, 
+                    col=surface.col[j])
+                }
+            }
+        }                 
     if (surface){
         vals <- seq(0, 1, length=grid.lines)
         dat <- expand.grid(x=vals, z=vals)
         for (i in 1:length(fit)){
             f <- match.arg(fit[i], c("linear", "quadratic", "smooth", "additive"))
-#            vals <- seq(0, 1, length=grid.lines)
-#            dat <- expand.grid(x=vals, z=vals)
             if (is.null(groups)){
                 mod <- switch(f,
                     linear = lm(y ~ x + z),
@@ -598,14 +866,23 @@ scatter3d <- function(x, y, z, xlab=deparse(substitute(x)), ylab=deparse(substit
                     )
                 if (model.summary) summaries[[f]] <- summary(mod)
                 yhat <- matrix(predict(mod, newdata=dat), grid.lines, grid.lines)
-                rgl.surface(vals, vals, yhat, color=surface.col[i], alpha=0.5, lit=FALSE)
-                if(grid) rgl.surface(vals, vals, yhat, color=grid.col, alpha=0.5, lit=FALSE, front="lines", back="lines")
+                if (fill) rgl.surface(vals, vals, yhat, color=surface.col[i], alpha=0.5, lit=FALSE)
+                if(grid) rgl.surface(vals, vals, yhat, color=if (fill) grid.col 
+                    else surface.col[i], alpha=0.5, lit=FALSE, front="lines", back="lines")
                 if (residuals){
                     n <- length(y)
                     fitted <- fitted(mod)
                     colors <- ifelse(residuals(mod) > 0, pos.res.col, neg.res.col)
                     rgl.lines(as.vector(rbind(x,x)), as.vector(rbind(y,fitted)), as.vector(rbind(z,z)),
                         color=as.vector(rbind(colors,colors)))
+                    if (squares){
+                        res <- y - fitted
+                        xx <- as.vector(rbind(x, x, x + res, x + res))
+                        yy <- as.vector(rbind(y, fitted, fitted, y))
+                        zz <- as.vector(rbind(z, z, z, z))
+                        rgl.quads(xx, yy, zz, color=square.col, alpha=0.5, lit=FALSE)
+                        rgl.lines(xx, yy, zz, color=square.col)
+                        }
                     }
                 }
             else{
@@ -625,17 +902,26 @@ scatter3d <- function(x, y, z, xlab=deparse(substitute(x)), ylab=deparse(substit
                         group <- levs[j]
                         select.obs <- groups == group
                         yhat <- matrix(predict(mod, newdata=cbind(dat, groups=group)), grid.lines, grid.lines)
-                        rgl.surface(vals, vals, yhat, color=surface.col[j], alpha=0.5, lit=FALSE)
-                        if (grid) rgl.surface(vals, vals, yhat, color=grid.col, alpha=0.5, lit=FALSE, front="lines", back="lines")
-                        rgl.texts(0, predict(mod, newdata=data.frame(x=0, z=0, groups=group)), 0,
+                        if (fill) rgl.surface(vals, vals, yhat, color=surface.col[j], alpha=0.5, lit=FALSE)
+                        if (grid) rgl.surface(vals, vals, yhat, color=if (fill) grid.col 
+                            else surface.col[j], alpha=0.5, lit=FALSE, front="lines", back="lines")
+                        rgl.texts(1, predict(mod, newdata=data.frame(x=1, z=1, groups=group)), 1,
                             paste(group, " "), adj=1, color=surface.col[j])
                         if (residuals){
                             yy <- y[select.obs]
                             xx <- x[select.obs]
                             zz <- z[select.obs]
                             fitted <- fitted(mod)[select.obs]
+                            res <- yy - fitted
                             rgl.lines(as.vector(rbind(xx,xx)), as.vector(rbind(yy,fitted)), as.vector(rbind(zz,zz)),
                                 col=surface.col[j])
+                            if (squares) {
+                                xxx <- as.vector(rbind(xx, xx, xx + res, xx + res))
+                                yyy <- as.vector(rbind(yy, fitted, fitted, yy))
+                                zzz <- as.vector(rbind(zz, zz, zz, zz))
+                                rgl.quads(xxx, yyy, zzz, color=surface.col[j], alpha=0.5, lit=FALSE)
+                                rgl.lines(xxx, yyy, zzz, color=surface.col[j])
+                                }                                                        
                             }
                         }
                     }
@@ -655,17 +941,26 @@ scatter3d <- function(x, y, z, xlab=deparse(substitute(x)), ylab=deparse(substit
                             )
                         if (model.summary) summaries[[paste(f, ".", group, sep="")]] <- summary(mod)
                         yhat <- matrix(predict(mod, newdata=dat), grid.lines, grid.lines)
-                        rgl.surface(vals, vals, yhat, color=surface.col[j], alpha=0.5, lit=FALSE)
-                        rgl.surface(vals, vals, yhat, color=grid.col, alpha=0.5, lit=FALSE, front="lines", back="lines")
-                        rgl.texts(0, predict(mod, newdata=data.frame(x=0, z=0, groups=group)), 0,
+                        if (fill) rgl.surface(vals, vals, yhat, color=surface.col[j], alpha=0.5, lit=FALSE)
+                        if (grid) rgl.surface(vals, vals, yhat, color=if (fill) grid.col 
+                            else surface.col[j], alpha=0.5, lit=FALSE, front="lines", back="lines")
+                        rgl.texts(1, predict(mod, newdata=data.frame(x=1, z=1, groups=group)), 1,
                             paste(group, " "), adj=1, color=surface.col[j])
                         if (residuals){
                             yy <- y[select.obs]
                             xx <- x[select.obs]
                             zz <- z[select.obs]
                             fitted <- fitted(mod)
+                            res <- yy - fitted
                             rgl.lines(as.vector(rbind(xx,xx)), as.vector(rbind(yy,fitted)), as.vector(rbind(zz,zz)),
                                 col=surface.col[j])
+                            if (squares) {
+                                xxx <- as.vector(rbind(xx, xx, xx + res, xx + res))
+                                yyy <- as.vector(rbind(yy, fitted, fitted, yy))
+                                zzz <- as.vector(rbind(zz, zz, zz, zz))
+                                rgl.quads(xxx, yyy, zzz, color=surface.col[j], alpha=0.5, lit=FALSE)
+                                rgl.lines(xxx, yyy, zzz, color=surface.col[j])
+                                } 
                             }
                         }
                     }
@@ -712,27 +1007,53 @@ function (...)
 }
 
 identify3d  <-
-function (x, y, z, groups = NULL, labels = 1:length(x), col = c("blue", 
-    "green", "orange", "magenta", "cyan", "red", "yellow", "gray"), 
+function (x, y, z, axis.scales=TRUE, groups = NULL, labels = 1:length(x), 
+    col = c("blue", "green", "orange", "magenta", "cyan", "red", "yellow", "gray"), 
     offset = ((100/length(x))^(1/3)) * 0.02) 
 {
     valid <- if (is.null(groups)) 
         complete.cases(x, y, z)
     else complete.cases(x, y, z, groups)
+    labels <- labels[valid]
     x <- x[valid]
     y <- y[valid]
     z <- z[valid]
-    labels <- labels[valid]
-    x <- (x - min(x))/(max(x) - min(x))
-    y <- (y - min(y))/(max(y) - min(y))
-    z <- (z - min(z))/(max(z) - min(z))
+    minx <- min(x)
+    maxx <- max(x)
+    miny <- min(y)
+    maxy <- max(y)
+    minz <- min(z)
+    maxz <- max(z)
+    if (axis.scales){
+        lab.min.x <- nice(minx)
+        lab.max.x <- nice(maxx)
+        lab.min.y <- nice(miny)
+        lab.max.y <- nice(maxy)
+        lab.min.z <- nice(minz)
+        lab.max.z <- nice(maxz)
+        minx <- min(lab.min.x, minx)
+        maxx <- max(lab.max.x, maxx)
+        miny <- min(lab.min.y, miny)
+        maxy <- max(lab.max.y, maxy)
+        minz <- min(lab.min.z, minz)
+        maxz <- max(lab.max.z, maxz)
+        min.x <- (lab.min.x - minx)/(maxx - minx)
+        max.x <- (lab.max.x - minx)/(maxx - minx)
+        min.y <- (lab.min.y - miny)/(maxy - miny)
+        max.y <- (lab.max.y - miny)/(maxy - miny)
+        min.z <- (lab.min.z - minz)/(maxz - minz)
+        max.z <- (lab.max.z - minz)/(maxz - minz)        
+        }
+    x <- (x - minx)/(maxx - minx)
+    y <- (y - miny)/(maxy - miny)
+    z <- (z - minz)/(maxz - minz)
     rgl.bringtotop()
     identified <- character(0)
     groups <- if (!is.null(groups)) 
         as.numeric(groups[valid])
     else rep(1, length(x))
     repeat {
-        f <- Rcmdr.select3d(button="middle")
+        f <- Rcmdr.select3d(button="right")
         which <- f(x, y, z)
         if (!any(which)) 
             break
@@ -748,31 +1069,31 @@ function (x, y, z, groups = NULL, labels = 1:length(x), col = c("blue",
 # this is slightly modified from tkpager to use the Rcmdr monospaced font
 #   and a white background
     
-RcmdrPager <- function (file, header, title, delete.file) 
+RcmdrPager <- function (file, header, title, delete.file)
 {
+    title <- paste(title, header)
     for (i in seq(along = file)) {
         zfile <- file[[i]]
         tt <- tktoplevel()
-        tkwm.title(tt, if (length(title)) 
+        tkwm.title(tt, if (length(title))
             title[(i - 1)%%length(title) + 1]
         else "")
         txt <- tktext(tt, bg = "white", font = getRcmdr("logFont"))
-        scr <- tkscrollbar(tt, repeatinterval = 5, command = function(...) tkyview(txt, 
+        scr <- tkscrollbar(tt, repeatinterval = 5, command = function(...) tkyview(txt,
             ...))
-        tkconfigure(txt, yscrollcommand = function(...) tkset(scr, 
+        tkconfigure(txt, yscrollcommand = function(...) tkset(scr,
             ...))
         tkpack(txt, side = "left", fill = "both", expand = TRUE)
         tkpack(scr, side = "right", fill = "y")
-        chn <- tkcmd("open", zfile)
-        tkinsert(txt, "end", header[[i]])
-        tkinsert(txt, "end", gsub("_\b", "", tclvalue(tkcmd("read", 
+        chn <- tcl("open", zfile)
+        tkinsert(txt, "end", gsub("_\b", "", tclvalue(tcl("read",
             chn))))
-        tkcmd("close", chn)
+        tcl("close", chn)
         tkconfigure(txt, state = "disabled")
         tkmark.set(txt, "insert", "0.0")
         tkfocus(txt)
-        if (delete.file) 
-            tkcmd("file", "delete", zfile)
+        if (delete.file)
+            tcl("file", "delete", zfile)
     }
 }
 
@@ -1001,13 +1322,55 @@ dialogSuffix <- defmacro(window=top, onOK=onOK, rows=1, columns=1, focus=top,
 variableListBox <- function(parentWindow, variableList=Variables(), bg="white",
     selectmode="single", export="FALSE", initialSelection=NULL, listHeight=4, title){
     if (selectmode == "multiple") selectmode <- getRcmdr("multiple.select.mode")
+    if (length(variableList) == 1 && is.null(initialSelection)) initialSelection <- 0
     frame <- tkframe(parentWindow)
     listbox <- tklistbox(frame, height=min(listHeight, length(variableList)),
         selectmode=selectmode, background=bg, exportselection=export)
     scrollbar <- tkscrollbar(frame, repeatinterval=5, command=function(...) tkyview(listbox, ...))
     tkconfigure(listbox, yscrollcommand=function(...) tkset(scrollbar, ...))
     for (var in variableList) tkinsert(listbox, "end", var)
-    if (!is.null(initialSelection)) tkselection.set(listbox, initialSelection)  
+    if (is.numeric(initialSelection)) tkselection.set(listbox, initialSelection)
+    firstChar <- tolower(substr(variableList, 1, 1))
+    len <- length(variableList)
+    onLetter <- function(letter){
+        letter <- tolower(letter)
+        current <- 1 + round(as.numeric(unlist(strsplit(tclvalue(tkyview(listbox) ), " "))[1])*len)
+        mat <- match(letter, firstChar[-(1:current)])
+        if (is.na(mat)) return()
+        tkyview.scroll(listbox, mat, "units")
+        }
+    onA <- function() onLetter("a")
+    onB <- function() onLetter("b")
+    onC <- function() onLetter("c")
+    onD <- function() onLetter("d")
+    onE <- function() onLetter("e")
+    onF <- function() onLetter("f")
+    onG <- function() onLetter("g")
+    onH <- function() onLetter("h")
+    onI <- function() onLetter("i")
+    onJ <- function() onLetter("j")
+    onK <- function() onLetter("k")
+    onL <- function() onLetter("l")
+    onM <- function() onLetter("m")
+    onN <- function() onLetter("n")
+    onO <- function() onLetter("o")
+    onP <- function() onLetter("p")
+    onQ <- function() onLetter("q")
+    onR <- function() onLetter("r")
+    onS <- function() onLetter("s")
+    onT <- function() onLetter("t")
+    onU <- function() onLetter("u")
+    onV <- function() onLetter("v")
+    onW <- function() onLetter("w")
+    onX <- function() onLetter("x")
+    onY <- function() onLetter("y")
+    onZ <- function() onLetter("z")
+    for (letter in c(letters, LETTERS)){
+        tkbind(listbox, paste("<", letter, ">", sep=""), 
+            get(paste("on", toupper(letter), sep="")))
+        }
+    onClick <- function() tkfocus(listbox)
+    tkbind(listbox, "<ButtonPress-1>", onClick)
     tkgrid(tklabel(frame, text=title, fg="blue"), columnspan=2, sticky="w")
     tkgrid(listbox, scrollbar, sticky="nw")
     tkgrid.configure(scrollbar, sticky="wns")
@@ -1510,7 +1873,7 @@ English <- function() {
 #  to allow for translation of button text
 
 RcmdrTkmessageBox <- function(message, icon=c("info", "question", "warning",
-    "error"), type=c("okcancel", "yesno", "ok"), default) {
+    "error"), type=c("okcancel", "yesno", "ok"), default, title="") {
     if ( (English()) || (.Platform$OS.type != "windows") ){
         if (missing(default)){
             default <- switch(type,
@@ -1518,11 +1881,11 @@ RcmdrTkmessageBox <- function(message, icon=c("info", "question", "warning",
                 yesno="yes",
                 ok="ok")}
         return(tkmessageBox(message=message, icon=icon, type=type, 
-            default=default))
+            default=default, title=title))
         }
     icon <- match.arg(icon)
     type <- match.arg(type)
-    initializeDialog(messageBox)
+    initializeDialog(messageBox, title=title)
     messageFrame <- tkframe(messageBox, borderwidth=5)
     buttonFrame <- tkframe(messageBox,  borderwidth=5)
     if (icon != "question") tkbell()
@@ -1595,4 +1958,19 @@ RcmdrTkmessageBox <- function(message, icon=c("info", "question", "warning",
     tkgrid(buttonFrame)
     dialogSuffix(messageBox, rows=2, focus=messageBox, bindReturn=FALSE)
     result
+    }
+    
+# The following function was contributed by Matthieu Lesnoff (added 20 July 06)
+
+trim.col.na <- function(dat){
+# Remove variables with only missing values (occurs sometimes with modified Excel file)    
+    colsup <- NULL 
+    for (i in 1:ncol(dat))
+    {
+    if (length(dat[is.na(dat[,i])==T,i]) ==length(dat[,i]))
+     colsup <- c(colsup,i)  
+    }
+    if (length(colsup) > 0)
+     dat <- dat[,-colsup]
+    dat
     }

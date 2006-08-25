@@ -1,4 +1,4 @@
-# last modified 19 February 2006 by J. Fox
+# last modified 7 August 2006 by J. Fox
 
 # Data menu dialogs
 
@@ -80,10 +80,10 @@ Recode <- function(){
         if (length(grep(",", parts[1])) > 0) paste("c(", parts[1], ") = ", parts[2], sep="")
             else paste(parts, collapse="=")
         }
-#    if (!checkActiveDataSet()) return(invisible())
     dataSet <- activeDataSet()
-    initializeDialog(title=gettextRcmdr("Recode Variable"))
-    variablesBox <- variableListBox(top, Variables(), title=gettextRcmdr("Variable to recode (pick one)"))
+    initializeDialog(title=gettextRcmdr("Recode Variables"))
+    variablesBox <- variableListBox(top, Variables(), 
+        selectmode="multiple", title=gettextRcmdr("Variables to recode (pick one or more)"))
     variablesFrame <- tkframe(top)
     newVariableName <- tclVar(gettextRcmdr("variable"))
     newVariable <- tkentry(variablesFrame, width="20", textvariable=newVariableName)
@@ -100,21 +100,9 @@ Recode <- function(){
     asFactorVariable <- tclVar("1")
     asFactorCheckBox <- tkcheckbutton(asFactorFrame, variable=asFactorVariable)
     onOK <- function(){
-        variable <- getSelection(variablesBox)
-        if (length(variable) == 0) {
-            errorCondition(recall=Recode, message=gettextRcmdr("You must select a variable."))
-            return()
-            }
-        newVar <- trim.blanks(tclvalue(newVariableName))
-        if (!is.valid.name(newVar)){
-            errorCondition(recall=Recode,
-                message=paste('"', newVar, '" ', gettextRcmdr("is not a valid name."), sep=""))
-            return()
-            }
         asFactor <- tclvalue(asFactorVariable) == "1"
         recode.directives <- gsub("\n", "; ", tclvalue(tkget(recodes, "1.0", "end")))
         check.empty <- gsub(";", "", gsub(" ", "", recode.directives))
-        closeDialog()
         if ("" == check.empty) {
             errorCondition(recall=Recode,
                 message=gettextRcmdr("No recode directives specified."))
@@ -125,32 +113,55 @@ Recode <- function(){
                 message=gettextRcmdr('Use only double-quotes (" ") in recode directives'))
             return()
             }
-        if (is.element(newVar, Variables())) {
-            if ("no" == tclvalue(checkReplace(newVar))){
-                Recode()
-                return()
-                }
-            }
         recode.directives <- strsplit(recode.directives, ";")[[1]]
         recode.directives <- paste(sapply(recode.directives, processRecode), collapse=";") 
-        cmd <- paste("recode(", dataSet,"$",variable, ", '", recode.directives, 
-            "', as.factor.result=", asFactor, ")", sep="")
-        logger(paste(dataSet,"$",newVar, " <- ", cmd, sep=""))
-        justDoIt(paste(dataSet,"$",newVar, " <- ", cmd, sep=""))
-        activeDataSet(dataSet, flushModel=FALSE)
-        tkfocus(CommanderWindow())
+        variables <- getSelection(variablesBox)
+        closeDialog()
+        if (length(variables) == 0) {
+            errorCondition(recall=Recode, message=gettextRcmdr("You must select a variable."))
+            return()
+            }
+        multiple <- if (length(variables) > 1) TRUE else FALSE
+        name <- trim.blanks(tclvalue(newVariableName))
+        for (variable in variables){
+            newVar <- if (multiple) paste(name, variable, sep="") else name
+            if (!is.valid.name(newVar)){
+                errorCondition(recall=Recode,
+                    message=paste('"', newVar, '" ', 
+                        gettextRcmdr("is not a valid name."), sep=""))
+                return()
+                }
+            if (is.element(newVar, Variables())) {
+                if ("no" == tclvalue(checkReplace(newVar))){
+                    Recode()
+                    return()
+                    }
+                }
+            cmd <- paste("recode(", dataSet,"$",variable, ", '", recode.directives, 
+                "', as.factor.result=", asFactor, ")", sep="")
+            logger(paste(dataSet,"$",newVar, " <- ", cmd, sep=""))
+            justDoIt(paste(dataSet,"$",newVar, " <- ", cmd, sep=""))
+            activeDataSet(dataSet, flushModel=FALSE)
+            tkfocus(CommanderWindow())
+            }
         }
     OKCancelHelp(helpSubject="Recode")    
     tkgrid(getFrame(variablesBox), sticky="nw")
-    tkgrid(tklabel(variablesFrame, text=gettextRcmdr("New variable name")), sticky="w")
-    tkgrid(newVariable, sticky="w")
-    tkgrid(tklabel(recodesFrame, text=gettextRcmdr("Enter recode directives"), fg="blue"), sticky="w")
+    tkgrid(tklabel(variablesFrame, text=""))
+    tkgrid(tklabel(variablesFrame, 
+        text=gettextRcmdr("New variable name or prefix for multiple recodes: ")),
+        newVariable, sticky="w")
+    tkgrid(tklabel(asFactorFrame, 
+        text=gettextRcmdr("Make (each) new variable a factor")), asFactorCheckBox, 
+        sticky="w")
+    tkgrid(tklabel(asFactorFrame, text=""))
+    tkgrid(tklabel(recodesFrame, text=gettextRcmdr("Enter recode directives"), fg="blue"), 
+        sticky="w")
     tkgrid(recodes, recodesYscroll, sticky="nw")
     tkgrid(recodesXscroll)
-    tkgrid(variablesFrame, recodesFrame, sticky="nw")
-    tkgrid(tklabel(asFactorFrame, text=gettextRcmdr("Make new variable a factor")), asFactorCheckBox, 
-        sticky="w")
+    tkgrid(variablesFrame, sticky="w")
     tkgrid(asFactorFrame, sticky="w")
+    tkgrid(recodesFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w", columnspan=2)
     tkgrid.configure(recodesXscroll, sticky="ew")
     tkgrid.configure(recodesYscroll, sticky="ns")
@@ -268,12 +279,14 @@ deleteVariable <- function(){
     }
 
 readDataSet <- function() {
-    initializeDialog(title=gettextRcmdr("Read Data From Text File"))
+    initializeDialog(title=gettextRcmdr("Read Data From Text File or Clipboard"))
     optionsFrame <- tkframe(top)
     dsname <- tclVar(gettextRcmdr("Dataset"))
     entryDsname <- tkentry(optionsFrame, width="20", textvariable=dsname)
     headerVariable <- tclVar("1")
     headerCheckBox <- tkcheckbutton(optionsFrame, variable=headerVariable)
+    clipboardVariable <- tclVar("0")
+    clipboardCheckBox <- tkcheckbutton(optionsFrame, variable=clipboardVariable)
     radioButtons(optionsFrame, "delimiter", buttons=c("whitespace", "commas", "tabs"),
         labels=gettextRcmdr(c("White space", "Commas", "Tabs")), title=gettextRcmdr("Field Separator"))
     otherButton <- tkradiobutton(delimiterFrame, variable=delimiterVariable, value="other")
@@ -302,7 +315,8 @@ readDataSet <- function() {
                 return()
                 }
             }
-        file <- tclvalue(tkgetOpenFile(filetypes=
+        clip <- tclvalue(clipboardVariable) == "1"
+        file <- if (clip) "clipboard" else tclvalue(tkgetOpenFile(filetypes=
             gettextRcmdr('{"Text Files" {".txt" ".TXT" ".dat" ".DAT" ".csv" ".CSV"}} {"All Files" {"*"}}')))
         if (file == "") {
             if (getRcmdr("grab.focus")) tkgrab.release(top)
@@ -327,6 +341,7 @@ readDataSet <- function() {
     OKCancelHelp(helpSubject="read.table")
     tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Enter name for data set:")), entryDsname, sticky="w")
     tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Variable names in file:")), headerCheckBox, sticky="w")
+    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Read data from clipboard:")), clipboardCheckBox, sticky="w")
     tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Missing data indicator:")), missingEntry, sticky="w")
     tkgrid(tklabel(delimiterFrame, text=gettextRcmdr("Other")), otherButton, 
         tklabel(delimiterFrame, text=gettextRcmdr("  Specify:")), otherEntry, sticky="w")
@@ -336,7 +351,7 @@ readDataSet <- function() {
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix(rows=4, columns=1)
     }
-    
+        
 readDataFromPackage <- function() {
     env <- environment()
     initializeDialog(title=gettextRcmdr("Read Data From Package"))
@@ -347,7 +362,6 @@ readDataFromPackage <- function() {
     packages <- sort(.packages())
     packages <- packages[! packages %in% c("base", "stats")]
     packages <- packages[sapply(packages, function(package) nrow(data(package=package)$results) > 0)]
-    packagesBox <- variableListBox(top, packages, title=gettextRcmdr("Select package:"))
     packageDatasetFrame <- tkframe(top)
     packageFrame <- tkframe(packageDatasetFrame)
     packageBox <- tklistbox(packageFrame, height="4", exportselection="FALSE",
@@ -368,10 +382,92 @@ readDataFromPackage <- function() {
         tkdelete(datasetBox, "0", "end")
         for (dataset in datasets) tkinsert(datasetBox, "end", dataset)
         tkconfigure(datasetBox, height=min(4, length(datasets)))
+        firstChar <- tolower(substr(datasets, 1, 1))
+        len <- length(datasets)
+        onLetter <- function(letter){
+            letter <- tolower(letter)
+            current <- 1 + round(as.numeric(unlist(strsplit(tclvalue(tkyview(datasetBox) ), " "))[1])*len)
+            mat <- match(letter, firstChar[-(1:current)])
+            if (is.na(mat)) return()
+            tkyview.scroll(datasetBox, mat, "units")
+            }
+        onA <- function() onLetter("a")
+        onB <- function() onLetter("b")
+        onC <- function() onLetter("c")
+        onD <- function() onLetter("d")
+        onE <- function() onLetter("e")
+        onF <- function() onLetter("f")
+        onG <- function() onLetter("g")
+        onH <- function() onLetter("h")
+        onI <- function() onLetter("i")
+        onJ <- function() onLetter("j")
+        onK <- function() onLetter("k")
+        onL <- function() onLetter("l")
+        onM <- function() onLetter("m")
+        onN <- function() onLetter("n")
+        onO <- function() onLetter("o")
+        onP <- function() onLetter("p")
+        onQ <- function() onLetter("q")
+        onR <- function() onLetter("r")
+        onS <- function() onLetter("s")
+        onT <- function() onLetter("t")
+        onU <- function() onLetter("u")
+        onV <- function() onLetter("v")
+        onW <- function() onLetter("w")
+        onX <- function() onLetter("x")
+        onY <- function() onLetter("y")
+        onZ <- function() onLetter("z")
+        for (letter in c(letters, LETTERS)){
+            tkbind(datasetBox, paste("<", letter, ">", sep=""), 
+                get(paste("on", toupper(letter), sep="")))
+            }
+        onClick <- function() tkfocus(datasetBox)
+        tkbind(datasetBox, "<ButtonPress-1>", onClick)      
         }
     onDatasetSelect <- function(){
         tclvalue(dsname) <- data(package=package)$results[as.numeric(tkcurselection(datasetBox)) + 1,3]
         }
+    firstChar <- tolower(substr(packages, 1, 1))
+    len <- length(packages)
+    onLetter <- function(letter){
+        letter <- tolower(letter)
+        current <- 1 + round(as.numeric(unlist(strsplit(tclvalue(tkyview(packageBox) ), " "))[1])*len)
+        mat <- match(letter, firstChar[-(1:current)])
+        if (is.na(mat)) return()
+        tkyview.scroll(packageBox, mat, "units")
+        }
+    onA <- function() onLetter("a")
+    onB <- function() onLetter("b")
+    onC <- function() onLetter("c")
+    onD <- function() onLetter("d")
+    onE <- function() onLetter("e")
+    onF <- function() onLetter("f")
+    onG <- function() onLetter("g")
+    onH <- function() onLetter("h")
+    onI <- function() onLetter("i")
+    onJ <- function() onLetter("j")
+    onK <- function() onLetter("k")
+    onL <- function() onLetter("l")
+    onM <- function() onLetter("m")
+    onN <- function() onLetter("n")
+    onO <- function() onLetter("o")
+    onP <- function() onLetter("p")
+    onQ <- function() onLetter("q")
+    onR <- function() onLetter("r")
+    onS <- function() onLetter("s")
+    onT <- function() onLetter("t")
+    onU <- function() onLetter("u")
+    onV <- function() onLetter("v")
+    onW <- function() onLetter("w")
+    onX <- function() onLetter("x")
+    onY <- function() onLetter("y")
+    onZ <- function() onLetter("z")
+    for (letter in c(letters, LETTERS)){
+        tkbind(packageBox, paste("<", letter, ">", sep=""), 
+            get(paste("on", toupper(letter), sep="")))
+        }
+    onClick <- function() tkfocus(packageBox)
+    tkbind(packageBox, "<ButtonPress-1>", onClick)        
     onOK <- function(){
         datasetName <- data(package=package)$results[as.numeric(tkcurselection(datasetBox)) + 1,3]
         dsnameValue <- tclvalue(dsname)
@@ -437,7 +533,7 @@ readDataFromPackage <- function() {
     tkgrid.configure(packageScroll, sticky="ns")
     tkgrid.configure(datasetScroll, sticky="ns")
     tkbind(packageBox, "<Double-ButtonPress-1>", onPackageSelect)
-    tkbind(datasetBox, "<ButtonPress-1>", onDatasetSelect)
+    tkbind(datasetBox, "<Double-ButtonPress-1>", onDatasetSelect)
     tkgrid(buttonsFrame, columnspan="2", sticky="w")
     dialogSuffix(rows=4, columns=1, focus=entryDsname)
     }
@@ -629,92 +725,214 @@ importSTATA <- function() {
     dialogSuffix(rows=4, columns=2, focus=entryDsname)
     } 
 
+# The following function was contributed by Matthieu Lesnoff 
+#  (added with small changes by J. Fox, 20 July 06)
+
+importRODBCtable <- function(){
+    # load the RODBC package and stops the program if not available
+    if(!require(RODBC))
+        stop(gettextRcmdr("This function requires the RODBC package.\n"))
+    # close all databases in case of error
+    on.exit(odbcCloseAll())
+# Enter the name of data set, by default : Dataset    
+    initializeDialog(title = gettextRcmdr("Import from Excel, Access or dBase data set"))
+    dsname <- tclVar(gettextRcmdr("Dataset"))
+    entryDsname <- tkentry(top, width = "35", textvariable = dsname)
+      onOK <- function(){
+        closeDialog()
+        dsnameValue <- trim.blanks(tclvalue(dsname))
+        if(dsnameValue == ""){
+            errorCondition(recall = importRODBCtable,
+                message = gettextRcmdr("You must enter the name of a data set."))
+            return()
+            }     
+        if(!is.valid.name(dsnameValue)){
+            errorCondition(recall = queryimportRODBCtable,
+                message = paste('"', dsnameValue, '" ', 
+                    gettextRcmdr("is not a valid name."), sep = ""))
+            return()
+            }
+        if(is.element(dsnameValue, listDataSets())){
+            if("no" == tclvalue(checkReplace(dsnameValue, gettextRcmdr("Data set")))){
+                importRODBCtable()
+                return()
+                }
+            }                              
+        File <- tclvalue(tkgetOpenFile(filetypes = gettextRcmdr(
+            '{"MS Excel file" {*.xls ".XLS"}} {"MS Access database" {*.mdb ".MDB"}} {"dBase-like file" {*.dbf ".DBF"}} {"All Files" {"*"}}'
+            )))                
+        if(File == ""){
+            tkfocus(CommanderWindow())
+            return()
+            }              
+        sop <- match(".", rev(strsplit(File, NULL)[[1]]))[1]
+        ext <- tolower(substring(File, nchar(File) - sop + 2, nchar(File)))
+        channel <- switch(EXPR = ext,
+            xls = odbcConnectExcel(File),
+            mdb = odbcConnectAccess(File),
+            dbf = odbcConnectDbase(File))        
+    # For Excel and Access cases, need to select a particular sheet or table
+        if(ext != "dbf"){
+            tabdat <- sqlTables(channel)
+            names(tabdat) <- tolower(names(tabdat))
+            if(ext == "mdb")
+                tabdat <- tabdat[tabdat$table_type == "TABLE", 3]
+            if(ext == "xls"){
+                tabname <- tabdat$table_name
+                tabdat <- ifelse(tabdat$table_type =="TABLE",
+                substring(tabname, 2, nchar(tabname) - 2),
+                substring(tabname, 1, nchar(tabname) - 1))
+                }      
+    # if there are several tables   
+          if(length(tabdat)>1)
+                fil <- tk_select.list(sort(tabdat), 
+                    title = gettextRcmdr("Select one table"))    
+          else  
+            fil <- tabdat               
+          if(fil == ""){
+            errorCondition(message=gettextRcmdr("No table selected"))
+            return()
+            }               
+          if(ext == "xls")
+            fil <- paste("[", fil, "$]", sep = "")
+          }            
+    # dBase file
+        else{
+          sop <- match(".", rev(strsplit(File, NULL)[[1]]))[1]
+          root <- tolower(substring(File, 1, nchar(File) - sop))
+          revstr <- rev(strsplit(root, NULL)[[1]])
+          sop <- if(is.na(match(c("/", "\\"), revstr)[1])) 
+            length(revstr) else match(c("/", "\\"), revstr)[1] - 1
+          toor <- revstr[seq(sop)]
+          fil <- paste(rev(toor), collapse = "")
+          }        
+    # Retrieve the data
+        dat <- sqlQuery(channel = channel, query = paste("select * from", fil))
+        names(dat)<- trim.blanks(names(dat))
+        dat <- trim.col.na(dat)        
+        odbcCloseAll()
+        assign(dsnameValue, as.data.frame(dat), envir = .GlobalEnv)
+        command <- paste("sqlQuery(channel = ",channel,", select * from ", fil,")", 
+            sep = "")
+        logger(paste(dsnameValue, " <- ", command, sep = ""))                
+        activeDataSet(dsnameValue)
+        tkfocus(CommanderWindow())              
+        }  ## End of function onOK       
+    OKCancelHelp(helpSubject="odbcConnect")
+    tkgrid(tklabel(top, text=gettextRcmdr("Enter name of data set:  ")), 
+        entryDsname, sticky="e")
+    tkgrid(buttonsFrame, columnspan="2", sticky="w")
+    tkgrid.configure(entryDsname, sticky="w")
+    dialogSuffix(rows=2, columns=2, focus=entryDsname)
+    }
+
+
 numericToFactor <- function(){
-    initializeDialog(title=gettextRcmdr("Convert Numeric Variable to Factor"))
-    variableBox <- variableListBox(top, Numeric(), title=gettextRcmdr("Variable (pick one)"))
+    initializeDialog(title=gettextRcmdr("Convert Numeric Variables to Factors"))
+    variableBox <- variableListBox(top, Numeric(), selectmode="multiple", 
+        title=gettextRcmdr("Variables (pick one or more)"))
     radioButtons(name="levels", buttons=c("names", "numbers"), 
         labels=gettextRcmdr(c("Supply level names", "Use numbers")), title=gettextRcmdr("Factor Levels"))
-    factorName <- tclVar(gettextRcmdr("<same as variable>"))
+    factorName <- tclVar(gettextRcmdr("<same as variables>"))
     factorNameField <- tkentry(top, width="20", textvariable=factorName)
     onOK <- function(){
-        variable <- getSelection(variableBox)
+        variables <- getSelection(variableBox)
         closeDialog()
-        if (length(variable) == 0) {
+        if (length(variables) == 0) {
             errorCondition(recall=numericToFactor, message=gettextRcmdr("You must select a variable."))
             return()
             }
-        name <- trim.blanks(tclvalue(factorName))
-        if (name == gettextRcmdr("<same as variable>")) name <- variable
-        if (!is.valid.name(name)){
-            errorCondition(recall=numericToFactor,
-                message=paste('"', name, '" ', gettextRcmdr("is not a valid name."), sep=""))
-            return()
-            }
-        if (is.element(name, Variables())) {
-            if ("no" == tclvalue(checkReplace(name))){
-                numericToFactor()
-                return()
-                }
-            }
-        levelsType <- tclvalue(levelsVariable)
-        if (levelsType == "names"){
-            .activeDataSet <- ActiveDataSet()
-            values <- sort(unique(eval(parse(text=paste(.activeDataSet, "$", variable, sep="")),
-                envir=.GlobalEnv)))
-            nvalues <- length(values)
-            if (nvalues > 30) {
+        facname <- trim.blanks(tclvalue(factorName))
+        .activeDataSet <- ActiveDataSet()
+        cmd <- paste("apply(", .activeDataSet, "[c(", paste(
+            paste('"', variables, '"', sep=""), 
+            collapse=","), ")], 2, function(x) sort(unique(x)))", sep="")
+        levs <- eval(parse(text=cmd), envir=.GlobalEnv)
+        sameLevels <- (length(variables) == 1) || 
+            ((is.matrix(levs)) && (all(0 == apply(levs, 1, var))))
+        for (name in variables){
+            fname <- if (facname == gettextRcmdr("<same as variables>")) name 
+                 else if (length(variables) == 1) facname
+                    else paste(facname, name, sep="") 
+            if (!is.valid.name(fname)){
                 errorCondition(recall=numericToFactor,
-                    message=sprintf(gettextRcmdr("Number of levels (%d) too large."), nvalues))
+                    message=paste('"', fname, '" ', gettextRcmdr("is not a valid name."), sep=""))
                 return()
                 }
-            initializeDialog(subdialog, title=gettextRcmdr("Level Names"))
-            names <- rep("", nvalues)
-            onOKsub <- function() {
-                closeDialog(subdialog)
+            if (is.element(fname, Variables())) {
+                if ("no" == tclvalue(checkReplace(fname))){
+                    numericToFactor()
+                    return()
+                    }
+                }
+            levelsType <- tclvalue(levelsVariable)
+            env <- environment()
+            if (((name == variables[1]) || (!sameLevels)) && (levelsType == "names")){
+                values <- sort(unique(eval(parse(text=paste(.activeDataSet, "$", name, sep="")),
+                    envir=.GlobalEnv)))
+                nvalues <- length(values)
+                if (nvalues > 30) {
+                    errorCondition(recall=numericToFactor,
+                        message=sprintf(gettextRcmdr("Number of levels (%d) too large."), nvalues))
+                    return()
+                    }
+                initializeDialog(subdialog, 
+                    title=paste(gettextRcmdr("Level Names for"), 
+                        if(sameLevels && length(variables) > 1) "Factors" else fname))
+                names <- rep("", nvalues)
+                onOKsub <- function() {
+                    closeDialog(subdialog)
+                    for (i in 1:nvalues){
+                        names[i] <- eval(parse(text=paste("tclvalue(levelName", i, ")", sep="")))
+                        }
+                    if (length(unique(names)) != nvalues){
+                        errorCondition(recall=numericToFactor,
+                            message=gettextRcmdr("Levels names are not unique."))
+                        return()
+                        }
+                    if (any(names == "")){
+                        errorCondition(recall=numericToFactor,
+                            message=gettextRcmdr("A level name is empty."))
+                        return()
+                        }
+                    assign("labels", paste(paste("'", names, "'", sep=""), collapse=","),
+                        envir=env)
+                    }                        
+                subOKCancelHelp()
+                tkgrid(tklabel(subdialog, text=gettextRcmdr("Numeric value")), tklabel(subdialog, text=gettextRcmdr("Level name")), sticky="w")
                 for (i in 1:nvalues){
-                    names[i] <- eval(parse(text=paste("tclvalue(levelName", i, ")", sep="")))
+                    valVar <- paste("levelName", i, sep="")
+                    assign(valVar, tclVar(""))
+                    assign(paste("entry", i, sep=""), tkentry(subdialog, width="20", 
+                        textvariable=eval(parse(text=valVar))))
+                    tkgrid(tklabel(subdialog, text=values[i]), eval(parse(text=paste("entry", i, sep=""))), sticky="w")
                     }
-                if (length(unique(names)) != nvalues){
-                    errorCondition(recall=numericToFactor,
-                        message=gettextRcmdr("Levels names are not unique."))
-                    return()
-                    }
-                if (any(names == "")){
-                    errorCondition(recall=numericToFactor,
-                        message=gettextRcmdr("A level name is empty."))
-                    return()
-                    }
-                command <- paste("factor(", .activeDataSet, "$", variable,
-                    ", labels=c(", paste(paste("'", names, "'", sep=""), collapse=","), "))", sep="")
-                justDoIt(paste(.activeDataSet, "$", name, " <- ", command, sep=""))
-                logger(paste(.activeDataSet,"$", name," <- ", command, sep=""))
+                tkgrid(subButtonsFrame, sticky="w", columnspan=2)
+                dialogSuffix(subdialog, rows=nvalues+2, columns=2, focus=entry1, onOK=onOKsub)   
+                }
+            if (levelsType == "names"){
+                if (!exists("labels", mode="character")) return()
+                command <- paste("factor(", .activeDataSet, "$", name,
+                    ", labels=c(", labels, "))", sep="")
+                justDoIt(paste(.activeDataSet, "$", fname, " <- ", command, sep=""))
+                logger(paste(.activeDataSet,"$", fname," <- ", command, sep=""))
                 activeDataSet(.activeDataSet)
                 tkfocus(CommanderWindow())
                 }
-            subOKCancelHelp()
-            tkgrid(tklabel(subdialog, text=gettextRcmdr("Numeric value")), tklabel(subdialog, text=gettextRcmdr("Level name")), sticky="w")
-            for (i in 1:nvalues){
-                valVar <- paste("levelName", i, sep="")
-                assign(valVar, tclVar(""))
-                assign(paste("entry", i, sep=""), tkentry(subdialog, width="20", 
-                    textvariable=eval(parse(text=valVar))))
-                tkgrid(tklabel(subdialog, text=values[i]), eval(parse(text=paste("entry", i, sep=""))), sticky="w")
+            else{
+                command <- paste("as.factor(", .activeDataSet, "$", name, ")", sep="")
+                justDoIt(paste(.activeDataSet, "$", fname, " <- ", command, sep=""))
+                logger(paste(.activeDataSet, "$", fname," <- ", command, sep=""))
+                activeDataSet(.activeDataSet, flushModel=FALSE)
+                tkfocus(CommanderWindow())
                 }
-            tkgrid(subButtonsFrame, sticky="w", columnspan=2)
-            dialogSuffix(subdialog, rows=nvalues+2, columns=2, focus=entry1, onOK=onOKsub)   
-            }
-        else{
-            command <- paste("as.factor(", .activeDataSet, "$", variable, ")", sep="")
-            justDoIt(paste(.activeDataSet, "$", name, " <- ", command, sep=""))
-            logger(paste(.activeDataSet, "$", name," <- ", command, sep=""))
-            activeDataSet(.activeDataSet, flushModel=FALSE)
-            tkfocus(CommanderWindow())
             }
         }
     OKCancelHelp(helpSubject="factor")
     tkgrid(getFrame(variableBox), levelsFrame, sticky="nw")
-    tkgrid(tklabel(top, text=gettextRcmdr("Name for factor")), sticky="w")
-    tkgrid(factorNameField, sticky="w")
+    tkgrid(tklabel(top, 
+        text=gettextRcmdr("New variable name or prefix for multiple variables:")),
+        factorNameField, sticky="w")
     tkgrid(buttonsFrame, sticky="w", columnspan=2)
     tkgrid.configure(numbersButton, sticky="w")
     tkgrid.configure(namesButton, sticky="w")
@@ -1346,3 +1564,86 @@ setContrasts <- function(){
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix(rows=4, columns=1) 
     }
+
+refreshActiveDataSet <- function() activeDataSet(ActiveDataSet())
+
+addObsNumbers <- function(){
+    dsname <- ActiveDataSet()
+    if (is.element("ObsNumber", listVariables())) {
+            if ("no" == tclvalue(checkReplace("ObsNumber", gettextRcmdr("Variable")))){
+                return()
+                }
+        }
+    nrows <- eval(parse(text=paste("nrow(", dsname, ")", sep="")), envir=.GlobalEnv)
+    command <- paste(dsname, "$ObsNumber <- 1:", nrows, sep="")
+    logger(command)
+    justDoIt(command)
+    activeDataSet(dsname, flushModel=FALSE)
+    }
+    
+Stack <- function(){
+    initializeDialog(title=gettextRcmdr("Stack Variables"))
+    variableBox <- variableListBox(top, Numeric(), selectmode="multiple",
+         title=gettextRcmdr("Variables (pick two or more)"))
+    factorName <- tclVar(gettextRcmdr("factor"))
+    factorNameField <- tkentry(top, width="20", textvariable=factorName)
+    variableName <- tclVar(gettextRcmdr("variable"))
+    variableNameField <- tkentry(top, width="20", textvariable=variableName)
+    datasetName <- tclVar(gettextRcmdr("StackedData"))
+    datasetNameField <- tkentry(top, width="20", textvariable=datasetName)
+    onOK <- function(){
+        variables <- getSelection(variableBox)
+        facname <- tclvalue(factorName)
+        varname <- tclvalue(variableName)
+        dsname <- tclvalue(datasetName)
+        closeDialog()
+        if (length(variables) < 2) {
+            errorCondition(recall=Stack, 
+                message=gettextRcmdr("You must select at least two variables."))
+            return()
+            }
+        if (!is.valid.name(facname)){
+            errorCondition(recall=Stack,
+                message=paste('"', facname, '" ', gettextRcmdr("is not a valid name."), sep=""))
+            return()
+            }
+        if (!is.valid.name(varname)){
+            errorCondition(recall=Stack,
+                message=paste('"', varname, '" ', gettextRcmdr("is not a valid name."), sep=""))
+            return()
+            }
+        if (!is.valid.name(dsname)){
+            errorCondition(recall=Stack,
+                message=paste('"', dsname, '" ', gettextRcmdr("is not a valid name."), sep=""))
+            return()
+            }
+        if (is.element(dsname, listDataSets())) {
+            if ("no" == tclvalue(checkReplace(dsname, gettextRcmdr("Data set")))){
+                Stack()
+                return()
+                }
+            }
+        command <- paste(dsname, " <- stack(", activeDataSet(), "[, c(", 
+            paste(paste('"', variables, '"', sep=""), collapse=","), ")])", sep="")
+        logger(command)
+        justDoIt(command)
+        command <- paste("names(", dsname, ') <- c("', varname, '", "', facname, '")',
+            sep="")
+        logger(command)
+        justDoIt(command)
+        activeDataSet(dsname)
+        tkfocus(CommanderWindow())
+        }
+    OKCancelHelp(helpSubject="stack")
+    tkgrid(getFrame(variableBox), sticky="nw", columnspan=2)
+    tkgrid(tklabel(top, text=""))
+    tkgrid(tklabel(top, 
+        text=gettextRcmdr("Name for stacked data set:")), datasetNameField, sticky="w")
+    tkgrid(tklabel(top, 
+        text=gettextRcmdr("Name for variable:")), variableNameField, sticky="w")
+    tkgrid(tklabel(top, 
+        text=gettextRcmdr("Name for factor:")), factorNameField, sticky="w")
+    tkgrid(buttonsFrame, sticky="w", columnspan=2)
+    dialogSuffix(rows=5, columns=2, preventGrabFocus=TRUE)
+    }
+

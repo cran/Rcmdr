@@ -42,6 +42,6 @@ plotMeans(response, factor1, factor2,
 
 \author{John Fox \email{jfox@mcmaster.ca}}
 
-\seealso{\code{\link[base]{interaction.plot}}}
+\seealso{\code{\link[stats]{interaction.plot}}}
 
 \keyword{hplot}

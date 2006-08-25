@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Rcmdr 1.1-7\n"
+"Project-Id-Version: Rcmdr 1.2-0\n"
 "Report-Msgid-Bugs-To: bugs@r-project.org\n"
-"POT-Creation-Date: 2006-02-23 16:17\n"
+"POT-Creation-Date: 2006-08-20 10:35\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2445,3 +2445,798 @@ msgstr ""
 msgid "\nThese have been changed to:\n"
 msgstr ""
 
+## messages added to Rcmdr version 1.2-0
+
+    # importRODBCtable dialog
+
+msgid "This function requires the RODBC package.\n"
+msgstr ""
+
+msgid "Import from Excel, Access or dBase data set"
+msgstr ""
+
+msgid "{\"MS Excel file\" {*.xls \".XLS\"}} {\"MS Access database\" {*.mdb \".MDB\"}} {\"dBase-like file\" {*.dbf \".DBF\"}} {\"All Files\" {\"*\"}}"
+msgstr ""
+
+msgid "Select one table"
+msgstr ""
+
+msgid "No table selected"
+msgstr ""
+
+msgid "from Excel, Access or dBase data set..."
+msgstr ""
+
+    # probability distributions
+
+msgid "Standard deviation must be positive."
+msgstr ""
+
+msgid "Degrees of freedom must be positive."
+msgstr ""
+
+msgid "Numerator degrees of freedom must be positive."
+msgstr ""
+
+msgid "Denominator degrees of freedom must be positive."
+msgstr ""
+
+msgid "Exponential Distribution"
+msgstr ""
+
+msgid "Rate must be positive."
+msgstr ""
+
+msgid "Rate"
+msgstr ""
+
+msgid "Uniform Distribution"
+msgstr ""
+
+msgid "Lower limit must be less than upper limit."
+msgstr ""
+
+msgid "Minimum"
+msgstr ""
+
+msgid "Maximum"
+msgstr ""
+
+msgid "Beta Distribution"
+msgstr ""
+
+msgid "Shapes not specified."
+msgstr ""
+
+msgid "Shapes must be positive."
+msgstr ""
+
+msgid "Shape"
+msgstr ""
+
+msgid "Cauchy Distribution"
+msgstr ""
+
+msgid "Scale must be positive."
+msgstr ""
+
+msgid "Location"
+msgstr ""
+
+msgid "Scale"
+msgstr ""
+
+msgid "Logistic Distribution"
+msgstr ""
+
+msgid "Lognormal Distribution"
+msgstr ""
+
+msgid "Mean (log scale)"
+msgstr ""
+
+msgid "Standard deviation (log scale)"
+msgstr ""
+
+msgid "Gamma Distribution"
+msgstr ""
+
+msgid "Shape not specified."
+msgstr ""
+
+msgid "Shape must be positive."
+msgstr ""
+
+msgid "Weibull Distribution"
+msgstr ""
+
+msgid "Exponential Quantiles"
+msgstr ""
+
+msgid "Exponential Probabilities"
+msgstr ""
+
+msgid "Uniform Quantiles"
+msgstr ""
+
+msgid "Uniform Probabilities"
+msgstr ""
+
+msgid "Beta Quantiles"
+msgstr ""
+
+msgid "Beta Probabilities"
+msgstr ""
+
+msgid "Cauchy Quantiles"
+msgstr ""
+
+msgid "Cauchy Probabilities"
+msgstr ""
+
+msgid "Logistic Quantiles"
+msgstr ""
+
+msgid "Logistic Probabilities"
+msgstr ""
+
+msgid "Lognormal Quantiles"
+msgstr ""
+
+msgid "Lognormal Probabilities"
+msgstr ""
+
+msgid "Gamma Quantiles"
+msgstr ""
+
+msgid "Gamma Probabilities"
+msgstr ""
+
+msgid "Weibull Quantiles"
+msgstr ""
+
+msgid "Weibull Probabilities"
+msgstr ""
+
+msgid "Gumbel Distribution"
+msgstr ""
+
+msgid "Shape (log shape)"
+msgstr ""
+
+msgid "Scale (log scale)"
+msgstr ""
+
+msgid "Gumbel Probabilities"
+msgstr ""
+
+msgid "Probability of success must be between 0 and 1."
+msgstr ""
+
+msgid "Poisson Quantiles"
+msgstr ""
+
+msgid "Geometric Quantiles"
+msgstr ""
+
+msgid "Geometric Probabilities"
+msgstr ""
+
+msgid "Hypergeometric Quantiles"
+msgstr ""
+
+msgid "The m parameter was not specified."
+msgstr ""
+
+msgid "The m parameter cannot be negative."
+msgstr ""
+
+msgid "The n parameter was not specified."
+msgstr ""
+
+msgid "The n parameter cannot be negative."
+msgstr ""
+
+msgid "The k parameter was not specified."
+msgstr ""
+
+msgid "The k parameter cannot be greater than m + n."
+msgstr ""
+
+msgid "The k parameter cannot be negative."
+msgstr ""
+
+msgid "m (number of white balls in the urn)"
+msgstr ""
+
+msgid "n (number of black balls in the urn)"
+msgstr ""
+
+msgid "k (number of balls drawn from the urn)"
+msgstr ""
+
+msgid "Hypergeometric Probabilities"
+msgstr ""
+
+msgid "Negative Binomial Quantiles"
+msgstr ""
+
+msgid "Target number of successes not specified."
+msgstr ""
+
+msgid "Target number of successes cannot be negative."
+msgstr ""
+
+msgid "Target number of successes"
+msgstr ""
+
+msgid "Negative Binomial Probabilities"
+msgstr ""
+
+msgid "Geometric Distribution"
+msgstr ""
+
+msgid "Hypergeometric Distribution"
+msgstr ""
+
+msgid "Negative Binomial Distribution"
+msgstr ""
+
+msgid "Sample from Normal Distribution"
+msgstr ""
+
+msgid "NormalSamples"
+msgstr ""
+
+msgid "Sample means"
+msgstr ""
+
+msgid "Sample sums"
+msgstr ""
+
+msgid "Sample standard deviations"
+msgstr ""
+
+msgid "Sample size must be positive."
+msgstr ""
+
+msgid "Number of samples must be positive."
+msgstr ""
+
+msgid "Number of samples (rows)"
+msgstr ""
+
+msgid "Number of observations (columns)"
+msgstr ""
+
+msgid "Add to Data Set:"
+msgstr ""
+
+msgid "Sample from t Distribution"
+msgstr ""
+
+msgid "tSamples"
+msgstr ""
+
+msgid "Sample from Chi-squared Distribution"
+msgstr ""
+
+msgid "ChisquareSamples"
+msgstr ""
+
+msgid "Sample from F Distribution"
+msgstr ""
+
+msgid "FSamples"
+msgstr ""
+
+msgid "Sample from Exponential Distribution"
+msgstr ""
+
+msgid "ExponentialSamples"
+msgstr ""
+
+msgid "Sample from Uniform Distribution"
+msgstr ""
+
+msgid "UniformSamples"
+msgstr ""
+
+msgid "Sample from Beta Distribution"
+msgstr ""
+
+msgid "BetaSamples"
+msgstr ""
+
+msgid "Sample from Cauchy Distribution"
+msgstr ""
+
+msgid "CauchySamples"
+msgstr ""
+
+msgid "Sample from Logistic Distribution"
+msgstr ""
+ 
+msgid "LogisticSamples"
+msgstr ""
+
+msgid "Sample from Log-Normal Distribution"
+msgstr ""
+
+msgid "LogNormalSamples"
+msgstr ""
+
+msgid "Sample from Gamma Distribution"
+msgstr ""
+
+msgid "GammaSamples"
+msgstr ""
+
+msgid "Sample from Weibull Distribution"
+msgstr ""
+
+msgid "WeibullSamples"
+msgstr ""
+
+msgid "Sample from Gumbel Distribution"
+msgstr ""
+
+msgid "GumbelSamples"
+msgstr ""
+
+msgid "Sample from Binomial Distribution"
+msgstr ""
+
+msgid "BinomialSamples"
+msgstr ""
+
+msgid "Poisson mean cannot be negative." 
+msgstr ""
+
+msgid "Sample from Poisson Distribution"
+msgstr ""
+
+msgid "PoissonSamples"
+msgstr ""
+
+msgid "Sample from Geometric Distribution"
+msgstr ""
+
+msgid "GeometricSamples"
+msgstr ""
+
+msgid "Sample from Hypergeometric Distribution"
+msgstr ""
+
+msgid "HypergeometricSamples"
+msgstr ""
+
+msgid "Sample from Negative Binomial Distribution"
+msgstr ""
+
+msgid "NegativeBinomialSamples"
+msgstr ""
+
+msgid "Sample from normal distribution..." 
+msgstr ""
+             
+msgid "Sample from t distribution..."    
+msgstr ""
+            
+msgid "Sample from chi-squared distribution..."  
+msgstr ""
+                                  
+msgid "Sample from F distribution..."        
+msgstr ""
+                                                      
+msgid "Exponential distribution"             
+msgstr ""
+         
+msgid "Exponential quantiles..."              
+msgstr ""
+        
+msgid "Exponential probabilities..."          
+msgstr ""
+        
+msgid "Plot exponential distribution..."           
+msgstr ""
+   
+msgid "Sample from exponential distribution..."       
+msgstr ""
+                                           
+msgid "Uniform distribution"                         
+msgstr ""
+
+msgid "Uniform quantiles..."                         
+msgstr ""
+
+msgid "Uniform probabilities..."                     
+msgstr ""
+
+msgid "Plot uniform distribution..."                 
+msgstr ""
+
+msgid "Sample from uniform distribution..."            
+msgstr ""
+                                               
+msgid "Beta distribution"            
+msgstr ""
+               
+msgid "Beta quantiles..."             
+msgstr ""
+                                                              
+msgid "Beta probabilities..."           
+msgstr ""
+                              
+msgid "Plot beta distribution..."                 
+msgstr ""
+                    
+msgid "Sample from beta distribution..."     
+msgstr ""
+                                                
+msgid "Cauchy distribution"               
+msgstr ""
+          
+msgid "Cauchy quantiles..."                 
+msgstr ""
+        
+msgid "Cauchy probabilities..."             
+msgstr ""
+        
+msgid "Plot Cauchy distribution..."            
+msgstr ""
+     
+msgid "Sample from Cauchy distribution..."      
+msgstr ""
+                                             
+msgid "Logistic distribution"             
+msgstr ""
+         
+msgid "Logistic quantiles..."                      
+msgstr ""
+
+msgid "Logistic probabilities..."                  
+msgstr ""
+
+msgid "Plot logistic distribution..."             
+msgstr ""
+ 
+msgid "Sample from logistic distribution..."         
+msgstr ""
+                                      
+msgid "Lognormal distribution"                     
+msgstr ""
+
+msgid "Lognormal quantiles..."                    
+msgstr ""
+ 
+msgid "Lognormal probabilities..."                 
+msgstr ""
+
+msgid "Plot lognormal distribution..."             
+msgstr ""
+
+msgid "Sample from lognormal distribution..."          
+msgstr ""
+                                    
+msgid "Gamma distribution"                
+msgstr ""
+         
+msgid "Gamma quantiles..."               
+msgstr ""
+          
+msgid "Gamma probabilities..."               
+msgstr ""
+      
+msgid "Plot gamma distribution..."              
+msgstr ""
+   
+msgid "Sample from gamma distribution..."          
+msgstr ""
+                                        
+msgid "Weibull distribution"                     
+msgstr ""
+  
+msgid "Weibull quantiles..."                       
+msgstr ""
+
+msgid "Weibull probabilities..."                   
+msgstr ""
+
+msgid "Plot Weibull distribution..."               
+msgstr ""
+
+msgid "Sample from Weibull distribution..."                
+msgstr ""
+                               
+msgid "Gumbel distribution"                        
+msgstr ""
+
+msgid "Gumbel quantiles..."                
+msgstr ""
+        
+msgid "Gumbel probabilities..."      
+msgstr ""
+              
+msgid "Plot Gumbel distribution..."      
+msgstr ""
+          
+msgid "Sample from Gumbel distribution..."  
+msgstr ""
+                             
+msgid "Sample from binomial distribution..." 
+msgstr ""
+                                                       
+msgid "Poisson quantiles..."         
+msgstr ""
+                 
+msgid "Poisson tail probabilities..."  
+msgstr ""
+               
+msgid "Sample from Poisson distribution..."   
+msgstr ""
+                                                      
+msgid "Geometric distribution"   
+msgstr ""
+                     
+msgid "Geometric quantiles..."  
+msgstr ""
+                      
+msgid "Geometric tail probabilities..."   
+msgstr ""
+            
+msgid "Geometric probabilities..."  
+msgstr ""
+                  
+msgid "Plot geometric distribution..."  
+msgstr ""
+              
+msgid "Sample from geometric distribution..."   
+msgstr ""
+                                                  
+msgid "Hypergeometric distribution" 
+msgstr ""
+                  
+msgid "Hypergeometric quantiles..."  
+msgstr ""
+                 
+msgid "Hypergeometric tail probabilities..."   
+msgstr ""
+       
+msgid "Hypergeometric probabilities..."     
+msgstr ""
+          
+msgid "Plot hypergeometric distribution..."   
+msgstr ""
+        
+msgid "Sample from hypergeometric distribution..."   
+msgstr ""
+                                            
+msgid "Negative binomial distribution"      
+msgstr ""
+         
+msgid "Negative binomial quantiles..."           
+msgstr ""
+    
+msgid "Negative binomial tail probabilities..."   
+msgstr ""
+   
+msgid "Negative binomial probabilities..."    
+msgstr ""
+       
+msgid "Plot negative binomial distribution..."      
+msgstr ""
+ 
+msgid "Sample from negative binomial distribution..."
+msgstr ""
+
+msgid "Continuous distributions"             
+msgstr ""
+                                     
+msgid "Discrete distributions"
+msgstr ""
+
+    # Xyplot dialog
+
+msgid "XY Conditioning Plot"
+msgstr ""
+
+msgid "Response variables (pick one or more)"     
+msgstr ""
+                              
+msgid "Groups (pick zero or more)"
+msgstr ""
+
+msgid "Automatically draw key"
+msgstr ""
+
+msgid "Different panels for different responses"
+msgstr ""
+
+msgid "Identical"
+msgstr ""
+
+msgid "Free"
+msgstr ""
+
+msgid "Same range" 
+msgstr ""
+
+msgid "X-Axis Scales in Different Panels"
+msgstr ""
+
+msgid "Y-Axis Scales in Different Panels"
+msgstr ""
+
+msgid "At least one response variable must be selected."
+msgstr ""
+
+msgid "At least one explanatory variable must be selected."
+msgstr ""
+
+msgid "XY conditioning plot..."
+msgstr ""
+
+    # contingency tables dialog
+
+msgid "Percentages of total"
+msgstr ""
+
+msgid "Components of chi-square statistic"
+msgstr ""
+
+    # 3D scatterplots dialog
+
+msgid "Show squared residuals"
+msgstr ""
+
+msgid "Show axis scales"
+msgstr ""
+
+msgid "Plot 50% concentration ellipsoid"
+msgstr ""
+
+    # scatterplot matrices dialog
+
+msgid "One-dimensional scatterplots"
+msgstr ""
+
+    # count NAs (menu item)
+
+msgid "Count missing observations"
+msgstr ""
+
+    # Correlation test dialog
+
+msgid "Correlation Test"
+msgstr ""
+
+msgid "Variables (pick two)"
+msgstr ""
+
+msgid "Kendall's tau"
+msgstr ""
+
+msgid "Type of Correlation"
+msgstr ""
+
+msgid "Correlation < 0"
+msgstr ""
+
+msgid "Correlation > 0"
+msgstr ""
+
+msgid "More than 2 variables selected."
+msgstr ""
+
+msgid "Correlation test..."
+msgstr ""
+
+    # Recode dialog
+
+msgid "Recode Variables"
+msgstr ""
+
+msgid "Variables to recode (pick one or more)"
+msgstr ""
+
+msgid "New variable name or prefix for multiple recodes:"
+msgstr ""
+
+msgid "Make (each) new variable a factor"
+msgstr ""
+
+msgid "Recode variables..." 
+msgstr ""
+
+    # Frequency distributions dialog
+
+msgid "Frequency Distributions"
+msgstr ""
+
+msgid "Chi-square goodness-of-fit test (for one variable only)"
+msgstr ""
+
+msgid "Goodness-of-fit test not available when more than one variable is selected."
+msgstr ""
+
+msgid "Frequency distributions..."
+msgstr ""
+
+    # Numeric to factor dialog
+    
+msgid "Convert Numeric Variables to Factors"
+msgstr ""
+
+msgid "<same as variables>"
+msgstr ""
+
+msgid "Level Names for"
+msgstr ""
+
+msgid "Factors"
+msgstr ""
+
+msgid "New variable name or prefix for multiple variables:"
+msgstr ""
+
+msgid "Convert numeric variables to factors..."
+msgstr ""
+
+    # Stack dialog
+    
+msgid "Stack Variables"
+msgstr ""
+
+msgid "factor"
+msgstr ""
+
+msgid "StackedData"
+msgstr ""
+
+msgid "You must select at least two variables."
+msgstr ""
+
+msgid "Name for stacked data set:"
+msgstr ""
+
+msgid "Name for variable:"
+msgstr ""
+
+msgid "Name for factor:"    
+msgstr ""
+    
+msgid "Stack variables in active data set..."
+msgstr ""
+
+    # miscelaneous
+
+msgid "Identify Points"
+msgstr ""
+
+msgid "Use left mouse button to identify points,\nright button to exit."
+msgstr ""
+
+msgid "Drag right mouse button to identify points,\nclick right button to exit."
+msgstr ""
+
+msgid "Read Data From Text File or Clipboard"
+msgstr ""
+
+msgid "Read data from clipboard:"
+msgstr ""
+
+msgid "from text file or clipboard..."
+msgstr ""
+
+msgid "Add observation numbers to data set"
+msgstr ""
+
+msgid "Refresh active data set"
+msgstr ""
+
+msgid "No statistics selected."
+msgstr ""
+
+msgid "Right-hand side"
+msgstr ""

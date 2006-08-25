@@ -155,7 +155,7 @@ radioButtons(window=top, name, buttons, values=NULL, initialValue=..values[1],
     labels, title)  # macro
 RcmdrTclSet(name, value)
 RcmdrTkmessageBox(message, icon=c("info", "question", "warning",
-    "error"), type=c("okcancel", "yesno", "ok"), default)
+    "error"), type=c("okcancel", "yesno", "ok"), default, title="")
 subOKCancelHelp(window=subdialog, helpSubject=NULL)  # macro
 subsetBox(window=top, model=FALSE)  # macro
 trim.blanks(text)
