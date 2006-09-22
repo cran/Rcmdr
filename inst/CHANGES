@@ -450,37 +450,59 @@ Version 1.1-8
    
 Version 1.2-0
 
-   o  Added ability to import from Excel, Access or dBase files (contributed by Matthieu Lesnoff and Renaud Lancelot).
+   o  Added ability to import from Excel, Access or dBase files (contributed by Samir Messad, Renaud Lancelot and Matthieu Lesnoff).
    
-   o  Added many probability distributions, courtesy of Miroslav Ristic and G. Jay Kerns, Andy Chang, and  Theophilius Boye.
+   o  Added many probability distributions, courtesy of Miroslav Ristic and G. Jay Kerns, Andy Chang, and Theophilius Boye.
    
    o  Added dialogs to sample from probability distributions; divided distributions menus into Continuous and Discrete.
    
    o  Added totPercents function. Added total percentages and components of chi-square to two-way tables (suggested by Richard Heiberger).
    
-   o XY conditioning plots dialog added, courtesy of Richard Heiberger.
+   o  XY conditioning plots dialog added, courtesy of Richard Heiberger.
    
-   o Added "Statistics -> Summaries -> Count missing observations".
+   o  Added "Statistics -> Summaries -> Count missing observations".
    
-   o Added "Statistics -> Summaries -> Correlation test", contributed by Stefano Calza.
+   o  Added "Statistics -> Summaries -> Correlation test", contributed by Stefano Calza.
    
-   o Added "Data -> Active data set -> Stack variables in active data set", (suggested by Richard Heiberger).
+   o  Added "Data -> Active data set -> Stack variables in active data set" (suggested by Richard Heiberger).
    
-   o The numerical summaries, table of statistics, frequency distributions, numeric to factor, and recode dialogs will now process multiple variables in parallel (suggested by Bo Sommerlund).
+   o  The numerical summaries, table of statistics, frequency distributions, numeric to factor, and recode dialogs will now process multiple variables in parallel (suggested by Bo Sommerlund).
    
-   o Added function numSummaries for neater output from "Statistics -> Summaries -> Numerical summaries" (motivated by comments from Bo Sommerlund).
+   o  Added function numSummaries for neater output from "Statistics -> Summaries -> Numerical summaries" (motivated by comments from Bo Sommerlund).
    
-   o Small interface improvements (e.g., pressing letter key in a list box moves to next entry starting with that letter).
+   o  Small interface improvements (e.g., pressing letter key in a list box moves to next entry starting with that letter).
    
-   o Cleaned up links to help files in standard packages.
+   o  Cleaned up links to help files in standard packages.
    
-   o Enhancements to 3D scatterplots.
+   o  Enhancements to 3D scatterplots.
    
-   o Added ability to read data from the clipboard (suggested by Graham Smith).
+   o  Added ability to read data from the clipboard (suggested by Graham Smith).
    
-   o Other small changes.
+   o  New Rcmdr options (etc and etcMenus) determine where the Commander will look for its configuration and menu files (motivated by a suggestion by Richard Heiberger).
    
-   o Updated R-Rcmdr.pot file for translaters.
+   o  Other small changes.
+   
+   o  Updated R-Rcmdr.pot file for translators.
+   
+   o  Updated Catalan (Manel Salamero) and Japanese (Takaharu Araki) translations
+   
+Version 1.2-1
+
+   o  Updated R Commander manual.
+   
+   o  Updated Romanian (Adrian Dusa) translation.
+   
+   o  "Data -> Import data -> from Excel, Access, or dBase data set" is inactivated on non-Windows systems (since the necessary ODBC drivers are not available -- pointed out by Brian Ripley).
+   
+   o  Fixed a bug (reported by Tom La Bone) in the handling of hist() when a command using this function is typed into the Script window.
+   
+   o  Suppressing X11 warnings is no longer necessary under R 2.4.0; the default value of the option suppress.X11.warnings is changed accordingly (suggested by Brian Ripley).
+   
+   o  File connections used rather than text connections for processing output and messages (suggested by Brian Ripley).
+   
+   o  Added a field to the Rcmdr-menus.txt file to determine whether a menu item or menu is installed. This is the last (7th) field in each line of the file, and contains a quoted command that suppresses installation if it evaluates to FALSE; an empty (i.e., "") installation field causes the menu item or menu to be installed unconditionally.
+   
+   o  rgl added once again to "suggested" packages in the DESCRIPTION file.
    
    
    

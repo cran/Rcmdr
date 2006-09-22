@@ -12,8 +12,8 @@ user interface) for R, based on the tcltk package.
 \details{
 \tabular{ll}{
 Package: \tab Rcmdr\cr
-Version: \tab 1.2-0\cr
-Date: \tab 2006/8/25\cr
+Version: \tab 1.2-1\cr
+Date: \tab 2006/9/22\cr
 Depends: \tab R (>= 2.1.0), tcltk\cr
 Suggests: \tab abind, car (>= 1.1-1), effects (>= 1.0-7), foreign, grid,
 lattice, lmtest, MASS, mgcv, multcomp, nlme, nnet, relimp, RODBC\cr
@@ -53,6 +53,20 @@ scatter3d               Three-Dimensional Scatterplots and Point
 stem.leaf               Stem-and-Leaf Display
 }
 }
+
+\section{Translations}{
+The R Commander comes with translations from English into several other languages. I am grateful to the following individuals for preparing these translations: 
+Catalan, Manel Salamero;
+Spanish, Carlos Enrique Carleos Artime;
+French, Philippe Grosjean;
+Italian, Stefano Calza;
+Japanese, Takaharu Araki;
+Brazilian Portuguese, Adriano Azevedo Filho;
+Romanian, Adrian Dusa;
+Russian, Alexey Shipunov;
+Slovenian, Jaro Lajovic.
+}
+
 \author{
 John Fox <jfox@mcmaster.ca>, with contributions from Michael Ash, Theophilius Boye, Stefano Calza, Andy Chang, Philippe Grosjean, Richard Heiberger, G. Jay Kerns, Renaud Lancelot, Matthieu Lesnoff, Martin Maechler, Dan Putler, Miroslav Ristic, and Peter Wolf.
 

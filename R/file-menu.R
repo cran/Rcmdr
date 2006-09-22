@@ -1,4 +1,4 @@
-# last modified 2 February 2006 by J. Fox
+# last modified 22 September 2006 by J. Fox
 
 # File menu dialogs
 
@@ -112,10 +112,9 @@ closeCommander <- function(){
          }
     if (.Platform$OS.type != "windows") options(getRcmdr("oldPager"))
     if (getRcmdr("suppress.X11.warnings")) {
-         sink(type="message")
-         close(getRcmdr("messages.connection"))
-         remove(".messages", envir=.GlobalEnv)
-         }
+        sink(type = "message")
+        close(getRcmdr("messages.connection"))
+    }
     options(getRcmdr("saveOptions"))
     tkdestroy(CommanderWindow())
     putRcmdr("commanderWindow", NULL)
@@ -130,6 +129,7 @@ closeCommander <- function(){
 closeCommanderAndR <- function(){
     response <- closeCommander()
     if (response == "cancel") return()
+    cat("\n")
     quit(save="no")
     }
 

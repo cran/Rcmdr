@@ -1,11 +1,16 @@
-msgid "" 
+# Romanian translations for the Rcmdr package
+# Traducerea în limba română a pachetului Rcmdr
+# Copyright (C) 2005 John Fox
+# This file is distributed under the same license as the Rcmdr package
+# Duşa Adrian <dusa.adrian@gmail.com>, 2006
+msgid ""
 msgstr ""
-"Project-Id-Version: R 2.1.0\n"
+"Project-Id-Version: Rcmdr 1.2-0\n"
 "Report-Msgid-Bugs-To: bugs@r-project.org\n"
-"POT-Creation-Date: 2005-09-04 15:35\n"
-"PO-Revision-Date: 2005-09-12 10:31\n"
+"POT-Creation-Date: 2006-08-20 10:35\n"
+"PO-Revision-Date: 2006-08-30 12:30+0200\n"
 "Last-Translator: Adrian Dusa <dusa.adrian@gmail.com>\n"
-"Language-Team: Romanian\n"
+"Language-Team: Romanian <dusa.adrian@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -417,7 +422,7 @@ msgid "{\"STATA datasets\" {\".dta\" \".DTA\"}} {\"All Files\" {\"*\"}}"
 msgstr "{\"Fişiere STATA\" {\".dta\" \".DTA\"}} {\"Toate fişierele\" {\"*\"}}"
 
 msgid "Convert dates to R format"
-msgstr "Convertire date (ZZLLAAAA) în format R"
+msgstr "Convertire date (ZZ.LL.AAAA) în format R"
 
 msgid "Multiple missing types (>=Stata 8)"
 msgstr "Tipuri de date lipsă multiple (>=Stata 8)"
@@ -492,7 +497,7 @@ msgid "Natural breaks\n(from K-means clustering)"
 msgstr "Împărţire naturală\n(cu clasificare K-means)"
 
 msgid "Binning Method"
-msgstr "Metoda de împartire"
+msgstr "Metoda de împărţire"
 
 msgid "Bin Names"
 msgstr "Nume clase"
@@ -804,7 +809,7 @@ msgid "{\"Script Files\" {\".R\"}} {\"All Files\" {\"*\"}}"
 msgstr "{\"Fişiere script\" {\".R\"}} {\"Toate fişierele\" {\"*\"}}"
 
 msgid "Save current log file?"
-msgstr "Salvare fişier de log?"
+msgstr "Salvare fişier de script?"
 
 msgid "Script saved to"
 msgstr "Script salvat în"
@@ -840,10 +845,10 @@ msgid "Log-font size (points)"
 msgstr "Mărime caractere (puncte)"
 
 msgid "Log width (characters)"
-msgstr "Lăţime ferestră de log (caractere)"
+msgstr "Lăţime ferestră de script (caractere)"
 
 msgid "Log height (lines)"
-msgstr "Înălţime fereastă de log (linii)"
+msgstr "Înălţime fereastă de script (linii)"
 
 msgid "Send output to R Console"
 msgstr "Trimitere output către consola R"
@@ -1153,6 +1158,9 @@ msgstr "Variabile explicative (două)"
 
 msgid "Response variable (pick one)"
 msgstr "Variabila răspuns\n(dependentă)"
+
+msgid "You must select a response variable."
+msgstr "Trebuie selectată o variailă răspuns."
 
 msgid "You must select 2 explanatory variables."
 msgstr "Trebuie selectate două variabile explicative."
@@ -1591,9 +1599,6 @@ msgstr "ANOVA uni-factorială"
 
 msgid "You must select a groups factor."
 msgstr "Trebuie selectat un factor de grupare"
-
-msgid "You must select a response variable."
-msgstr "Trebuie selectată o variabilă răspuns"
 
 msgid "Factor has fewer than 3 levels; pairwise comparisons omitted."
 msgstr "Factorul are mai puţin de 3 grupuri; comparaţiile pe perechi vor fi omise"
@@ -2334,7 +2339,7 @@ msgid "Models"
 msgstr "Modele"
 
 msgid "Normal distribution"
-msgstr "Distribuţie normală"
+msgstr "Distribuţia normală"
 
 msgid "Normal quantiles..."
 msgstr "Quantile normale..."
@@ -2432,7 +2437,811 @@ msgstr "gl ="
 ## messages added to Rcmdr version 1.1-1
 
 msgid "There is no current RGL graphics device."
-msgstr "Nu există nici un periferic RGL activ"
+msgstr "Nu există nici un periferic RGL activ."
 
 msgid "3D graph"
 msgstr "Grafic 3D"
+
+## messages added to Rcmdr version 1.1-6
+
+msgid " contains non-standard variable names:\n"
+msgstr " contine nume de variabile non-standard:\n"
+
+msgid "\nThese have been changed to:\n"
+msgstr "\nAcestea au fost schimbate in:\n"
+
+## messages added to Rcmdr version 1.2-0
+
+    # importRODBCtable dialog
+
+msgid "This function requires the RODBC package.\n"
+msgstr "Aceasta functie necesita pachetul RODBC.\n"
+
+msgid "Import from Excel, Access or dBase data set"
+msgstr "Import din Excel, Access sau dBase"
+
+msgid "{\"MS Excel file\" {*.xls \".XLS\"}} {\"MS Access database\" {*.mdb \".MDB\"}} {\"dBase-like file\" {*.dbf \".DBF\"}} {\"All Files\" {\"*\"}}"
+msgstr "{\"Fişier MS Excel\" {*.xls \".XLS\"}} {\"Bază de date MS Access\" {*.mdb \".MDB\"}} {\"Fişier tip dBase\" {*.dbf \".DBF\"}} {\"Toate fişierele\" {\"*.*\"}}"
+
+msgid "Select one table"
+msgstr "Selectare tabel"
+
+msgid "No table selected"
+msgstr "Nu a fost selectat nici un tabel"
+
+msgid "from Excel, Access or dBase data set ..."
+msgstr "din Excel, Access sau dBase..."
+
+    # probability distributions
+
+msgid "Standard deviation must be positive."
+msgstr "Deviaţia standard trebuie să fie pozitivă."
+
+msgid "Degrees of freedom must be positive."
+msgstr "Gradele de libertate trebuie să fie pozitive."
+
+msgid "Numerator degrees of freedom must be positive."
+msgstr "Gradele de libertate de la numărător trebuie să fie pozitive."
+
+msgid "Denominator degrees of freedom must be positive."
+msgstr "Gradele de libertate de la numitor trebuie să fie pozitive."
+
+msgid "Exponential Distribution"
+msgstr "Distribuţie exponenţială"
+
+msgid "Rate must be positive."
+msgstr "Rata trebuie să fie pozitivă."
+
+msgid "Rate"
+msgstr "Rată"
+
+msgid "Uniform Distribution"
+msgstr "Distribuţia uniformă"
+
+msgid "Lower limit must be less than upper limit."
+msgstr "Limita de jos trebuie să fie mai mică decât limita de sus."
+
+msgid "Minimum"
+msgstr "Minimum"
+
+msgid "Maximum"
+msgstr "Maximum"
+
+msgid "Beta Distribution"
+msgstr "Distribuţia beta"
+
+msgid "Shapes not specified."
+msgstr "Formele nu au fost specificate."
+
+msgid "Shapes must be positive."
+msgstr "Formele trebuie să fie pozitive."
+
+msgid "Shape"
+msgstr "Formă"
+
+msgid "Cauchy Distribution"
+msgstr "Distribuţia Cauchy"
+
+msgid "Scale must be positive."
+msgstr "Scala trebuie să fie pozitivă"
+
+msgid "Location"
+msgstr "Locaţie"
+
+msgid "Scale"
+msgstr "Scală"
+
+msgid "Logistic Distribution"
+msgstr "Distribuţia logistică"
+
+msgid "Lognormal Distribution"
+msgstr "Distribuţia lognormală"
+
+msgid "Mean (log scale)"
+msgstr "Medie (scală logaritmică)"
+
+msgid "Standard deviation (log scale)"
+msgstr "Deviaţie standard (scală logaritmică)"
+
+msgid "Gamma Distribution"
+msgstr "Distribuţia gama"
+
+msgid "Shape not specified."
+msgstr "Forma nu a fost specificată."
+
+msgid "Shape must be positive."
+msgstr "Forma trebuie să fie pozitivă"
+
+msgid "Weibull Distribution"
+msgstr "Distribuţia Weibull"
+
+msgid "Exponential Quantiles"
+msgstr "Quantile exponenţiale"
+
+msgid "Exponential Probabilities"
+msgstr "Probabilităţi exponenţiale"
+
+msgid "Uniform Quantiles"
+msgstr "Quantile uniforme"
+
+msgid "Uniform Probabilities"
+msgstr "Probabilităţi uniforme"
+
+msgid "Beta Quantiles"
+msgstr "Quantile beta"
+
+msgid "Beta Probabilities"
+msgstr "Probabilităţi beta"
+
+msgid "Cauchy Quantiles"
+msgstr "Quantile Cauchy"
+
+msgid "Cauchy Probabilities"
+msgstr "Probabilităţi Cauchy"
+
+msgid "Logistic Quantiles"
+msgstr "Quantile logistice"
+
+msgid "Logistic Probabilities"
+msgstr "Probabilităţi logistice"
+
+msgid "Lognormal Quantiles"
+msgstr "Quantile lognormale"
+
+msgid "Lognormal Probabilities"
+msgstr "Probabilităţi lognormale"
+
+msgid "Gamma Quantiles"
+msgstr "Quantile gama"
+
+msgid "Gamma Probabilities"
+msgstr "Probabilităţi gama"
+
+msgid "Weibull Quantiles"
+msgstr "Quantile Weibull"
+
+msgid "Weibull Probabilities"
+msgstr "Probabilităţi Weibull"
+
+msgid "Gumbel Distribution"
+msgstr "Distribuţia Gumbel"
+
+msgid "Shape (log shape)"
+msgstr "Formă (formă logaritmică)"
+
+msgid "Scale (log scale)"
+msgstr "Scală (scală logaritmică)"
+
+msgid "Gumbel Probabilities"
+msgstr "Probabilităţi Gumbel"
+
+msgid "Probability of success must be between 0 and 1."
+msgstr "Probabilitatea de succes trebuie să fie între 0 şi 1"
+
+msgid "Poisson Quantiles"
+msgstr "Quantile Poisson"
+
+msgid "Geometric Quantiles"
+msgstr "Quantile geometrice"
+
+msgid "Geometric Probabilities"
+msgstr "Probabilităţi geometrice"
+
+msgid "Hypergeometric Quantiles"
+msgstr "Quantile hipergeometrice"
+
+msgid "The m parameter was not specified."
+msgstr "Parametrul m nu a fost specificat."
+
+msgid "The m parameter cannot be negative."
+msgstr "Parametrul m nu poate fi negativ."
+
+msgid "The n parameter was not specified."
+msgstr "Parametrul n nu a fost specificat."
+
+msgid "The n parameter cannot be negative."
+msgstr "Parametrul n nu poate fi negativ."
+
+msgid "The k parameter was not specified."
+msgstr "Parametrul k nu a fost specificat."
+
+msgid "The k parameter cannot be greater than m + n."
+msgstr "Parametrul k nu poate fi mai mare decât m + n"
+
+msgid "The k parameter cannot be negative."
+msgstr "Parametrul k nu poate fi negativ."
+
+msgid "m (number of white balls in the urn)"
+msgstr "m (numărul de bile albe din urnă)"
+
+msgid "n (number of black balls in the urn)"
+msgstr "n (numărul de bile negre din urnă)"
+
+msgid "k (number of balls drawn from the urn)"
+msgstr "k (numărul de bile extrase din urnă)"
+
+msgid "Hypergeometric Probabilities"
+msgstr "Probabilităţi hipergeometrice"
+
+msgid "Negative Binomial Quantiles"
+msgstr "Quantile binomiale negative"
+
+msgid "Target number of successes not specified."
+msgstr "Numărul de succese dorit nu a fost specificat."
+
+msgid "Target number of successes cannot be negative."
+msgstr "Numărul de succese dorit nu poate fi negativ."
+
+msgid "Target number of successes"
+msgstr "Numărul de succese dorit"
+
+msgid "Negative Binomial Probabilities"
+msgstr "Probabilităţi binomiale negative"
+
+msgid "Geometric Distribution"
+msgstr "Distribuţia geometrică"
+
+msgid "Hypergeometric Distribution"
+msgstr "Distribuţia hipergeometrică"
+
+msgid "Negative Binomial Distribution"
+msgstr "Distribuţia binomială negativă"
+
+msgid "Sample from Normal Distribution"
+msgstr "Eşantionare din distribuţia normală"
+
+msgid "NormalSamples"
+msgstr "Eşantioane normale"
+
+msgid "Sample means"
+msgstr "Medii eşantioane"
+
+msgid "Sample sums"
+msgstr "Sume eşantioane"
+
+msgid "Sample standard deviations"
+msgstr "Deviaţii standard eşantioane"
+
+msgid "Sample size must be positive."
+msgstr "Mărimea eşantionului trebuie să fie pozitivă."
+
+msgid "Number of samples must be positive."
+msgstr "Numărul de eşantioane trebuie să fie pozitiv."
+
+msgid "Number of samples (rows)"
+msgstr "Număr de eşantioane (rânduri)"
+
+msgid "Number of observations (columns)"
+msgstr "Număr de observaţii (coloane)"
+
+msgid "Add to Data Set:"
+msgstr "Adăugare la set de date:"
+
+msgid "Sample from t Distribution"
+msgstr "Eşantionare din distribuţia t"
+
+msgid "tSamples"
+msgstr "EsantioaneT"
+
+msgid "Sample from Chi-squared Distribution"
+msgstr "Eşantionare din distribuţia chi-pătrat"
+
+msgid "ChisquareSamples"
+msgstr "EsantioaneChi2"
+
+msgid "Sample from F Distribution"
+msgstr "Eşantionare din distribuţia F"
+
+msgid "FSamples"
+msgstr "EsantioaneF"
+
+msgid "Sample from Exponential Distribution"
+msgstr "Eşantionare din distribuţia exponenţială"
+
+msgid "ExponentialSamples"
+msgstr "EsantioaneExponentiale"
+
+msgid "Sample from Uniform Distribution"
+msgstr "Eşantionare din distribuţia uniformă"
+
+msgid "UniformSamples"
+msgstr "EsantioaneUniforme"
+
+msgid "Sample from Beta Distribution"
+msgstr "Eşantionare din distribuţia beta"
+
+msgid "BetaSamples"
+msgstr "EsantioaneBeta"
+
+msgid "Sample from Cauchy Distribution"
+msgstr "Eşantionare din distribuţia Cauchy"
+
+msgid "CauchySamples"
+msgstr "EsantioaneCauchy"
+
+msgid "Sample from Logistic Distribution"
+msgstr "Eşantionare din distribuţia logistică"
+
+msgid "LogisticSamples"
+msgstr "EsantioaneLogistice"
+
+msgid "Sample from Log-Normal Distribution"
+msgstr "Eşantionare din distribuţia log-normală"
+
+msgid "LogNormalSamples"
+msgstr "EsantioaneLogNormale"
+
+msgid "Sample from Gamma Distribution"
+msgstr "Eşantionare din distribuţia gama"
+
+msgid "GammaSamples"
+msgstr "EsantioaneGama"
+
+msgid "Sample from Weibull Distribution"
+msgstr "Eşantionare din distribuţia Weibull"
+
+msgid "WeibullSamples"
+msgstr "EsantioaneWeibull"
+
+msgid "Sample from Gumbel Distribution"
+msgstr "Eşantionare din distribuţia Gumbel"
+
+msgid "GumbelSamples"
+msgstr "EsantioaneGumbel"
+
+msgid "Sample from Binomial Distribution"
+msgstr "Eşantionare din distribuţia binomială"
+
+msgid "BinomialSamples"
+msgstr "EsantioaneBinomiale"
+
+msgid "Poisson mean cannot be negative."
+msgstr "Media Poisson nu poate fi negativă."
+
+msgid "Sample from Poisson Distribution"
+msgstr "Eşantionare din distribuţia Poisson"
+
+msgid "PoissonSamples"
+msgstr "EsantioanePoisson"
+
+msgid "Sample from Geometric Distribution"
+msgstr "Eşantionare din distribuţia geometrică"
+
+msgid "GeometricSamples"
+msgstr "EsantioaneGeometrice"
+
+msgid "Sample from Hypergeometric Distribution"
+msgstr "Eşantionare din distribuţia hipergeometrică"
+
+msgid "HypergeometricSamples"
+msgstr "EsantioaneHipergeometrice"
+
+msgid "Sample from Negative Binomial Distribution"
+msgstr "Eşantionare din distribuţia binomială negativă"
+
+msgid "NegativeBinomialSamples"
+msgstr "EsantioaneBinomialeNegative"
+
+msgid "Sample from normal distribution..."
+msgstr "Eşantionare din distribuţia normală..."
+
+msgid "Sample from t distribution..."
+msgstr "Eşantionare din distribuţia t..."
+
+msgid "Sample from chi-squared distribution..."
+msgstr "Eşantionare din distribuţia chi-pătrat..."
+
+msgid "Sample from F distribution..."
+msgstr "Eşantionare din distribuţia F..."
+
+msgid "Exponential distribution"
+msgstr "Distribuţie exponenţială"
+
+msgid "Exponential quantiles..."
+msgstr "Quantile exponenţiale..."
+
+msgid "Exponential probabilities..."
+msgstr "Probabilităţi exponenţiale..."
+
+msgid "Plot exponential distribution..."
+msgstr "Grafic distribuţie exponenţială..."
+
+msgid "Sample from exponential distribution..."
+msgstr "Eşantionare din distribuţia exponenţială..."
+
+msgid "Uniform distribution"
+msgstr "Distribuţia uniformă"
+
+msgid "Uniform quantiles..."
+msgstr "Quantile uniforme..."
+
+msgid "Uniform probabilities..."
+msgstr "Probabilităţi uniforme..."
+
+msgid "Plot uniform distribution..."
+msgstr "Grafic distribuţie uniformă..."
+
+msgid "Sample from uniform distribution..."
+msgstr "Eşantionare din distribuţia uniformă..."
+
+msgid "Beta distribution"
+msgstr "Distribuţia beta"
+
+msgid "Beta quantiles..."
+msgstr "Quantile beta..."
+
+msgid "Beta probabilities..."
+msgstr "Probabilităţi beta..."
+
+msgid "Plot beta distribution..."
+msgstr "Grafic distribuţie beta..."
+
+msgid "Sample from beta distribution..."
+msgstr "Eşantionare din distribuţia beta..."
+
+msgid "Cauchy distribution"
+msgstr "Distribuţia Cauchy"
+
+msgid "Cauchy quantiles..."
+msgstr "Quantile Cauchy..."
+
+msgid "Cauchy probabilities..."
+msgstr "Probabilităţi Cauchy..."
+
+msgid "Plot Cauchy distribution..."
+msgstr "Grafic distribuţie Cauchy..."
+
+msgid "Sample from Cauchy distribution..."
+msgstr "Eşantionare din distribuţia Cauchy"
+
+msgid "Logistic distribution"
+msgstr "Distribuţia logistică"
+
+msgid "Logistic quantiles..."
+msgstr "Quantile logistice..."
+
+msgid "Logistic probabilities..."
+msgstr "Probabilităţi logistice..."
+
+msgid "Plot logistic distribution..."
+msgstr "Grafic distribuţie logistică..."
+
+msgid "Sample from logistic distribution..."
+msgstr "Eşantionare din distribuţia logistică..."
+
+msgid "Lognormal distribution"
+msgstr "Distribuţia lognormală"
+
+msgid "Lognormal quantiles..."
+msgstr "Quantile lognormale..."
+
+msgid "Lognormal probabilities..."
+msgstr "Probabilităţi lognormale..."
+
+msgid "Plot lognormal distribution..."
+msgstr "Grafic distribuţie lognormală..."
+
+msgid "Sample from lognormal distribution..."
+msgstr "Eşantionare din distribuţia lognormală..."
+
+msgid "Gamma distribution"
+msgstr "Distribuţia gama"
+
+msgid "Gamma quantiles..."
+msgstr "Quantile gama..."
+
+msgid "Gamma probabilities..."
+msgstr "Probabilităţi gama..."
+
+msgid "Plot gamma distribution..."
+msgstr "Grafic distribuţie gama..."
+
+msgid "Sample from gamma distribution..."
+msgstr "Eşantionare din distribuţia gama..."
+
+msgid "Weibull distribution"
+msgstr "Distribuţia Weibull"
+
+msgid "Weibull quantiles..."
+msgstr "Quantile Weibull..."
+
+msgid "Weibull probabilities..."
+msgstr "Probabilităţi Weibull..."
+
+msgid "Plot Weibull distribution..."
+msgstr "Grafic distribuţie Weibull..."
+
+msgid "Sample from Weibull distribution..."
+msgstr "Eşantionare din distribuţia Weibull..."
+
+msgid "Gumbel distribution"
+msgstr "Distribuţia Gumbel"
+
+msgid "Gumbel quantiles..."
+msgstr "Quantile Gumbel..."
+
+msgid "Gumbel probabilities..."
+msgstr "Probabilităţi Gumbel..."
+
+msgid "Plot Gumbel distribution..."
+msgstr "Grafic distribuţie Gumbel..."
+
+msgid "Sample from Gumbel distribution..."
+msgstr "Eşantionare din distribuţia Gumbel..."
+
+msgid "Sample from binomial distribution..."
+msgstr "Eşantionare din distribuţia binomială..."
+
+msgid "Poisson quantiles..."
+msgstr "Quantile Poisson..."
+
+msgid "Poisson tail probabilities..."
+msgstr "Probabilităţi Poisson cumulate..."
+
+msgid "Sample from Poisson distribution..."
+msgstr "Eşantionare din distribuţia Poisson..."
+
+msgid "Geometric distribution"
+msgstr "Distribuţia geometrică"
+
+msgid "Geometric quantiles..."
+msgstr "Quantile geometrice..."
+
+msgid "Geometric tail probabilities..."
+msgstr "Probabilităţi geometrică cumulate..."
+
+msgid "Geometric probabilities..."
+msgstr "Probabilităţi geometrice..."
+
+msgid "Plot geometric distribution..."
+msgstr "Grafic distribuţie geometrică..."
+
+msgid "Sample from geometric distribution..."
+msgstr "Eşantionare din distribuţia geometrică..."
+
+msgid "Hypergeometric distribution"
+msgstr "Distribuţia hipergeometrică"
+
+msgid "Hypergeometric quantiles..."
+msgstr "Quantile hipergeometrice..."
+
+msgid "Hypergeometric tail probabilities..."
+msgstr "Probabilităţi hipergeometrice cumulate..."
+
+msgid "Hypergeometric probabilities..."
+msgstr "Probabilităţi hipergeometrice..."
+
+msgid "Plot hypergeometric distribution..."
+msgstr "Grafic distribuţie hipergeometrică..."
+
+msgid "Sample from hypergeometric distribution..."
+msgstr "Eşantionare din distribuţia hipergeometrică..."
+
+msgid "Negative binomial distribution"
+msgstr "Distribuţia binomială negativă"
+
+msgid "Negative binomial quantiles..."
+msgstr "Quantile binomiale negative..."
+
+msgid "Negative binomial tail probabilities..."
+msgstr "Probabilităţi binomiale negative cumulate..."
+
+msgid "Negative binomial probabilities..."
+msgstr "Probabilităţi binomiale negative..."
+
+msgid "Plot negative binomial distribution..."
+msgstr "Grafic distribuţie binomială negativă..."
+
+msgid "Sample from negative binomial distribution..."
+msgstr "Eşantionare din distribuţia binomială..."
+
+msgid "Continuous distributions"
+msgstr "Distribuţii continue"
+
+msgid "Discrete distributions"
+msgstr "Distribuţii discrete"
+
+    # Xyplot dialog
+
+msgid "XY Conditioning Plot"
+msgstr "Plot condiţional XY"
+
+msgid "Response variables (pick one or more)"
+msgstr "Variabilă răspuns (una sau mai multe)"
+
+msgid "Groups (pick zero or more)"
+msgstr "Grupuri (zero sau mai multe"
+
+msgid "Automatically draw key"
+msgstr "Alege cheia automat"
+
+msgid "Different panels for different responses"
+msgstr "Paneluri diferite pentru răspunsuri diferite"
+
+msgid "Identical"
+msgstr "Identice"
+
+msgid "Free"
+msgstr "Liber"
+
+msgid "Same range"
+msgstr "Aceeaşi amplitudine"
+
+msgid "X-Axis Scales in Different Panels"
+msgstr "Scale pe axa-X în paneluri diferite"
+
+msgid "Y-Axis Scales in Different Panels"
+msgstr "Scale pe axa-Y în paneluri diferite"
+
+msgid "At least one response variable must be selected."
+msgstr "Trebuie selectată cel puţin o variabilă răspuns."
+
+msgid "At least one explanatory variable must be selected."
+msgstr "Trebuie selectată cel puţin o variabilă independentă."
+
+msgid "XY conditioning plot..."
+msgstr "Plot condiţional XY..."
+
+    # contingency tables dialog
+
+msgid "Percentages of total"
+msgstr "Procente pe total"
+
+msgid "Components of chi-square statistic"
+msgstr "Componente ale statisticii chi-pătrat"
+
+    # 3D scatterplots dialog
+
+msgid "Show squared residuals"
+msgstr "Arată pătratele reziduurilor"
+
+msgid "Show axis scales"
+msgstr "Arată scale pe axe"
+
+msgid "Plot 50% concentration ellipsoid"
+msgstr "Plot elipsoid cu concentraţie 50%"
+
+    # scatterplot matrices dialog
+
+msgid "One-dimensional scatterplots"
+msgstr "Scatterplot-uri unidimensionale"
+
+    # count NAs (menu item)
+
+msgid "Count missing observations"
+msgstr "Numără missing-uri"
+
+    # Correlation test dialog
+
+msgid "Correlation Test"
+msgstr "Test de corelaţie"
+
+msgid "Variables (pick two)"
+msgstr "Variabile (două)"
+
+msgid "Kendall's tau"
+msgstr "Tau al lui Kendall"
+
+msgid "Type of Correlation"
+msgstr "Tip de corelaţie"
+
+msgid "Correlation < 0"
+msgstr "Corelaţie < 0"
+
+msgid "Correlation > 0"
+msgstr "Corelaţie > 0"
+
+msgid "More than 2 variables selected."
+msgstr "Au fost selectate mai mult de 2 varaibile."
+
+msgid "Correlation test..."
+msgstr "Test de corelaţie..."
+
+    # Recode dialog
+
+msgid "Recode Variables"
+msgstr "Recodificare variabile"
+
+msgid "Variables to recode (pick one or more)"
+msgstr "Variabile de recodificat (una sau mai multe)"
+
+msgid "New variable name or prefix for multiple recodes:"
+msgstr "Nume variabilă nouă ori prefix pentru recodificări multiple:"
+
+msgid "Make (each) new variable a factor"
+msgstr "Transformă (fiecare) nouă variabilă în factor"
+
+msgid "Recode variables..."
+msgstr "Recodificare variabile..."
+
+    # Frequency distributions dialog
+
+msgid "Frequency Distributions"
+msgstr "Distribuţii de frecvenţe"
+
+msgid "Chi-square goodness-of-fit test (for one variable only)"
+msgstr "Testul chi-pătrat de adecvare (pentru o singură variabilă)"
+
+msgid "Goodness-of-fit test not available when more than one variable is selected."
+msgstr "Testul de adecvare nu este disponibil dacă sunt selectate mai mult de o variabilă."
+
+msgid "Frequency distributions..."
+msgstr "Distribuţii de frecvenţe..."
+
+    # Numeric to factor dialog
+    
+msgid "Convert Numeric Variables to Factors"
+msgstr "Convertire variabile numerice în factori"
+
+msgid "<same as variables>"
+msgstr "<la fel ca variabilele>"
+
+msgid "Level Names for"
+msgstr "Nume niveluri pentru"
+
+msgid "Factors"
+msgstr "Factori"
+
+msgid "New variable name or prefix for multiple variables:"
+msgstr "Nume variabilă nouă ori prefix pentru variabile multiple:"
+
+msgid "Convert numeric variables to factors..."
+msgstr "Convertire variabile numerice în factori..."
+
+    # Stack dialog
+    
+msgid "Stack Variables"
+msgstr "Variabile stivuite"
+
+msgid "factor"
+msgstr "factor"
+
+msgid "StackedData"
+msgstr "Date stivuite"
+
+msgid "You must select at least two variables."
+msgstr "Trebuie selectate cel puţin două variabile."
+
+msgid "Name for stacked data set:"
+msgstr "Nume pentru set de date stivuit:"
+
+msgid "Name for variable:"
+msgstr "Nume pentru variabile:"
+
+msgid "Name for factor:"
+msgstr "Nume pentru factor:"
+
+msgid "Stack variables in active data set..."
+msgstr "Variabile stivuite în setul de date activ..."
+
+    # miscelaneous
+
+msgid "Identify Points"
+msgstr "Identificare puncte"
+
+msgid "Use left mouse button to identify points,\nright button to exit."
+msgstr "Utilizare butonul stâng mouse pentru identificare puncte,\nbuton dreapta pentru ieşire"
+
+msgid "Drag right mouse button to identify points,\nclick right button to exit."
+msgstr "Drag buton dreapta mouse pentru identificare puncte,\nclic pe buton dreapta pentru ieşire"
+
+msgid "Read Data From Text File or Clipboard"
+msgstr "Citire date din fişier text ori clipboard"
+
+msgid "Read data from clipboard:"
+msgstr "Citire date din clipboard:"
+
+msgid "from text file or clipboard..."
+msgstr "din fişier text ori clipboard..."
+
+msgid "Add observation numbers to data set"
+msgstr "Adăugare numere observaţii la setul de date"
+
+msgid "Refresh active data set"
+msgstr "Reîmprospătare set de date activ"
+
+msgid "No statistics selected."
+msgstr "Nu a fost selectată nici o statistică."
+
+msgid "Right-hand side"
+msgstr "Partea dreaptă"

@@ -1,6 +1,6 @@
 # Graphs menu dialogs
 
-# last modified 17 August 06 by J. Fox
+# last modified 21 August 06 by J. Fox
 
 indexPlot <- function(){
     initializeDialog(title=gettextRcmdr("Index Plot"))                                               
@@ -660,7 +660,10 @@ PlotMeans <- function(){
 
 Scatter3D <- function(){
     use.rgl <- options("Rcmdr")[[1]]$use.rgl
-    if (length(use.rgl) == 0 || use.rgl) require(rgl)    
+    if (length(use.rgl) == 0 || use.rgl) {
+        require(rgl)
+        require(mgcv)
+        }    
     initializeDialog(title=gettextRcmdr("3D Scatterplot"))
     variablesFrame <- tkframe(top)
     .numeric <- Numeric()
