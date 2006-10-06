@@ -112,7 +112,7 @@ doItAndPrint(command, log=TRUE)
 errorCondition(window=top, recall=NULL, message, model=FALSE)  # macro
 exists.method(generic, object, default=TRUE, strict=FALSE)
 Factors(names)
-factorsP()
+factorsP(n=1)
 \method{getFrame}{listbox}(object)
 \method{getSelection}{listbox}(object)
 getRcmdr(x, mode="any")
@@ -144,9 +144,9 @@ LogWindow()
 Message(message, type=c("note", "error", "warning"))
 MessagesWindow()
 modelFormula(frame=top, hasLhs=TRUE)  # macro
-modelsP()
+modelsP(n=1)
 Numeric(names)
-numericP()
+numericP(n=1)
 OKCancelHelp(window=top, helpSubject=NULL, model=FALSE)  # macro
 OutputWindow()
 packageAvailable(name)
@@ -160,7 +160,7 @@ subOKCancelHelp(window=subdialog, helpSubject=NULL)  # macro
 subsetBox(window=top, model=FALSE)  # macro
 trim.blanks(text)
 TwoLevelFactors(names)
-twoLevelFactorsP()
+twoLevelFactorsP(n=1)
 UpdateModelNumber(increment=1)
 variableListBox(parentWindow, variableList=Variables(), bg="white",
     selectmode="single", export="FALSE", initialSelection=NULL, 
@@ -212,7 +212,7 @@ commanderPosition()
     upon the function.}
   \item{name}{quoted name.}
   \item{names}{optional names to be stored.}
-  \item{n}{number of variables to check for.}
+  \item{n}{number of items to check for.}
   \item{object}{an object (depends on context).}
   \item{offset}{in pixels, from top-left of Commander window.}
   \item{onOK}{function to execute when the \emph{OK} button is pressed.}

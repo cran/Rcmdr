@@ -1,4 +1,4 @@
-# last modified 17 August 06 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 4 October 06 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
                                                                                        
 # utility functions
 
@@ -1733,12 +1733,16 @@ checkClass <- defmacro(object, class, message=NULL,
     )
     
 
-# the following function is from John Chambers
+# the following function is from John Chambers (plus new test for R 2.4.0)
 
 isS4object <- function(object) {
-     if(length(attr(object, "class"))!= 1)
-         return(FALSE)
-    !isVirtualClass(getClass(class(object), TRUE)) }
+    if (getRversion() < "2.4.0"){
+        if (length(attr(object, "class"))!= 1)
+             return(FALSE)
+        !isVirtualClass(getClass(class(object), TRUE)) 
+        }
+    else isS4(object)
+    }
 
 
 #isS4object <- function(object) {

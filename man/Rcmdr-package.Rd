@@ -12,11 +12,11 @@ user interface) for R, based on the tcltk package.
 \details{
 \tabular{ll}{
 Package: \tab Rcmdr\cr
-Version: \tab 1.2-1\cr
-Date: \tab 2006/9/22\cr
-Depends: \tab R (>= 2.1.0), tcltk\cr
-Suggests: \tab abind, car (>= 1.1-1), effects (>= 1.0-7), foreign, grid,
-lattice, lmtest, MASS, mgcv, multcomp, nlme, nnet, relimp, RODBC\cr
+Version: \tab 1.2-2\cr
+Date: \tab 2006/10/6\cr
+Depends: \tab R (>= 2.1.0), tcltk, grDevices, utils\cr
+Suggests: \tab abind, car (>= 1.1-1), effects (>= 1.0-7), foreign, grid, 
+  lattice, lmtest, MASS, mgcv, multcomp, nlme, nnet, relimp, rgl, RODBC\cr
 LazyLoad: \tab no\cr
 License: \tab GPL version 2 or newer\cr
 URL: \tab http://www.r-project.org,

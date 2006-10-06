@@ -7,10 +7,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: R 2.1.1\n"
+"Project-Id-Version: Rcmdr 1.2-0\n"
 "Report-Msgid-Bugs-To: bugs@R-project.org\n"
 "POT-Creation-Date: 2005-06-02 13:06+0100\n"
-"PO-Revision-Date: 2005-09-19 04:36+0300\n"
+"PO-Revision-Date: 2006-09-25 05:53-0800\n"
 "Last-Translator: Alexey Shipunov <iit512@yandex.ru>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -107,7 +107,7 @@ msgid "Plot Dendrogram"
 msgstr "Дендрограмма"
 
 msgid "Hierarchical Cluster Summary"
-msgstr "Результат иерерхической кластеризации"
+msgstr "Результат иерархической кластеризации"
 
 msgid "Select One Clustering Solution"
 msgstr "Выбрать одно кластерное решение"
@@ -116,7 +116,7 @@ msgid "There are no hierachical clustering solutions"
 msgstr "Иерархических кластерных решений нет"
 
 msgid "No hierachical clustering solutions are associated with this data set."
-msgstr "Иерархические кластерные решения не присоединны к этим данным"
+msgstr "Иерархические кластерные решения не присоединены к этим данным"
 
 msgid "A clustering solution has not been selected."
 msgstr "Кластерное решение не выбрано."
@@ -266,7 +266,7 @@ msgid "Enter name for data set:"
 msgstr "Введите имя данных:"
 
 msgid "There is only one dataset in memory."
-msgstr "В пямяти только один набор данных."
+msgstr "В памяти только один набор данных."
 
 msgid "There are no data sets from which to choose."
 msgstr "Нет данных, из которых выбирать."
@@ -455,7 +455,7 @@ msgid "{\"STATA datasets\" {\".dta\" \".DTA\"}} {\"All Files\" {\"*\"}}"
 msgstr "{\"Данные STATA\" {\".dta\" \".DTA\"}} {\"Все файлы\" {\"*\"}}"
 
 msgid "Convert dates to R format"
-msgstr "Конверировать данные в формат R"
+msgstr "Конвертировать данные в формат R"
 
 msgid "Multiple missing types (>=Stata 8)"
 msgstr "Много типов пропущенных данных (>=Stata 8)"
@@ -709,7 +709,7 @@ msgid "No probabilities specified."
 msgstr "Не выбраны вероятности."
 
 msgid "Probabilities"
-msgstr "Верояности"
+msgstr "Вероятности"
 
 msgid "mu (mean)"
 msgstr "mu (среднее)"
@@ -843,7 +843,7 @@ msgid "Binomial Distribution"
 msgstr "Биномиальное распределение"
 
 msgid "Plot probability mass function"
-msgstr "Графмк функции вероятности"
+msgstr "График функции вероятности"
 
 msgid "Poisson Distribution"
 msgstr "Распределение Пуассона"
@@ -1189,7 +1189,7 @@ msgid "No factors selected."
 msgstr "Факторы не выбраны."
 
 msgid "More than two factors selected."
-msgstr "Выблано более двух факторов."
+msgstr "Выбрано более двух факторов."
 
 msgid "No response variable selected."
 msgstr "Не выбрана зависимая переменная."
@@ -1548,7 +1548,7 @@ msgstr ""
 "(должна включать файл PACKAGES)"
 
 msgid "The following packages were not found at the specified location:"
-msgstr "Следуюшие пакеты не найдены в указанном месте:"
+msgstr "Следующие пакеты не найдены в указанном месте:"
 
 msgid "Cancel"
 msgstr "Отменить"
@@ -1671,7 +1671,7 @@ msgid "Population mean = mu0"
 msgstr "Популяционная средняя = mu0"
 
 msgid "Population mean < mu0"
-msgstr "Популяционная среднаяя < mu0"
+msgstr "Популяционная средняя < mu0"
 
 msgid "Population mean > mu0"
 msgstr "Популяционная средняя > mu0"
@@ -1933,7 +1933,7 @@ msgid "Control variable(s) (pick one or more)"
 msgstr "Контрольные переменн(ые) (выберите 1 или более)"
 
 msgid "You must select row, column, and control variables"
-msgstr "Вы должны выбоать строку, колонку и контрольную переменную"
+msgstr "Вы должны выбрать строку, колонку и контрольную переменную"
 
 msgid "Row, column, and control variables must be different."
 msgstr "Строка, колонка и контрольная переменная должны различаться."
@@ -1982,7 +1982,7 @@ msgid "There is no active model."
 msgstr "Нет активной модели."
 
 msgid "argument must be a square, symmetric, numeric covariance matrix"
-msgstr "аргумент должен быть кваратной и симметричной ковариационной матрицей"
+msgstr "аргумент должен быть квадратной и симметричной ковариационной матрицей"
 
 msgid "there are fewer than 3 items in the scale"
 msgstr "менее чем 3 значения на шкале"
@@ -1997,7 +1997,7 @@ msgid "Arguments factor1 and factor2 must be factors."
 msgstr "Аргументы factor1 и factor2 должны быть факторами."
 
 msgid "Number of groups for factor2, %d, exceeds number of distinct colours, %d."
-msgstr "Количество групп для factor2, %d, превышаетколичество различных цветов, %d."
+msgstr "Количество групп для factor2, %d, превышает количество различных цветов, %d."
 
 msgid "The number of bins exceeds the number of data values"
 msgstr "Количество групп превышает количество значений"
@@ -2221,7 +2221,7 @@ msgid "Table of statistics..."
 msgstr "Статистические таблицы..."
 
 msgid "Correlation matrix..."
-msgstr "Корредяционная матрица..."
+msgstr "Корреляционная матрица..."
 
 msgid "Two-way table..."
 msgstr "Двумерная таблица..."
@@ -2482,7 +2482,7 @@ msgid "Chi-squared quantiles..."
 msgstr "Квантили хи-квадрат..."
 
 msgid "Chi-squared probabilities..."
-msgstr "Вероятности хи-вкадрат..."
+msgstr "Вероятности хи-квадрат..."
 
 msgid "Plot chi-squared distribution..."
 msgstr "График распределения хи-квадрат..."
@@ -2543,4 +2543,812 @@ msgstr "Введение в R Commander"
 
 msgid "About Rcmdr"
 msgstr "О R Commander"
+
+## messages added to Rcmdr version 1.1-1
+msgid "There is no current RGL graphics device."
+msgstr "Нет текущего RGL-устройства"
+
+msgid "3D graph"
+msgstr "3D-график"
+
+## messages added to Rcmdr version 1.1-6
+msgid " contains non-standard variable names:\n"
+msgstr " содержит нестандартные имена переменных:\n"
+
+msgid ""
+"\n"
+"These have been changed to:\n"
+msgstr ""
+"\n"
+"Были изменены на:\n"
+
+## messages added to Rcmdr version 1.2-0
+# importRODBCtable dialog
+msgid "This function requires the RODBC package.\n"
+msgstr "Эта функция требует пакет RODBC.\n"
+
+msgid "Import from Excel, Access or dBase data set"
+msgstr "Импорт из Excel, Access или таблицы dBase"
+
+msgid "{\"MS Excel file\" {*.xls \".XLS\"}} {\"MS Access database\" {*.mdb \".MDB\"}} {\"dBase-like file\" {*.dbf \".DBF\"}} {\"All Files\" {\"*\"}}"
+msgstr "{\"Файл MS Excel\" {*.xls \".XLS\"}} {\"База данных MS Access\" {*.mdb \".MDB\"}} {\"Файл dBase\" {*.dbf \".DBF\"}} {\"Все файлы\" {\"*\"}}"
+
+msgid "Select one table"
+msgstr "Выберите одну таблицу"
+
+msgid "No table selected"
+msgstr "Не выбрана таблица"
+
+msgid "from Excel, Access or dBase data set..."
+msgstr "из Excel, Access или таблицы dBase..."
+
+# probability distributions
+msgid "Standard deviation must be positive."
+msgstr "Стандартное отклонение должно быть положительным."
+
+msgid "Degrees of freedom must be positive."
+msgstr "Степени свободы должны быть положительными."
+
+msgid "Numerator degrees of freedom must be positive."
+msgstr "Числитель степеней свободы должен быть положительным."
+
+msgid "Denominator degrees of freedom must be positive."
+msgstr "Знаменатель степеней свободы должен быть положительным."
+
+msgid "Exponential Distribution"
+msgstr "Экспоненциальное распределение"
+
+msgid "Rate must be positive."
+msgstr "Частное должно быть положительным."
+
+msgid "Rate"
+msgstr "Частное"
+
+msgid "Uniform Distribution"
+msgstr "Однородное распределение"
+
+msgid "Lower limit must be less than upper limit."
+msgstr "Нижний предел должен быть меньше верхнего."
+
+msgid "Minimum"
+msgstr "Минимум"
+
+msgid "Maximum"
+msgstr "Максимум"
+
+msgid "Beta Distribution"
+msgstr "Бета-распределение"
+
+msgid "Shapes not specified."
+msgstr "Формы не определены."
+
+msgid "Shapes must be positive."
+msgstr "Формы должны быть положительными."
+
+msgid "Shape"
+msgstr "Форма"
+
+msgid "Cauchy Distribution"
+msgstr "Распределение Коши"
+
+msgid "Scale must be positive."
+msgstr "Шкала должна быть положительна."
+
+msgid "Location"
+msgstr "Место"
+
+msgid "Scale"
+msgstr "Шкала"
+
+msgid "Logistic Distribution"
+msgstr "Логистическое распределение"
+
+msgid "Lognormal Distribution"
+msgstr "Логнормальное распределение"
+
+msgid "Mean (log scale)"
+msgstr "Среднее (логарифмическая шкала)"
+
+msgid "Standard deviation (log scale)"
+msgstr "Стандартное отклонение (логарифмическая шкала)"
+
+msgid "Gamma Distribution"
+msgstr "Гамма-распределение"
+
+msgid "Shape not specified."
+msgstr "Форма не определена."
+
+msgid "Shape must be positive."
+msgstr "Форма должна быть положительной."
+
+msgid "Weibull Distribution"
+msgstr "Распределение Вейбулла"
+
+msgid "Exponential Quantiles"
+msgstr "Экспоненциальные квантили"
+
+msgid "Exponential Probabilities"
+msgstr "Экспоненциальные вероятности"
+
+msgid "Uniform Quantiles"
+msgstr "Квантили однородного распределения"
+
+msgid "Uniform Probabilities"
+msgstr "Вероятности однородного распределения"
+
+msgid "Beta Quantiles"
+msgstr "Квантили бета-распределения"
+
+msgid "Beta Probabilities"
+msgstr "Вероятности однородного распределения"
+
+msgid "Cauchy Quantiles"
+msgstr "Квантили распределения Коши"
+
+msgid "Cauchy Probabilities"
+msgstr "Вероятности распределения Коши"
+
+msgid "Logistic Quantiles"
+msgstr "Квантили логистического распределения"
+
+msgid "Logistic Probabilities"
+msgstr "Вероятности логистического распределения"
+
+msgid "Lognormal Quantiles"
+msgstr "Квантили логнормального распределения"
+
+msgid "Lognormal Probabilities"
+msgstr "Вероятности логнормального распределения"
+
+msgid "Gamma Quantiles"
+msgstr "Квантили гамма-распределения"
+
+msgid "Gamma Probabilities"
+msgstr "Вероятности гамма-распределения"
+
+msgid "Weibull Quantiles"
+msgstr "Квантили распределения Вейбулла"
+
+msgid "Weibull Probabilities"
+msgstr "Вероятности распределения Вейбулла"
+
+msgid "Gumbel Distribution"
+msgstr "Распределение Гумбеля"
+
+msgid "Shape (log shape)"
+msgstr "Форма (логарифм)"
+
+msgid "Scale (log scale)"
+msgstr "Шкала (логарифм)"
+
+msgid "Gumbel Probabilities"
+msgstr "Вероятности распределения Гумбеля"
+
+msgid "Probability of success must be between 0 and 1."
+msgstr "Вероятности успеха должны быть между 0 и 1."
+
+msgid "Poisson Quantiles"
+msgstr "Квантили распределения Пуассона"
+
+msgid "Geometric Quantiles"
+msgstr "Квантили геометрического распределения"
+
+msgid "Geometric Probabilities"
+msgstr "Вероятности геометрического распределения"
+
+msgid "Hypergeometric Quantiles"
+msgstr "Квантили гипергеометрического распределения"
+
+msgid "The m parameter was not specified."
+msgstr "Параметр m не определен."
+
+msgid "The m parameter cannot be negative."
+msgstr "Параметр m не должен быть отрицательным."
+
+msgid "The n parameter was not specified."
+msgstr "Параметр n не определен."
+
+msgid "The n parameter cannot be negative."
+msgstr "Параметр n не должен быть отрицательным."
+
+msgid "The k parameter was not specified."
+msgstr "Параметр k не определен."
+
+msgid "The k parameter cannot be greater than m + n."
+msgstr "Параметр k не должен быть больше чем m + n."
+
+msgid "The k parameter cannot be negative."
+msgstr "Параметр k не должен быть отрицательным."
+
+msgid "m (number of white balls in the urn)"
+msgstr "m (количество белых шаров в корзине)"
+
+msgid "n (number of black balls in the urn)"
+msgstr "n (количество черных шаров в корзине)"
+
+msgid "k (number of balls drawn from the urn)"
+msgstr "k (количество шаров, вынутых из корзины)"
+
+msgid "Hypergeometric Probabilities"
+msgstr "Вероятности гипергеометрического распределения"
+
+msgid "Negative Binomial Quantiles"
+msgstr "Квантили негативного биномиального распределения"
+
+msgid "Target number of successes not specified."
+msgstr "Нужное количество успехов не определено."
+
+msgid "Target number of successes cannot be negative."
+msgstr "Нужное количество успехов не может быть отрицательным."
+
+msgid "Target number of successes"
+msgstr "Нужное количество успехов."
+
+msgid "Negative Binomial Probabilities"
+msgstr "Вероятности негативного биномиального распределения"
+
+msgid "Geometric Distribution"
+msgstr "Геометрическое распределение"
+
+msgid "Hypergeometric Distribution"
+msgstr "Гипергеометрическое распределение"
+
+msgid "Negative Binomial Distribution"
+msgstr "Негативное биномиальное распределение"
+
+msgid "Sample from Normal Distribution"
+msgstr "Выборка из нормального распределения"
+
+msgid "NormalSamples"
+msgstr "Нормальные выборки"
+
+msgid "Sample means"
+msgstr "Средние по выборкам"
+
+msgid "Sample sums"
+msgstr "Суммы выборок"
+
+msgid "Sample standard deviations"
+msgstr "Стандартные отклонения выборок"
+
+msgid "Sample size must be positive."
+msgstr "Размер выборки должен быть положительным."
+
+msgid "Number of samples must be positive."
+msgstr "Количество образцов должно быть положительным."
+
+msgid "Number of samples (rows)"
+msgstr "Количество образцов (строк)"
+
+msgid "Number of observations (columns)"
+msgstr "Количество наблюдений (колонок)"
+
+msgid "Add to Data Set:"
+msgstr "Добавить к данным:"
+
+msgid "Sample from t Distribution"
+msgstr "Выборка из распределения Стьюдента"
+
+msgid "tSamples"
+msgstr "Выборки из распределения Стьюдента"
+
+msgid "Sample from Chi-squared Distribution"
+msgstr "Выборка из распределения хи-квадрат"
+
+msgid "ChisquareSamples"
+msgstr "Выборки из распределения хи-квадрат"
+
+msgid "Sample from F Distribution"
+msgstr "Выборка из распределения Фишера"
+
+msgid "FSamples"
+msgstr "Выборки из распределения Фишера"
+
+msgid "Sample from Exponential Distribution"
+msgstr "Выборка из экспоненциального распределения"
+
+msgid "ExponentialSamples"
+msgstr "Выборки из экспоненциального распределения"
+
+msgid "Sample from Uniform Distribution"
+msgstr "Выборка из однородного распределения"
+
+msgid "UniformSamples"
+msgstr "Выборки из однородного распределения"
+
+msgid "Sample from Beta Distribution"
+msgstr "Выборка из бета-распределения"
+
+msgid "BetaSamples"
+msgstr "Выборки из бета-распределения"
+
+msgid "Sample from Cauchy Distribution"
+msgstr "Выборка из распределения Коши"
+
+msgid "CauchySamples"
+msgstr "Выборки из распределения Коши"
+
+msgid "Sample from Logistic Distribution"
+msgstr "Выборка из логистического распределения"
+
+msgid "LogisticSamples"
+msgstr "Выборки из логистического распределения"
+
+msgid "Sample from Log-Normal Distribution"
+msgstr "Выборка из логнормального распределения"
+
+msgid "LogNormalSamples"
+msgstr "Выборки из логнормального распределения"
+
+msgid "Sample from Gamma Distribution"
+msgstr "Выборка из гамма-распределения"
+
+msgid "GammaSamples"
+msgstr "Выборки из гамма-распределения"
+
+msgid "Sample from Weibull Distribution"
+msgstr "Выборка из распределения Вейбулла"
+
+msgid "WeibullSamples"
+msgstr "Выборки из распределения Вейбулла"
+
+msgid "Sample from Gumbel Distribution"
+msgstr "Выборка из распределения Гумбеля"
+
+msgid "GumbelSamples"
+msgstr "Выборки из распределения Гумбеля"
+
+msgid "Sample from Binomial Distribution"
+msgstr "Выборка из биномиального распределения"
+
+msgid "BinomialSamples"
+msgstr "Выборки из биномиального распределения"
+
+msgid "Poisson mean cannot be negative."
+msgstr "Пуассоновское среднее не может быть отрицательным."
+
+msgid "Sample from Poisson Distribution"
+msgstr "Выборка из распределения Пуассона"
+
+msgid "PoissonSamples"
+msgstr "Выборки из распределения Пуассона"
+
+msgid "Sample from Geometric Distribution"
+msgstr "Выборка из геометрического распределения"
+
+msgid "GeometricSamples"
+msgstr "Выборки из геометрического распределения"
+
+msgid "Sample from Hypergeometric Distribution"
+msgstr "Выборка из гипергеометрического распределения"
+
+msgid "HypergeometricSamples"
+msgstr "Выборки из гипергеометрического распределения "
+
+msgid "Sample from Negative Binomial Distribution"
+msgstr "Выборка из негативного биномиального распределения "
+
+msgid "NegativeBinomialSamples"
+msgstr "Выборки из негативного биномиального распределения"
+
+msgid "Sample from normal distribution..."
+msgstr "Выборка из нормального распределения..."
+
+msgid "Sample from t distribution..."
+msgstr "Выборка из распределения Стьюдента..."
+
+msgid "Sample from chi-squared distribution..."
+msgstr "Выборка из распределения хи-квадрат..."
+
+msgid "Sample from F distribution..."
+msgstr "Выборка из распределения Фишера..."
+
+msgid "Exponential distribution"
+msgstr "Экспоненциальное распределение"
+
+msgid "Exponential quantiles..."
+msgstr "Квантили эквипотенциального распределения..."
+
+msgid "Exponential probabilities..."
+msgstr "Вероятности экспоненциального распределения..."
+
+msgid "Plot exponential distribution..."
+msgstr "График экспоненциального распределения..."
+
+msgid "Sample from exponential distribution..."
+msgstr "Выборка из экспоненциального распределения..."
+
+msgid "Uniform distribution"
+msgstr "Однородное распределение"
+
+msgid "Uniform quantiles..."
+msgstr "Квантили однородного распределения..."
+
+msgid "Uniform probabilities..."
+msgstr "Вероятности однородного распределения..."
+
+msgid "Plot uniform distribution..."
+msgstr "График однородного распределения..."
+
+msgid "Sample from uniform distribution..."
+msgstr "Выборка из однородного распределения..."
+
+msgid "Beta distribution"
+msgstr "Бета-распределение"
+
+msgid "Beta quantiles..."
+msgstr "Квантили бета-распределения..."
+
+msgid "Beta probabilities..."
+msgstr "Вероятности бета-распределения..."
+
+msgid "Plot beta distribution..."
+msgstr "График бета-распределения..."
+
+msgid "Sample from beta distribution..."
+msgstr "Выборка из бета-распределения..."
+
+msgid "Cauchy distribution"
+msgstr "Распределение Коши"
+
+msgid "Cauchy quantiles..."
+msgstr "Квантили распределения Коши..."
+
+msgid "Cauchy probabilities..."
+msgstr "Вероятности распределения Коши..."
+
+msgid "Plot Cauchy distribution..."
+msgstr "График распределения Коши..."
+
+msgid "Sample from Cauchy distribution..."
+msgstr "Выборка из распределения Коши..."
+
+msgid "Logistic distribution"
+msgstr "Логистическое распределение"
+
+msgid "Logistic quantiles..."
+msgstr "Квантили логистического распределения..."
+
+msgid "Logistic probabilities..."
+msgstr "Вероятности логистического распределения..."
+
+msgid "Plot logistic distribution..."
+msgstr "График логистического распределения..."
+
+msgid "Sample from logistic distribution..."
+msgstr "Выборка логистического распределения..."
+
+msgid "Lognormal distribution"
+msgstr "Логнормальное распределение"
+
+msgid "Lognormal quantiles..."
+msgstr "Квантили логнормального распределения..."
+
+msgid "Lognormal probabilities..."
+msgstr "Вероятности логнормального распределения..."
+
+msgid "Plot lognormal distribution..."
+msgstr "График логнормального распределения... "
+
+msgid "Sample from lognormal distribution..."
+msgstr "Выборка из логнормального распределения..."
+
+msgid "Gamma distribution"
+msgstr "Гамма-распределение"
+
+msgid "Gamma quantiles..."
+msgstr "Квантили гамма-распределения..."
+
+msgid "Gamma probabilities..."
+msgstr "Вероятности гамма-распределения..."
+
+msgid "Plot gamma distribution..."
+msgstr "График гамма-распределения..."
+
+msgid "Sample from gamma distribution..."
+msgstr "Выборка из гамма-распределения..."
+
+msgid "Weibull distribution"
+msgstr "Распределение Вейбулла"
+
+msgid "Weibull quantiles..."
+msgstr "Квантили распределения Вейбулла..."
+
+msgid "Weibull probabilities..."
+msgstr "Вероятности распределения Вейбулла..."
+
+msgid "Plot Weibull distribution..."
+msgstr "График распределения Вейбулла..."
+
+msgid "Sample from Weibull distribution..."
+msgstr "Выборка из распределения Вейбулла..."
+
+msgid "Gumbel distribution"
+msgstr "Распределение Гумбеля"
+
+msgid "Gumbel quantiles..."
+msgstr "Квантили распределения Гумбеля..."
+
+msgid "Gumbel probabilities..."
+msgstr "Вероятности распределения Гумбеля..."
+
+msgid "Plot Gumbel distribution..."
+msgstr "График распределения Гумбеля..."
+
+msgid "Sample from Gumbel distribution..."
+msgstr "Выборка из распределения Гумбеля..."
+
+msgid "Sample from binomial distribution..."
+msgstr "Выборка из биномиального распределения..."
+
+msgid "Poisson quantiles..."
+msgstr "Квантили распределения Пуассона..."
+
+msgid "Poisson tail probabilities..."
+msgstr "Хвостовые вероятности распределения Пуассона..."
+
+msgid "Sample from Poisson distribution..."
+msgstr "Выборка из распределения Пуассона..."
+
+msgid "Geometric distribution"
+msgstr "Геометрическое распределение"
+
+msgid "Geometric quantiles..."
+msgstr "Квантили геометрического распределения..."
+
+msgid "Geometric tail probabilities..."
+msgstr "Хвостовые вероятности геометрического распределения..."
+
+msgid "Geometric probabilities..."
+msgstr "Вероятности геометрического распределения..."
+
+msgid "Plot geometric distribution..."
+msgstr "График геометрического распределения..."
+
+msgid "Sample from geometric distribution..."
+msgstr "Выборка из геометрического распределения..."
+
+msgid "Hypergeometric distribution"
+msgstr "Гипергеометрическое распределение"
+
+msgid "Hypergeometric quantiles..."
+msgstr "Квантили гипергеометрического распределения..."
+
+msgid "Hypergeometric tail probabilities..."
+msgstr "Хвостовые вероятности гипергеометрического распределения..."
+
+msgid "Hypergeometric probabilities..."
+msgstr "Вероятности гипергеометрического распределения..."
+
+msgid "Plot hypergeometric distribution..."
+msgstr "График гипергеометрического распределения..."
+
+msgid "Sample from hypergeometric distribution..."
+msgstr "Выборка из гипергеометрического распределения..."
+
+msgid "Negative binomial distribution"
+msgstr "Негативное биномиальное распределение"
+
+msgid "Negative binomial quantiles..."
+msgstr "Квантили негативного биномиального распределения..."
+
+msgid "Negative binomial tail probabilities..."
+msgstr "Хвостовые вероятности негативного биномиального распределения..."
+
+msgid "Negative binomial probabilities..."
+msgstr "Вероятности негативного биномиального распределения..."
+
+msgid "Plot negative binomial distribution..."
+msgstr "График негативного биномиального распределения..."
+
+msgid "Sample from negative binomial distribution..."
+msgstr "Выборка из негативного биномиального распределения..."
+
+msgid "Continuous distributions"
+msgstr "Непрерывные распределения"
+
+msgid "Discrete distributions"
+msgstr "Дискретные распределения"
+
+# Xyplot dialog
+msgid "XY Conditioning Plot"
+msgstr "XY-условный график"
+
+msgid "Response variables (pick one or more)"
+msgstr "Зависимые переменные (выберите одну или более)"
+
+msgid "Groups (pick zero or more)"
+msgstr "Группы (выберите одну или более)"
+
+msgid "Automatically draw key"
+msgstr "Автоматически нарисованный ключ"
+
+msgid "Different panels for different responses"
+msgstr "Разные панели для разных откликов"
+
+msgid "Identical"
+msgstr "Идентичны"
+
+msgid "Free"
+msgstr "Свободный"
+
+msgid "Same range"
+msgstr "Тот же размах"
+
+msgid "X-Axis Scales in Different Panels"
+msgstr "Шкалы оси абсцисс в разных панелях"
+
+msgid "Y-Axis Scales in Different Panels"
+msgstr "Шкалы оси ординат в разных панелях"
+
+msgid "At least one response variable must be selected."
+msgstr "Нужно выбрать не менее одной зависимой переменной."
+
+msgid "At least one explanatory variable must be selected."
+msgstr "Нужно выбрать не менее одной независимой переменой."
+
+msgid "XY conditioning plot..."
+msgstr "XY-условный график..."
+
+# contingency tables dialog
+msgid "Percentages of total"
+msgstr "Проценты от общего"
+
+msgid "Components of chi-square statistic"
+msgstr "Компоненты статистики хи-квадрат"
+
+# 3D scatterplots dialog
+msgid "Show squared residuals"
+msgstr "Показать квадраты остатков"
+
+msgid "Show axis scales"
+msgstr "Показать шкалы осей"
+
+msgid "Plot 50% concentration ellipsoid"
+msgstr "Нарисовать эллипсолид 50% концентраций"
+
+# scatterplot matrices dialog
+msgid "One-dimensional scatterplots"
+msgstr "Одномерный график точек"
+
+# count NAs (menu item)
+msgid "Count missing observations"
+msgstr "Подсчитать пропущенные значения"
+
+# Correlation test dialog
+msgid "Correlation Test"
+msgstr "Корреляционный тест"
+
+msgid "Variables (pick two)"
+msgstr "Переменные (выберите две)"
+
+msgid "Kendall's tau"
+msgstr "Тау Кендалла"
+
+msgid "Type of Correlation"
+msgstr "Тип корреляции"
+
+msgid "Correlation < 0"
+msgstr "Корреляция < 0"
+
+msgid "Correlation > 0"
+msgstr "Корреляция > 0"
+
+msgid "More than 2 variables selected."
+msgstr "Выбрано больше 2 переменных."
+
+msgid "Correlation test..."
+msgstr "Корреляционный тест..."
+
+# Recode dialog
+msgid "Recode Variables"
+msgstr "Перекодировать переменные"
+
+msgid "Variables to recode (pick one or more)"
+msgstr "Переменные для перекодировки (выберите одну или более)"
+
+msgid "New variable name or prefix for multiple recodes:"
+msgstr "Новое имя переменной или префикс для множественных перекодировок:"
+
+msgid "Make (each) new variable a factor"
+msgstr "Сделать (каждую) новою переменную фактором"
+
+msgid "Recode variables..."
+msgstr "Перекодировать переменные..."
+
+# Frequency distributions dialog
+msgid "Frequency Distributions"
+msgstr "Распределения частот"
+
+msgid "Chi-square goodness-of-fit test (for one variable only)"
+msgstr "Тест соответствия хи-квадрат (только для одной переменной)"
+
+msgid "Goodness-of-fit test not available when more than one variable is selected."
+msgstr "Тест соответствия недоступен, если выбрано более одной переменной."
+
+msgid "Frequency distributions..."
+msgstr "Распределения частот..."
+
+# Numeric to factor dialog
+msgid "Convert Numeric Variables to Factors"
+msgstr "Конвертировать числовые переменные в факторы"
+
+msgid "<same as variables>"
+msgstr "<такие же как переменные>"
+
+msgid "Level Names for"
+msgstr "Имена уровней для"
+
+msgid "Factors"
+msgstr "Факторы"
+
+msgid "New variable name or prefix for multiple variables:"
+msgstr "Новое имя переменной или префикс для нескольких переменных:"
+
+msgid "Convert numeric variables to factors..."
+msgstr "Конвертировать числовые переменные в факторы..."
+
+# Stack dialog
+msgid "Stack Variables"
+msgstr "Стековые переменные"
+
+msgid "factor"
+msgstr "фактор"
+
+msgid "StackedData"
+msgstr "Данные в стеке"
+
+msgid "You must select at least two variables."
+msgstr "Вы должны выбрать не менее двух переменных."
+
+msgid "Name for stacked data set:"
+msgstr "Имя для стековых данных:"
+
+msgid "Name for variable:"
+msgstr "Имя переменной:"
+
+msgid "Name for factor:"
+msgstr "Имя фактора:"
+
+msgid "Stack variables in active data set..."
+msgstr "Стековые переменные в активных данных..."
+
+# miscelaneous
+msgid "Identify Points"
+msgstr "Определить точки"
+
+msgid ""
+"Use left mouse button to identify points,\n"
+"right button to exit."
+msgstr ""
+"Используйте левую кнопку мыши для определения точек,\n"
+"правую кнопку -- для выхода."
+
+msgid ""
+"Drag right mouse button to identify points,\n"
+"click right button to exit."
+msgstr ""
+"Ведите правую кнопку мыши для определения точек,\n"
+"щелкните правой кнопкой для выхода."
+
+msgid "Read Data From Text File or Clipboard"
+msgstr "Прочитать данные из текстового файла или буфера обмена"
+
+msgid "Read data from clipboard:"
+msgstr "Прочитать данные из буфера обмена:"
+
+msgid "from text file or clipboard..."
+msgstr "из текстового файла или буфера обмена..."
+
+msgid "Add observation numbers to data set"
+msgstr "Добавить номера наблюдений к данным"
+
+msgid "Refresh active data set"
+msgstr "Обновить активные данные"
+
+msgid "No statistics selected."
+msgstr "Статистика не выбрана."
+
+msgid "Right-hand side"
+msgstr "Правая сторона"
 

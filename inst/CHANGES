@@ -504,5 +504,17 @@ Version 1.2-1
    
    o  rgl added once again to "suggested" packages in the DESCRIPTION file.
    
+Version 1.2-2
+
+   o  Updated Russian translation, courtesy of Alexey Shipunov.
+   
+   o  Updated Brazilian Portuguese translation, courtesy of Adriano Azevedo Filho.
+   
+   o  Test for S4 objects uses isS4() if R version >= 2.4.0.
+   
+   o  Old-style Rcmdr-menus.txt files (with six fields) will be accepted as well as the new-style files (with a seventh, acitivation, field).
+   
+   o  Small changes to docs.
+   
    
    

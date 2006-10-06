@@ -99,7 +99,9 @@ You have to install the \code{rgl} and \code{mgcv} packages to produce 3D plots.
   \item{level}{expected proportion of bivariate-normal observations included in the
     concentration ellipsoid(s); default is 0.5.}
   \item{model.summary}{print summary or summaries of the model(s) fit 
-    (\code{TRUE} or \code{FALSE}).}
+    (\code{TRUE} or \code{FALSE}). \code{scatter3d} rescales the three variables 
+    internally to fit in the unit cube; this rescaling will affect regression 
+    coefficients.}
   \item{labels}{text labels for the points, one for each point; defaults to
     the observation indices.}
   \item{col}{colours for the point labels, given by group. There must be at
