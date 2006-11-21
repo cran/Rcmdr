@@ -516,5 +516,11 @@ Version 1.2-2
    
    o  Small changes to docs.
    
+Version 1.2-3
+
+   o  Added Indonesian translation, contributed by I Made Tirta.
+   
+   o  The Rcmdr will no longer prompt for missing packages at start-up when interactive() is FALSE (suggested by Kurt Hornik).
+   
    
    

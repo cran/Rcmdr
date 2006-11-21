@@ -11,7 +11,7 @@ Commander <- function(){
       warning("The R Commander is already open.")
       return(invisible(NULL))
     }
-    RcmdrVersion <- "1.2-2"
+    RcmdrVersion <- "1.2-3"
     if (is.SciViews()) return(invisible(svCommander(Version=RcmdrVersion))) # +PhG
     setOption <- function(option, default, global=TRUE) {
         opt <- if (is.null(current[[option]])) default else current[[option]]

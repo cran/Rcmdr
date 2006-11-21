@@ -1,4 +1,4 @@
-# last modified 22 September 2006 by J. Fox
+# last modified 16 November 2006 by J. Fox
 
 .onAttach <- function(...){
     Commander()
@@ -23,7 +23,7 @@
             require(package, character.only=TRUE)
         }
     check <- options("Rcmdr")[[1]]$check.packages
-    if (length(check) > 0 && !check) return()
+    if (!interactive() || (length(check) > 0 && !check)) return()
     packages.to.check <- union(required.packages, packages.to.load)
     available.packages <- packagesAvailable(packages.to.check)
     missing.packages <- packages.to.check[!available.packages]
