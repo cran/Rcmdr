@@ -1,4 +1,4 @@
-# last modified 16 November 2006 by J. Fox
+# last modified 27 November 2006 by J. Fox
 
 .onAttach <- function(...){
     Commander()
@@ -10,6 +10,7 @@
         sapply(sapply(packages, .find.package, quiet=TRUE), 
             function(x) length(x) != 0)
         }
+    if (!interactive()) return()
     save.options <- options(warn=-1)
     on.exit(options(save.options))
     tcltk <- require(tcltk)
@@ -23,7 +24,7 @@
             require(package, character.only=TRUE)
         }
     check <- options("Rcmdr")[[1]]$check.packages
-    if (!interactive() || (length(check) > 0 && !check)) return()
+    if (length(check) > 0 && !check) return()
     packages.to.check <- union(required.packages, packages.to.load)
     available.packages <- packagesAvailable(packages.to.check)
     missing.packages <- packages.to.check[!available.packages]

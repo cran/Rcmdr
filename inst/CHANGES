@@ -522,5 +522,11 @@ Version 1.2-3
    
    o  The Rcmdr will no longer prompt for missing packages at start-up when interactive() is FALSE (suggested by Kurt Hornik).
    
+Version 1.2-4
+
+   o  Updated Italian translation (contributed by Stefano Calza).
+   
+   o  Small change to start-up -- test for interactive() moved to top of .onLoad().
+   
    
    
