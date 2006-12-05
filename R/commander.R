@@ -1,6 +1,6 @@
 # The R Commander and command logger
 
-# last modified 6 October 06 by J. Fox
+# last modified 1 December 06 by J. Fox
 #   slight changes 12 Aug 04 by Ph. Grosjean 
 
 Commander <- function(){
@@ -11,7 +11,7 @@ Commander <- function(){
       warning("The R Commander is already open.")
       return(invisible(NULL))
     }
-    RcmdrVersion <- "1.2-3"
+    RcmdrVersion <- "1.2-5"
     if (is.SciViews()) return(invisible(svCommander(Version=RcmdrVersion))) # +PhG
     setOption <- function(option, default, global=TRUE) {
         opt <- if (is.null(current[[option]])) default else current[[option]]

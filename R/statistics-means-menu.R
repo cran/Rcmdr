@@ -154,7 +154,10 @@ oneWayAnova <- function(){
             return()
             }
         .activeDataSet <- ActiveDataSet()
-        doItAndPrint(paste("anova(lm(", response, " ~ ", group, ", data=", .activeDataSet, "))", sep=""))
+        command <- paste(".Anova <- lm(", response, " ~ ", group, ", data=", .activeDataSet, ")", sep="")
+        justDoIt(command)
+        logger(command)
+        doItAndPrint("anova(.Anova)")
         doItAndPrint(paste("tapply(", .activeDataSet, "$", response, ", ", .activeDataSet, "$", group, 
             ", mean, na.rm=TRUE) # means", sep=""))
         doItAndPrint(paste("tapply(", .activeDataSet, "$", response, ", ", .activeDataSet, "$", group, 
@@ -168,17 +171,18 @@ oneWayAnova <- function(){
                     type="warning")
             # the following lines modified by Richard Heiberger and subsequently by J. Fox
             else {
-                command <- paste(".Pairs <- simint(", response, " ~ ", group, 
-                                 ', type="Tukey", data=', .activeDataSet, ')', sep="")
+                command <- paste(".Pairs <- glht(.Anova, linfct = mcp(", group, ' = "Tukey"))', sep="")
                 justDoIt(command)
                 logger(command)
-                doItAndPrint("summary(.Pairs)")
-                justDoIt("plot(.Pairs)")
-                logger("plot(.Pairs)")
+                doItAndPrint("confint(.Pairs)")
+                justDoIt("plot(confint(.Pairs))")
+                logger("plot(confint(.Pairs))")
                 logger("remove(.Pairs)")
                 remove(.Pairs, envir=.GlobalEnv)
                 }
             }
+        logger("remove(.Anova)")
+        remove(.Anova, envir=.GlobalEnv)
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="anova")

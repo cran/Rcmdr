@@ -104,14 +104,14 @@ VIF <- function(){
     doItAndPrint(paste("vif(", .activeModel, ")", sep=""))
     }
             
-influencePlot <- function(){
+InfluencePlot <- function(){
     require("car")
     .activeModel <- ActiveModel()
-    if (!checkMethod("influence.plot", .activeModel)) return()
+    if (!checkMethod("influencePlot", .activeModel)) return()
     response <- tclvalue(RcmdrTkmessageBox(message=gettextRcmdr("Identify points with mouse?"), 
         icon="question", type="yesno", default="no"))
     labels <- if (response == "no") ", labels=FALSE" else ""
-    doItAndPrint(paste("influence.plot(", .activeModel, labels, ")", sep=""))
+    doItAndPrint(paste("influencePlot(", .activeModel, labels, ")", sep=""))
     }  
     
 effectPlots <- function(){

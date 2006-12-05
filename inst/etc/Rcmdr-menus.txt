@@ -1,6 +1,6 @@
 # R Commander Menu Definitions
 
-# last modified 21 September 2006 by J. Fox
+# last modified 5 December 2006 by J. Fox
 
 #   type    menu/item      operation/parent  label                                          command/menu                activation  install?
 
@@ -172,7 +172,7 @@
     item    graphsMenu      command         "Residual quantile-comparison plot..."          residualQQPlot              "lmP()" "packageAvailable('car')"
     item    graphsMenu      command         "Component+residual plots"                      CRPlots                     "(lmP() || glmP())" "packageAvailable('car')"
     item    graphsMenu      command         "Added-variable plots"                          AVPlots                     "(lmP() || glmP())" "packageAvailable('car')"
-    item    graphsMenu      command         "Influence plot"                                influencePlot               "(lmP() || glmP())" "packageAvailable('car')"
+    item    graphsMenu      command         "Influence plot"                                InfluencePlot               "(lmP() || glmP())" "packageAvailable('car')"
     item    graphsMenu      command         "Effect plots"                                  effectPlots                 "(lmP() || glmP())" "packageAvailable('effects')"
     item    topMenu         cascade         "Models"                                        modelsMenu                  ""          ""
 

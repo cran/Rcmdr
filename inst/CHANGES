@@ -528,5 +528,13 @@ Version 1.2-4
    
    o  Small change to start-up -- test for interactive() moved to top of .onLoad().
    
+Version 1.2-5
+
+   o  Corrections to Indonesian translation (by I Made Tirta).
+   
+   o  Changed command to produce influence plots from influence.plot() to influencePlot(), in conformity with change in the car package. The GUI function, called from the menu, is changed from influencePlot() to InfluencePlot().
+   
+   o  Changed command to produce pairwise comparisons in one-way ANOVA to conform to new multcomp package.
+   
    
    
