@@ -536,5 +536,9 @@ Version 1.2-5
    
    o  Changed command to produce pairwise comparisons in one-way ANOVA to conform to new multcomp package.
    
+Version 1.2-6
+
+   o  New German translation, kindly provide by Gerhard Schön.
+   
    
    
