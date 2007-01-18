@@ -540,5 +540,11 @@ Version 1.2-6
 
    o  New German translation, kindly provide by Gerhard Schön.
    
+Version 1.2-7
+
+   o  The linePlot() function failed when the x-variable is a "Date" variable (bug reported by Richard Heiberger).
+   
+   o  Small changes.
+   
    
    

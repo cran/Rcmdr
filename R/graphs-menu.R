@@ -1,6 +1,6 @@
 # Graphs menu dialogs
 
-# last modified 21 August 06 by J. Fox
+# last modified 18 January 2007 by J. Fox
 
 indexPlot <- function(){
     initializeDialog(title=gettextRcmdr("Index Plot"))                                               
@@ -415,7 +415,7 @@ linePlot <- function(){
             }
         .activeDataSet <- ActiveDataSet()
         .x <- na.omit(eval(parse(text=paste(.activeDataSet, "$", x, sep="")), envir=.GlobalEnv))
-        if (!identical(order(.x), seq(along=.x))){
+        if (!identical(order(.x), seq(1:length(.x)))){
             response <- tclvalue(RcmdrTkmessageBox(message=gettextRcmdr("x-values are not in order.\nContinue?"), 
                 icon="warning", type="okcancel", default="cancel"))
             if (response == "cancel") {

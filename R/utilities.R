@@ -1,4 +1,4 @@
-# last modified 4 October 06 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 18 January 2007 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
                                                                                        
 # utility functions
 
@@ -1468,7 +1468,7 @@ groupsBox <- defmacro(recall=NULL, label=gettextRcmdr("Plot by:"), initialLabel=
         .factors <- Factors()
         onGroups <- function(){
             if (length(.factors) == 0){
-                errorCondition(recall=recall, message=gettextRcmdr("There no factors in the active data set.")) 
+                errorCondition(recall=recall, message=gettextRcmdr("There are no factors in the active data set.")) 
                 return()
                 }
             initializeDialog(subdialog, title=gettextRcmdr("Groups"))
