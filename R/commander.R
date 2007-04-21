@@ -1,6 +1,6 @@
 # The R Commander and command logger
 
-# last modified 18 January 2007 by J. Fox
+# last modified 21 April 2007 by J. Fox
 #   slight changes 12 Aug 04 by Ph. Grosjean 
 
 Commander <- function(){
@@ -530,7 +530,8 @@ doItAndPrint <- function(command, log=TRUE) {
         }
     if (isS4object(result)) show(result) else print(result)
     .Output <- readLines(output.connection)
-    if (.Output[length(.Output)] == "NULL") .Output <- .Output[-length(.Output)] # suppress "NULL" line at end of output
+    if (length(.Output) > 0 && .Output[length(.Output)] == "NULL") 
+        .Output <- .Output[-length(.Output)] # suppress "NULL" line at end of output
     if (length(.Output) != 0) {  # is there output to print?
         if (.console.output) {
             out <- .Output

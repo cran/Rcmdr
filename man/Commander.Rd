@@ -32,7 +32,8 @@ data frames or suitable model objects in memory.
 Almost all commands require an active data set. When the Commander starts, there is no active
 data set, as indicated in the data set information field. A data set becomes the active data set
 when it is read into memory from an R package or imported from a text file, SPSS data set,
-Minitab data set, or STATA data set. In addition, the active data set can be selected from among R data frames
+Minitab data set,  STATA data set, or an Excel, Access, or dBase data set. 
+In addition, the active data set can be selected from among R data frames
 resident in memory. You can therefore switch among data sets during a session.
 
 By default, commands are logged to the script window (the
@@ -204,7 +205,7 @@ when the \code{Rcmdr} package is loaded; the default is to load only the \code{c
     Some X11 warnings may be printed when you exit from the Commander. This problem only applies to R versions
     before 2.4.0, and the default value of the option is set accordingly.}
     
-    \item{\code{retain.messages}}{If \code{TRUE} (the default is code{FALSE}), the contents of the message window
+    \item{\code{retain.messages}}{If \code{TRUE} (the default is \code{FALSE}), the contents of the message window
     are not erased between messages. In any event, a "NOTE" message will not erase a preceding "WARNING" or "ERROR".}
     
     \item{\code{scale.factor}}{A scaling factor to be applied to all Tk elements, such as fonts. This works well
@@ -242,6 +243,15 @@ when the \code{Rcmdr} package is loaded; the default is to load only the \code{c
     
 Many options can also be set via the \emph{File -> Options} menu, which will restart the Commander after options are set.
 }
+
+\section{Warning}{
+    The R Commander Script window does not provide a true console to R, and has certain limitations.
+    I don't recommend using the R Commander for serious programming or for data analysis that relies
+    primarily on scripts --- use a programming editor instead. For example, compound
+    R statements enclosed in braces \code{"{}"}, including in function defintions,
+    will not be parsed and executed correctly, even if lines after the first are indented.
+    You can execute compound statements from the Script window by separating commands within braces by semicolons.
+    }
 
 \section{Known Problem}{
   Occasionally, under Windows, after typing some text into a dialog box (e.g., a subsetting expression in the Subset  Data Set dialog), buttons in the dialog (e.g., the OK button) will have no effect when they are pressed. Clicking anywhere inside or outside of the dialog box should restore the function of the buttons. As far as I have been able to ascertain, this is a problem with Tcl/Tk for Windows.
