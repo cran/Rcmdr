@@ -552,5 +552,9 @@ Version 1.2-8
    
    o  Change to the way that doItAndPrint() processes output, to avoid an error in R 2.5.0 with 0-length output, as produced, e.g., by printing a trellis graph (problem reported by Richard Heiberger).
    
+Version 1.2-9
+
+   o  Correction to version information.
+   
    
    
