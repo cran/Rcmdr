@@ -1,4 +1,4 @@
-# last modified 22 September 2006 by J. Fox
+# last modified 18 May 2007 by J. Fox
 
 # File menu dialogs
 
@@ -90,22 +90,26 @@ saveWorkspace <- function() {
     Message(paste(gettextRcmdr("R workspace saved to"), .saveFileName), type="note")
     }
     
-closeCommander <- function(){
-    response <- tclvalue(RcmdrTkmessageBox(message=gettextRcmdr("Exit?"),
-        icon="question", type="okcancel", default="cancel"))
-    if (response == "cancel") return(invisible(response))
+CloseCommander <- function() closeCommander()
+    
+closeCommander <- function(ask=TRUE, ask.save=ask){
+    if (ask){
+        response <- tclvalue(RcmdrTkmessageBox(message=gettextRcmdr("Exit?"),
+            icon="question", type="okcancel", default="cancel"))
+        if (response == "cancel") return(invisible(response))
+        }
     sink(type="message")
     if (rglLoaded()) rgl.quit()
     if (!is.null(ActiveDataSet()) && getRcmdr("attach.data.set"))
         justDoIt(logger(paste("detach(", ActiveDataSet(), ")", sep="")))
     putRcmdr(".activeDataSet", NULL)
     putRcmdr(".activeModel", NULL)
-    if (getRcmdr("log.commands") && tclvalue(tkget(LogWindow(), "1.0", "end")) != "\n"){
+    if (ask.save && getRcmdr("log.commands") && tclvalue(tkget(LogWindow(), "1.0", "end")) != "\n"){
          response2 <- RcmdrTkmessageBox(message=gettextRcmdr("Save script file?"),
                  icon="question", type="yesno", default="yes")
          if ("yes" == tclvalue(response2)) saveLog()
          }
-    if (!getRcmdr("console.output") && tclvalue(tkget(OutputWindow(), "1.0", "end")) != "\n"){
+    if (ask.save && !getRcmdr("console.output") && tclvalue(tkget(OutputWindow(), "1.0", "end")) != "\n"){
          response3 <- RcmdrTkmessageBox(message=gettextRcmdr("Save output file?"),
                  icon="question", type="yesno", default="yes")
          if ("yes" == tclvalue(response3)) saveOutput()
@@ -292,3 +296,4 @@ loadPackages <- function(){
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix(rows=1, columns=1)
     }
+

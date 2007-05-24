@@ -17,10 +17,12 @@
 \alias{checkReplace}
 \alias{checkTwoLevelFactors}
 \alias{checkVariables}
+\alias{closeCommander}
 \alias{closeDialog}
 \alias{commanderPosition}
 \alias{CommanderWindow}
 \alias{dataSetsP}
+\alias{defmacro}
 \alias{dialogSuffix}
 \alias{doItAndPrint}
 \alias{errorCondition}
@@ -48,6 +50,7 @@
 \alias{listLinearModels}
 \alias{listMultinomialLogitModels}
 \alias{listNumeric}
+\alias{listPlugins}
 \alias{listProportionalOddsModels}
 \alias{listTwoLevelFactors}
 \alias{listVariables}
@@ -67,6 +70,7 @@
 \alias{radioButtons}
 \alias{RcmdrTclSet}
 \alias{RcmdrTkmessageBox}
+\alias{rglLoaded}
 \alias{subOKCancelHelp}
 \alias{subsetBox}
 \alias{trim.blanks}
@@ -103,9 +107,11 @@ checkNumeric(n=1)
 checkReplace(name, type=gettextRcmdr("Variable"))
 checkTwoLevelFactors(n=1)
 checkVariables(n=1)
+closeCommander(ask=TRUE, ask.save=ask)
 closeDialog(window, release=TRUE)  # macro
 CommanderWindow()
 dataSetsP()
+defmacro(..., expr)
 dialogSuffix(window=top, onOK=onOK, rows=1, columns=1, focus=top, bindReturn=TRUE, 
     preventGrabFocus=FALSE, preventDoubleClick=FALSE, preventCrisp=FALSE)  # macro
 doItAndPrint(command, log=TRUE)
@@ -135,6 +141,7 @@ listGeneralizedLinearModels(envir=.GlobalEnv, ...)
 listLinearModels(envir=.GlobalEnv, ...)
 listMultinomialLogitModels(envir=.GlobalEnv, ...)
 listNumeric(dataSet=ActiveDataSet())
+listPlugins(loaded=FALSE)
 listProportionalOddsModels(envir=.GlobalEnv, ...)
 listTwoLevelFactors(dataSet=ActiveDataSet())
 listVariables(dataSet=ActiveDataSet())
@@ -156,6 +163,7 @@ radioButtons(window=top, name, buttons, values=NULL, initialValue=..values[1],
 RcmdrTclSet(name, value)
 RcmdrTkmessageBox(message, icon=c("info", "question", "warning",
     "error"), type=c("okcancel", "yesno", "ok"), default, title="")
+rglLoaded()
 subOKCancelHelp(window=subdialog, helpSubject=NULL)  # macro
 subsetBox(window=top, model=FALSE)  # macro
 trim.blanks(text)
@@ -174,6 +182,8 @@ commanderPosition()
 }
 
 \arguments{
+  \item{ask}{ask for confirmation.}
+  \item{ask.save}{ask whether to save contents of script and output windows.}
   \item{bg}{background color.}
   \item{bindReturn}{if \code{TRUE}, the \emph{Return} key is bound to the \code{onOK} function in the dialog.}
   \item{boxes}{vector of quoted names for check boxes, used to generate each box and its associated variable.}
@@ -186,6 +196,7 @@ commanderPosition()
     or look for a default method.}
   \item{envir}{the environment to be searched; should generally be left at the default.}
   \item{export}{export selection?}
+  \item{expr}{expression constituting the body of the macro; typically a compound expression.}
   \item{flushModel}{set (or reset) the active model to NULL? Should normally be \code{TRUE} when the active 
     data set is changed; an exception is when variables are simply added to, deleted from, or modified in 
     the data set set.}
@@ -205,6 +216,8 @@ commanderPosition()
   \item{label}{label prefix for groups button after a selection is made.}
   \item{labels}{a vector of character strings to label a set of radio buttons or check boxes.}
   \item{listHeight}{Maximum number of elements displayed simultaneously in list box.}
+  \item{loaded}{if \code{TRUE}, plug-in packages that are loaded are included in the vector of names
+    returned.}
   \item{log}{echo command to the log window, as well as executing it and printing its output.}
   \item{message}{error (or other) message.}
   \item{mode}{mode of object to retrieve.}
@@ -241,7 +254,7 @@ commanderPosition()
   \item{window, parentWindow}{a Tk window.}
   \item{x}{an R object name, as a character string.}
   \item{\dots}{For \code{gettextRcmdr}, text string or vector of text strings
-    to translate; otherwise disregard.}
+    to translate; for \code{defmacro}, arguments for the macro; otherwise disregard.}
 }
 
 \details{
@@ -300,8 +313,10 @@ commanderPosition()
   The \code{gettextRcmdr} function simply passes its argument(s) to
    \code{\link[base]{gettext}}, adding the argument \code{domain="R-Rcmdr"}.
    
-  \emph{Miscelaneous:}
-  The function \code{trim.blanks} removes spaces from the beginning and end of a character string.
+  \emph{Miscellaneous:}
+  The function \code{trim.blanks} removes spaces from the beginning and end of a character string. The function 
+  \code{installPlugin} installs an Rcmdr plug-in from a ZIP file or directory; this function may be used to
+  create self-installing plug-ins in the form of packages.
   
   Some of these functions, marked \code{# macro} under \emph{Usage}, are "macro-like" in their behaviour, in that they 
   execute in the environment from which they are called. These were defined with an adaptation (used with permission) of

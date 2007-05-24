@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 1 July 05 by J. Fox
+# last modified 22 May 07 by J. Fox
 
     # Models menu
     
@@ -277,9 +277,9 @@ generalizedLinearModel <- function(){
     dialogSuffix(rows=7, columns=1, focus=lhsEntry, preventDoubleClick=TRUE)
     }
 
-proportionalOddsModel <- function(){
+ordinalRegressionModel <- function(){
     require("MASS")
-    initializeDialog(title=gettextRcmdr("Proportional-Odds Logit Model"))
+    initializeDialog(title=gettextRcmdr("Ordinal Regression Model"))
     .activeModel <- ActiveModel()
     .activeDataSet <- ActiveDataSet()
     currentModel <- if (!is.null(.activeModel)) 
@@ -292,9 +292,13 @@ proportionalOddsModel <- function(){
         if (currentFields$data != .activeDataSet) currentModel <- FALSE
         }
     UpdateModelNumber()
-    modelName <- tclVar(paste("POM.", getRcmdr("modelNumber"), sep=""))
+    modelName <- tclVar(paste("OrdRegModel.", getRcmdr("modelNumber"), sep=""))
     modelFrame <- tkframe(top)
     model <- tkentry(modelFrame, width="20", textvariable=modelName)
+    radioButtons(name="modelType", 
+        buttons=c("logistic", "probit"), 
+        labels=gettextRcmdr(c("Proportional-odds logit", "Ordered probit")),
+        title=gettextRcmdr("Type of Model"))
     onOK <- function(){
         modelValue <- trim.blanks(tclvalue(modelName))
         closeDialog()
@@ -333,8 +337,8 @@ proportionalOddsModel <- function(){
                 }
             }
         formula <- paste(tclvalue(lhsVariable), tclvalue(rhsVariable), sep=" ~ ")
-        command <- paste("polr(", formula,
-            ", data=", .activeDataSet, subset, ", Hess=TRUE)", sep="")
+        command <- paste("polr(", formula, ', method="', tclvalue(modelTypeVariable),
+            '", data=', .activeDataSet, subset, ", Hess=TRUE)", sep="")
         logger(paste(modelValue, " <- ", command, sep=""))
         assign(modelValue, justDoIt(command), envir=.GlobalEnv)
         doItAndPrint(paste("summary(", modelValue, ")", sep=""))
@@ -350,8 +354,9 @@ proportionalOddsModel <- function(){
     tkgrid(outerOperatorsFrame, sticky="w")
     tkgrid(formulaFrame, sticky="w")
     tkgrid(subsetFrame, sticky="w")
+    tkgrid(modelTypeFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
-    dialogSuffix(rows=6, columns=1, focus=lhsEntry, preventDoubleClick=TRUE)
+    dialogSuffix(rows=7, columns=1, focus=lhsEntry, preventDoubleClick=TRUE)
     }
     
 multinomialLogitModel <- function(){

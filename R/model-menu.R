@@ -1,6 +1,6 @@
 # Model menu dialogs
 
-# last modified 20 August 06 by J. Fox
+# last modified 16 May 07 by J. Fox
 
 selectActiveModel <- function(){
     models <- listAllModels()
@@ -62,10 +62,13 @@ summarizeModel <- function(){
 plotModel <- function(){
     .activeModel <- ActiveModel()
     if (!checkMethod("plot", .activeModel)) return()
-    doItAndPrint("par(mfrow=c(2,2))")
+    command <- "oldpar <- par(oma=c(0,0,3,0), mfrow=c(2,2))"
+    justDoIt(command)
+    logger(command)
     doItAndPrint(paste("plot(", .activeModel, ")", sep=""))
-    doItAndPrint("par(mfrow=c(1,1))")
-    activateMenus()
+    command <- "par(oldpar)"
+    justDoIt(command)
+    logger(command)
     }
 
 CRPlots <- function(){

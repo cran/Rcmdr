@@ -1,6 +1,6 @@
 # Graphs menu dialogs
 
-# last modified 18 January 2007 by J. Fox
+# last modified 24 May 2007 by J. Fox
 
 indexPlot <- function(){
     initializeDialog(title=gettextRcmdr("Index Plot"))                                               
@@ -205,15 +205,48 @@ scatterPlot <- function(){
     require("car")
     initializeDialog(title=gettextRcmdr("Scatterplot"))
     .numeric <- Numeric()
-    xBox <- variableListBox(top, .numeric, title=gettextRcmdr("x-variable (pick one)"))
-    yBox <- variableListBox(top, .numeric, title=gettextRcmdr("y-variable (pick one)"))
+    variablesFrame <- tkframe(top)
+    xBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("x-variable (pick one)"))
+    yBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("y-variable (pick one)"))
     checkBoxes(frame="optionsFrame", boxes=c("identify", "jitterX", "jitterY", "boxplots", "lsLine", "smoothLine"),
         initialValues=c(0, 0, 0, 1, 1, 1), labels=gettextRcmdr(c("Identify points", "Jitter x-variable", "Jitter y-variable",
         "Marginal boxplots", "Least-squares line", "Smooth Line")))
     sliderValue <- tclVar("50")
     slider <- tkscale(optionsFrame, from=0, to=100, showvalue=TRUE, variable=sliderValue,
         resolution=5, orient="horizontal")
-    subsetBox()
+    subsetBox()    
+    labelsFrame <- tkframe(top)
+    xlabVar <- tclVar(gettextRcmdr("<auto>"))
+    ylabVar <- tclVar(gettextRcmdr("<auto>"))
+    xlabFrame <- tkframe(labelsFrame)
+    xlabEntry <- tkentry(xlabFrame, width="25", textvariable=xlabVar)
+    xlabScroll <- tkscrollbar(xlabFrame, orient="horizontal",
+        repeatinterval=5, command=function(...) tkxview(xlabEntry, ...))
+    tkconfigure(xlabEntry, xscrollcommand=function(...) tkset(xlabScroll, ...))
+    tkgrid(tklabel(xlabFrame, text=gettextRcmdr("x-axis label"), fg="blue"), sticky="w")
+    tkgrid(xlabEntry, sticky="w")
+    tkgrid(xlabScroll, sticky="ew")
+    ylabFrame <- tkframe(labelsFrame)
+    ylabEntry <- tkentry(ylabFrame, width="25", textvariable=ylabVar)
+    ylabScroll <- tkscrollbar(ylabFrame, orient="horizontal",
+        repeatinterval=5, command=function(...) tkxview(ylabEntry, ...))
+    tkconfigure(ylabEntry, xscrollcommand=function(...) tkset(ylabScroll, ...))
+    tkgrid(tklabel(ylabFrame, text=gettextRcmdr("y-axis label"), fg="blue"), sticky="w")
+    tkgrid(ylabEntry, sticky="w")
+    tkgrid(ylabScroll, sticky="ew")
+    tkgrid(xlabFrame, tklabel(labelsFrame, text="     "), ylabFrame, sticky="w")    
+    parFrame <- tkframe(top) 
+    pchVar <- tclVar(gettextRcmdr("<auto>"))
+    pchEntry <- tkentry(parFrame, width=25, textvariable=pchVar)      
+    cexValue <- tclVar("1")
+    cex.axisValue <- tclVar("1")
+    cex.labValue <- tclVar("1")    
+    cexSlider <- tkscale(parFrame, from=0.5, to=2.5, showvalue=TRUE, variable=cexValue,
+        resolution=0.1, orient="horizontal")
+    cex.axisSlider <- tkscale(parFrame, from=0.5, to=2.5, showvalue=TRUE, variable=cex.axisValue,
+        resolution=0.1, orient="horizontal")
+    cex.labSlider <- tkscale(parFrame, from=0.5, to=2.5, showvalue=TRUE, variable=cex.labValue,
+        resolution=0.1, orient="horizontal")
     onOK <- function(){
         x <- getSelection(xBox)
         y <- getSelection(yBox)
@@ -245,17 +278,34 @@ scatterPlot <- function(){
         subset <- tclvalue(subsetVariable)
         subset <- if (trim.blanks(subset) == gettextRcmdr("<all valid cases>")) "" 
             else paste(", subset=", subset, sep="")
-        tkdestroy(top)
+        xlab <- trim.blanks(tclvalue(xlabVar))
+        xlab <- if(xlab == "<auto>") "" else paste(', xlab="', xlab, '"', sep="")
+        ylab <- trim.blanks(tclvalue(ylabVar))
+        ylab <- if(ylab == "<auto>") "" else paste(', ylab="', ylab, '"', sep="")
+        cex <- as.numeric(tclvalue(cexValue))
+        cex <- if(cex == 1) "" else paste(', cex=', cex, sep="")
+        cex.axis <- as.numeric(tclvalue(cex.axisValue))
+        cex.axis <- if(cex.axis == 1) "" else paste(', cex.axis=', cex.axis, sep="")
+        cex.lab <- as.numeric(tclvalue(cex.labValue))
+        cex.lab <- if(cex.lab == 1) "" else paste(', cex.lab=', cex.lab, sep="")        
+        pch <- gsub(" ", ",", tclvalue(pchVar))
+        if ("" == pch) {
+            errorCondition(recall=scatterPlot, message=gettextRcmdr("No plotting characters."))
+            return()
+            }
+        pch <- if(trim.blanks(pch) == "<auto>") "" else paste(", pch=c(", pch, ")", sep="")
         if (.groups == FALSE) {
             doItAndPrint(paste("scatterplot(", y, "~", x,
                 ", reg.line=", line, ", smooth=", smooth, ", labels=", labels,
-                ", boxplots=", box, ", span =", span/100, jitter,
+                ", boxplots=", box, ", span=", span/100, jitter, xlab, ylab,
+                cex, cex.axis, cex.lab, pch,
                 ", data=", .activeDataSet, subset, ")", sep=""))
             }
         else {
             doItAndPrint(paste("scatterplot(", y, "~", x," | ", .groups,
                 ", reg.line=", line, ", smooth=", smooth, ", labels=", labels,
-                ", boxplots=", box, ", span=", span/100, jitter,
+                ", boxplots=", box, ", span=", span/100, jitter, xlab, ylab,
+                cex, cex.axis, cex.lab, pch,
                 ", by.groups=", .linesByGroup,
                 ", data=", .activeDataSet, subset, ")", sep=""))
             }
@@ -264,13 +314,22 @@ scatterPlot <- function(){
         }
     groupsBox(scatterPlot, plotLinesByGroup=TRUE)
     OKCancelHelp(helpSubject="scatterplot")
-    tkgrid(getFrame(xBox), getFrame(yBox), sticky="nw")    
+    tkgrid(getFrame(xBox), getFrame(yBox), sticky="nw") 
+    tkgrid(variablesFrame, sticky="w")   
     tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Span for smooth")), slider, sticky="w")
     tkgrid(optionsFrame, sticky="w")
     tkgrid(subsetFrame, sticky="w")
-    tkgrid(groupsFrame, sticky="w")
+    tkgrid(groupsFrame, sticky="w")    
+    tkgrid(labelsFrame, sticky="w")
+    tkgrid(tklabel(top, text=" "))    
+    tkgrid(tklabel(parFrame, text=gettextRcmdr("Plotting Parameters"), fg="blue"), sticky="w")
+    tkgrid(tklabel(parFrame, text=gettextRcmdr("Plotting characters")), pchEntry, stick="w")
+    tkgrid(tklabel(parFrame, text=gettextRcmdr("Point size")), cexSlider, sticky="w")
+    tkgrid(tklabel(parFrame, text=gettextRcmdr("Axis text size")), cex.axisSlider, sticky="w")
+    tkgrid(tklabel(parFrame, text=gettextRcmdr("Axis-labels text size")), cex.labSlider, sticky="w")
+    tkgrid(parFrame, sticky="w")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
-    dialogSuffix(rows=5, columns=2)
+    dialogSuffix(rows=8, columns=2)
     }
 
 scatterPlotMatrix <- function(){
@@ -1014,5 +1073,121 @@ Xyplot <- function() {
     tkgrid(y.relationFrame, sticky="w")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     dialogSuffix(rows=6, columns=2)
+    }
+
+# set the colour palette
+    
+setPalette <- function() {
+    cval <- function(x,y) -sum((x-y)^2)
+    contrasting <- function(x) 
+        optim(rep(127, 3),cval,lower=0,upper=255,method="L-BFGS-B",y=x)$par
+    # the following local function from Thomas Lumley via r-help
+    convert <- function (color){
+        rgb <- col2rgb(color)/255
+        L <- c(0.2, 0.6, 0) %*% rgb
+        ifelse(L >= 0.2, "#000060", "#FFFFA0")    
+        }
+    env <- environment()
+    pal <- palette()
+    pickColor <- function(initialcolor, parent){
+        tclvalue(.Tcl(paste("tk_chooseColor", .Tcl.args(title = "Select a Color",
+            initialcolor=initialcolor, parent=parent))))
+        }
+    initializeDialog(title=gettextRcmdr("Set Color Palette"))
+    hexcolor <- colorConverter(toXYZ = function(hex,...) {
+        rgb <- t(col2rgb(hex))/255
+        colorspaces$sRGB$toXYZ(rgb,...) },
+        fromXYZ = function(xyz,...) {
+            rgb <- colorspaces$sRGB$fromXYZ(xyz,..)
+            rgb <- round(rgb,5)
+            if (min(rgb) < 0 || max(rgb) > 1) as.character(NA)
+            else rgb(rgb[1],rgb[2],rgb[3])},
+            white = "D65", name = "#rrggbb")
+    cols <- t(col2rgb(pal))
+    hex <- convertColor(cols, from="sRGB", to=hexcolor, scale.in=255, scale.out=NULL)
+    for (i in 1:8) assign(paste("hex", i, sep="."), hex[i], envir=env)
+    paletteFrame <- tkframe(top)
+    button1 <- tkbutton(paletteFrame, text=hex[1], bg = hex[1],
+        fg=convert(hex[1]),
+        command=function() {
+            color <- pickColor(hex[1], parent=button1)
+            fg <- convert(color)
+            tkconfigure(button1, bg=color, fg=fg)
+            assign("hex.1", color, envir=env)
+            }
+        )
+    button2 <- tkbutton(paletteFrame, text=hex[2], bg = hex[2],
+        fg=convert(hex[2]),
+        command=function() {
+            color <- pickColor(hex[2], parent=button2)
+            fg <- convert(color)
+            tkconfigure(button2, bg=color, fg=fg)
+            assign("hex.2", color, envir=env)
+            }
+        )
+     button3 <- tkbutton(paletteFrame, text=hex[3], bg = hex[3],
+        fg=convert(hex[3]),
+        command=function() {
+            color <- pickColor(hex[3], parent=button3)
+            fg <- convert(color)
+            tkconfigure(button3, bg=color, fg=fg)
+            assign("hex.3", color, envir=env)
+            }
+        )
+     button4 <- tkbutton(paletteFrame, text=hex[4], bg = hex[4],
+        fg=convert(hex[4]),
+        command=function() {
+            color <- pickColor(hex[4], parent=button4)
+            fg <- convert(color)
+            tkconfigure(button4, bg=color, fg=fg)
+            assign("hex.4", color, envir=env)
+            }
+        )
+     button5 <- tkbutton(paletteFrame, text=hex[5], bg = hex[5],
+        fg=convert(hex[5]),
+        command=function() {
+            color <- pickColor(hex[5], parent=button5)
+            fg <- convert(color)
+            tkconfigure(button5, bg=color, fg=fg)
+            assign("hex.5", color, envir=env)
+            }
+        )
+     button6 <- tkbutton(paletteFrame, text=hex[6], bg = hex[6],
+        fg=convert(hex[6]),
+        command=function() {
+            color <- pickColor(hex[6], parent=button6)
+            fg <- convert(color)
+            tkconfigure(button6, bg=color, fg=fg)
+            assign("hex.6", color, envir=env)
+            }
+        )
+     button7 <- tkbutton(paletteFrame, text=hex[7], bg = hex[7],
+        fg=convert(hex[7]),
+        command=function() {
+            color <- pickColor(hex[7], parent=button7)
+            fg <- convert(color)
+            tkconfigure(button7, bg=color, fg=fg)
+            assign("hex.7", color, envir=env)
+            }
+        )
+     button8 <- tkbutton(paletteFrame, text=hex[8], bg = hex[8],
+        fg=convert(hex[8]),
+        command=function() {
+            color <- pickColor(hex[8], parent=button8)
+            fg <- convert(color)
+            tkconfigure(button8, bg=color, fg=fg)
+            assign("hex.8", color, envir=env)
+            }
+        )
+     onOK <- function(){
+        closeDialog(top)
+        palette(c(hex.1, hex.2, hex.3, hex.4, hex.5, hex.6, hex.7, hex.8))
+        Message(gettextRcmdr("Color palette reset.", type="note"))
+        }
+    OKCancelHelp(helpSubject="palette") 
+    tkgrid(button1, button2, button3, button4, button5, button6, button7, button8)
+    tkgrid(paletteFrame)
+    tkgrid(buttonsFrame, sticky="w")
+    dialogSuffix(rows=2)
     }
 

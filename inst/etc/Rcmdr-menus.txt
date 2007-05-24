@@ -1,6 +1,6 @@
 # R Commander Menu Definitions
 
-# last modified 5 December 2006 by J. Fox
+# last modified 22 May 2007 by J. Fox
 
 #   type    menu/item      operation/parent  label                                          command/menu                activation  install?
 
@@ -13,7 +13,7 @@
     item    fileMenu        command         "Save R workspace..."                           saveWorkspace               ""          ""
     item    fileMenu        command         "Save R workspace as..."                        saveWorkspaceAs             ""          ""
     menu    exitMenu        fileMenu        ""                                              ""                          ""          ""
-    item    exitMenu        command         "From Commander"                                closeCommander              ""          ""
+    item    exitMenu        command         "From Commander"                                CloseCommander              ""          ""
     item    exitMenu        command         "From Commander and R"                          closeCommanderAndR          ""          ""
     item    fileMenu        cascade         "Exit"                                          exitMenu                    ""          ""
     item    topMenu         cascade         "File"                                          fileMenu                    ""          ""
@@ -28,6 +28,7 @@
     item    topMenu         cascade         "Edit"                                          editMenu                    ""          ""
     menu    dataMenu        topMenu         ""                                              ""                          ""          ""
     item    dataMenu        command         "New data set..."                               newDataSet                  ""          ""
+    item    dataMenu        command         "Load data set..."                              loadDataSet                 ""      ""
     menu    importMenu      dataMenu        ""                                              ""                          ""          ""
     item    importMenu      command         "from text file or clipboard..."                readDataSet                 ""          ""
     item    importMenu      command         "from SPSS data set..."                         importSPSS                  ""          "packageAvailable('foreign')"
@@ -48,6 +49,7 @@
     item    activeMenu      command         "Subset active data set..."                     subsetDataSet               "activeDataSetP()"          ""
     item    activeMenu      command         "Stack variables in active data set..."         Stack                       "activeDataSetP() && numericP(2)"          ""
     item    activeMenu      command         "Remove cases with missing data..."             filterNA                    "activeDataSetP()"          ""
+    item    activeMenu      command         "Save active data set..."                       saveDataSet                 "activeDataSetP()"          ""
     item    activeMenu      command         "Export active data set..."                     exportDataSet               "activeDataSetP()"          ""
     item    dataMenu        cascade         "Active data set"                               activeMenu                  ""          ""
     menu    variablesMenu   dataMenu        ""                                              ""                          ""          ""
@@ -72,6 +74,7 @@
     item    summariesMenu   command         "Table of statistics..."                        statisticsTable             "numericP() && factorsP()"  ""
     item    summariesMenu   command         "Correlation matrix..."                         correlationMatrix           "numericP(2)"               ""
     item    summariesMenu   command         "Correlation test..."                           correlationTest             "numericP(2)"               ""
+    item    summariesMenu   command         "Shapiro-Wilk test of normality..."             ShapiroTest                 "numericP()"                ""
     menu    tablesMenu      statisticsMenu  ""                                              ""                          ""          ""
     item    tablesMenu      command         "Two-way table..."                              twoWayTable                 "factorsP(2)" "packageAvailable('abind')"
     item    tablesMenu      command         "Multi-way table..."                            multiWayTable               "factorsP(3)" "packageAvailable('abind')"
@@ -108,11 +111,7 @@
     item    modelsMenu      command         "Linear model..."                               linearModel                 "numericP()"          ""
     item    modelsMenu      command         "Generalized linear model..."                   generalizedLinearModel      "activeDataSetP()"          ""
     item    modelsMenu      command         "Multinomial logit model..."                    multinomialLogitModel       "factorsP()" "packageAvailable('nnet')"
-    item    modelsMenu      command         "Proportional-odds logit model..."              proportionalOddsModel       "factorsP()" "packageAvailable('MASS')"
-
-#    menu    transformMenu   statisticsMenu  ""                                              ""                         ""          ""
-#    item    transformMenu   command         "Multivariate Box-Cox transformations..."       BoxCox                     "numericP()" "packageAvailable('car')"
-
+    item    modelsMenu      command         "Ordinal regression model..."                   ordinalRegressionModel      "factorsP()" "packageAvailable('MASS')"
     item    topMenu         cascade         "Statistics"                                    statisticsMenu              ""          ""
     item    statisticsMenu  cascade         "Summaries"                                     summariesMenu               ""          ""
     item    statisticsMenu  cascade         "Contingency tables"                            tablesMenu                  ""          "packageAvailable('abind')"
@@ -122,10 +121,8 @@
     item    statisticsMenu  cascade         "Nonparametric tests"                           nonparametricMenu           ""          ""
     item    statisticsMenu  cascade         "Dimensional analysis"                          dimensionalMenu             ""          ""
     item    statisticsMenu  cascade         "Fit models"                                    modelsMenu                  ""          ""
-
-#    item    statisticsMenu  cascade         "Transform"                                     transformMenu               ""          ""
-
     menu    graphsMenu      topMenu         ""                                              ""                          ""          ""
+    item    graphsMenu      command         "Color palette..."                              setPalette                  ""          ""
     item    graphsMenu      command         "Index plot..."                                 indexPlot                   "numericP()"          ""
     item    graphsMenu      command         "Histogram..."                                  Histogram                   "numericP()"          ""
     item    graphsMenu      command         "Stem-and-leaf display..."                      stemAndLeaf                 "numericP()"          ""
@@ -336,6 +333,7 @@
 
     menu    toolsMenu       topMenu         ""                                              ""                          ""          ""
     item    toolsMenu       command         "Load package(s)..."                            loadPackages                ""          ""
+    item    toolsMenu       command         "Load Rcmdr plug-in(s)..."                        loadPlugins             "length(listPlugins()) > 0" ""
     item    toolsMenu       command         "Options..."                                    Options                     ""          ""
     item    topMenu         cascade         "Tools"                                         toolsMenu                   ""          ""
     menu    helpMenu        topMenu         ""                                              ""                          ""          ""

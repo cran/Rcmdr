@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 17 August 06 by J. Fox
+# last modified 22 May 07 by J. Fox
 
     # Summaries menu
     
@@ -301,3 +301,22 @@ countMissing <- function(){
   doItAndPrint(command)
   invisible(NULL)
   }
+  
+ShapiroTest <- function(){
+    initializeDialog(title=gettextRcmdr("Shapiro-Wilk Test for Normality"))
+    variableBox <- variableListBox(top, Numeric(), title=gettextRcmdr("Variable (pick one)"))
+    onOK <- function(){
+        var <- getSelection(variableBox)
+        if (length(var) == 0) {
+            errorCondition(recall=ShapiroTest, message=gettextRcmdr("You must select a variable."))
+            return()
+            }
+        closeDialog()
+        doItAndPrint(paste("shapiro.test(",ActiveDataSet(), "$", var, ")", sep=""))
+        tkfocus(CommanderWindow())
+        }
+    OKCancelHelp(helpSubject="shapiro.test")
+    tkgrid(getFrame(variableBox), sticky="nw")
+    tkgrid(buttonsFrame, sticky="w")
+    dialogSuffix(rows=2, columns=1)
+    }

@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 30 July 06 by J. Fox
+# last modified 24 May 07 by J. Fox
 
     # Means menu
 
@@ -175,8 +175,12 @@ oneWayAnova <- function(){
                 justDoIt(command)
                 logger(command)
                 doItAndPrint("confint(.Pairs)")
+                justDoIt("old.oma <- par(oma=c(0,5,0,0))")
+                logger("old.oma <- par(oma=c(0,5,0,0))")
                 justDoIt("plot(confint(.Pairs))")
                 logger("plot(confint(.Pairs))")
+                justDoIt("par(old.oma)")
+                logger("par(old.oma)")
                 logger("remove(.Pairs)")
                 remove(.Pairs, envir=.GlobalEnv)
                 }

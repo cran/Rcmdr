@@ -1,4 +1,4 @@
-# last modified 18 January 2007 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 24 May 2007 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
                                                                                        
 # utility functions
 
@@ -146,7 +146,7 @@ listNumeric <- function(dataSet=ActiveDataSet()) {
     }
 
 trim.blanks <- function(text){
-    gsub("^\ ", "", gsub("\ *$", "", text))
+    gsub("^\ *", "", gsub("\ *$", "", text))
     }
     
 is.valid.name <- function(x){
@@ -1325,7 +1325,7 @@ variableListBox <- function(parentWindow, variableList=Variables(), bg="white",
     if (length(variableList) == 1 && is.null(initialSelection)) initialSelection <- 0
     frame <- tkframe(parentWindow)
     listbox <- tklistbox(frame, height=min(listHeight, length(variableList)),
-        selectmode=selectmode, background=bg, exportselection=export)
+        selectmode=selectmode, background=bg, exportselection=export, width=max(20, nchar(variableList)))
     scrollbar <- tkscrollbar(frame, repeatinterval=5, command=function(...) tkyview(listbox, ...))
     tkconfigure(listbox, yscrollcommand=function(...) tkset(scrollbar, ...))
     for (var in variableList) tkinsert(listbox, "end", var)
@@ -1773,7 +1773,6 @@ RcmdrTclSet <- function(name, value){
     name <- ls(unclass(getRcmdr(name))$env)
     tcl("set", name, value)
     }
-
     
 # functions to store or retrieve Rcmdr state information
 
@@ -1852,6 +1851,7 @@ packageAvailable <- function(name) 0 != length(.find.package(name, quiet=TRUE))
 rglLoaded <- function() 0 != length(grep("^rgl", loadedNamespaces()))
 
 activateMenus <- function(){
+    if (getRcmdr("suppress.menus")) return()
     for (item in getRcmdr("Menus")){
         if (item$activation()) .Tcl(paste(item$ID, " entryconfigure ", item$position - 1," -state normal", sep=""))
         else .Tcl(paste(item$ID, " entryconfigure ", item$position - 1," -state disabled", sep=""))
@@ -1978,3 +1978,69 @@ trim.col.na <- function(dat){
      dat <- dat[,-colsup]
     dat
     }
+
+# check whether packages are available
+
+packagesAvailable <- function(packages){
+    sapply(sapply(packages, .find.package, quiet=TRUE), 
+        function(x) length(x) != 0)
+    }
+    
+# insert a row (or rows) in a matrix or data frame
+
+insertRows <- function(object1, object2, where=NULL, ...){
+    if (ncol(object1) != ncol(object2)) 
+        stop(gettextRcmdr("objects have different numbers of columns"))
+    if (!(TRUE == all.equal(colnames(object1), colnames(object2))))
+        stop(gettextRcmdr("objects have different column names"))
+    n <- nrow(object1)
+    if (is.null(where) || where >= n) rbind(object1, object2)
+    else if (where < 1) rbind(object2, object1)
+    else rbind(object1[1:floor(where),], object2, 
+        object1[(floor(where) + 1):n,])
+    }
+    
+# functions for handling Rcmdr plug-in packages
+
+listPlugins <- function(loaded=FALSE){
+    availablePackages <- if (loaded) sort(.packages(all.available = TRUE))
+        else sort(setdiff(.packages(all.available = TRUE), .packages()))
+    plugins <- availablePackages[sapply(availablePackages, 
+        function(package) file.exists(file.path(.find.package(package), "etc/menus.txt")))]
+    plugins
+    }    
+
+loadPlugins <- function(){
+    plugins <- listPlugins()
+    initializeDialog(title=gettextRcmdr("Load Plugins"))
+    packagesBox <- variableListBox(top, plugins, title=gettextRcmdr("Plug-ins (pick one or more)"),
+        selectmode="multiple", listHeight=10)
+    onOK <- function(){
+        plugins <- getSelection(packagesBox)
+        closeDialog(top)
+        if (length(plugins) == 0){
+            errorCondition(recall=loadPlugins, message=gettextRcmdr("You must select at least one plug-in."))
+            return()
+            }
+        opts <- options("Rcmdr")
+        opts$Rcmdr$plugins <- c(plugins, opts$Rcmdr$plugins)
+        options(opts)
+        for (plugin in plugins) {            
+            command <- paste('library("', plugin, '", character.only=TRUE)', sep="")
+            justDoIt(command)
+            }
+        Message(paste(gettextRcmdr("Plug-ins loaded:"), paste(plugins, collapse=", ")), type="note")
+        response <- tkmessageBox(message=paste(gettextRcmdr(
+            "The plug-in(s) will not be available until the Commander is restarted.\nRestart now?")), 
+                    icon="question", type="yesno")
+        if (tclvalue(response) == "yes") {
+            putRcmdr("autoRestart", TRUE)
+            closeCommander(ask=FALSE)
+            Commander()
+            }
+        }
+    OKCancelHelp(helpSubject="Plugins")
+    tkgrid(getFrame(packagesBox), sticky="nw")
+    tkgrid(buttonsFrame, sticky="w")
+    dialogSuffix(rows=1, columns=1)
+    }    

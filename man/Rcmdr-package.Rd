@@ -12,8 +12,8 @@ user interface) for R, based on the tcltk package.
 \details{
 \tabular{ll}{
 Package: \tab Rcmdr\cr
-Version: \tab 1.2-9\cr
-Date: \tab 2007/4/23\cr
+Version: \tab 1.3-0\cr
+Date: \tab 2007/5/24\cr
 Depends: \tab R (>= 2.1.0), tcltk, grDevices, utils\cr
 Suggests: \tab abind, car (>= 1.1-1), effects (>= 1.0-7), foreign, grid, 
   lattice, lmtest, MASS, mgcv, multcomp, nlme, nnet, relimp, rgl, RODBC\cr
@@ -56,15 +56,17 @@ stem.leaf               Stem-and-Leaf Display
 
 \section{Translations}{
 The R Commander comes with translations from English into several other languages. I am grateful to the following individuals for preparing these translations: 
+Brazilian Portuguese, Adriano Azevedo Filho;
 Catalan, Manel Salamero;
-Spanish, Carlos Enrique Carleos Artime;
 French, Philippe Grosjean;
+German: Gerhard Schoen;
+Indonesian, I Made Tirta;
 Italian, Stefano Calza;
 Japanese, Takaharu Araki;
-Brazilian Portuguese, Adriano Azevedo Filho;
 Romanian, Adrian Dusa;
 Russian, Alexey Shipunov;
-Slovenian, Jaro Lajovic.
+Slovenian, Jaro Lajovic;
+Spanish, Carlos Enrique Carleos Artime.
 }
 
 \author{

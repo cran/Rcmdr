@@ -556,5 +556,27 @@ Version 1.2-9
 
    o  Correction to version information.
    
+Version 1.3-0
+
+   o  New facility for Rcmdr plug-in packages to extend the Rcmdr menus. (The design reflects suggestions from Richard Heiberger.)
+   
+   o  New Rcmdr option "suppress.menus" to suppress the Commander menu bar and tool bar, so that another program (e.g., Excel) can take over these functions (suggested by Erich Neuwirth).
+   
+   o  Use View() rather than edit() where applicable.
+   
+   o  New menu item and dialog box for resetting the colour palette (suggested by Richard Heiberger).
+   
+   o  Added menu items to save and load R data sets (as .rda files) (suggested by Neville Calleja).
+   
+   o  Added menu and dialog box for Shapiro-Wilk test of normality (suggested by Noel Yvonnick).
+   
+   o  "Ordinal Regression Model" menu item and dialog replaces "Proportional-Odds Model", permitting ordered probit as well as order logit models, as accommodated by polr() (suggested by Bob Andersen).
+   
+   o  Improvements to the scatterplot dialog (suggested by several people).
+   
+   o  Some more functions exported.
+   
+   o  Small changes.
+   
    
    
