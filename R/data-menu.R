@@ -1,4 +1,4 @@
-# last modified 22 May 2007 by J. Fox
+# last modified 4 June 2007 by J. Fox
 
 # Data menu dialogs
 
@@ -169,11 +169,11 @@ Recode <- function(){
     }
 
 Compute <- function(){
-#    if (!checkActiveDataSet()) return(invisible())
     onDoubleClick <-function(){
         var <- trim.blanks(getSelection(variablesBox))
-        if (length(grep("\\[factor\\]", var)) == 1)
-            var <- trim.blanks(sub("\\[factor\\]", "",  var))
+        word <- paste("\\[", gettextRcmdr("factor"), "\\]", sep="")
+        if (length(grep(word, var)) == 1)
+            var <- trim.blanks(sub(word, "",  var))
         tkfocus(compute)
         expr <- tclvalue(computeVar)
         tclvalue(computeVar) <- if (expr == "") var
@@ -1650,11 +1650,7 @@ Stack <- function(){
 loadDataSet <- function() {
     file <- tclvalue(tkgetOpenFile(filetypes=
         gettextRcmdr('{"R Data Files" {".rda" ".Rda" ".RDA"}} {"All Files" {"*"}}')))
-    if (file == "") {
-        if (getRcmdr("grab.focus")) tkgrab.release(top)
-        tkdestroy(top)
-        return()
-        }
+    if (file == "") return()
     command <- paste('load("', file,'")', sep="")
     dsname <- justDoIt(command)
     logger(command)

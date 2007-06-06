@@ -2,7 +2,7 @@
 # Traducerea în limba română a pachetului Rcmdr
 # Copyright (C) 2005 John Fox
 # This file is distributed under the same license as the Rcmdr package
-# Duşa Adrian <dusa.adrian@gmail.com>, 2006
+# Duşa Adrian <dusa.adrian@gmail.com>, 2007
 msgid ""
 msgstr ""
 "Project-Id-Version: Rcmdr 1.2-0\n"
@@ -3245,3 +3245,108 @@ msgstr "Nu a fost selectată nici o statistică."
 
 msgid "Right-hand side"
 msgstr "Partea dreaptă"
+
+## messages added to Rcmdr version 1.3-0
+
+    # handling plug-ins
+    
+msgid "Load Plugins"
+msgstr "Încarcă plugin-uri"
+
+msgid "Plug-ins (pick one or more)"
+msgstr "Plugin (unul sau mai multe)"
+
+msgid "You must select at least one plug-in."
+msgstr "Trebuie selectat cel puţin un plugin."
+
+msgid "Plug-ins loaded:"
+msgstr "Plugin-uri încărcate:"
+
+msgid "The plug-in(s) will not be available until the Commander is restarted.\nRestart now?"
+msgstr "Plugin-urile vor fi disponibile numai după ce Commander va fi restartat. Restartăm acum?"
+
+msgid "objects have different numbers of columns"
+msgstr "obiectele au număr diferit de coloane"
+
+msgid "objects have different column names"
+msgstr "obiectele au nume diferite de coloane"
+
+msgid "Load Rcmdr plug-in(s)..." 
+msgstr "Încarcă plugin-uri Rcmdr..."
+
+msgid "the plug-in package %s is missing"
+msgstr "pachetul plugin %s lipseşte"
+
+msgid "the package %s is not an Rcmdr plug-in"
+msgstr "pachetul %s nu este un plugin Rcmdr"
+
+msgid "unrecognized operation, \"%s\", in plugin menu line %i"
+msgstr "operaţie nerecunoscută,  \"%s\", în meniul plugin linia %i"
+
+msgid "unrecognized type, \"%s\", in plugin menu line %i"
+msgstr "tip nerecunoscut,  \"%s\", în meniul plugin linia %i"
+
+    # miscelaneous additions
+    
+msgid "Color palette..."
+msgstr "Paletă de culori..."
+
+msgid "Set Color Palette"
+msgstr "Setare paletă de culori"
+
+msgid "Color palette reset."
+msgstr "Resetare paleta"
+    
+msgid "Save active data set..."
+msgstr "Salvare set de date activ..."
+
+msgid "Load data set..." 
+msgstr "Încarcă set de date..."
+
+msgid "{\"R Data Files\" {\".rda\" \".Rda\" \".RDA\"}} {\"All Files\" {\"*\"}}"
+msgstr "{\"Fişiere de date R\" {\".rda\" \".Rda\" \".RDA\"}} {\"Toate fişierele\" {\"*\"}}"
+
+msgid "Shapiro-Wilk test of normality..." 
+msgstr "Testul de normalitate Shapiro-Wilk..."
+
+msgid "Shapiro-Wilk Test of Normality"
+msgstr "Testul de normalitate Shapiro-Wilk"
+
+msgid "Ordinal regression model..."
+msgstr "Model de regresie ordinală..."
+
+msgid "Ordinal Regression Model"
+msgstr "Model de regresie ordinală"
+
+msgid "Proportional-odds logit"
+msgstr "Logit proporţional cu şansele"
+
+msgid "Ordered probit"
+msgstr "Probit ordonat"
+
+msgid "Type of Model"
+msgstr "Tip de model"
+
+msgid "x-axis label"
+msgstr "eticheta pentru axa-x"
+
+msgid "y-axis label"
+msgstr "eticheta pentru axa-y"
+
+msgid "No plotting characters."
+msgstr "Fără caractere de plot"
+
+msgid "Plotting Parameters"
+msgstr "Parametri de plot"
+
+msgid "Plotting characters"
+msgstr "Caractere de plot"
+
+msgid "Point size"
+msgstr "Marimea punctului"
+
+msgid "Axis text size"
+msgstr "Marimea caracterelor pe axe"
+
+msgid "Axis-labels text size"
+msgstr "Marimea caracterelor pentru etichetele axelor"

@@ -1,6 +1,6 @@
 # Graphs menu dialogs
 
-# last modified 24 May 2007 by J. Fox
+# last modified 3 June 2007 by J. Fox
 
 indexPlot <- function(){
     initializeDialog(title=gettextRcmdr("Index Plot"))                                               
@@ -706,7 +706,7 @@ PlotMeans <- function(){
     buttonsFrame <- tkframe(top)
     OKCancelHelp(helpSubject="plotMeans")
     tkgrid(getFrame(groupBox), getFrame(responseBox), sticky="nw")
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Error Bars", fg="blue")), sticky="w")
+    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Error Bars"), fg="blue"), sticky="w")
     tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Standard errors")), seButton, sticky="w")
     tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Standard deviations")), sdButton, sticky="w")
     tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Confidence intervals")), confIntButton,

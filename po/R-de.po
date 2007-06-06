@@ -2,13 +2,13 @@
 # Deutsche Übersetzung für das Rcmdr Paket
 # Copyright (C) 2005 John Fox
 # This file is distributed under the same license as the Rcmdr package
-# Gerhard Schön <gerhard.schoen@berlin.de>, 2006
+# Gerhard Schön <gerhard.schoen@berlin.de>, 2007
 msgid ""
 msgstr ""
-"Project-Id-Version: Rcmdr 1.2-5\n"
-"Report-Msgid-Bugs-To: jfox@mcmaster.ca\n"
+"Project-Id-Version: Rcmdr 1.3-0\n"
+"Report-Msgid-Bugs-To: bugs@r-project.org\n"
 "POT-Creation-Date: 2006-11-28 17:06+0100\n"
-"PO-Revision-Date: 2006-12-19 16:13+0100\n"
+"PO-Revision-Date: 2007-06-03 20:02+0100\n"
 "Last-Translator: Gerhard Schön <gerhard.schoen@berlin.de>\n"
 "Language-Team: German <R-core@r-project.org>\n"
 "MIME-Version: 1.0\n"
@@ -32,7 +32,7 @@ msgid "Number of clusters:"
 msgstr "Anzahl der Cluster:"
 
 msgid "Number of starting seeds:"
-msgstr ""
+msgstr "Anzahl der Start-Zufallszahlen:"
 
 msgid "Maximum iterations:"
 msgstr "Maximum der Iterationen:"
@@ -47,9 +47,11 @@ msgid ""
 "Assign clusters to\n"
 "the data set"
 msgstr ""
+"Clusterzugehörigkeit in\n"
+"Datenmatrix speichern"
 
 msgid "Assignment variable:"
-msgstr ""
+msgstr "Name der Variable mit Clusterzugehörigkeit"
 
 msgid "Hierarchical Clustering"
 msgstr "Hierarchische Clusterung"
@@ -109,7 +111,7 @@ msgid "There are no hierachical clustering solutions"
 msgstr "Es gibt keine hierarchische Clusterlösung"
 
 msgid "No hierachical clustering solutions are associated with this data set."
-msgstr ""
+msgstr "In dieser Datenmatrix befindet sich keine hierarchische Clusterlösung."
 
 msgid "A clustering solution has not been selected."
 msgstr "Keine Clusterlösung ausgewählt."
@@ -1128,7 +1130,7 @@ msgid "Plot legend (position with mouse click)"
 msgstr "Abbildungslegende (Position mit Mausklick festlegen)"
 
 msgid "Quantile-Comparison (QQ) Plot"
-msgstr ""
+msgstr "Q-Q-Diagramm"
 
 msgid "df for t must be a positive number."
 msgstr "Die Anzahl der Freiheitsgrade für t muss eine positive Zahl sein."
@@ -3330,4 +3332,110 @@ msgstr "Keine Statistiken ausgewählt."
 
 msgid "Right-hand side"
 msgstr ""
+
+## messages added to Rcmdr version 1.3-0
+# handling plug-ins
+msgid "Load Plugins"
+msgstr "Lade Plugin"
+
+msgid "Plug-ins (pick one or more)"
+msgstr "Plugins (eins oder mehrere auswählen)"
+
+msgid "You must select at least one plug-in."
+msgstr "Sie müssen mindestens ein Plugin auswählen."
+
+msgid "Plug-ins loaded:"
+msgstr "Plugin geladen:"
+
+msgid ""
+"The plug-in(s) will not be available until the Commander is restarted.\n"
+"Restart now?"
+msgstr ""
+"Das Plugin steht erst zur Verfügung, wenn der R-Commander neu gestartet worden ist.\n"
+"Jetzt neu starten?"
+
+msgid "objects have different numbers of columns"
+msgstr "Die Objekte haben unterschiedliche Spaltennummern"
+
+msgid "objects have different column names"
+msgstr "Die Objekte haben unterschiedliche Spaltennamen"
+
+msgid "Load Rcmdr plug-in(s)..."
+msgstr "Lade Rcmdr Plugin(s) ..."
+
+msgid "the plug-in package %s is missing"
+msgstr "Das Plugin %s ist nicht vorhanden"
+
+msgid "the package %s is not an Rcmdr plug-in"
+msgstr "Das Paket %s ist kein Rcmdr - Plugin"
+
+msgid "unrecognized operation, \"%s\", in plugin menu line %i"
+msgstr "unerwarteter Befehl, \"%\", in der Plugin-Menüzeile %i"
+
+msgid "unrecognized type, \"%s\", in plugin menu line %i"
+msgstr ""
+
+# miscelaneous additions
+msgid "Color palette..."
+msgstr "Farbpalette ..."
+
+msgid "Set Color Palette"
+msgstr "Aktuelle Farbpalette"
+
+msgid "Color palette reset."
+msgstr "Farbpalette gespeichert."
+
+msgid "Save active data set..."
+msgstr "Speichere aktive Datendatei ..."
+
+msgid "Load data set..."
+msgstr "Lade Datendatei ..."
+
+msgid "{\"R Data Files\" {\".rda\" \".Rda\" \".RDA\"}} {\"All Files\" {\"*\"}}"
+msgstr "{\"R - Datendateien\" {\".rda\" \".Rda\" \".RDA\"}} {\"Alle Dateien\" {\"*\"}}"
+
+msgid "Shapiro-Wilk test of normality..."
+msgstr "Shapiro-Wilk-Test auf Normalverteilung ..."
+
+msgid "Shapiro-Wilk Test of Normality"
+msgstr "Shapiro-Wilk-Test auf Normalverteilung ..."
+
+msgid "Ordinal regression model..."
+msgstr "Ordinale Regression ..."
+
+msgid "Ordinal Regression Model"
+msgstr "Ordinale Regression ..."
+
+msgid "Proportional-odds logit"
+msgstr "Proportionales Odds-Logit-Modell"
+
+msgid "Ordered probit"
+msgstr ""
+
+msgid "Type of Model"
+msgstr "Modelltyp"
+
+msgid "x-axis label"
+msgstr "Label der X-Achse"
+
+msgid "y-axis label"
+msgstr "Label der Y-Achse"
+
+msgid "No plotting characters."
+msgstr "Keine darstellbaren Zeichen."
+
+msgid "Plotting Parameters"
+msgstr "Abbildungsparameter"
+
+msgid "Plotting characters"
+msgstr "Darstellbare Zeichen"
+
+msgid "Point size"
+msgstr "Punktgröße"
+
+msgid "Axis text size"
+msgstr "Schriftgröße der Achsenbeschriftung"
+
+msgid "Axis-labels text size"
+msgstr "Schriftgröße der Achsenlabels"
 

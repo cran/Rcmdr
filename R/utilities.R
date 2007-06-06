@@ -1,4 +1,4 @@
-# last modified 24 May 2007 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 1 June 2007 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
                                                                                        
 # utility functions
 
@@ -1542,12 +1542,13 @@ modelFormula <- defmacro(frame=top, hasLhs=TRUE, expr={
         !is.element(check.char, c("+", "*", ":", "/", "-", "^", "(", "%"))
         }
     .variables <- Variables()
-    variables <- paste(.variables, ifelse(is.element(.variables, Factors()), "[factor]", ""))
+    variables <- paste(.variables, ifelse(is.element(.variables, Factors()), gettextRcmdr("[factor]"), ""))
     xBox <- variableListBox(frame, variables, title=gettextRcmdr("Variables (double-click to formula)"))
+    word <- paste("\\[", gettextRcmdr("factor"), "\\]", sep="")
     onDoubleClick <- if (!hasLhs){
         function(){
             var <- getSelection(xBox)
-            if (length(grep("\\[factor\\]", var)) == 1) var <- sub("\\[factor\\]", "",  var)
+            if (length(grep(word, var)) == 1) var <- sub(word, "",  var)
             tkfocus(rhsEntry)
             rhs <- tclvalue(rhsVariable)
             rhs.chars <- rev(strsplit(rhs, "")[[1]])
@@ -1567,7 +1568,7 @@ modelFormula <- defmacro(frame=top, hasLhs=TRUE, expr={
     else{
         function(){
             var <- getSelection(xBox)
-            if (length(grep("\\[factor\\]", var)) == 1) var <- sub("\\[factor\\]", "",  var)
+            if (length(grep(word, var)) == 1) var <- sub(word, "",  var)
             lhs <- tclvalue(lhsVariable)
             if (lhs == "") tclvalue(lhsVariable) <- var
             else {

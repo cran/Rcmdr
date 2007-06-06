@@ -1,6 +1,6 @@
 # R Commander Menu Definitions
 
-# last modified 22 May 2007 by J. Fox
+# last modified 6 June 2007 by J. Fox
 
 #   type    menu/item      operation/parent  label                                          command/menu                activation  install?
 
@@ -163,14 +163,14 @@
     item    diagnosticsMenu command         "Durbin-Watson test for autocorrelation..."     DurbinWatsonTest            "lmP()" "packageAvailable('lmtest')"
     item    diagnosticsMenu command         "RESET test for nonlinearity..."                RESETtest                   "lmP()" "packageAvailable('lmtest')"
     item    diagnosticsMenu command         "Bonferroni outlier test"                       outlierTest                 "(lmP() || glmP())" "packageAvailable('car')"
-    menu    graphsMenu      modelsMenu      ""                                              ""                          ""          ""
-    item    modelsMenu      cascade         "Graphs"                                        graphsMenu                  ""          ""
-    item    graphsMenu      command         "Basic diagnostic plots"                        plotModel                   "lmP() || glmP()"          ""
-    item    graphsMenu      command         "Residual quantile-comparison plot..."          residualQQPlot              "lmP()" "packageAvailable('car')"
-    item    graphsMenu      command         "Component+residual plots"                      CRPlots                     "(lmP() || glmP())" "packageAvailable('car')"
-    item    graphsMenu      command         "Added-variable plots"                          AVPlots                     "(lmP() || glmP())" "packageAvailable('car')"
-    item    graphsMenu      command         "Influence plot"                                InfluencePlot               "(lmP() || glmP())" "packageAvailable('car')"
-    item    graphsMenu      command         "Effect plots"                                  effectPlots                 "(lmP() || glmP())" "packageAvailable('effects')"
+    menu    modelsGraphsMenu      modelsMenu      ""                                              ""                          ""          ""
+    item    modelsMenu      cascade         "Graphs"                                        modelsGraphsMenu                  ""          ""
+    item    modelsGraphsMenu      command         "Basic diagnostic plots"                        plotModel                   "lmP() || glmP()"          ""
+    item    modelsGraphsMenu      command         "Residual quantile-comparison plot..."          residualQQPlot              "lmP()" "packageAvailable('car')"
+    item    modelsGraphsMenu      command         "Component+residual plots"                      CRPlots                     "(lmP() || glmP())" "packageAvailable('car')"
+    item    modelsGraphsMenu      command         "Added-variable plots"                          AVPlots                     "(lmP() || glmP())" "packageAvailable('car')"
+    item    modelsGraphsMenu      command         "Influence plot"                                InfluencePlot               "(lmP() || glmP())" "packageAvailable('car')"
+    item    modelsGraphsMenu      command         "Effect plots"                                  effectPlots                 "(lmP() || glmP())" "packageAvailable('effects')"
     item    topMenu         cascade         "Models"                                        modelsMenu                  ""          ""
 
     # Distributions

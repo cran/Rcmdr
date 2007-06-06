@@ -5,19 +5,20 @@
 # Manel Salamero <10133msb@comb.es>, 2005
 msgid ""
 msgstr ""
-"Project-Id-Version: Rcmdr 1.0-2\n"
+"Project-Id-Version: Rcmdr 1.3-0\n"
 "Report-Msgid-Bugs-To: jfox@mcmaster.ca\n"
 "POT-Creation-Date: 2005-06-30 16:10\n"
-"PO-Revision-Date: 2006-08-22 01:13+0100\n"
-"Last-Translator: Manel Salamero <10133msb@comb.es>\n"
-"Language-Team: Catalan <10133msb@comb.es>\n"
+"PO-Revision-Date: 2007-06-03 18:16+0100\n"
+"Last-Translator: manel <10133msb@comb.es>\n"
+"Language-Team:  <10133msb@comb.es>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Poedit-Language: Catalan\n"
 
 msgid "KMeans Clustering"
-msgstr "Classificació per clusters k-mitjanes"
+msgstr "Clusters k-mitjanes"
 
 msgid "Variables (pick one or more)"
 msgstr "Variables (triï'n una o més)"
@@ -32,7 +33,7 @@ msgid "Number of clusters:"
 msgstr "Nombre de clústers:"
 
 msgid "Number of starting seeds:"
-msgstr "Nombre d'inici de l'aleatorització:"
+msgstr "Nombre d'inici de l'al·leatorització:"
 
 msgid "Maximum iterations:"
 msgstr "Iteracions màximes:"
@@ -48,7 +49,7 @@ msgid ""
 "the data set"
 msgstr ""
 "Afegeix els clústers\n"
-"a la taula de dades"
+"al fitxer de dades"
 
 msgid "Assignment variable:"
 msgstr "Variable d'assignació:"
@@ -237,10 +238,10 @@ msgid "NOTE"
 msgstr "NOTA"
 
 msgid "New Data Set"
-msgstr "Dades taula de dades"
+msgstr "Nova taula de dades"
 
 msgid "Dataset"
-msgstr "taula de dades"
+msgstr "taula.de.dades"
 
 msgid "You must enter the name of a data set."
 msgstr "Ha d'introduir el nom d'una taula de dades."
@@ -255,7 +256,7 @@ msgid "empty data set."
 msgstr "taula de dades buida."
 
 msgid "Enter name for data set:"
-msgstr "Introdueixi el nom d'una tuala de dades:"
+msgstr "Introdueixi el nom d'una taula de dades:"
 
 msgid "There is only one dataset in memory."
 msgstr "Només hi ha una taula de dades a la memòria."
@@ -273,7 +274,7 @@ msgid "Recode Variable"
 msgstr "Recodifica una variable"
 
 msgid "Variable to recode (pick one)"
-msgstr "Variable a recodificar (triï-n una)"
+msgstr "Variable a recodificar (triï'n una)"
 
 msgid "variable"
 msgstr "variable"
@@ -303,7 +304,7 @@ msgid "[factor]"
 msgstr "[factor]"
 
 msgid "Current variables (double-click to expression)"
-msgstr "Variables actuals (fagi un clic doble per enviar a l'expressió)"
+msgstr "Variables actuals (faci un clic doble per enviar a l'expressió)"
 
 msgid "No expression specified."
 msgstr "No s'ha especificat cap expressió."
@@ -344,7 +345,7 @@ msgid "White space"
 msgstr "Espai blanc"
 
 msgid "Commas"
-msgstr "Comas"
+msgstr "Comes"
 
 msgid "Tabs"
 msgstr "Tabuladors"
@@ -386,7 +387,7 @@ msgid "Select package:"
 msgstr "Selecciona un paquet:"
 
 msgid "Data set %s does not exit"
-msgstr "La taula %s no existeix."
+msgstr "La taula de dades %s no existeix."
 
 msgid "You must select a package."
 msgstr "Ha de triar un paquet."
@@ -401,7 +402,7 @@ msgid "Data set (Double-click to select)"
 msgstr "Taula de dades (fer un clic doble per seleccionar)"
 
 msgid "OR"
-msgstr "ó"
+msgstr "O"
 
 msgid "Enter name of data set:"
 msgstr "Entri el nom d'una taula de dades:"
@@ -417,7 +418,7 @@ msgid ""
 "to factor levels"
 msgstr ""
 "Converteix les etiquétes dels valors\n"
-"en nivells de factor"
+"a nivells de factor"
 
 msgid ""
 "Maximum number\n"
@@ -487,7 +488,7 @@ msgid "Levels names are not unique."
 msgstr "Hi ha noms dels nivells duplicats."
 
 msgid "A level name is empty."
-msgstr "El nom d'un nivell és buid."
+msgstr "El nom d'un nivell és buit."
 
 msgid "Numeric value"
 msgstr "Valor numèric"
@@ -591,13 +592,13 @@ msgid "Missing values:"
 msgstr "Valors no observats:"
 
 msgid "Remove Missing Data"
-msgstr "Elimina valors no observats"
+msgstr "Elimina dades no observats"
 
 msgid "Variables (select one or more)"
 msgstr "Variables (triï'n una o més)"
 
 msgid "<same as active data set>"
-msgstr "<igual que a la taula de dades activa>"
+msgstr "<igual que la taula de dades activa>"
 
 msgid "No variables were selected."
 msgstr "No hi ha cap variable seleccionada."
@@ -769,13 +770,13 @@ msgid "Binomial trials not specified."
 msgstr "Nombre d'assaigs no specificats."
 
 msgid "Probability of success not specified."
-msgstr "Probabilitat de l'aconteixament no especificada."
+msgstr "Probabilitat del succés no especificada."
 
 msgid "Binomial trials"
 msgstr "Nombre d'assaigs binomials"
 
 msgid "Probability of success"
-msgstr "Probabilitat de l'aconteixement"
+msgstr "Probabilitat del succés"
 
 msgid "Cumulative Binomial Probabilities"
 msgstr "Probabilitats binomials acumulades"
@@ -794,7 +795,7 @@ msgid ""
 "Range of values over which to plot, %d, is large.\n"
 "Create long output?"
 msgstr ""
-"El rang de valors a graficar, %d, és gran.\n"
+"El rang de valors a representar, %d, és gran.\n"
 "Genero una sortida llarga?"
 
 msgid "Poisson Probabilities"
@@ -825,7 +826,7 @@ msgid "F Distribution"
 msgstr "Distribució F"
 
 msgid "Numerator degrees of freedom not specified."
-msgstr "Graud de llibertat del numerador no especificat."
+msgstr "Graus de llibertat del numerador no especificat."
 
 msgid "Denominator degrees of freedom not specified."
 msgstr "Graus de llibertat del denominador no especificats."
@@ -876,10 +877,10 @@ msgid "Save output file?"
 msgstr "Vol salvar el fitxer de resultats?"
 
 msgid "Commander Options"
-msgstr "Opcions d'R Commander"
+msgstr "Opcions del R Commander"
 
 msgid "Log commands to script window"
-msgstr "Enregistrar les ordres a la finestra d'instruccions?"
+msgstr "Enregistra les ordres a la finestra d'instruccions?"
 
 msgid "Log-font size (points)"
 msgstr "Grandària del tipus de lletra de les instrucions (punts)"
@@ -909,7 +910,7 @@ msgid "Double-click presses OK button"
 msgstr "Un clic doble correspon al botó 'D'acord'"
 
 msgid "Sort variable names alphabetically"
-msgstr "Ordena les variables alfabèticamente"
+msgstr "Ordena les variables alfabèticament"
 
 msgid "Show edit button"
 msgstr "Mostra el botó d'edició'"
@@ -1128,7 +1129,7 @@ msgid "Label for y-axis"
 msgstr "Etiqueta de l'eix y"
 
 msgid "Plot legend (position with mouse click)"
-msgstr "Ubica la legenda (marquí la posició amb el clic del ratolí)"
+msgstr "Traça la llegenda (marquí la posició amb el clic del ratolí)"
 
 msgid "Quantile-Comparison (QQ) Plot"
 msgstr "Gràfic quantil-quantil"
@@ -1189,7 +1190,7 @@ msgid "Error Bars"
 msgstr "Barres d'error"
 
 msgid "blue"
-msgstr "blue"
+msgstr "blau"
 
 msgid "Standard errors"
 msgstr "Errors estàndard"
@@ -1309,7 +1310,7 @@ msgid "Height (inches)"
 msgstr "Alçada (polsades)"
 
 msgid "Text size (points)"
-msgstr "Mida del text (points)"
+msgstr "Mida del text (punts)"
 
 msgid "There is no current RGL graphics device to save."
 msgstr "Actualment no hi ha cap dispositiu gràfic RGL per salvar."
@@ -1321,7 +1322,7 @@ msgid "There is only one model in memory."
 msgstr "Només hi ha un model a la memòria."
 
 msgid "There are no models from which to choose."
-msgstr "No hi ha models a triar."
+msgstr "No hi ha cap model a triar."
 
 msgid "Select Model"
 msgstr "Seleccioneu el model"
@@ -1330,7 +1331,7 @@ msgid "Models (pick one)"
 msgstr "Models (triï'n un)"
 
 msgid "There is no dataset associated with this model."
-msgstr "No hi ha captaula de dades associada a aquest model."
+msgstr "No hi ha cap taula de dades associada a aquest model."
 
 msgid "The dataset associated with this model, %s, is not in memory."
 msgstr "La taula de de dades, %s, associada a aquest model no és a la memòria."
@@ -1349,7 +1350,7 @@ msgid ""
 "for a model fit to a subset of the data."
 msgstr ""
 "No estan disponibles estadístics per les observacions\n"
-"per un model ajustat a un subconjut de les dades."
+"per un model ajustat a un subconjunt de les dades."
 
 msgid "Add Observation Statistics to Data"
 msgstr "Afegeix els estadístics de les observacions a les dades"
@@ -1370,7 +1371,7 @@ msgid "Cook's distances"
 msgstr "Distàncies de Cook"
 
 msgid "Observation indices"
-msgstr "Indexs de les observacions"
+msgstr "Índexs de les observacions"
 
 msgid "Residual Quantile-Comparison Plot"
 msgstr "Gràfic quantil-quantil dels residus"
@@ -1398,14 +1399,14 @@ msgid ""
 "Number of valid entries in rhs vector (%d)\n"
 "is not equal to number of rows (%d)."
 msgstr ""
-"El nombre d'entrades correctes en el vector de la dereta (%d)\n"
+"El nombre d'entrades correctes en el vector de la dreta (%d)\n"
 "no és igual al nombre de files (%d)"
 
 msgid "Number of Rows:"
 msgstr "Nombre de files:"
 
 msgid "Enter hypothesis matrix and right-hand side vector:"
-msgstr "Introduiu la matriu d'hipòtesis i el vector de la dereta:"
+msgstr "Introduiu la matriu d'hipòtesis i el vector de la dreta:"
 
 msgid "There are fewer than two models."
 msgstr "Hi ha menys de dos models."
@@ -1429,7 +1430,7 @@ msgid "Breusch-Pagan Test"
 msgstr "Test de Breusch-Pagan"
 
 msgid "Score Test for Nonconstant Error Variance"
-msgstr "Test de puntuacions per error de variancia no constant"
+msgstr "Test de puntuacions per error de variància no constant"
 
 msgid "Studentized test statistic"
 msgstr "Estadístic del test estudentitzat"
@@ -1438,7 +1439,7 @@ msgid "Explanatory variables"
 msgstr "Variables explicatives"
 
 msgid "Variance Formula"
-msgstr "Fórmula de la variancia"
+msgstr "Fórmula de la varància"
 
 msgid "Durbin-Waton Test"
 msgstr "Test de Durbin-Watson"
@@ -1536,7 +1537,7 @@ msgid ""
 "(must include PACKAGES index file)"
 msgstr ""
 "El directori local de paquets\n"
-"(ha d'incloure el fitxer index PACKAGES)"
+"(ha d'incloure el fitxer índex PACKAGES)"
 
 msgid "The following packages were not found at the specified location:"
 msgstr "No s'ha trobat els següents paquets en el lloc indicat:"
@@ -1635,7 +1636,7 @@ msgid "No"
 msgstr "No"
 
 msgid "Assume equal variances?"
-msgstr "Assumir variancies iguals?"
+msgstr "Assumir variàncies iguals?"
 
 msgid "Confidence Level"
 msgstr "Nivell de confiança"
@@ -1671,7 +1672,7 @@ msgid "Null hypothesis: mu ="
 msgstr "Hipòtesi nul·la: mu ="
 
 msgid "One-Way Analysis of Variance"
-msgstr "Anàlisi de variancia d'un factor"
+msgstr "Anàlisi de variància d'un factor"
 
 msgid "You must select a groups factor."
 msgstr "Cal seleccionar un factor de grup."
@@ -1768,13 +1769,13 @@ msgid "Single-Sample Proportion Test"
 msgstr "Test de proporcions per una mostra"
 
 msgid "Population proportion = p0"
-msgstr "Proporció de la population = p0"
+msgstr "Proporció de la població = p0"
 
 msgid "Population proportion < p0"
-msgstr "Proporció de la population < p0"
+msgstr "Proporció de la població < p0"
 
 msgid "Population proportion > p0"
-msgstr "Proporció de la population > p0"
+msgstr "Proporció de la població > p0"
 
 msgid "Exact binomial"
 msgstr "Test binomial exacte"
@@ -1952,7 +1953,7 @@ msgid "Enter counts:"
 msgstr "Introduir les freqüències:"
 
 msgid "Two Variances F-Test"
-msgstr "Test F per dues variancies"
+msgstr "Test F per dues variàncies"
 
 msgid "Bartlett's Test"
 msgstr "Test de Bartlett"
@@ -1973,7 +1974,7 @@ msgid "There is no active model."
 msgstr "No hi ha cap model actiu."
 
 msgid "argument must be a square, symmetric, numeric covariance matrix"
-msgstr "l'argument ha de ser una matriu de covariancia numèrica, quadrada i simètrica"
+msgstr "l'argument ha de ser una matriu de covariància numèrica, quadrada i simètrica"
 
 msgid "there are fewer than 3 items in the scale"
 msgstr "hi ha menys de 3 ítems a l'escala."
@@ -2000,7 +2001,7 @@ msgid "groups variable must be a factor."
 msgstr "la variable de grup ha de ser un factor."
 
 msgid "cannot plot both multiple surfaces and residuals"
-msgstr "no és possible graficar a la vegada superfícies múltiples i residus"
+msgstr "no és possible traçarr a la vegada superfícies múltiples i residus"
 
 msgid "not supplied"
 msgstr "no ha estat indicat"
@@ -2037,7 +2038,7 @@ msgid ""
 "Overwrite %s?"
 msgstr ""
 "%s %s ja existeix.\n"
-"Reemplacar-lo %s ?"
+"Reemplaçar-lo %s ?"
 
 msgid "Plot by:"
 msgstr "Gràfic segons:"
@@ -2046,7 +2047,7 @@ msgid "Plot by groups"
 msgstr "Gràfic segons grups"
 
 msgid "Plot lines by group"
-msgstr "Gràfic de línies segos grup"
+msgstr "Gràfic de línies segons grup"
 
 msgid "There no factors in the active data set."
 msgstr "No hi ha factors a la taula de dades activa."
@@ -2058,7 +2059,7 @@ msgid "Groups variable (pick one)"
 msgstr "Variable de grup (triï'n una)"
 
 msgid "Position legend with mouse click"
-msgstr "Ubica la legenda amb un clic del ratolí"
+msgstr "Ubica la llegenda amb un clic del ratolí"
 
 msgid "<No groups selected>"
 msgstr "<No hi ha cap grup seleccionat>"
@@ -2125,19 +2126,19 @@ msgid "from text file..."
 msgstr "des d'un fitxer de text..."
 
 msgid "from SPSS data set..."
-msgstr "des d'una taula de dades del SPSS..."
+msgstr "des d'un fitxer SPSS..."
 
 msgid "from Minitab data set..."
-msgstr "des d'ua taula de dades del Minitab..."
+msgstr "des d'un fitxer Minitab..."
 
 msgid "from STATA data set..."
-msgstr "des d'una taula de dades STATA..."
+msgstr "des d'un fitxer STATA..."
 
 msgid "Import data"
 msgstr "Importa dades"
 
 msgid "List data sets in packages"
-msgstr "Llista les taulets de dades dels paquets"
+msgstr "Llista les taules de dades dels paquets"
 
 msgid "Read data set from an attached package..."
 msgstr "Llegeix una taula de dades d'un paquet ja carregat..."
@@ -2161,7 +2162,7 @@ msgid "Subset active data set..."
 msgstr "Fes un subconjunt de la taula de dades activa..."
 
 msgid "Remove cases with missing data..."
-msgstr "Elimina casos amb dades absents..."
+msgstr "Elimina casos amb dades incompletes..."
 
 msgid "Export active data set..."
 msgstr "Exportala taula de dades activa..."
@@ -2245,7 +2246,7 @@ msgid "Two-sample proportions test..."
 msgstr "Test de proporcions per dues mostres..."
 
 msgid "Two-variances F-test..."
-msgstr "Test F de dues variancies..."
+msgstr "Test F de dues varàncies..."
 
 msgid "Bartlett's test..."
 msgstr "Test de Bartlett"
@@ -2281,7 +2282,7 @@ msgid "Summarize hierarchical clustering..."
 msgstr "Resumeix la classificació jeràrquica..."
 
 msgid "Add hierarchical clustering to data set..."
-msgstr "Afegeix esl clústers a la taula de dades..."
+msgstr "Afegeix els clústers a la taula de dades..."
 
 msgid "Cluster analysis"
 msgstr "Anàlisi de clústers"
@@ -2317,7 +2318,7 @@ msgid "Proportions"
 msgstr "Proporcions"
 
 msgid "Variances"
-msgstr "Variancies"
+msgstr "Variàncies"
 
 msgid "Nonparametric tests"
 msgstr "Tests no paramètrics"
@@ -2329,7 +2330,7 @@ msgid "Fit models"
 msgstr "Ajustament de models"
 
 msgid "Index plot..."
-msgstr "Gràfic seqüèncial..."
+msgstr "Gràfic seqüencial..."
 
 msgid "Histogram..."
 msgstr "Histograma..."
@@ -2389,10 +2390,10 @@ msgid "Add observation statistics to data..."
 msgstr "Afegeix els estadístics de les observacions a les dades..."
 
 msgid "Confidence intervals..."
-msgstr "Intèrvals de confiança..."
+msgstr "Intervals de confiança..."
 
 msgid "Hypothesis tests"
-msgstr "Tests d'hipòtesis"
+msgstr "Test d'hipòtesis"
 
 msgid "ANOVA table"
 msgstr "Taula de l'ANOVA"
@@ -2407,7 +2408,7 @@ msgid "Numerical diagnostics"
 msgstr "Diagnòstics numèrics"
 
 msgid "Variance-inflation factors"
-msgstr "Inflació de variancia dels factors"
+msgstr "Inflació de variància dels factors"
 
 msgid "Breusch-Pagan test for heteroscedasticity..."
 msgstr "Test Breusch-Pagan d'heteroscedasticitat..."
@@ -2452,7 +2453,7 @@ msgid "Normal probabilities..."
 msgstr "Probabilitats normals..."
 
 msgid "Plot normal distribution..."
-msgstr "Gàfic de la distribució normal..."
+msgstr "Traça una distribució normal..."
 
 msgid "t distribution"
 msgstr "Distribució t"
@@ -2464,7 +2465,7 @@ msgid "t probabilities..."
 msgstr "Probabilitats t..."
 
 msgid "Plot t distribution..."
-msgstr "Gràfic de la distribució t..."
+msgstr "Traça una distribució t..."
 
 msgid "Chi-squared distribution"
 msgstr "Distribució Khi-quadrat"
@@ -2476,7 +2477,7 @@ msgid "Chi-squared probabilities..."
 msgstr "Probabilitats Khi-quadrat..."
 
 msgid "Plot chi-squared distribution..."
-msgstr "Gràfic de la distribució Khi quadrat..."
+msgstr "Traça una distribució Khi quadrat..."
 
 msgid "F distribution"
 msgstr "Distribució F"
@@ -2488,7 +2489,7 @@ msgid "F probabilities..."
 msgstr "Probabilitats F..."
 
 msgid "Plot F distribution..."
-msgstr "Gràfic de la distribució F..."
+msgstr "Traça una distribució F..."
 
 msgid "Binomial distribution"
 msgstr "Distribució binomial"
@@ -2503,7 +2504,7 @@ msgid "Binomial probabilities..."
 msgstr "Probabilitats binomials..."
 
 msgid "Plot binomial distribution..."
-msgstr "Gràfic de la distribució binomial..."
+msgstr "Traça una distribució binomial..."
 
 msgid "Poisson distribution"
 msgstr "Distribució de Poisson"
@@ -2512,7 +2513,7 @@ msgid "Poisson probabilities..."
 msgstr "Probabilitats de Poisson..."
 
 msgid "Plot Poisson distribution..."
-msgstr "Gràfic de la distribució de Poisson..."
+msgstr "Traça una distribució de Poisson..."
 
 msgid "Distributions"
 msgstr "Distribucions"
@@ -2546,7 +2547,7 @@ msgstr "Gràfic 3D"
 
 # # messages added to Rcmdr version 1.1-6
 msgid " contains non-standard variable names:\n"
-msgstr "conté noms de variables no estàndars:\n"
+msgstr "conté noms de variables no estàndards:\n"
 
 msgid ""
 "\n"
@@ -2558,10 +2559,10 @@ msgstr ""
 # # messages added to Rcmdr version 1.2-0
 # importRODBCtable dialog
 msgid "This function requires the RODBC package.\n"
-msgstr "Aquesta funció requereix el paquet RODBC.\n"
+msgstr "Aquesta funció necessita el paquet RODBC.\n"
 
 msgid "Import from Excel, Access or dBase data set"
-msgstr "Importa des d'una taula de dades d'Excell, Access o dBase"
+msgstr "Importa des d'un fitxer Excell, Access o dBase"
 
 msgid "{\"MS Excel file\" {*.xls \".XLS\"}} {\"MS Access database\" {*.mdb \".MDB\"}} {\"dBase-like file\" {*.dbf \".DBF\"}} {\"All Files\" {\"*\"}}"
 msgstr "{\"Fitxer MS Excel\" {*.xls \".XLS\"}} {\"Base de dades MS Access\" {*.mdb \".MDB\"}} {\"fitxer tipus dBase\" {*.dbf \".DBF\"}} {\"All Files\" {\"*\"}}"
@@ -2717,7 +2718,7 @@ msgid "Gumbel Probabilities"
 msgstr "Probabilitats de Gumbell"
 
 msgid "Probability of success must be between 0 and 1."
-msgstr "La probabilitat de l'aconteixament ha de estar entre 0 i 1."
+msgstr "La probabilitat del succés ha de ser entre 0 i 1."
 
 msgid "Poisson Quantiles"
 msgstr "Quantils de Poisson"
@@ -2768,7 +2769,7 @@ msgid "Negative Binomial Quantiles"
 msgstr "Quantils binomials negatius"
 
 msgid "Target number of successes not specified."
-msgstr "Nombre d'aconteixament no especificat."
+msgstr "Nombre de successos no especificat."
 
 msgid "Target number of successes cannot be negative."
 msgstr "El nombre previst de successos no pot ser negatiu."
@@ -2927,10 +2928,10 @@ msgid "Sample from normal distribution..."
 msgstr "Mostra d'una distribució normal..."
 
 msgid "Sample from t distribution..."
-msgstr "+ de la distribució t..."
+msgstr "Mostra de la distribució t..."
 
 msgid "Sample from chi-squared distribution..."
-msgstr "mostra d'una distribució Khi quadrat"
+msgstr "Mostra d'una distribució Khi quadrat"
 
 msgid "Sample from F distribution..."
 msgstr "Mostra d'una distribució F"
@@ -2945,7 +2946,7 @@ msgid "Exponential probabilities..."
 msgstr "Probabilitats exponencials"
 
 msgid "Plot exponential distribution..."
-msgstr "Grafica la distribució exponencial..."
+msgstr "Traça una distribució exponencial..."
 
 msgid "Sample from exponential distribution..."
 msgstr "Mostra d'una distribució exponencial..."
@@ -2960,7 +2961,7 @@ msgid "Uniform probabilities..."
 msgstr "Probabilitats uniformes"
 
 msgid "Plot uniform distribution..."
-msgstr "Grafica la distribució uniforme..."
+msgstr "Traça una distribució uniforme..."
 
 msgid "Sample from uniform distribution..."
 msgstr "Mostra d'una distribució uniforme"
@@ -2975,7 +2976,7 @@ msgid "Beta probabilities..."
 msgstr "Probabilitats beta"
 
 msgid "Plot beta distribution..."
-msgstr "Grafica la distribució beta..."
+msgstr "Traça una distribució beta..."
 
 msgid "Sample from beta distribution..."
 msgstr "Mostra d'una distribució beta..."
@@ -2990,7 +2991,7 @@ msgid "Cauchy probabilities..."
 msgstr "Probabilitats de Cauchy"
 
 msgid "Plot Cauchy distribution..."
-msgstr "Grafica la distribució de Cauchy"
+msgstr "Traça una distribució de Cauchy"
 
 msgid "Sample from Cauchy distribution..."
 msgstr "Mostra d'una distribució de Cauchy..."
@@ -3005,7 +3006,7 @@ msgid "Logistic probabilities..."
 msgstr "Probabilitats logístiques"
 
 msgid "Plot logistic distribution..."
-msgstr "Grafica la distribució logística"
+msgstr "Traça una distribució logística"
 
 msgid "Sample from logistic distribution..."
 msgstr "Mostra d'una distribució logística..."
@@ -3020,7 +3021,7 @@ msgid "Lognormal probabilities..."
 msgstr "Probabilitats lognormals..."
 
 msgid "Plot lognormal distribution..."
-msgstr "Grafica uan distribució lognormal"
+msgstr "Traça una distribució lognormal"
 
 msgid "Sample from lognormal distribution..."
 msgstr "Mostra d'una distribució lognormal"
@@ -3035,7 +3036,7 @@ msgid "Gamma probabilities..."
 msgstr "Probabilitats gamma"
 
 msgid "Plot gamma distribution..."
-msgstr "Grafica la distribució gamma"
+msgstr "Traça una distribució gamma"
 
 msgid "Sample from gamma distribution..."
 msgstr "Mostra d'una distribució gamma"
@@ -3050,7 +3051,7 @@ msgid "Weibull probabilities..."
 msgstr "Probabilitats Weibull..."
 
 msgid "Plot Weibull distribution..."
-msgstr "Grafica la distribució de Weibull"
+msgstr "Traça una distribució de Weibull"
 
 msgid "Sample from Weibull distribution..."
 msgstr "Mostra d'una distribució de Weibull"
@@ -3065,7 +3066,7 @@ msgid "Gumbel probabilities..."
 msgstr "Probabilitats de Gumbell..."
 
 msgid "Plot Gumbel distribution..."
-msgstr "Gràaica la distribució de Gumbel..."
+msgstr "Traça una distribució de Gumbel..."
 
 msgid "Sample from Gumbel distribution..."
 msgstr "Mostra d'una distribució de Gumbel..."
@@ -3089,13 +3090,13 @@ msgid "Geometric quantiles..."
 msgstr "Quantils geomètrics..."
 
 msgid "Geometric tail probabilities..."
-msgstr "Probabilitats geomètriquesde la cua..."
+msgstr "Probabilitats geomètriques de la cua..."
 
 msgid "Geometric probabilities..."
 msgstr "Probabilitats geomètriques..."
 
 msgid "Plot geometric distribution..."
-msgstr "Grafica la distribució geomètrica..."
+msgstr "Traça una distribució geomètrica..."
 
 msgid "Sample from geometric distribution..."
 msgstr "Mostra d'una distribució geomètrica"
@@ -3107,13 +3108,13 @@ msgid "Hypergeometric quantiles..."
 msgstr "Quantils hipergeomètrics..."
 
 msgid "Hypergeometric tail probabilities..."
-msgstr "Probabilitatshipergeomètriques de la cuas..."
+msgstr "Probabilitats hipergeomètriques de les cues..."
 
 msgid "Hypergeometric probabilities..."
 msgstr "Probabilitats hipergeomètriques..."
 
 msgid "Plot hypergeometric distribution..."
-msgstr "Grafica la distribució hipergeomètrica..."
+msgstr "Traça una distribució hipergeomètrica..."
 
 msgid "Sample from hypergeometric distribution..."
 msgstr "Mostra d'una distribució hipergeomètrica..."
@@ -3131,7 +3132,7 @@ msgid "Negative binomial probabilities..."
 msgstr "Probabilitats binomials negatives..."
 
 msgid "Plot negative binomial distribution..."
-msgstr "Grafica la distribució binomial negativa..."
+msgstr "Traça una distribució binomial negativa..."
 
 msgid "Sample from negative binomial distribution..."
 msgstr "Mostra d'una distribució binomial negativa..."
@@ -3153,7 +3154,7 @@ msgid "Groups (pick zero or more)"
 msgstr "Grups (triï'n zero o un)"
 
 msgid "Automatically draw key"
-msgstr "Dibuixa automàticament la clau"
+msgstr "Clau de dibuix automàtica"
 
 msgid "Different panels for different responses"
 msgstr "Panells diferents per respostes diferents"
@@ -3177,7 +3178,7 @@ msgid "At least one response variable must be selected."
 msgstr "Com a mínim cal seleccionar una variable de resposta."
 
 msgid "At least one explanatory variable must be selected."
-msgstr "com a mínim cal seleccionar una variable explicativa."
+msgstr "Com a mínim cal seleccionar una variable explicativa."
 
 msgid "XY conditioning plot..."
 msgstr "Gràfic condicional XY"
@@ -3195,11 +3196,11 @@ msgid "Show axis scales"
 msgstr "Mostra les escales dels eixos"
 
 msgid "Plot 50% concentration ellipsoid"
-msgstr "Dibuixa l'el·lipsoide de concentració del 50%"
+msgstr "Traça l'el·lipsoide de concentració del 50%"
 
 # scatterplot matrices dialog
 msgid "One-dimensional scatterplots"
-msgstr "Gràfic de disperssió unidimensional"
+msgstr "Gràfic de dispersió unidimensional"
 
 # count NAs (menu item)
 msgid "Count missing observations"
@@ -3275,7 +3276,7 @@ msgid "Convert numeric variables to factors..."
 msgstr "Converteix variables numèriques en factors..."
 
 msgid "Stack Variables"
-msgstr "Stack Variables"
+msgstr "Apila variables"
 
 msgid "factor"
 msgstr "factor"
@@ -3287,7 +3288,7 @@ msgid "You must select at least two variables."
 msgstr "Cal triar com a mínim dues variables."
 
 msgid "Name for stacked data set:"
-msgstr "Name for stacked data set:"
+msgstr "Nom per la taula de dades apilada:"
 
 msgid "Name for variable:"
 msgstr "Nom per la variable:"
@@ -3313,7 +3314,7 @@ msgid ""
 "click right button to exit."
 msgstr ""
 "Arrossega amb el boté dret del ratolí per identificar punts,\n"
-"clica el botó dret per sortir."
+"prem el botó dret per sortir."
 
 msgid "Read Data From Text File or Clipboard"
 msgstr "Llegeix dades des d'un fitxer de text o del portapapers"
@@ -3335,4 +3336,106 @@ msgstr "No hi ha cap estadística seleccionada."
 
 msgid "Right-hand side"
 msgstr "Terme de la dreta"
+
+msgid "Load Plugins"
+msgstr "Carrega plugins"
+
+msgid "Plug-ins (pick one or more)"
+msgstr "Plugins (triï'n un o mes)"
+
+msgid "You must select at least one plug-in."
+msgstr "Cal triar com a mínim un plugin."
+
+msgid "Plug-ins loaded:"
+msgstr "Plugins carregats:"
+
+msgid ""
+"The plug-in(s) will not be available until the Commander is restarted.\n"
+"Restart now?"
+msgstr "El(s) plugin(s) no estaran disponibles fins reiniciar el Commander."
+
+msgid "objects have different numbers of columns"
+msgstr "els objectes tenen un nombre diferent de columnes"
+
+msgid "objects have different column names"
+msgstr "els objectes tenen noms de columnes diferents"
+
+msgid "Load Rcmdr plug-in(s)..."
+msgstr "Carrrega plugin(s) del Rcmdr..."
+
+msgid "the plug-in package %s is missing"
+msgstr "manca el plugin %s"
+
+msgid "the package %s is not an Rcmdr plug-in"
+msgstr "el paquet %s no és un plugin del Rcmdr"
+
+msgid "unrecognized operation, \"%s\", in plugin menu line %i"
+msgstr "operació no reconeguda, \"%s\", a la línia %i del menú del plugin"
+
+msgid "unrecognized type, \"%s\", in plugin menu line %i"
+msgstr "tipus no reconegut, \"%s\", a la línia %i del menú del plugin"
+
+# miscelaneous additions
+msgid "Color palette..."
+msgstr "Paleta de colors..."
+
+msgid "Set Color Palette"
+msgstr "Estableix la paleta de colors"
+
+msgid "Color palette reset."
+msgstr "Restableix paleta de colors"
+
+msgid "Save active data set..."
+msgstr "Salva la taula de dades activa..."
+
+msgid "Load data set..."
+msgstr "Carrega taula de dades..."
+
+msgid "{\"R Data Files\" {\".rda\" \".Rda\" \".RDA\"}} {\"All Files\" {\"*\"}}"
+msgstr "{\"Fitxers de dades R\" {\".rda\" \".Rda\" \".RDA\"}} {\"Tots els fitxers\" {\"*\"}}"
+
+msgid "Shapiro-Wilk test of normality..."
+msgstr "Test de normalitat de Shapiro-Wilk..."
+
+msgid "Shapiro-Wilk Test of Normality"
+msgstr "Test de normalitat de Shapiro-Wilk"
+
+msgid "Ordinal regression model..."
+msgstr "Model de regressió ordinal..."
+
+msgid "Ordinal Regression Model"
+msgstr "Model de regressió ordinal"
+
+msgid "Proportional-odds logit"
+msgstr "Odds logit proporcional..."
+
+msgid "Ordered probit"
+msgstr "Probits ordenats"
+
+msgid "Type of Model"
+msgstr "Tipus de model"
+
+msgid "x-axis label"
+msgstr "etiqueta del eix x"
+
+msgid "y-axis label"
+msgstr "etiqueta de l'eix y"
+
+msgid "No plotting characters."
+msgstr "No hi ha cap caràcter a traçar."
+
+msgid "Plotting Parameters"
+msgstr "Paràmetres a traçar"
+
+msgid "Plotting characters"
+msgstr "Caràcters a traçar"
+
+msgid "Point size"
+msgstr "Grandària dels punts"
+
+msgid "Axis text size"
+msgstr "Grandària del text de l'eix"
+
+msgid "Axis-labels text size"
+msgstr "Grandària de les etiquetes de l'eix"
 

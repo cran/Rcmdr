@@ -578,5 +578,13 @@ Version 1.3-0
    
    o  Small changes.
    
+Version 1.3-0
+
+   o  Small changes and fixes.
+
+   o  Corrected an error in the R-Rcmdr.pot messages file (for translators).
+   
+   o  Updated translations: German (courtesy of Gerhard Schoen), Indonesian (I Made Tirta), Japanese (Takaharu Araki), Romanian (Adrian Dusa), Russian (Alexey Shipunov).
+   
    
    
