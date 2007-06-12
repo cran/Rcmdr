@@ -1,10 +1,10 @@
 # The R Commander and command logger
 
-# last modified 1 June 2007 by J. Fox
+# last modified 12 June 2007 by J. Fox
 #   slight changes 12 Aug 04 by Ph. Grosjean 
 
 Commander <- function(){
-    RcmdrVersion <- "1.3-1"
+    RcmdrVersion <- "1.3-2"
     # the following test suggested by Richard Heiberger
     if ("RcmdrEnv" %in% search() &&
         exists("commanderWindow", "RcmdrEnv") &&
