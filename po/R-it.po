@@ -5,11 +5,11 @@
 # Stefano Calza <calza@med.unibs.it>, 2005
 msgid ""
 msgstr ""
-"Project-Id-Version: Rcmdr 1.2-2\n"
-"Report-Msgid-Bugs-To: jfox@mcmaster.ca\n"
-"POT-Creation-Date: 2005-06-30 16:10\n"
-"PO-Revision-Date: 2006-11-21 19:12+0100\n"
-"Last-Translator: Stefano <calza@med.unibs.it>\n"
+"Project-Id-Version: Rcmdr 1.3-3\n"
+"Report-Msgid-Bugs-To: bugs@r-project.org\n"
+"POT-Creation-Date: 2007-05-31 21:05\n"
+"PO-Revision-Date: 2007-07-04 07:50\n"
+"Last-Translator: Stefano <calza@med.unibs.it>(small correction by J. Fox)\n"
 "Language-Team: Italiano\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
@@ -112,7 +112,8 @@ msgid "There are no hierachical clustering solutions"
 msgstr "Non ci sono soluzioni dell'analisi gerarchica dei cluster"
 
 msgid "No hierachical clustering solutions are associated with this data set."
-msgstr "Non ci sono soluzioni dell'analisi gerarchica dei cluster associate ai dati"
+msgstr ""
+"Non ci sono soluzioni dell'analisi gerarchica dei cluster associate ai dati"
 
 msgid "A clustering solution has not been selected."
 msgstr "Non è stata selezionata una soluzione dell'analisi dei cluster"
@@ -365,8 +366,12 @@ msgstr "Carattere decimale"
 msgid "You must enter a name for the data set."
 msgstr "Inserire il nome del set di dati."
 
-msgid "{\"Text Files\" {\".txt\" \".TXT\" \".dat\" \".DAT\" \".csv\" \".CSV\"}} {\"All Files\" {\"*\"}}"
-msgstr "{\"File di testo\" {\".txt\" \".TXT\" \".dat\" \".DAT\" \".csv\" \".CSV\"}} {\"Tutti i files\" {\"*\"}}"
+msgid ""
+"{\"Text Files\" {\".txt\" \".TXT\" \".dat\" \".DAT\" \".csv\" \".CSV\"}} "
+"{\"All Files\" {\"*\"}}"
+msgstr ""
+"{\"File di testo\" {\".txt\" \".TXT\" \".dat\" \".DAT\" \".csv\" \".CSV\"}} "
+"{\"Tutti i files\" {\"*\"}}"
 
 msgid "Variable names in file:"
 msgstr "Nomi delle variabili nel file:"
@@ -410,8 +415,12 @@ msgstr "Inserire il nome del set di dati:"
 msgid "Import SPSS Data Set"
 msgstr "Importa i dati dal formato SPSS"
 
-msgid "{\"SPSS save files\" {\".sav\" \".SAV\"}} {\"SPSS portable files\" {\".por\" \".POR\"}} {\"All Files\" {\"*\"}}"
-msgstr "{\"File di salvataggio SPSS\" {\".sav\" \".SAV\"}} {\"File di SPSS portabile\" {\".por\" \".POR\"}} {\"Tutti i files\" {\"*\"}}"
+msgid ""
+"{\"SPSS save files\" {\".sav\" \".SAV\"}} {\"SPSS portable files\" {\".por\" "
+"\".POR\"}} {\"All Files\" {\"*\"}}"
+msgstr ""
+"{\"File di salvataggio SPSS\" {\".sav\" \".SAV\"}} {\"File di SPSS portabile"
+"\" {\".por\" \".POR\"}} {\"Tutti i files\" {\"*\"}}"
 
 msgid ""
 "Convert value labels\n"
@@ -432,8 +441,10 @@ msgstr ""
 msgid "Import Minitab Data Set"
 msgstr "Importa dati di Minitab"
 
-msgid "{\"Minitab portable files\" {\".mtp\" \".MTP\"}} {\"All Files\" {\"*\"}}"
-msgstr "{\"File Minitab portabile\" {\".mtp\" \".MTP\"}} {\"Tutti i files\" {\"*\"}}"
+msgid ""
+"{\"Minitab portable files\" {\".mtp\" \".MTP\"}} {\"All Files\" {\"*\"}}"
+msgstr ""
+"{\"File Minitab portabile\" {\".mtp\" \".MTP\"}} {\"Tutti i files\" {\"*\"}}"
 
 msgid ""
 "Minitab data set contains elements of unequal length.\n"
@@ -446,7 +457,8 @@ msgid "Import STATA Data Set"
 msgstr "Inporta dati in formato STATA"
 
 msgid "{\"STATA datasets\" {\".dta\" \".DTA\"}} {\"All Files\" {\"*\"}}"
-msgstr "{\"File di dati STATA\" {\".dta\" \".DTA\"}} {\"Tutti i file\" {\"*\"}}"
+msgstr ""
+"{\"File di dati STATA\" {\".dta\" \".DTA\"}} {\"Tutti i file\" {\"*\"}}"
 
 msgid "Convert dates to R format"
 msgstr "Converti i dati in formato R"
@@ -1272,8 +1284,12 @@ msgstr "Tipo di file grafico"
 msgid "{\"PNG Files\" {\".png\" \".PNG\"}} {\"All Files\" {\"*\"}}"
 msgstr "{\"Files PNG\" {\".png\" \".PNG\"}} {\"Tutti i files\" {\"*\"}}"
 
-msgid "{\"JPEG Files\" {\".jpg\" \".JPG\" \".jpeg\" \".JPEG\"}} {\"All Files\" {\"*\"}}"
-msgstr "{\"Files JPEG\" {\".jpg\" \".JPG\" \".jpeg\" \".JPEG\"}} {\"Tutti i files\" {\"*\"}}"
+msgid ""
+"{\"JPEG Files\" {\".jpg\" \".JPG\" \".jpeg\" \".JPEG\"}} {\"All Files\" {\"*"
+"\"}}"
+msgstr ""
+"{\"Files JPEG\" {\".jpg\" \".JPG\" \".jpeg\" \".JPEG\"}} {\"Tutti i files"
+"\" {\"*\"}}"
 
 msgid "Graph saved to file"
 msgstr "Grafico salvato come file"
@@ -1302,8 +1318,12 @@ msgstr "{\"Files PDF\" {\".pdf\" \".PDF\"}} {\"Tutti i files\" {\"*\"}}"
 msgid "{\"Postscript Files\" {\".ps\" \".PS\"}} {\"All Files\" {\"*\"}}"
 msgstr "{\"Files Postscript\" {\".ps\" \".PS\"}} {\"Tutti i files\" {\"*\"}}"
 
-msgid "{\"Encapsulated Postscript Files\" {\".eps\" \".EPS\"}} {\"All Files\" {\"*\"}}"
-msgstr "{\"Files Encapsulated Postscript\" {\".eps\" \".EPS\"}} {\"Tutti i files\" {\"*\"}}"
+msgid ""
+"{\"Encapsulated Postscript Files\" {\".eps\" \".EPS\"}} {\"All Files\" {\"*"
+"\"}}"
+msgstr ""
+"{\"Files Encapsulated Postscript\" {\".eps\" \".EPS\"}} {\"Tutti i files"
+"\" {\"*\"}}"
 
 msgid "Width (inches)"
 msgstr "Larghezza (pollici)"
@@ -1477,7 +1497,9 @@ msgid "3 (cubes)"
 msgstr "3 (cubica)"
 
 msgid "There is no appropriate outlier.test method for a model of this class."
-msgstr "Nessun metodo appropriato per il test degli outlier per un modello di questa classe."
+msgstr ""
+"Nessun metodo appropriato per il test degli outlier per un modello di questa "
+"classe."
 
 msgid "Confidence Intervals"
 msgstr "Intervalli di confidenza"
@@ -1542,7 +1564,8 @@ msgstr ""
 "(deve includere il file indice PACKAGES)"
 
 msgid "The following packages were not found at the specified location:"
-msgstr "I seguenti pacchetti non sono stati trovati nella locazione specificata:"
+msgstr ""
+"I seguenti pacchetti non sono stati trovati nella locazione specificata:"
 
 msgid "Cancel"
 msgstr "Annulla"
@@ -1976,7 +1999,9 @@ msgid "There is no active model."
 msgstr "Nessun modello attivo."
 
 msgid "argument must be a square, symmetric, numeric covariance matrix"
-msgstr "l'argomento deve essere una matrice di covaranza numerica, quadrata e simmetrica."
+msgstr ""
+"l'argomento deve essere una matrice di covaranza numerica, quadrata e "
+"simmetrica."
 
 msgid "there are fewer than 3 items in the scale"
 msgstr "ci sono meno di 3 items nella scala"
@@ -1990,8 +2015,11 @@ msgstr "L'argomento 'factor1' deve essere un fattore."
 msgid "Arguments factor1 and factor2 must be factors."
 msgstr "Gli argomenti 'factor1' e 'factor2' devono essere dei fattori."
 
-msgid "Number of groups for factor2, %d, exceeds number of distinct colours, %d."
-msgstr "Il numero di gruppi per 'factor2', %d, eccede il numero di colori distinti, %d."
+msgid ""
+"Number of groups for factor2, %d, exceeds number of distinct colours, %d."
+msgstr ""
+"Il numero di gruppi per 'factor2', %d, eccede il numero di colori distinti, %"
+"d."
 
 msgid "The number of bins exceeds the number of data values"
 msgstr "Il numero degli intervalli eccede il numero dei valori."
@@ -2568,9 +2596,7 @@ msgid "Import from Excel, Access or dBase data set"
 msgstr "Importa da Excel, Access o dBase"
 
 msgid "{\"MS Excel file\" {*.xls \".XLS\"}} {\"MS Access database\" {*.mdb \".MDB\"}} {\"dBase-like file\" {*.dbf \".DBF\"}} {\"All Files\" {\"*\"}}"
-msgstr ""
-"{\\\"File MS Excel\\\" {*.xls \\\".XLS\\\"}} {\\\"MS Access database\\\" {*.mdb \\\".MDB\"\n"
-"\"\\\"}} {\\\"file dBase\\\" {*.dbf \\\".DBF\\\"}} {\\\"Tutti i file\\\" {\\\"*\\\"}}"
+msgstr "{\"File MS Excel\" {*.xls \".XLS\"}} {\"MS Access database\" {*.mdb \".MDB\"}} {\"file dBase\" {*.dbf \".DBF\"}} {\"Tutti i file\" {\"*\"}}"
 
 msgid "Select one table"
 msgstr "Seleziona una tabella"
@@ -3260,10 +3286,14 @@ msgid "Frequency Distributions"
 msgstr "Distribuzioni di frequenza"
 
 msgid "Chi-square goodness-of-fit test (for one variable only)"
-msgstr "Test del chi-quadrato per la bontà dell'adattamento (per una sola variabile)"
+msgstr ""
+"Test del chi-quadrato per la bontà dell'adattamento (per una sola variabile)"
 
-msgid "Goodness-of-fit test not available when more than one variable is selected."
-msgstr "Il test per la bontà dell'adattamento non è disponibile quando si seleziona più di una variabile."
+msgid ""
+"Goodness-of-fit test not available when more than one variable is selected."
+msgstr ""
+"Il test per la bontà dell'adattamento non è disponibile quando si seleziona "
+"più di una variabile."
 
 msgid "Frequency distributions..."
 msgstr "Distribuzioni di frequenza..."
@@ -3351,14 +3381,117 @@ msgstr "Nessuna statistica selezionata."
 msgid "Right-hand side"
 msgstr "A destra"
 
-#~ msgid "menu defintion error:"
-#~ msgstr "Errore di definizione del menù"
-#~ msgid "You must selection a groups factor."
-#~ msgstr "Selezionare un fattore di raggruppamento"
-#~ msgid "You must selection a response variable."
-#~ msgstr "Selezionare una variabile di risposta"
-#~ msgid "You must selection at least one factor."
-#~ msgstr "Selezionare almeno un fattore."
-#~ msgid "Chisquare test of independence"
-#~ msgstr "Test del chi-quadrato per l'indipendenza "
+msgid "Load Plugins"
+msgstr "Carica plugins"
+
+msgid "Plug-ins (pick one or more)"
+msgstr "Plugins (uno o più)"
+
+
+msgid "You must select at least one plug-in."
+msgstr "Selezionare almeno un plugin"
+
+
+msgid "Plug-ins loaded:"
+msgstr "Plugins caricati:"
+
+msgid ""
+"The plug-in(s) will not be available until the Commander is restarted.\n"
+"Restart now?"
+msgstr ""
+"Il/i plugin non saranno disponibili fino al riavvio di Commander. \n"
+"Riavviare ora?"
+
+msgid "objects have different numbers of columns"
+msgstr "gli oggetti hanno un numero di colonne differente"
+
+msgid "objects have different column names"
+msgstr "gli oggetti hanno differenti nomi di colonna"
+
+
+msgid "Load Rcmdr plug-in(s)..."
+msgstr "Carica il/i plugin..."
+
+
+msgid "the plug-in package %s is missing"
+msgstr "I seguenti plugin %s non sono disponibili:"
+
+msgid "the package %s is not an Rcmdr plug-in"
+msgstr "il pacchetto %s non è un plugin di Rcmdr"
+
+msgid "unrecognized operation, \"%s\", in plugin menu line %i"
+msgstr "operazione \"%s\" non riconosciuta, nel menù del plugin alla linea %i "
+
+msgid "unrecognized type, \"%s\", in plugin menu line %i"
+msgstr "tipo \"%s\" non riconosciuto nel menù del plugin alla linea %i"
+
+# miscelaneous additions
+msgid "Color palette..."
+msgstr "Tavolozza dei colori"
+
+msgid "Set Color Palette"
+msgstr "Imposta la tavolozza dei colori"
+
+msgid "Color palette reset."
+msgstr "Reimposta la tavolozza dei colori"
+
+
+msgid "Save active data set..."
+msgstr "Salva il file di dati attivo..."
+
+msgid "Load data set..."
+msgstr "Carica set di dati..."
+
+
+msgid "{\"R Data Files\" {\".rda\" \".Rda\" \".RDA\"}} {\"All Files\" {\"*\"}}"
+msgstr "{\"Files dati di R\" {\".rda\" \".Rda\" \".RDA\"}} {\"Tutti i files\" {\"*\"}}"
+
+msgid "Shapiro-Wilk test of normality..."
+msgstr "Test di Normalità di Shapiro-Wilk"
+
+msgid "Shapiro-Wilk Test of Normality"
+msgstr "Test di Normalità di Shapiro-Wilk<"
+
+
+msgid "Ordinal regression model..."
+msgstr "Regressione lineare ordinale..."
+
+
+msgid "Ordinal Regression Model"
+msgstr "Regressione Lineare Ordinale"
+
+
+msgid "Proportional-odds logit"
+msgstr "Modello ad odds proporzionali (link: logit)"
+
+msgid "Ordered probit"
+msgstr "Probit ordinali"
+
+msgid "Type of Model"
+msgstr "Tipo di Modello"
+
+msgid "x-axis label"
+msgstr "etichetta dell'asse x"
+
+msgid "y-axis label"
+msgstr "etichetta dell'asse y"
+
+msgid "No plotting characters."
+msgstr "Nessun tipo di carattere specificato"
+
+msgid "Plotting Parameters"
+msgstr "Parametri grafici"
+
+
+msgid "Plotting characters"
+msgstr "Tipo di carattere"
+
+msgid "Point size"
+msgstr "Dimensione dei punti"
+
+msgid "Axis text size"
+msgstr "Dimensione del testo degli assi"
+
+msgid "Axis-labels text size"
+msgstr "Dimensione del testo delle etichette degli assi"
 
