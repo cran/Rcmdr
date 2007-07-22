@@ -1,10 +1,11 @@
 # The R Commander and command logger
 
-# last modified 12 June 2007 by J. Fox
+# last modified 22 June 2007 by J. Fox
 #   slight changes 12 Aug 04 by Ph. Grosjean 
+#   changes 21 July 2007 by Erich Neuwirth for Excel support (marked EN)
 
 Commander <- function(){
-    RcmdrVersion <- "1.3-2"
+    RcmdrVersion <- "1.3-3"
     # the following test suggested by Richard Heiberger
     if ("RcmdrEnv" %in% search() &&
         exists("commanderWindow", "RcmdrEnv") &&
@@ -278,10 +279,17 @@ Commander <- function(){
                 domain=NA)
             }
         }
+    ## added by EN ###############################
+	if (RExcelSupported())
+    	putRExcel(".rexcel.menu.dataframe", Menus)
+    ## end of change ###############################
     putRcmdr("Menus", .Menus)
     putRcmdr("autoRestart", FALSE)
     activateMenus()
     exceptions <- scan(file.path(etc, "log-exceptions.txt"), what="", quiet=TRUE, comment.char="#")
+    ## added by EN ###############################
+   	putRcmdr("Commander.Input.exceptions", exceptions)
+    ## end of change ###############################
     modelClasses <- scan(file.path(etc, "model-classes.txt"), what="", quiet=TRUE, comment.char="#")
     for (plugin in Plugins){
         description <- readLines(file.path(.path.package(package=plugin)[1], "DESCRIPTION"))
@@ -622,6 +630,10 @@ doItAndPrint <- function(command, log=TRUE) {
             }
         }
     else if (.console.output) sink(type="output")
+    ###### added by EN  ######################
+	if (RExcelSupported())
+    	putRExcel(".rexcel.last.output",.Output)
+    ###### end of change  #####################
     # errors already intercepted, display any warnings
     checkWarnings(readLines(messages.connection))
     result
@@ -684,6 +696,10 @@ Message <- function(message, type=c("note", "error", "warning")){
         }
     putRcmdr("last.message", type)
     message <- paste(prefix, ": ", message, sep="")
+    ######### added by EN #####################
+   	if (RExcelSupported())
+    	putRExcel(".rexcel.last.message",message)
+    ######### end of change ###############
     lines <- strsplit(message, "\n")[[1]]
     for (line in lines){
         tagName <- messageTag()

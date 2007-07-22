@@ -212,6 +212,8 @@ when the \code{Rcmdr} package is loaded; the default is to load only the \code{c
     \item{\code{retain.messages}}{If \code{TRUE} (the default is \code{FALSE}), the contents of the message window
     are not erased between messages. In any event, a "NOTE" message will not erase a preceding "WARNING" or "ERROR".}
     
+    \item{\code{RExcelSupport}}{If \code{TRUE} (the default is \code{FALSE}), menus and output are handled by Excel.}
+    
     \item{\code{scale.factor}}{A scaling factor to be applied to all Tk elements, such as fonts. This works well
     only in Windows. The default is \code{NULL}.}
 

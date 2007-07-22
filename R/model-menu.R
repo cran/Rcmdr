@@ -1,6 +1,6 @@
 # Model menu dialogs
 
-# last modified 16 May 07 by J. Fox
+# last modified 22 June 07 by J. Fox
 
 selectActiveModel <- function(){
     models <- listAllModels()
@@ -131,7 +131,7 @@ effectPlots <- function(){
 
 addObservationStatistics <- function(){
     addVariable <- function(name){
-        variable <- paste(.activeModel, ".", name, sep="")
+        variable <- paste(name, ".", .activeModel, sep="")
         if (is.element(variable, .variables)) {
             ans <- checkReplace(variable)
             if (tclvalue(ans) == "no") return()
