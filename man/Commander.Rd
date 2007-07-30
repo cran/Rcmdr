@@ -52,8 +52,9 @@ If there are several models in memory, you can select the active model from amon
 If command logging in turned on, R commands that are generated from the menus and dialog boxes are
 entered into the script window in the Commander. You can edit these commands in the normal
 manner and can also type new commands into the script window. Individual commands
-can be continued over more than one line, but each line after the first must be indented with
-one or more spaces or tabs. The contents of the script
+can be continued over more than one line, the several lines of a multi-line command
+must be submitted simultaneously. (It is not necessary, as in earlier versions of the
+R Commander, to begin continuation lines with white space.) The contents of the script
 window can be saved during or at the end of the session, and a saved script can be loaded into the
 script window. The contents of the output window can also be edited or saved to a text file.
 

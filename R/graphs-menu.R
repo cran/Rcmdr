@@ -1,6 +1,6 @@
 # Graphs menu dialogs
 
-# last modified 3 June 2007 by J. Fox
+# last modified 21 July 2007 by J. Fox
 
 indexPlot <- function(){
     initializeDialog(title=gettextRcmdr("Index Plot"))                                               
@@ -279,9 +279,9 @@ scatterPlot <- function(){
         subset <- if (trim.blanks(subset) == gettextRcmdr("<all valid cases>")) "" 
             else paste(", subset=", subset, sep="")
         xlab <- trim.blanks(tclvalue(xlabVar))
-        xlab <- if(xlab == "<auto>") "" else paste(', xlab="', xlab, '"', sep="")
+        xlab <- if(xlab == gettextRcmdr("<auto>")) "" else paste(', xlab="', xlab, '"', sep="")
         ylab <- trim.blanks(tclvalue(ylabVar))
-        ylab <- if(ylab == "<auto>") "" else paste(', ylab="', ylab, '"', sep="")
+        ylab <- if(ylab == gettextRcmdr("<auto>")) "" else paste(', ylab="', ylab, '"', sep="")
         cex <- as.numeric(tclvalue(cexValue))
         cex <- if(cex == 1) "" else paste(', cex=', cex, sep="")
         cex.axis <- as.numeric(tclvalue(cex.axisValue))
@@ -293,7 +293,7 @@ scatterPlot <- function(){
             errorCondition(recall=scatterPlot, message=gettextRcmdr("No plotting characters."))
             return()
             }
-        pch <- if(trim.blanks(pch) == "<auto>") "" else paste(", pch=c(", pch, ")", sep="")
+        pch <- if(trim.blanks(pch) == gettextRcmdr("<auto>")) "" else paste(", pch=c(", pch, ")", sep="")
         if (.groups == FALSE) {
             doItAndPrint(paste("scatterplot(", y, "~", x,
                 ", reg.line=", line, ", smooth=", smooth, ", labels=", labels,

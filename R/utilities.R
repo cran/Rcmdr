@@ -1,7 +1,6 @@
-# last modified 1 June 2007 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 23 July 2007 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
                                                                                        
 # utility functions
-
 
     # listing objects etc.
 
@@ -55,11 +54,18 @@ activeDataSet <- function(dsname, flushModel=TRUE){
             }
         else return(.activeDataSet)
         }
-    if (!is.data.frame(get(dsname, envir=.GlobalEnv))){
-        Message(message=paste(dsname, gettextRcmdr(" is not a data frame and cannot be attached."),
-            sep=""), type="error")
-        tkfocus(CommanderWindow())
-        return()
+    if (!is.data.frame(ds <- get(dsname, envir=.GlobalEnv))){
+        if (!exists.method("as.data.frame", ds, default=FALSE)){
+            Message(message=paste(dsname, gettextRcmdr(" is not a data frame and cannot be attached."),
+                sep=""), type="error")
+            tkfocus(CommanderWindow())
+            return()
+            }
+        command <- paste(dsname, " <- as.data.frame(", dsname, ")", sep="")
+        justDoIt(command)
+        logger(command)
+        Message(message=paste(dsname, gettextRcmdr(" has been coerced to a data frame"), sep=""),
+            type="warning")
         }
     varnames <- names(eval(parse(text=dsname), envir=.GlobalEnv))
     newnames <- make.names(varnames)
@@ -1796,14 +1802,47 @@ TwoLevelFactors <- function(names){
     if (missing(names)) getRcmdr("twoLevelFactors")
     else putRcmdr("twoLevelFactors", names)
     }
+
+# The following two functions were modified by Erich Neuwrith
+#  and subsequently by John Fox (23 July 07)
     
 ActiveDataSet <- function(name){
-    if (missing(name)) getRcmdr(".activeDataSet")
+    if (missing(name)) {
+      temp <- getRcmdr(".activeDataSet")
+      if (is.null(temp))
+        return(NULL)
+      else
+        if (!exists(temp) || !is.data.frame(get(temp,envir=.GlobalEnv))) {
+          Message(sprintf(gettextRcmdr("the dataset %s is no longer available"),
+            temp), type="error")
+          putRcmdr(".activeDataSet", NULL)
+          RcmdrTclSet("dataSetName", gettextRcmdr("<No active dataset>"))
+          putRcmdr(".activeModel", NULL)
+          RcmdrTclSet("modelName", gettextRcmdr("<No active model>"))
+          activateMenus()
+          if (getRcmdr("suppress.menus") && RExcelSupported()) return(NULL)
+        }
+        return(temp)
+      }
     else putRcmdr(".activeDataSet", name)
     }
 
 ActiveModel <- function(name){
-    if (missing(name)) getRcmdr(".activeModel")
+    if (missing(name)) {
+      temp <- getRcmdr(".activeModel")
+      if (is.null(temp))
+        return(NULL)
+      else
+        if (!exists(temp) || !is.model(get(temp,envir=.GlobalEnv))) {
+          Message(sprintf(gettextRcmdr("the model %s is no longer available"),
+            temp), type="error")
+          putRcmdr(".activeModel", NULL)
+          RcmdrTclSet("modelName", gettextRcmdr("<No active model>"))
+          activateMenus()
+          return(NULL)
+        }
+      else return(temp)
+      }
     else putRcmdr(".activeModel", name)
     }
     
@@ -2044,4 +2083,13 @@ loadPlugins <- function(){
     tkgrid(getFrame(packagesBox), sticky="nw")
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix(rows=1, columns=1)
-    }    
+    } 
+    
+# the following two functions contributed by Erich Neuwirth (added 22 July 07)
+
+whitespaceonly <- function(str) sub('[[:space:]]+$', '', str) == ''
+
+is.model <- function(object) {
+  any(class(object) %in% getRcmdr("modelClasses"))
+  }
+   

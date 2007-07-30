@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Rcmdr Japanese Translation\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-06-06 11:08+0900\n"
+"PO-Revision-Date: 2007-07-16 15:34+0900\n"
 "Last-Translator: Takaharu ARAKI <arakit@kansai-u.ac.jp>\n"
 "Language-Team: Rcmdr Japanese Translation <arakit@kansai-u.ac.jp>\n"
 "MIME-Version: 1.0\n"
@@ -295,7 +295,7 @@ msgid "Compute New Variable"
 msgstr "新しい変数の計算"
 
 msgid "[factor]"
-msgstr "［因子］"
+msgstr ""
 
 msgid "Current variables (double-click to expression)"
 msgstr "現在の変数 (ダブルクリックして計算式のテキストボックスに入力)"
@@ -960,7 +960,7 @@ msgid "Histogram"
 msgstr "ヒストグラム"
 
 msgid "<auto>"
-msgstr "<自動>"
+msgstr ""
 
 msgid "Frequency counts"
 msgstr "頻度の計算"
@@ -1606,7 +1606,7 @@ msgid "Number of factors to extract:"
 msgstr "抽出する因子数:"
 
 msgid "Independent Samples t-Test"
-msgstr "独立サンプルの ｔ 検定"
+msgstr "独立サンプル ｔ 検定"
 
 msgid "Groups (pick one)"
 msgstr "グループ（１つ選択）"
@@ -1757,7 +1757,7 @@ msgid "The two variables must be different."
 msgstr "２つの変数は異なっていないとだめです。"
 
 msgid "Kruskal-Wallis Rank Sum Test"
-msgstr "クラスカル-ウォリスの順位和検定"
+msgstr "クラスカル・ウォリスの順位和検定"
 
 msgid "Single-Sample Proportion Test"
 msgstr "１標本の比率の検定(母不良率の検定)"
@@ -2222,7 +2222,7 @@ msgid "Single-sample t-test..."
 msgstr "１標本 ｔ 検定..."
 
 msgid "Independent samples t-test..."
-msgstr "独立サンプルの ｔ 検定..."
+msgstr "独立サンプル ｔ 検定..."
 
 msgid "Paired t-test..."
 msgstr "対応のある t 検定..."
@@ -2255,7 +2255,7 @@ msgid "Paired-samples Wilcoxon test..."
 msgstr "対応のあるウィルコクソン検定..."
 
 msgid "Kruskal-Wallis test..."
-msgstr "クラスカル-ウォリスの検定..."
+msgstr "クラスカル・ウォリスの検定..."
 
 msgid "Scale reliability..."
 msgstr "スケールの信頼性..."
@@ -2453,7 +2453,7 @@ msgid "t distribution"
 msgstr "t分布"
 
 msgid "t quantiles..."
-msgstr "ｔ分位点..."
+msgstr "ｔ分布の分位点..."
 
 msgid "t probabilities..."
 msgstr "t分布の確率..."
@@ -2495,7 +2495,7 @@ msgid "Binomial tail probabilities..."
 msgstr "２項分布の裾の確率..."
 
 msgid "Binomial probabilities..."
-msgstr "２項分布..."
+msgstr "２項分布の確率..."
 
 msgid "Plot binomial distribution..."
 msgstr "２項分布を描く..."
@@ -3300,7 +3300,7 @@ msgid "Name for factor:"
 msgstr "因子名："
 
 msgid "Stack variables in active data set..."
-msgstr "アクティブなデータセット内の変数を積み重ねて結合する..."
+msgstr "アクティブデータセット内の変数を積み重ねて結合する..."
 
 # miscelaneous
 msgid "Identify Points"
@@ -3440,7 +3440,7 @@ msgid "Plotting Parameters"
 msgstr "プロットするパラメータ"
 
 msgid "Plotting characters"
-msgstr "プロットするパラメータ"
+msgstr "プロットする記号"
 
 msgid "Point size"
 msgstr "点の大きさ"

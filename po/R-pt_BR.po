@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rcmdr112\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2006-10-04 03:07-0300\n"
-"Last-Translator: adriano azevedo filho <adrianoazevedofilho@gmail.com>\n"
+"PO-Revision-Date: 2007-07-16 19:07-0300\n"
+"Last-Translator: adriano azevedo <adrianoazevedofilho@yahoo.com.br>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -3067,10 +3067,10 @@ msgid "Plot Gumbel distribution..."
 msgstr "Gráfico da distribuição Gumbel..."
 
 msgid "Sample from Gumbel distribution..."
-msgstr "Amostragem da distribuição normal"
+msgstr "Amostragem da distribuição Gumbel"
 
 msgid "Sample from binomial distribution..."
-msgstr "Gráfico da distribuição binomial..."
+msgstr "Amostra da distribuição binomial..."
 
 msgid "Poisson quantiles..."
 msgstr "Quantis da distribuição Poisson"
@@ -3079,7 +3079,7 @@ msgid "Poisson tail probabilities..."
 msgstr "Probabilidades da dist. Poisson (caudas)"
 
 msgid "Sample from Poisson distribution..."
-msgstr "Amostrage da distribuição Poisson..."
+msgstr "Amostragem da distribuição Poisson..."
 
 msgid "Geometric distribution"
 msgstr "Distribuição Geometrica"
@@ -3097,7 +3097,7 @@ msgid "Plot geometric distribution..."
 msgstr "Gráfico da distribuição Geométrica..."
 
 msgid "Sample from geometric distribution..."
-msgstr "Gráfico da distribuição geométrica..."
+msgstr "Amostra da distribuição geométrica..."
 
 msgid "Hypergeometric distribution"
 msgstr "Distribuição Hipergeométrica"
@@ -3139,7 +3139,7 @@ msgid "Continuous distributions"
 msgstr "Distribuições Contínuas"
 
 msgid "Discrete distributions"
-msgstr "Distribuições discretas"
+msgstr "Distribuições Discretas"
 
 # Xyplot dialog
 msgid "XY Conditioning Plot"
@@ -3346,4 +3346,126 @@ msgstr "Nenhuma estatística selecionada."
 
 msgid "Right-hand side"
 msgstr "Lado direito"
+
+#, fuzzy
+msgid "Load Plugins"
+msgstr "Carregue Pacotes"
+
+#, fuzzy
+msgid "Plug-ins (pick one or more)"
+msgstr "Pacotes (escolha um)"
+
+#, fuzzy
+msgid "You must select at least one plug-in."
+msgstr "Deve escolher pelo menos um."
+
+#, fuzzy
+msgid "Plug-ins loaded:"
+msgstr "Pacote carregado:"
+
+msgid ""
+"The plug-in(s) will not be available until the Commander is restarted.\n"
+"Restart now?"
+msgstr ""
+"O(s) plug-in(s) não estarão disponíveis até o Rcmdr ser iniciado.\n"
+" Inicie agora?"
+
+msgid "objects have different numbers of columns"
+msgstr "objetos têm numeros diferentes de colunas"
+
+msgid "objects have different column names"
+msgstr "objetos têm os nomes das colunas diferentes"
+
+#, fuzzy
+msgid "Load Rcmdr plug-in(s)..."
+msgstr "Carregar package(s)..."
+
+#, fuzzy
+msgid "the plug-in package %s is missing"
+msgstr "Os seguintes packages não foram encontrados:"
+
+msgid "the package %s is not an Rcmdr plug-in"
+msgstr "o package %s  não é um plug-in do Rcmdr"
+
+msgid "unrecognized operation, \"%s\", in plugin menu line %i"
+msgstr "operação não reconhecida, \"%s\", no menú do plugin - linha %i"
+
+msgid "unrecognized type, \"%s\", in plugin menu line %i"
+msgstr "tipo não reconhecido, \"%s\", no menú do plugin - linha %i"
+
+# miscelaneous additions
+msgid "Color palette..."
+msgstr "Paleta de cores"
+
+msgid "Set Color Palette"
+msgstr "Definir Paleta de Cores"
+
+msgid "Color palette reset."
+msgstr "Redefinir paleta de cores"
+
+#, fuzzy
+msgid "Save active data set..."
+msgstr "Selecionar Conjunto de Dados..."
+
+#, fuzzy
+msgid "Load data set..."
+msgstr "Novo conjunto de dados..."
+
+#, fuzzy
+msgid "{\"R Data Files\" {\".rda\" \".Rda\" \".RDA\"}} {\"All Files\" {\"*\"}}"
+msgstr "{\"PDF\" {\".pdf\" \".PDF\"}} {\"Todos\" {\"*\"}}"
+
+msgid "Shapiro-Wilk test of normality..."
+msgstr "Shapiro-Wilk - teste de normalidade..."
+
+msgid "Shapiro-Wilk Test of Normality"
+msgstr "Shapiro-Wilk - teste de normalidade..."
+
+#, fuzzy
+msgid "Ordinal regression model..."
+msgstr "Regressão Linear..."
+
+#, fuzzy
+msgid "Ordinal Regression Model"
+msgstr "Regressão Linear"
+
+#, fuzzy
+msgid "Proportional-odds logit"
+msgstr "Modelo Logito de chances proporcionais (proportional-odds)..."
+
+#, fuzzy
+msgid "Ordered probit"
+msgstr "Fatores ordenados"
+
+#, fuzzy
+msgid "Type of Model"
+msgstr "Tipo do teste"
+
+msgid "x-axis label"
+msgstr "rótulo do eixo-x"
+
+msgid "y-axis label"
+msgstr "rótulo do eixo-y"
+
+#, fuzzy
+msgid "No plotting characters."
+msgstr "Largura do log (caracteres)"
+
+#, fuzzy
+msgid "Plotting Parameters"
+msgstr "Parâmetros:"
+
+#, fuzzy
+msgid "Plotting characters"
+msgstr "Largura do log (caracteres)"
+
+#, fuzzy
+msgid "Point size"
+msgstr "Pontos"
+
+msgid "Axis text size"
+msgstr "tamanho do texto no eixo"
+
+msgid "Axis-labels text size"
+msgstr "tamanho do texto - rótulo do eixo"
 

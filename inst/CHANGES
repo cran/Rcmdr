@@ -602,5 +602,19 @@ Version 1.3-4
 
    o  Updated Italian translation and fix to Italian translation (courtesy of Stefano Calza).
    
+Version 1.3-5
+   
+   o  Updated Japanese translation (courtesy of Takaharu Araki); Brazilian Portuguese translation (Adriano Azevedo-Filho); and Spanish translation (Manuel Munoz-Marquez).
+   
+   o  The Rcmdr now tries to coerce non-data-frames to data frames when the user tries to make such as object the active data set (as, e.g., reading a non-data-frame data object from a package).
+   
+   o  Updated RExcel support (contributed by Erich Neuwirth).
+   
+   o  Better behaviour when the user deletes the active data set or active model (suggested by Richard Heiberger and Erich Neuwirth, some code by Erich Neuwirth).
+   
+   o  Fixed bug in logger() (command logger) to handle correctly commands with line-feeds (following bug report and patch by Richard Heiberger).
+   
+   o  Small fixes.
+   
    
    

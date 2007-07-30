@@ -55,13 +55,13 @@ selectActiveModel <- function(){
 
 summarizeModel <- function(){
     .activeModel <- ActiveModel()
-    if (!checkMethod("summary", .activeModel)) return()
+    if (is.null(.activeModel) || !checkMethod("summary", .activeModel)) return()
     doItAndPrint(paste("summary(", .activeModel, ", cor=FALSE)", sep=""))
     }
 
 plotModel <- function(){
     .activeModel <- ActiveModel()
-    if (!checkMethod("plot", .activeModel)) return()
+    if (is.null(.activeModel) || !checkMethod("plot", .activeModel)) return()
     command <- "oldpar <- par(oma=c(0,0,3,0), mfrow=c(2,2))"
     justDoIt(command)
     logger(command)
@@ -74,7 +74,7 @@ plotModel <- function(){
 CRPlots <- function(){
     require("car")
     .activeModel <- ActiveModel()
-    if (!checkMethod("cr.plot", .activeModel)) return()
+    if (is.null(.activeModel) || !checkMethod("cr.plot", .activeModel)) return()
     doItAndPrint(paste("cr.plots(", .activeModel, ", ask=FALSE)", sep=""))
     activateMenus()
     }
@@ -82,7 +82,7 @@ CRPlots <- function(){
 AVPlots <- function(){
     require("car")
     .activeModel <- ActiveModel()
-    if (!checkMethod("av.plot", .activeModel)) return()
+    if (is.null(.activeModel) || !checkMethod("av.plot", .activeModel)) return()
     response <- tclvalue(RcmdrTkmessageBox(message=gettextRcmdr("Identify points with mouse?"), 
         icon="question", type="yesno", default="no"))
     doItAndPrint(paste("av.plots(", .activeModel, ", ask=FALSE, identify.points=",
@@ -93,6 +93,7 @@ AVPlots <- function(){
 anovaTable <- function(){
     require("car")
     .activeModel <- ActiveModel()
+    if (is.null(.activeModel)) return()
     if (!checkMethod("Anova", .activeModel)) {
         errorCondition(message=gettextRcmdr("There is no appropriate Anova method for a model of this class."))
         return()
@@ -103,14 +104,14 @@ anovaTable <- function(){
 VIF <- function(){
     require("car")
     .activeModel <- ActiveModel()
-    if (!checkMethod("vif", .activeModel)) return()
+    if (is.null(.activeModel) || !checkMethod("vif", .activeModel)) return()
     doItAndPrint(paste("vif(", .activeModel, ")", sep=""))
     }
             
 InfluencePlot <- function(){
     require("car")
     .activeModel <- ActiveModel()
-    if (!checkMethod("influencePlot", .activeModel)) return()
+    if (is.null(.activeModel) || !checkMethod("influencePlot", .activeModel)) return()
     response <- tclvalue(RcmdrTkmessageBox(message=gettextRcmdr("Identify points with mouse?"), 
         icon="question", type="yesno", default="no"))
     labels <- if (response == "no") ", labels=FALSE" else ""
@@ -120,7 +121,7 @@ InfluencePlot <- function(){
 effectPlots <- function(){
     require("effects")
     .activeModel <- ActiveModel()
-    if (!checkMethod("effect", .activeModel)) return()
+    if (is.null(.activeModel) || !checkMethod("effect", .activeModel)) return()
     doItAndPrint('trellis.device(theme="col.whitebg")')
     command <- paste("plot(all.effects(", .activeModel, "), ask=FALSE)", sep="")
     justDoIt(command)
@@ -130,6 +131,7 @@ effectPlots <- function(){
     }
 
 addObservationStatistics <- function(){
+    if (is.null(.activeModel)) return()
     addVariable <- function(name){
         variable <- paste(name, ".", .activeModel, sep="")
         if (is.element(variable, .variables)) {
@@ -189,7 +191,7 @@ addObservationStatistics <- function(){
 residualQQPlot <- function(){
     require("car")
     .activeModel <- ActiveModel()
-    if (!checkMethod("qq.plot", .activeModel)) return()
+    if (is.null(.activeModel) || !checkMethod("qq.plot", .activeModel)) return()
     initializeDialog(title=gettextRcmdr("Residual Quantile-Comparison Plot"))
     selectFrame <- tkframe(top)
     simulateVar <- tclVar("1")
@@ -218,7 +220,7 @@ residualQQPlot <- function(){
 testLinearHypothesis <- function(){
     require("car")
     .activeModel <- ActiveModel()
-    if (!checkMethod("linear.hypothesis", .activeModel)) return()
+    if (is.null(.activeModel) || !checkMethod("linear.hypothesis", .activeModel)) return()
     env <- environment()
     initializeDialog(title=gettextRcmdr("Test Linear Hypothesis"))
     outerTableFrame <- tkframe(top)
@@ -359,6 +361,7 @@ compareModels <- function(){
     }
     
 BreuschPaganTest <- function(){
+    if (is.null(.activeModel)) return()
     require("lmtest")
     initializeDialog(title=gettextRcmdr("Breusch-Pagan Test"))
     tkgrid(tklabel(top, text=gettextRcmdr("Score Test for Nonconstant Error Variance"), fg="blue"), sticky="w")
@@ -399,6 +402,7 @@ BreuschPaganTest <- function(){
     }
 
 DurbinWatsonTest <- function(){
+    if (is.null(.activeModel)) return()
     require("lmtest")
     initializeDialog(title=gettextRcmdr("Durbin-Waton Test"))
     tkgrid(tklabel(top, text=gettextRcmdr("Test for First-Order Error Autocorrelation"), fg="blue"), sticky="w")
@@ -421,6 +425,7 @@ DurbinWatsonTest <- function(){
     }
 
 RESETtest <- function(){
+    if (is.null(.activeModel)) return()
     require("lmtest")
     initializeDialog(title=gettextRcmdr("RESET Test"))
     tkgrid(tklabel(top, text=gettextRcmdr("Test for Nonlinearity"), fg="blue"), sticky="w")
@@ -463,6 +468,7 @@ RESETtest <- function(){
     }
 
 outlierTest <- function(){
+    if (is.null(.activeModel)) return()
     require("car")
     .activeModel <- ActiveModel()
     if (!checkMethod("outlier.test", .activeModel)) {
@@ -473,6 +479,7 @@ outlierTest <- function(){
     }
     
 confidenceIntervals <- function(){
+    if (is.null(.activeModel)) return()
     require(MASS)
     initializeDialog(title=gettextRcmdr("Confidence Intervals"))
     tkgrid(tklabel(top, text=gettextRcmdr("Confidence Intervals for Individual Coefficients"), fg="blue"), sticky="w")

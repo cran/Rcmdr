@@ -1,11 +1,11 @@
 # The R Commander and command logger
 
-# last modified 22 June 2007 by J. Fox
+# last modified 26 July 2007 by J. Fox
 #   slight changes 12 Aug 04 by Ph. Grosjean 
-#   changes 21 July 2007 by Erich Neuwirth for Excel support (marked EN)
+#   changes 21 June 2007 by Erich Neuwirth for Excel support (marked EN)
 
 Commander <- function(){
-    RcmdrVersion <- "1.3-4"
+    RcmdrVersion <- "1.3-5"
     # the following test suggested by Richard Heiberger
     if ("RcmdrEnv" %in% search() &&
         exists("commanderWindow", "RcmdrEnv") &&
@@ -333,12 +333,13 @@ Commander <- function(){
         tkwm.deiconify(CommanderWindow())
         tkfocus(CommanderWindow())
         }
+    # the following function modified 14 July 07 by Erich Neuwirth
     onSubmit <- function(){
         .log <- LogWindow()
         selection <- strsplit(tclvalue(tktag.ranges(.log, "sel")), " ")[[1]]
         if (is.na(selection[1])) {
             tktag.add(.log, "currentLine", "insert linestart", "insert lineend")
-            selection <- strsplit(tclvalue(tktag.ranges(.log, "currentLine")), " ")[[1]]
+            selection <- strsplit(tclvalue(tktag.ranges(.log,"currentLine")), " ")[[1]]
             tktag.delete(.log, "currentLine")
             if (is.na(selection[1])) {
                 Message(message=gettextRcmdr("Nothing is selected."),
@@ -351,30 +352,33 @@ Commander <- function(){
         lines <- strsplit(lines, "\n")[[1]]
         .console.output <- getRcmdr("console.output")
         .output <- OutputWindow()
-        if (!.console.output) tkinsert(.output, "end", "\n")
         iline <- 1
         nlines <- length(lines)
         while (iline <= nlines){
+            while (nchar(lines[iline])==0) iline <- iline + 1
+            if (iline > nlines) break
             current.line <- lines[iline]
             if (.console.output) cat(paste("\nRcmdr> ", current.line,"\n", sep=""))
             else{
-                tkinsert(.output, "end", paste("> ", current.line,"\n", sep=""))
+                tkinsert(.output, "end", paste("\n> ", current.line,"\n", sep="")) ### end of changed
                 tktag.add(.output, "currentLine", "end - 2 lines linestart", "end - 2 lines lineend")
                 tktag.configure(.output, "currentLine", foreground=getRcmdr("command.text.color"))
                 }
             jline <- iline + 1
             while (jline <= nlines){
-                if (length(grep("^[\\ \t]", lines[jline])) == 0) break
+                   if (class(try(parse(text=current.line),silent=TRUE))!="try-error") break
                 if (.console.output)cat(paste("Rcmdr+ ", lines[jline],"\n", sep=""))
                 else{
                     tkinsert(.output, "end", paste("+ ", lines[jline],"\n", sep=""))
                     tktag.add(.output, "currentLine", "end - 2 lines linestart", "end - 2 lines lineend")
                     tktag.configure(.output, "currentLine", foreground=getRcmdr("command.text.color"))
                     }
-                current.line <- paste(current.line, lines[jline])
+                current.line <- paste(current.line, lines[jline],sep="\n")
                 jline <- jline + 1
                 iline <- iline + 1
                 }
+            if (!(is.null(current.line) || is.na(current.line))){
+
             if (length(grep("<-", current.line)) > 0){
                 justDoIt(current.line)
                 }
@@ -387,10 +391,11 @@ Commander <- function(){
                 justDoIt(current.line)
                 }
             else doItAndPrint(current.line, log=FALSE)
-            iline <- iline + 1
             }
+            iline <- iline + 1
         tkyview.moveto(.output, 1)
         }
+    }
     contextMenuLog <- function(){
         .log <- LogWindow()
         contextMenu <- tkmenu(tkmenu(.log), tearoff=FALSE)
@@ -541,25 +546,36 @@ Commander <- function(){
     Message(paste(gettextRcmdr("R Commander Version "), getRcmdr("RcmdrVersion"), ": ", date(), sep=""))
     }
 
-logger <- function(command){
-    if (is.SciViews()) return(svlogger(command))    # +PhG
-    .log <- LogWindow()
-    .output <- OutputWindow()
-    if (getRcmdr("log.commands")) {
-        tkinsert(.log, "end", paste(command,"\n", sep=""))
-        tkyview.moveto(.log, 1)
-        }
-    lines <- strsplit(command, "\n")[[1]]
-    tkinsert(.output, "end", "\n")
-    if (getRcmdr("console.output")) for (line in lines) cat(paste("\nRcmdr>", line, "\n"))
-    else {
-        for (line in lines) tkinsert(.output, "end", paste("> ", command,"\n", sep=""))
-        tktag.add(.output, "currentLine", "end - 2 lines linestart", "end - 2 lines lineend")
-        tktag.configure(.output, "currentLine", foreground=getRcmdr("command.text.color"))
-        tkyview.moveto(.output, 1)
-        }
-    command
-    }
+# the following function modified 24 July 07 by Richard Heiberger
+#  and subsequently by J. Fox 26 July 07
+
+logger <- function(command){ 
+   if (is.SciViews()) return(svlogger(command))    # +PhG 
+   .log <- LogWindow() 
+   .output <- OutputWindow() 
+   if (getRcmdr("log.commands")) { 
+       tkinsert(.log, "end", paste(command,"\n", sep="")) 
+       tkyview.moveto(.log, 1) 
+       } 
+   lines <- strsplit(command, "\n")[[1]] 
+   tkinsert(.output, "end", "\n") 
+   if (getRcmdr("console.output")) { 
+     for (line in seq(along=lines)) { 
+       prompt <- ifelse (line==1, "\nRcmdr>", "\nRcmdr+") 
+       cat(paste(prompt, lines[line], "\n")) 
+        } 
+     } 
+   else { 
+     for (line in  seq(along=lines)) { 
+       prompt <- ifelse(line==1, "> ", "+ ") 
+       tkinsert(.output, "end", paste(prompt, lines[line], "\n", sep=""))
+       tktag.add(.output, "currentLine", "end - 2 lines linestart", "end - 2 lines lineend") 
+       tktag.configure(.output, "currentLine", foreground=getRcmdr("command.text.color")) 
+       tkyview.moveto(.output, 1)  
+       } 
+     } 
+   command 
+   } 
 
 justDoIt <- function(command) {
     Message()
