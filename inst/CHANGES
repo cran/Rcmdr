@@ -616,5 +616,19 @@ Version 1.3-5
    
    o  Small fixes.
    
+Version 1.3-6
+
+   o  Greatly improved speed of detection of plug-in packages (implementing a suggestion by Brian Ripley).
+   
+   o  New Rcmdr ask.on.exit option, can suppress queries to save script and output files (suggested by Liviu Andronic).
+   
+   o  Fixed bug in options dialog that incorrectly set default font size of non-Windows systems to 10 rather than 12 (reported by Adrian Dusa).
+   
+   o  Fixed bug in handling of menus for plug-in packages when a plug-in defined a submenu of one of its own top-level menus (reported by Charilaos Skiadas).
+   
+   o  The log-exceptions.txt file is no longer needed (or used), and the Log-Exceptions: field of the DESCRIPTION files for plug-in packages is ignored. The Rcmdr now checks for invisible output (motivated by an issue reported by Adrian Dusa).
+   
+   o  Small changes.
+   
    
    

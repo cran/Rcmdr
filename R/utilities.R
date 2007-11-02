@@ -1,4 +1,4 @@
-# last modified 23 July 2007 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 31 October 2007 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
                                                                                        
 # utility functions
 
@@ -2042,13 +2042,23 @@ insertRows <- function(object1, object2, where=NULL, ...){
     
 # functions for handling Rcmdr plug-in packages
 
+##listPlugins <- function(loaded=FALSE){
+##    availablePackages <- if (loaded) sort(.packages(all.available = TRUE))
+##        else sort(setdiff(.packages(all.available = TRUE), .packages()))
+##    plugins <- availablePackages[sapply(availablePackages, 
+##        function(package) file.exists(file.path(.find.package(package), "etc/menus.txt")))]
+##    plugins
+##    }
+
+# the following function based on a suggestion by Brian Ripley
+    
 listPlugins <- function(loaded=FALSE){
-    availablePackages <- if (loaded) sort(.packages(all.available = TRUE))
-        else sort(setdiff(.packages(all.available = TRUE), .packages()))
-    plugins <- availablePackages[sapply(availablePackages, 
-        function(package) file.exists(file.path(.find.package(package), "etc/menus.txt")))]
-    plugins
-    }    
+    plugins <- unlist(lapply(.libPaths(), 
+        function(x) Sys.glob(file.path(x, "*/etc/menus.txt")))) 
+    plugins <- sub(".*/([^/]*)/etc/menus.txt", "\\1", plugins)
+    if (loaded) plugins else sort(setdiff(plugins, .packages()))
+    }
+    
 
 loadPlugins <- function(){
     plugins <- listPlugins()

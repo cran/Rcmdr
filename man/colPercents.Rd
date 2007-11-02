@@ -19,7 +19,6 @@ totPercents(tab, digits=1)
   \item{digits}{number of places to the right of the decimal place for percentages.}
 }
 
-}
 \value{
   Returns an array of the same size and shape as \code{tab} percentaged by
   rows or columns, plus rows or columns of totals and counts, or by the

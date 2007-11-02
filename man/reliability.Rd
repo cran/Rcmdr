@@ -25,7 +25,6 @@ reliability(S)
   \item{...}{not used: for compatibility with the print generic."}
 }
 
-}
 \value{
     an object of class reliability, which normally would be printed.
 }

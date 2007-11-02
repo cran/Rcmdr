@@ -1,4 +1,4 @@
-# last modified 11 May 2007 by J. Fox
+# last modified 31 October 2007 by J. Fox
 
 .onAttach <- function(...){
     Commander()
@@ -16,7 +16,8 @@
     tcltk <- require(tcltk)
     if (!tcltk) stop(gettext("The tcltk package is absent. The R Commander cannot function.", domain="R-Rcmdr"))
     required.packages <- rev(c("abind", "car", "effects", "foreign", "grid", "lattice", "lmtest", 
-        "MASS", "mgcv", "multcomp", "nlme", "nnet", "relimp", "rgl", "RODBC"))
+        "MASS", "mgcv", "multcomp", "nlme", "nnet", "relimp", "rgl"))
+    if (.Platform$OS.type == "windows") required.packages <- c(required.packages, "RODBC")
     packages.to.load <- options("Rcmdr")[[1]]$load.at.startup
     if (is.null(packages.to.load)) packages.to.load <- "car"
     for (package in packages.to.load){ 

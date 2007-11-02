@@ -15,7 +15,6 @@ partial.cor(X, ...)
   \item{\dots}{arguments to be passed to \code{cor}.}
 }
 
-}
 \value{
     Returns a matrix of partial correlations.
 }

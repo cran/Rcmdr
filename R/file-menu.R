@@ -1,4 +1,4 @@
-# last modified 18 May 2007 by J. Fox
+# last modified 31 October 2007 by J. Fox
 
 # File menu dialogs
 
@@ -90,7 +90,7 @@ saveWorkspace <- function() {
     Message(paste(gettextRcmdr("R workspace saved to"), .saveFileName), type="note")
     }
     
-CloseCommander <- function() closeCommander()
+CloseCommander <- function() closeCommander(ask.save=getRcmdr("ask.on.exit"))
     
 closeCommander <- function(ask=TRUE, ask.save=ask){
     if (ask){
@@ -131,7 +131,7 @@ closeCommander <- function(ask=TRUE, ask.save=ask){
     }
 
 closeCommanderAndR <- function(){
-    response <- closeCommander()
+    response <- CloseCommander()
     if (response == "cancel") return()
     cat("\n")
     quit(save="no")
@@ -157,7 +157,8 @@ Options <- function(){
     sort.names <- setOption("sort.names", TRUE)
     show.edit.button <- setOption("show.edit.button", TRUE)
     scale.factor <- current$scale.factor
-    default.font.size <- setOption("default.font.size", 10)
+    default.font.size <- setOption("default.font.size", 
+        if (.Platform$OS.type != "windows") 12 else 10)
     default.font <- setOption("default.font", 
         paste("*helvetica-medium-r-normal-*-", default.font.size, "*", sep=""))
     consoleOutputVar <- tclVar(console.output)

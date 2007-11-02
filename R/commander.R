@@ -1,11 +1,11 @@
 # The R Commander and command logger
 
-# last modified 26 July 2007 by J. Fox
+# last modified 2 November 2007 by J. Fox
 #   slight changes 12 Aug 04 by Ph. Grosjean 
 #   changes 21 June 2007 by Erich Neuwirth for Excel support (marked EN)
 
 Commander <- function(){
-    RcmdrVersion <- "1.3-5"
+    RcmdrVersion <- "1.3-6"
     # the following test suggested by Richard Heiberger
     if ("RcmdrEnv" %in% search() &&
         exists("commanderWindow", "RcmdrEnv") &&
@@ -141,6 +141,7 @@ Commander <- function(){
         else 20, global=FALSE))
     putRcmdr("saveOptions", options(warn=1, contrasts=getRcmdr("contrasts"), width=as.numeric(log.width),
         na.action="na.exclude", graphics.record=TRUE))
+    setOption("ask.on.exit", TRUE)
     setOption("double.click", FALSE)
     setOption("sort.names", TRUE)
     setOption("grab.focus", TRUE)
@@ -155,7 +156,7 @@ Commander <- function(){
         interactive() && .Platform$GUI == "X11" && getRversion() < "2.4.0") # to address problem in Linux
     setOption("showData.threshold", 100)
     setOption("retain.messages", TRUE)
-    setOption("crisp.dialogs",  (.Platform$OS.type == "windows") && (getRversion() >= "2.1.1"))
+    setOption("crisp.dialogs",  TRUE)
     if (getRcmdr("suppress.X11.warnings")) {
         putRcmdr("messages.connection", file(open = "w+"))
         sink(getRcmdr("messages.connection"), type="message")
@@ -168,15 +169,7 @@ Commander <- function(){
             paste("*helvetica-medium-r-normal-*-", default.font.size, "*", sep=""), global=FALSE)
         .Tcl(paste("option add *font ", default.font, sep=""))
         }
-    if (getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
-    putRcmdr("commanderWindow", tktoplevel())
-    .commander <- CommanderWindow()
     placement <- setOption("placement", "-40+20", global=FALSE)
-    tkwm.geometry(.commander, placement)
-    tkwm.title(.commander, gettextRcmdr("R Commander"))
-    tkwm.protocol(.commander, "WM_DELETE_WINDOW", CloseCommander)
-    topMenu <- tkmenu(.commander)
-    tkconfigure(.commander, menu=topMenu)
     source.files <- list.files(etc, pattern="\\.[Rr]$")
     for (file in source.files) {
         source(file.path(etc, file))
@@ -222,13 +215,13 @@ Commander <- function(){
                     else if (line[1, "operationOrParent"] == "cascade"){
                         where <- if (line[1, "menuOrItem"] != "topMenu")
                             max(which((Menus[, "operationOrParent"] == "cascade") &
-                                (Menus[, "menuOrItem"] == line[1, "menuOrItem"])))
+                                (Menus[, "commandOrMenu"] == line[1, "menuOrItem"])))
                         else {
                             max(which((Menus[, "operationOrParent"] == "cascade") &
                                 (Menus[, "menuOrItem"] == "topMenu") &
                                 (Menus[, "commandOrMenu"] != "toolsMenu") &
                                 (Menus[, "commandOrMenu"] != "helpMenu")))
-                            }                        
+                            }
                         }
                     else stop(sprintf(gettextRcmdr('unrecognized operation, "%s", in plugin menu line %i'), 
                         line[1, "operation"], i))
@@ -245,61 +238,24 @@ Commander <- function(){
     menuItems <- 0
     oldMenu <- ncol(Menus) == 6
     setOption("suppress.menus", FALSE)
-    if (!getRcmdr("suppress.menus")){
-        for (m in 1:nrow(Menus)){
-            install <- if (oldMenu) "" else Menus[m, 7]
-            if ((install != "") && (!eval(parse(text=install)))) next  
-            if (Menus[m, 1] == "menu") {
-                position <- 0
-                assign(Menus[m, 2], tkmenu(eval(parse(text=Menus[m, 3])), tearoff=FALSE))
-                menus[[Menus[m, 2]]] <- list(ID=get(Menus[m, 2])$ID, position=0)
-                }
-            else if (Menus[m, 1] == "item") {
-                if (Menus[m, 3] == "command"){
-                    position <- position + 1
-                    if (Menus[m, 6] == "")
-                        tkadd(eval(parse(text=Menus[m, 2])),"command", label=gettextRcmdr(Menus[m, 4]),
-                            command=eval(parse(text=Menus[m, 5])))
-                    else {
-                        tkadd(eval(parse(text=Menus[m, 2])),"command", label=gettextRcmdr(Menus[m, 4]),
-                            command=eval(parse(text=Menus[m, 5])),  state="disabled")
-                        menuItems <- menuItems + 1
-                        menus[[Menus[m, 2]]]$position <- position
-                        .Menus[[menuItems]] <- list(ID=menus[[Menus[m, 2]]]$ID, position=position,
-                            activation=eval(parse(text=paste("function()", Menus[m, 6]))))
-                        }
-                    }
-                else if (Menus[m, 3] == "cascade")
-                    tkadd(eval(parse(text=Menus[m, 2])),"cascade", label=gettextRcmdr(Menus[m, 4]), 
-                        menu=eval(parse(text=Menus[m, 5])))
-                else stop(paste(gettextRcmdr("menu definition error:"), Menus[m, ], collapse=" "),
-                    domain=NA)
-                }
-            else stop(paste(gettextRcmdr("menu definition error:"), Menus[m, ], collapse=" "),
-                domain=NA)
-            }
-        }
     ## added by EN ###############################
 	if (RExcelSupported())
     	putRExcel(".rexcel.menu.dataframe", Menus)
     ## end of change ###############################
-    putRcmdr("Menus", .Menus)
-    putRcmdr("autoRestart", FALSE)
-    activateMenus()
-    exceptions <- scan(file.path(etc, "log-exceptions.txt"), what="", quiet=TRUE, comment.char="#")
+##    exceptions <- scan(file.path(etc, "log-exceptions.txt"), what="", quiet=TRUE, comment.char="#")
     ## added by EN ###############################
-   	putRcmdr("Commander.Input.exceptions", exceptions)
+##   	putRcmdr("Commander.Input.exceptions", exceptions)
     ## end of change ###############################
     modelClasses <- scan(file.path(etc, "model-classes.txt"), what="", quiet=TRUE, comment.char="#")
     for (plugin in Plugins){
         description <- readLines(file.path(.path.package(package=plugin)[1], "DESCRIPTION"))
-        addExceptions <- description[grep("Log-Exceptions:", description)]
-        addExceptions <- gsub(" ", "", sub("^Log-Exceptions:", "", addExceptions))
-        addExceptions <- unlist(strsplit(addExceptions, ","))
+##        addExceptions <- description[grep("Log-Exceptions:", description)]
+##        addExceptions <- gsub(" ", "", sub("^Log-Exceptions:", "", addExceptions))
+##        addExceptions <- unlist(strsplit(addExceptions, ","))
         addModels <- description[grep("Models:", description)]
         addModels <- gsub(" ", "", sub("^Models:", "", addModels))
         addModels <- unlist(strsplit(addModels, ","))
-        if (length(addExceptions) > 0) exceptions <- c(exceptions, addExceptions)
+##        if (length(addExceptions) > 0) exceptions <- c(exceptions, addExceptions)
         if (length(addModels) > 0) modelClasses <- c(modelClasses, addModels)
         }
     putRcmdr("modelClasses", modelClasses)
@@ -378,22 +334,22 @@ Commander <- function(){
                 iline <- iline + 1
                 }
             if (!(is.null(current.line) || is.na(current.line))){
-
-            if (length(grep("<-", current.line)) > 0){
-                justDoIt(current.line)
-                }
-            else if (length(grep("^remove\\(", current.line)) > 0){
-                current.line <- sub(")", ", envir=.GlobalEnv)", current.line)
-                justDoIt(current.line)
-                }
-            else if (any(sapply(exceptions,
-                    function(.x) length(grep(paste("^", .x, "\\(", sep=""), current.line)) > 0))){
-                justDoIt(current.line)
-                }
-            else doItAndPrint(current.line, log=FALSE)
+                if (length(grep("<-", current.line)) > 0){
+                    justDoIt(current.line)
+                    }
+                else if (length(grep("^remove\\(", current.line)) > 0){
+                    current.line <- sub(")", ", envir=.GlobalEnv)", current.line)
+                    justDoIt(current.line)
+                    }
+    ##            else if (any(sapply(exceptions,
+    ##                    function(.x) length(grep(paste("^", .x, "\\(", sep=""), current.line)) > 0))){
+    ##                justDoIt(current.line)
+    ##                }
+    ##            else doItAndPrint(current.line, log=FALSE)
+                doItAndPrint(current.line, log=FALSE)
             }
             iline <- iline + 1
-        tkyview.moveto(.output, 1)
+            tkyview.moveto(.output, 1)
         }
     }
     contextMenuLog <- function(){
@@ -420,7 +376,52 @@ Commander <- function(){
         tkadd(contextMenu, "command", label=gettextRcmdr("Find..."), command=onFind)
         tkadd(contextMenu, "command", label=gettextRcmdr("Select all"), command=onSelectAll)
         tkpopup(contextMenu, tkwinfo("pointerx", .output), tkwinfo("pointery", .output))
-        }
+        }        
+    if (getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
+    putRcmdr("commanderWindow", tktoplevel())
+    .commander <- CommanderWindow()        
+    tkwm.geometry(.commander, placement)
+    tkwm.title(.commander, gettextRcmdr("R Commander"))
+    tkwm.protocol(.commander, "WM_DELETE_WINDOW", CloseCommander)
+    topMenu <- tkmenu(.commander)
+    tkconfigure(.commander, menu=topMenu)    
+    if (!getRcmdr("suppress.menus")){
+        for (m in 1:nrow(Menus)){
+            install <- if (oldMenu) "" else Menus[m, 7]
+            if ((install != "") && (!eval(parse(text=install)))) next  
+            if (Menus[m, 1] == "menu") {
+                position <- 0
+                assign(Menus[m, 2], tkmenu(eval(parse(text=Menus[m, 3])), tearoff=FALSE))
+                menus[[Menus[m, 2]]] <- list(ID=get(Menus[m, 2])$ID, position=0)
+                }
+            else if (Menus[m, 1] == "item") {
+                if (Menus[m, 3] == "command"){
+                    position <- position + 1
+                    if (Menus[m, 6] == "")
+                        tkadd(eval(parse(text=Menus[m, 2])),"command", label=gettextRcmdr(Menus[m, 4]),
+                            command=eval(parse(text=Menus[m, 5])))
+                    else {
+                        tkadd(eval(parse(text=Menus[m, 2])),"command", label=gettextRcmdr(Menus[m, 4]),
+                            command=eval(parse(text=Menus[m, 5])),  state="disabled")
+                        menuItems <- menuItems + 1
+                        menus[[Menus[m, 2]]]$position <- position
+                        .Menus[[menuItems]] <- list(ID=menus[[Menus[m, 2]]]$ID, position=position,
+                            activation=eval(parse(text=paste("function()", Menus[m, 6]))))
+                        }
+                    }
+                else if (Menus[m, 3] == "cascade")
+                    tkadd(eval(parse(text=Menus[m, 2])),"cascade", label=gettextRcmdr(Menus[m, 4]), 
+                        menu=eval(parse(text=Menus[m, 5])))
+                else stop(paste(gettextRcmdr("menu definition error:"), Menus[m, ], collapse=" "),
+                    domain=NA)
+                }
+            else stop(paste(gettextRcmdr("menu definition error:"), Menus[m, ], collapse=" "),
+                domain=NA)
+            }
+        }        
+    putRcmdr("Menus", .Menus)
+    putRcmdr("autoRestart", FALSE)
+    activateMenus()      
     controlsFrame <- tkframe(CommanderWindow())
     editButton <- tkbutton(controlsFrame, text=gettextRcmdr("Edit data set"), command=onEdit)
     viewButton <- tkbutton(controlsFrame, text=gettextRcmdr("View data set"), command=onView)
@@ -623,13 +624,14 @@ doItAndPrint <- function(command, log=TRUE) {
         close(output.connection)
         }, add=TRUE)
     if (log) logger(command)
-    result <-  try(eval(parse(text=command), envir=.GlobalEnv), silent=TRUE)
+    result <-  try(eval(parse(text=paste("withVisible(", command, ")")), envir=.GlobalEnv), silent=TRUE)
     if (class(result)[1] ==  "try-error"){
         Message(message=paste(strsplit(result, ":")[[1]][2]), type="error")
         if (.console.output) sink(type="output")
         tkfocus(CommanderWindow())
         return()
         }
+    result <- if (result$visible == FALSE) NULL else result$value
     if (isS4object(result)) show(result) else print(result)
     .Output <- readLines(output.connection)
     if (length(.Output) > 0 && .Output[length(.Output)] == "NULL") 

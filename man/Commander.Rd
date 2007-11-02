@@ -92,11 +92,6 @@ Configuration files reside in the \code{etc} subdirectory of the package, or in 
 
 The \code{Rcmdr} menus can be customized by editing the file \code{Rcmdr-menus.txt}.
 
-Some functions (e.g., \code{hist}) that do not normally create visible printed output when executed
-from the \emph{R Console} command prompt will do so --- unless prevented --- when executed from the 
-\emph{Commander} script window. Such output
-can be suppressed by listing the names of these functions in the \code{log-exceptions.txt} file.
-
 You can add R code to the package, e.g., for creating additional dialogs, by placing files with
 file type \code{.R} in the \code{etc} directory, also editing \code{Rcmdr-menus.txt} to provide
 additional menus, sub-menus, or menu-items. A demo addition is provided in the file 
@@ -114,12 +109,14 @@ the usual situation, defaults are used. Specify options as a list of \emph{name=
 set none, one, several, or all options. The available options are as follows:
 
 \describe{
+    \item{\code{ask.on.exit}}{if \code{TRUE} (the default), then the user is asked whether to save
+    the script file and the output file when the \code{Rcmdr} exits.}
 
     \item{\code{attach.data.set}}{if \code{TRUE} (the default is \code{FALSE}), the active data set is attached to the
     search path.}
 
-    \item{\code{check.packages}}{if \code{TRUE} (the default), on start-up, the presence of all of the Rcmdr
-    recommended packages will be checked, and if any are absent, the Rcmdr will offer to install them.}
+    \item{\code{check.packages}}{if \code{TRUE} (the default), on start-up, the presence of all of the \code{Rcmdr}
+    recommended packages will be checked, and if any are absent, the \code{Rcmdr} will offer to install them.}
 
     \item{\code{command.text.color}}{Color for commands in the output window; the default is \code{"red"}.}
     
@@ -131,8 +128,8 @@ set none, one, several, or all options. The available options are as follows:
     option is returned to its pre-existing value. Note that \code{contr.Treatment} is from the \code{car} package.}
     
     \item{\code{crisp.dialogs}}{If \code{TRUE}, dialogs should appear on the screen fully drawn, rather than built up
-    widget by widget. This option should affect the Windows version of R only, but should in any event be harmless.
-    The default is \code{TRUE} under Windows for R versions 2.1.1 and above, and \code{FALSE} otherwise.
+    widget by widget. This option should currently affect the Windows version of R only, but should in any event be harmless.
+    The default is \code{TRUE}.
     If you're working on Windows and encounter increased stability problems, trying setting this option to
     \code{FALSE}.}
     
@@ -150,8 +147,8 @@ set none, one, several, or all options. The available options are as follows:
     
     \item{\code{error.text.color}}{Color for error messages; the default is \code{"red"}.}
     
-    \item{\code{etc}}{Set to the path of the directory containing the Rcmdr 
-    configuration files; defaults to the \code{etc} subdirectory of the installed Rcmdr package.}
+    \item{\code{etc}}{Set to the path of the directory containing the \code{Rcmdr}
+    configuration files; defaults to the \code{etc} subdirectory of the installed \code{Rcmdr} package.}
     
     \item{\code{grab.focus}}{Set to \code{TRUE} for the current Tk window to 
     "grab" the focus --- that is, to prevent the focus from being changed to another Tk window.
@@ -183,7 +180,7 @@ when the \code{Rcmdr} package is loaded; the default is to load only the \code{c
     the selection (and may be used to select additional variables); Shift-left-click extends the selection.
     This is the standard Windows convention. If set
     to \code{"multiple"}, left-clicking toggles the selection of a variable and may be used to select more than one
-    variable. This is the behaviour in the Rcmdr prior to version 1.9-10.}
+    variable. This is the behaviour in the \code{Rcmdr} prior to version 1.9-10.}
     
     \item{\code{output.height}}{The height of the output window, in lines. The default is twice the height
     of the script window, or 20 if the script window is suppressed. Setting \code{output.height}
@@ -194,19 +191,19 @@ when the \code{Rcmdr} package is loaded; the default is to load only the \code{c
     \item{\code{placement}}{Placement of the \emph{R Commander} window, in pixels; the default is
     \code{"-40+20"}, which puts the window near the upper-right corner of the screen.}
     
-    \item{\code{plugins}}{A character vector giving the names of Rcmdr plug-in packages to load when the 
+    \item{\code{plugins}}{A character vector giving the names of \code{Rcmdr} plug-in packages to load when the 
     Commander starts up. Plug-in packages can also be loaded from the \emph{Tools -> Load Rcmdr plug-in(s)} menu.
     See \link{Plugins}.}
     
     \item{\code{suppress.menus}}{if \code{TRUE}, the Commander menu bar and tool bar are suppressed, allowing another
     program (such as Excel) to take over these functions. The default (of course) is \code{FALSE}.}
             
-    \item{\code{suppress.X11.warnings}}{On (some?) Linux systems, multiple X11 warnings are generated by Rcmdr
+    \item{\code{suppress.X11.warnings}}{On (some?) Linux systems, multiple X11 warnings are generated by \code{Rcmdr}
     commands after a graphics-device window has been opened. Set this option to \code{TRUE} (the default when running
     interactively under X11 prior to R version 2.4.0) to suppress reporting of these warnings. An undesirable side effect
-    is that then \emph{all} warnings and error messages are intercepted by the Rcmdr,
+    is that then \emph{all} warnings and error messages are intercepted by the \code{Rcmdr},
     even those for commands entered at the R command prompt. Messages produced by such commands will be printed
-    in the Commander Messages window after the next Rcmdr-generated command.
+    in the Commander Messages window after the next \code{Rcmdr}-generated command.
     Some X11 warnings may be printed when you exit from the Commander. This problem only applies to R versions
     before 2.4.0, and the default value of the option is set accordingly.}
     
@@ -249,6 +246,18 @@ when the \code{Rcmdr} package is loaded; the default is to load only the \code{c
     }
     
 Many options can also be set via the \emph{File -> Options} menu, which will restart the Commander after options are set.
+
+If you want always to launch the R Commander when R starts up, you can include the following code in one of R's start-up files (e.g., in the \code{Rprofile.site} file in R's \code{etc} subdirectory):
+
+\preformatted{
+local({
+old <- getOption("defaultPackages")
+options(defaultPackages = c(old, "Rcmdr"))
+})
+}
+
+R Commander options can also be permanently set in the same manner.
+For more information about R initialization, see \code{?Startup}.
 }
 
 \section{Warning}{
@@ -280,6 +289,5 @@ Many options can also be set via the \emph{File -> Options} menu, which will res
 \examples{
     options(Rcmdr=list(log.font.size=12, contrasts=c("contr.Sum", "contr.poly")))
     }
-}
 
 \keyword{misc}

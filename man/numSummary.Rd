@@ -25,7 +25,7 @@ numSummary(data, statistics=c("mean", "sd", "quantiles"),
 
 \value{
 \code{numSummary} returns an object of class \code{"numSummary"} containing the table of 
-statistics to be reported along with information on missing data, if there are any.}
+statistics to be reported along with information on missing data, if there are any.
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}}
