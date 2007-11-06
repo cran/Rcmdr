@@ -1,4 +1,4 @@
-# last modified 31 October 2007 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 6 November 2007 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
                                                                                        
 # utility functions
 
@@ -1548,9 +1548,10 @@ modelFormula <- defmacro(frame=top, hasLhs=TRUE, expr={
         !is.element(check.char, c("+", "*", ":", "/", "-", "^", "(", "%"))
         }
     .variables <- Variables()
-    variables <- paste(.variables, ifelse(is.element(.variables, Factors()), gettextRcmdr("[factor]"), ""))
-    xBox <- variableListBox(frame, variables, title=gettextRcmdr("Variables (double-click to formula)"))
     word <- paste("\\[", gettextRcmdr("factor"), "\\]", sep="")
+    variables <- paste(.variables, 
+        ifelse(is.element(.variables, Factors()), paste("[", gettextRcmdr("factor"), "]", sep=""), ""))
+    xBox <- variableListBox(frame, variables, title=gettextRcmdr("Variables (double-click to formula)"))
     onDoubleClick <- if (!hasLhs){
         function(){
             var <- getSelection(xBox)

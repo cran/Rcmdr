@@ -630,5 +630,9 @@ Version 1.3-6
    
    o  Small changes.
    
+Version 1.3-8
+
+   o  Fixed problem (introduced with R 1.6-0) that caused the string "[factor]" not to be translated into other languages in model-formula dialogs (reported by Eric Pagot).
+   
    
    
