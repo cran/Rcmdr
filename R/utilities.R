@@ -1,4 +1,4 @@
-# last modified 6 November 2007 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 11 November 2007 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
                                                                                        
 # utility functions
 
@@ -1291,6 +1291,7 @@ initializeDialog <- defmacro(window=top, title="", offset=10, preventCrisp=FALSE
     expr={
         if ((!preventCrisp) && getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
         window <- tktoplevel(borderwidth=10)
+#        tkwm.withdraw(window)
         tkwm.title(window, title)
         position <- if (is.SciViews()) -1 else commanderPosition() # +PhG
         position <- if (any(position < 0)) "-50+50"

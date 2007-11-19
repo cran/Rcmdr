@@ -1,8 +1,9 @@
-# last modified 31 October 2007 by J. Fox
+# last modified 7 November 2007 by J. Fox
 
 .onAttach <- function(...){
     Commander()
-    packageStartupMessage(gettext("\nRcmdr Version", domain="R-Rcmdr"), " ", getRcmdr("RcmdrVersion"), "\n")
+    packageStartupMessage(gettext("\nRcmdr Version", domain="R-Rcmdr"), " ", 
+        getRcmdr("RcmdrVersion"), "\n")
     }
 
 .onLoad <- function(...){

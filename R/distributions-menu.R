@@ -1,6 +1,6 @@
 # Distributions menu dialogs
 
-# last modified 28 July 06 by J. Fox
+# last modified 19 November 07 by J. Fox
 
 #   many distributions added (and some other changes) by Miroslav Ristic (20 July 06)
 
@@ -495,6 +495,9 @@ uniformProbabilities <- function(){
     onOK <- function(){
         closeDialog()
         probabilities <- gsub(" ", ",", tclvalue(probabilitiesVar))
+        min <- as.numeric(tclvalue(minVar))
+        max <- as.numeric(tclvalue(maxVar))
+        tail <- tclvalue(tailVar)
         if ("" == probabilities) {
             errorCondition(recall=uniformProbabilities, message=gettextRcmdr("No values specified."))
             return()
@@ -503,9 +506,6 @@ uniformProbabilities <- function(){
             errorCondition(recall=uniformProbabilities, message=gettextRcmdr("Lower limit must be less than upper limit."))
             return()
             }
-        min <- as.numeric(tclvalue(minVar))
-        max <- as.numeric(tclvalue(maxVar))
-        tail <- tclvalue(tailVar)
         doItAndPrint(paste("punif(c(", probabilities, "), min=", min, ", max=", max, ", lower.tail=", tail == "lower", ")", sep=""))
         tkfocus(CommanderWindow())
         }

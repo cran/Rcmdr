@@ -1,11 +1,14 @@
 # The R Commander and command logger
 
-# last modified 6 November 2007 by J. Fox
+# last modified 19 November 2007 by J. Fox
 #   slight changes 12 Aug 04 by Ph. Grosjean 
 #   changes 21 June 2007 by Erich Neuwirth for Excel support (marked EN)
 
 Commander <- function(){
-    RcmdrVersion <- "1.3-8"
+    RcmdrVersion <- "1.3-9"
+##    DESCRIPTION <- readLines(file.path(.find.package("Rcmdr"), "DESCRIPTION")[1])
+##    RcmdrVersion <- trim.blanks(sub("^Version:", "", 
+##        grep("^Version:", D, value=TRUE)))
     # the following test suggested by Richard Heiberger
     if ("RcmdrEnv" %in% search() &&
         exists("commanderWindow", "RcmdrEnv") &&
@@ -379,7 +382,8 @@ Commander <- function(){
         }        
     if (getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
     putRcmdr("commanderWindow", tktoplevel())
-    .commander <- CommanderWindow()        
+    .commander <- CommanderWindow() 
+#    tkwm.withdraw(.commander)       
     tkwm.geometry(.commander, placement)
     tkwm.title(.commander, gettextRcmdr("R Commander"))
     tkwm.protocol(.commander, "WM_DELETE_WINDOW", CloseCommander)
@@ -527,6 +531,7 @@ Commander <- function(){
     .Tcl("update idletasks")
     tkbind(.commander, "<Control-r>", onSubmit)
     tkbind(.commander, "<Control-R>", onSubmit)
+    tkbind(.commander, "<Control-Tab>", onSubmit)
     tkbind(.commander, "<Control-f>", onFind)
     tkbind(.commander, "<Control-F>", onFind)
     tkbind(.commander, "<Control-s>", saveLog)
@@ -624,7 +629,9 @@ doItAndPrint <- function(command, log=TRUE) {
         close(output.connection)
         }, add=TRUE)
     if (log) logger(command)
-    result <-  try(eval(parse(text=paste("withVisible(", command, ")")), envir=.GlobalEnv), silent=TRUE)
+    commentStart <- regexpr("#", command)
+    commandNoComments <- if (commentStart < 0) command else substr(command, 1, commentStart - 1) 
+    result <-  try(eval(parse(text=paste("withVisible(", commandNoComments, ")")), envir=.GlobalEnv), silent=TRUE)
     if (class(result)[1] ==  "try-error"){
         Message(message=paste(strsplit(result, ":")[[1]][2]), type="error")
         if (.console.output) sink(type="output")

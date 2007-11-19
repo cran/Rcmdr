@@ -60,7 +60,8 @@ script window. The contents of the output window can also be edited or saved to 
 
 To re-execute a command or set of commands, select the lines to be executed using
 the mouse and press the \emph{Submit} button at the right of the toolbar
-(or \emph{Control-R}, for "run"). If no text is selected, the \emph{Submit} button (or \emph{Control-R}) 
+(or \emph{Control-R}, for "run", or \emph{Control-Tab}). If no text is selected, 
+the \emph{Submit} button (or \emph{Control-R} or \emph{Control-Tab}) 
 submits the line containing the text-insertion cursor. Note that an error will be generated if the submitted
 command or commands are incomplete.
 
@@ -128,9 +129,8 @@ set none, one, several, or all options. The available options are as follows:
     option is returned to its pre-existing value. Note that \code{contr.Treatment} is from the \code{car} package.}
     
     \item{\code{crisp.dialogs}}{If \code{TRUE}, dialogs should appear on the screen fully drawn, rather than built up
-    widget by widget. This option should currently affect the Windows version of R only, but should in any event be harmless.
-    The default is \code{TRUE}.
-    If you're working on Windows and encounter increased stability problems, trying setting this option to
+    widget by widget. Prior to R 2.6.1, this option only works on the Windows version of R, but should in any event be harmless.
+    The default is \code{TRUE}. If you encounter stability problems, try setting this option to
     \code{FALSE}.}
     
     \item{\code{default.font}}{The default font, as an X11 font specification, given in a character string. 
