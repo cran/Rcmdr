@@ -62,6 +62,7 @@ stem.leaf(data, unit, m, Min, Max,
 \seealso{\code{\link[graphics]{stem}}}
 
 \examples{
+library(car)
 data(Prestige)
 stem.leaf(Prestige$income)
 }

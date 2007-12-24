@@ -29,6 +29,7 @@ Hist(x, scale = c("frequency", "percent", "density"), ...)
 \seealso{\code{\link[graphics]{hist}}}
 
 \examples{
+    library(car)
     data(Prestige)
     Hist(Prestige$income, scale="percent")
     }

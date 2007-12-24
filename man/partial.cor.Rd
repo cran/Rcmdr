@@ -24,6 +24,7 @@ partial.cor(X, ...)
 \seealso{\code{\link[stats]{cor}}}
 
 \examples{
+    library(car)
     data(DavisThin)
     partial.cor(DavisThin)
 }

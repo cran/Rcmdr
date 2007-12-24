@@ -1,7 +1,12 @@
-# last modified 7 November 2007 by J. Fox
+# last modified 24 December 2007 by J. Fox
 
 .onAttach <- function(...){
-    Commander()
+    if(interactive()) Commander()
+    else {
+        message("The Commander GUI is launched only in interactive sessions", 
+            domain="R-Rcmdr")
+        return()
+        }
     packageStartupMessage(gettext("\nRcmdr Version", domain="R-Rcmdr"), " ", 
         getRcmdr("RcmdrVersion"), "\n")
     }
