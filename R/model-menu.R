@@ -1,6 +1,6 @@
 # Model menu dialogs
 
-# last modified 22 June 07 by J. Fox
+# last modified 28 Dec 07 by J. Fox
 
 selectActiveModel <- function(){
     models <- listAllModels()
@@ -29,7 +29,8 @@ selectActiveModel <- function(){
             tkfocus(CommanderWindow())
             return()
             }
-        dataSet <- eval(parse(text=paste("as.character(", model, "$call$data)")))
+        dataSet <- as.character(get(model)$call$data)
+#        dataSet <- eval(parse(text=paste("as.character(", model, "$call$data)")))
         if (length(dataSet) == 0){
             errorCondition(message=gettextRcmdr("There is no dataset associated with this model."))
             return()
@@ -229,7 +230,8 @@ testLinearHypothesis <- function(){
         tkdestroy(get(".tableFrame", envir=env))
         assign(".tableFrame", tkframe(outerTableFrame), envir=env)
         nrows <- as.numeric(tclvalue(rowsValue))
-        col.names <- eval(parse(text=paste("names(coef(", .activeModel, "))")))
+        col.names <- names(coef(get(.activeModel)))
+#        col.names <- eval(parse(text=paste("names(coef(", .activeModel, "))")))
         col.names <- substring(paste(abbreviate(col.names, 12), "            "), 1, 12)
         make.col.names <- "tklabel(.tableFrame, text='')"
         for (j in 1:ncols) {
@@ -260,7 +262,8 @@ testLinearHypothesis <- function(){
             }
         tkgrid(get(".tableFrame", envir=env), sticky="w")
         }
-    ncols <- eval(parse(text=paste("length(coef(", .activeModel, "))")))
+    ncols <- length(coef(get(.activeModel)))
+#    ncols <- eval(parse(text=paste("length(coef(", .activeModel, "))")))
     rowsFrame <- tkframe(top)
     rowsValue <- tclVar("1")
     rowsSlider <- tkscale(rowsFrame, from=1, to=ncols, showvalue=FALSE, variable=rowsValue,
@@ -344,8 +347,9 @@ compareModels <- function(){
         if (!checkMethod("anova", model1)) {
             return()
             }
-        if (!eval(parse(text=paste("class(", model1, ")[1] == class(", model2, ")[1]",
-            sep="")), envir=.GlobalEnv)){
+        if (!class(get(model1, envir=.GlobalEnv))[1] == class(get(model2, envir=.GlobalEnv))[1]){
+#        if (!eval(parse(text=paste("class(", model1, ")[1] == class(", model2, ")[1]",
+#            sep="")), envir=.GlobalEnv)){
                 Message(message=gettextRcmdr("Models are not of the same class."),
                     type="error")
                 compareModels()
@@ -375,7 +379,8 @@ BreuschPaganTest <- function(){
                 else if (var == "predictors") ""
                 else paste(", varformula = ~", tclvalue(rhsVariable), sep="")
         student <- if (tclvalue(studentVariable) == 1) "TRUE" else "FALSE"
-        model.formula <- as.character(eval(parse(text=paste("formula(", .activeModel, ")", sep=""))))
+        model.formula <- as.character(formula(get(.activeModel)))
+#        model.formula <- as.character(eval(parse(text=paste("formula(", .activeModel, ")", sep=""))))
         model.formula <- paste(model.formula[2], "~", model.formula[3])
         command <- paste("bptest(", model.formula, type, ", studentize=", student,
             ", data=", ActiveDataSet(), ")", sep="")
@@ -409,7 +414,8 @@ DurbinWatsonTest <- function(){
     onOK <- function(){
         altHypothesis <- tclvalue(altHypothesisVariable)
         closeDialog()
-        model.formula <- as.character(eval(parse(text=paste("formula(", ActiveModel(), ")", sep=""))))
+        model.formula <- as.character(formula(get(ActiveModel())))
+#        model.formula <- as.character(eval(parse(text=paste("formula(", ActiveModel(), ")", sep=""))))
         model.formula <- paste(model.formula[2], "~", model.formula[3])
         command <- paste("dwtest(", model.formula, ', alternative="', altHypothesis,
              '", data=', ActiveDataSet(), ')', sep="")
@@ -434,7 +440,8 @@ RESETtest <- function(){
         square <- tclvalue(squareVariable)
         cube <- tclvalue(cubeVariable)
         closeDialog()
-        model.formula <- as.character(eval(parse(text=paste("formula(", ActiveModel(), ")", sep=""))))
+        model.formula <- as.character(formula(get(ActiveModel())))
+#        model.formula <- as.character(eval(parse(text=paste("formula(", ActiveModel(), ")", sep=""))))
         model.formula <- paste(model.formula[2], "~", model.formula[3])
         if (square == "0" && cube == "0"){
             errorCondition(recall=RESETtest, message=gettextRcmdr("No powers are checked."))
@@ -509,7 +516,8 @@ confidenceIntervals <- function(){
     tkgrid(tklabel(confidenceFrame, text=gettextRcmdr("Confidence Level: ")), confidenceField, sticky="w")
     tkgrid(confidenceFrame, sticky="w")
     .activeModel <- ActiveModel()
-    glm <- eval(parse(text=paste("class(", .activeModel, ")")))[1] == "glm"
+    glm <- class(get(.activeModel))[1] == "glm"
+#    glm <- eval(parse(text=paste("class(", .activeModel, ")")))[1] == "glm"
     if (glm) tkgrid(typeFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix(rows=3 + glm, columns=1)

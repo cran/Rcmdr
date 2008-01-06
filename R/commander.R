@@ -1,11 +1,11 @@
 # The R Commander and command logger
 
-# last modified 19 November 2007 by J. Fox
+# last modified 4 January 2008 by J. Fox
 #   slight changes 12 Aug 04 by Ph. Grosjean 
 #   changes 21 June 2007 by Erich Neuwirth for Excel support (marked EN)
 
 Commander <- function(){
-    RcmdrVersion <- "1.3-10"
+    RcmdrVersion <- "1.3-11"
 ##    DESCRIPTION <- readLines(file.path(.find.package("Rcmdr"), "DESCRIPTION")[1])
 ##    RcmdrVersion <- trim.blanks(sub("^Version:", "", 
 ##        grep("^Version:", D, value=TRUE)))
@@ -280,7 +280,8 @@ Commander <- function(){
             return()
             }
         view.height <- max(as.numeric(output.height) + as.numeric(log.height), 10)
-        ncols <- eval(parse(text=paste("ncol(", ActiveDataSet(), ")")))
+        ncols <- ncol(get(ActiveDataSet()))
+#        ncols <- eval(parse(text=paste("ncol(", ActiveDataSet(), ")")))
         command <- if (packageAvailable("relimp") && ncols <= getRcmdr("showData.threshold")){
             require("relimp")
             paste("showData(", ActiveDataSet(), ", placement='-20+200', font=getRcmdr('logFont'), maxwidth=",
@@ -336,21 +337,7 @@ Commander <- function(){
                 jline <- jline + 1
                 iline <- iline + 1
                 }
-            if (!(is.null(current.line) || is.na(current.line))){
-                if (length(grep("<-", current.line)) > 0){
-                    justDoIt(current.line)
-                    }
-                else if (length(grep("^remove\\(", current.line)) > 0){
-                    current.line <- sub(")", ", envir=.GlobalEnv)", current.line)
-                    justDoIt(current.line)
-                    }
-    ##            else if (any(sapply(exceptions,
-    ##                    function(.x) length(grep(paste("^", .x, "\\(", sep=""), current.line)) > 0))){
-    ##                justDoIt(current.line)
-    ##                }
-    ##            else doItAndPrint(current.line, log=FALSE)
-                doItAndPrint(current.line, log=FALSE)
-            }
+            if (!(is.null(current.line) || is.na(current.line))) doItAndPrint(current.line, log=FALSE)
             iline <- iline + 1
             tkyview.moveto(.output, 1)
         }
@@ -395,18 +382,23 @@ Commander <- function(){
             if ((install != "") && (!eval(parse(text=install)))) next  
             if (Menus[m, 1] == "menu") {
                 position <- 0
-                assign(Menus[m, 2], tkmenu(eval(parse(text=Menus[m, 3])), tearoff=FALSE))
+                assign(Menus[m, 2], tkmenu(get(Menus[m, 3]), tearoff=FALSE))
+#                assign(Menus[m, 2], tkmenu(eval(parse(text=Menus[m, 3])), tearoff=FALSE))
                 menus[[Menus[m, 2]]] <- list(ID=get(Menus[m, 2])$ID, position=0)
                 }
             else if (Menus[m, 1] == "item") {
                 if (Menus[m, 3] == "command"){
                     position <- position + 1
                     if (Menus[m, 6] == "")
-                        tkadd(eval(parse(text=Menus[m, 2])),"command", label=gettextRcmdr(Menus[m, 4]),
-                            command=eval(parse(text=Menus[m, 5])))
+                    tkadd(get(Menus[m, 2]), "command", label=gettextRcmdr(Menus[m, 4]),
+                        command=get(Menus[m, 5]))
+#                        tkadd(eval(parse(text=Menus[m, 2])),"command", label=gettextRcmdr(Menus[m, 4]),
+#                            command=eval(parse(text=Menus[m, 5])))
                     else {
-                        tkadd(eval(parse(text=Menus[m, 2])),"command", label=gettextRcmdr(Menus[m, 4]),
-                            command=eval(parse(text=Menus[m, 5])),  state="disabled")
+                        tkadd(get(Menus[m, 2]), "command", label=gettextRcmdr(Menus[m, 4]),
+                            command=get(Menus[m, 5]), state="disabled")
+#                        tkadd(eval(parse(text=Menus[m, 2])),"command", label=gettextRcmdr(Menus[m, 4]),
+#                            command=eval(parse(text=Menus[m, 5])),  state="disabled")
                         menuItems <- menuItems + 1
                         menus[[Menus[m, 2]]]$position <- position
                         .Menus[[menuItems]] <- list(ID=menus[[Menus[m, 2]]]$ID, position=position,
@@ -414,8 +406,10 @@ Commander <- function(){
                         }
                     }
                 else if (Menus[m, 3] == "cascade")
-                    tkadd(eval(parse(text=Menus[m, 2])),"cascade", label=gettextRcmdr(Menus[m, 4]), 
-                        menu=eval(parse(text=Menus[m, 5])))
+                    tkadd(get(Menus[m, 2]), "cascade", label=gettextRcmdr(Menus[m, 4]), 
+                        menu=get(Menus[m, 5]))
+#                    tkadd(eval(parse(text=Menus[m, 2])),"cascade", label=gettextRcmdr(Menus[m, 4]), 
+#                        menu=eval(parse(text=Menus[m, 5])))
                 else stop(paste(gettextRcmdr("menu definition error:"), Menus[m, ], collapse=" "),
                     domain=NA)
                 }
@@ -605,6 +599,7 @@ justDoIt <- function(command) {
     }
 
 doItAndPrint <- function(command, log=TRUE) {
+    # with modifications from Duncan Murdoch 4 Jan 08
     Message()
     .console.output <- getRcmdr("console.output")
     .output <- OutputWindow()
@@ -629,38 +624,49 @@ doItAndPrint <- function(command, log=TRUE) {
         close(output.connection)
         }, add=TRUE)
     if (log) logger(command)
-    commentStart <- regexpr("#", command)
-    commandNoComments <- if (commentStart < 0) command else substr(command, 1, commentStart - 1) 
-    result <-  try(eval(parse(text=paste("withVisible(", commandNoComments, ")")), envir=.GlobalEnv), silent=TRUE)
-    if (class(result)[1] ==  "try-error"){
-        Message(message=paste(strsplit(result, ":")[[1]][2]), type="error")
-        if (.console.output) sink(type="output")
-        tkfocus(CommanderWindow())
-        return()
+    result <- try(parse(text=paste(command)), silent=TRUE)
+    if (class(result)[1] == "try-error"){
+    	Message(message=paste(strsplit(result, ":")[[1]][2]), type="error")
+    	if (.console.output) sink(type="output")
+    	tkfocus(CommanderWindow())
+    	return()
+    } else {
+        exprs <- result
+        result <- NULL
+    }
+    for (i in seq_along(exprs)) {
+        ei <- exprs[i]
+        result <-  try(withVisible(eval(ei, envir=.GlobalEnv)), silent=TRUE)
+	if (class(result)[1] ==  "try-error"){
+	    Message(message=paste(strsplit(result, ":")[[1]][2]), type="error")
+	    if (.console.output) sink(type="output")
+	    tkfocus(CommanderWindow())
+	    return()
+	    }
+	result <- if (result$visible == FALSE) NULL else result$value
+	if (isS4object(result)) show(result) else print(result)
+	.Output <- readLines(output.connection)
+	if (length(.Output) > 0 && .Output[length(.Output)] == "NULL") 
+	    .Output <- .Output[-length(.Output)] # suppress "NULL" line at end of output
+	if (length(.Output) != 0) {  # is there output to print?
+	    if (.console.output) {
+		out <- .Output
+		sink(type="output")
+		for (line in out) cat(paste(line, "\n", sep=""))
+		}
+	    else{
+		for (line in .Output) tkinsert(.output, "end", paste(line, "\n", sep=""))
+		tkyview.moveto(.output, 1)
+		}
+	    }
+	else if (.console.output) sink(type="output")
+	###### added by EN  ######################
+	    if (RExcelSupported())
+	    putRExcel(".rexcel.last.output",.Output)
+	###### end of change  #####################
+        # errors already intercepted, display any warnings
+        checkWarnings(readLines(messages.connection))
         }
-    result <- if (result$visible == FALSE) NULL else result$value
-    if (isS4object(result)) show(result) else print(result)
-    .Output <- readLines(output.connection)
-    if (length(.Output) > 0 && .Output[length(.Output)] == "NULL") 
-        .Output <- .Output[-length(.Output)] # suppress "NULL" line at end of output
-    if (length(.Output) != 0) {  # is there output to print?
-        if (.console.output) {
-            out <- .Output
-            sink(type="output")
-            for (line in out) cat(paste(line, "\n", sep=""))
-            }
-        else{
-            for (line in .Output) tkinsert(.output, "end", paste(line, "\n", sep=""))
-            tkyview.moveto(.output, 1)
-            }
-        }
-    else if (.console.output) sink(type="output")
-    ###### added by EN  ######################
-	if (RExcelSupported())
-    	putRExcel(".rexcel.last.output",.Output)
-    ###### end of change  #####################
-    # errors already intercepted, display any warnings
-    checkWarnings(readLines(messages.connection))
     result
     }
 

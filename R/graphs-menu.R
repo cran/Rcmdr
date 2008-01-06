@@ -1,6 +1,6 @@
 # Graphs menu dialogs
 
-# last modified 21 July 2007 by J. Fox
+# last modified 6 January 2008 by J. Fox
 
 indexPlot <- function(){
     initializeDialog(title=gettextRcmdr("Index Plot"))                                               
@@ -208,9 +208,10 @@ scatterPlot <- function(){
     variablesFrame <- tkframe(top)
     xBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("x-variable (pick one)"))
     yBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("y-variable (pick one)"))
-    checkBoxes(frame="optionsFrame", boxes=c("identify", "jitterX", "jitterY", "boxplots", "lsLine", "smoothLine"),
+    optionsParFrame <- tkframe(top)    
+    checkBoxes(window=optionsParFrame, frame="optionsFrame", boxes=c("identify", "jitterX", "jitterY", "boxplots", "lsLine", "smoothLine"),
         initialValues=c(0, 0, 0, 1, 1, 1), labels=gettextRcmdr(c("Identify points", "Jitter x-variable", "Jitter y-variable",
-        "Marginal boxplots", "Least-squares line", "Smooth Line")))
+        "Marginal boxplots", "Least-squares line", "Smooth Line")), title="Options")
     sliderValue <- tclVar("50")
     slider <- tkscale(optionsFrame, from=0, to=100, showvalue=TRUE, variable=sliderValue,
         resolution=5, orient="horizontal")
@@ -234,8 +235,8 @@ scatterPlot <- function(){
     tkgrid(tklabel(ylabFrame, text=gettextRcmdr("y-axis label"), fg="blue"), sticky="w")
     tkgrid(ylabEntry, sticky="w")
     tkgrid(ylabScroll, sticky="ew")
-    tkgrid(xlabFrame, tklabel(labelsFrame, text="     "), ylabFrame, sticky="w")    
-    parFrame <- tkframe(top) 
+    tkgrid(xlabFrame, tklabel(labelsFrame, text="     "), ylabFrame, sticky="w")
+    parFrame <- tkframe(optionsParFrame) 
     pchVar <- tclVar(gettextRcmdr("<auto>"))
     pchEntry <- tkentry(parFrame, width=25, textvariable=pchVar)      
     cexValue <- tclVar("1")
@@ -317,17 +318,17 @@ scatterPlot <- function(){
     tkgrid(getFrame(xBox), getFrame(yBox), sticky="nw") 
     tkgrid(variablesFrame, sticky="w")   
     tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Span for smooth")), slider, sticky="w")
-    tkgrid(optionsFrame, sticky="w")
-    tkgrid(subsetFrame, sticky="w")
-    tkgrid(groupsFrame, sticky="w")    
-    tkgrid(labelsFrame, sticky="w")
-    tkgrid(tklabel(top, text=" "))    
     tkgrid(tklabel(parFrame, text=gettextRcmdr("Plotting Parameters"), fg="blue"), sticky="w")
     tkgrid(tklabel(parFrame, text=gettextRcmdr("Plotting characters")), pchEntry, stick="w")
     tkgrid(tklabel(parFrame, text=gettextRcmdr("Point size")), cexSlider, sticky="w")
     tkgrid(tklabel(parFrame, text=gettextRcmdr("Axis text size")), cex.axisSlider, sticky="w")
     tkgrid(tklabel(parFrame, text=gettextRcmdr("Axis-labels text size")), cex.labSlider, sticky="w")
-    tkgrid(parFrame, sticky="w")
+    tkgrid(optionsFrame, parFrame, sticky="nw")
+    tkgrid(optionsParFrame, sticky="w")
+    tkgrid(labelsFrame, sticky="w")
+    tkgrid(subsetFrame, sticky="w")
+    tkgrid(groupsFrame, sticky="w")    
+    tkgrid(tklabel(top, text=" "))    
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     dialogSuffix(rows=8, columns=2)
     }

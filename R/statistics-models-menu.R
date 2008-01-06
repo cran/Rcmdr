@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 22 May 07 by J. Fox
+# last modified 28 Dec 07 by J. Fox
 
     # Models menu
     
@@ -79,13 +79,15 @@ linearRegressionModel <- function(){
 linearModel <- function(){
     initializeDialog(title=gettextRcmdr("Linear Model"))
     .activeModel <- ActiveModel()
-    currentModel <- if (!is.null(.activeModel)) 
-        eval(parse(text=paste("class(", .activeModel, ")[1] == 'lm'", sep="")), 
-            envir=.GlobalEnv) 
+    currentModel <- if (!is.null(.activeModel))
+        class(get(.activeModel, envir=.GlobalEnv))[1] == "lm" 
+#        eval(parse(text=paste("class(", .activeModel, ")[1] == 'lm'", sep="")), 
+#            envir=.GlobalEnv) 
         else FALSE
-    if (currentModel) {
-        currentFields <- formulaFields(eval(parse(text=.activeModel), 
-            envir=.GlobalEnv))
+    if (currentModel) { 
+        currentFields <- formulaFields(get(.activeModel, envir=.GlobalEnv))
+#        currentFields <- formulaFields(eval(parse(text=.activeModel), 
+#            envir=.GlobalEnv))
         if (currentFields$data != ActiveDataSet()) currentModel <- FALSE
         }
     UpdateModelNumber()
@@ -167,13 +169,15 @@ generalizedLinearModel <- function(){
     names(canonicalLinks) <- families
     initializeDialog(title=gettextRcmdr("Generalized Linear Model"))
     .activeModel <- ActiveModel()
-    currentModel <- if (!is.null(.activeModel)) 
-        eval(parse(text=paste("class(", .activeModel, ")[1] == 'glm'", sep="")), 
-            envir=.GlobalEnv)
+    currentModel <- if (!is.null(.activeModel))
+        class(get(.activeModel, envir=.GlobalEnv))[1] == "glm"  
+#        eval(parse(text=paste("class(", .activeModel, ")[1] == 'glm'", sep="")), 
+#            envir=.GlobalEnv)
         else FALSE
     if (currentModel) {
-        currentFields <- formulaFields(eval(parse(text=.activeModel), 
-            envir=.GlobalEnv), glm=TRUE)
+        currentFields <- formulaFields(get(.activeModel, envir=.GlobalEnv), glm=TRUE)
+#        currentFields <- formulaFields(eval(parse(text=.activeModel), 
+#            envir=.GlobalEnv), glm=TRUE)
         if (currentFields$data != ActiveDataSet()) currentModel <- FALSE
         }
     modelFormula()
@@ -282,13 +286,15 @@ ordinalRegressionModel <- function(){
     initializeDialog(title=gettextRcmdr("Ordinal Regression Model"))
     .activeModel <- ActiveModel()
     .activeDataSet <- ActiveDataSet()
-    currentModel <- if (!is.null(.activeModel)) 
-        eval(parse(text=paste("class(", .activeModel, ")[1] == 'polr'", sep="")), 
-            envir=.GlobalEnv) 
+    currentModel <- if (!is.null(.activeModel))
+        class(get(.activeModel, envir=.GlobalEnv))[1] == "polr"  
+#        eval(parse(text=paste("class(", .activeModel, ")[1] == 'polr'", sep="")), 
+#            envir=.GlobalEnv) 
         else FALSE
     if (currentModel) {
-        currentFields <- formulaFields(eval(parse(text=.activeModel), 
-            envir=.GlobalEnv))
+        currentFields <- formulaFields(get(.activeModel, envir=.GlobalEnv))
+#        currentFields <- formulaFields(eval(parse(text=.activeModel), 
+#            envir=.GlobalEnv))
         if (currentFields$data != .activeDataSet) currentModel <- FALSE
         }
     UpdateModelNumber()
@@ -325,7 +331,8 @@ ordinalRegressionModel <- function(){
             errorCondition(recall=proportionalOddsModel, message=gettextRcmdr("Right-hand side of model empty."), model=TRUE)
             return()
             }
-        if (!is.factor(eval(parse(text=tclvalue(lhsVariable)), envir=eval(parse(text=.activeDataSet), envir=.GlobalEnv)))){
+        if (!is.factor(eval(parse(text=tclvalue(lhsVariable)), envir=get(.activeDataSet, envir=.GlobalEnv)))){
+#        if (!is.factor(eval(parse(text=tclvalue(lhsVariable)), envir=eval(parse(text=.activeDataSet), envir=.GlobalEnv)))){
             errorCondition(recall=proportionalOddsModel, message=gettextRcmdr("Response variable must be a factor"))
             return()
             }
@@ -364,13 +371,15 @@ multinomialLogitModel <- function(){
     initializeDialog(title=gettextRcmdr("Multinomial Logit Model"))
     .activeModel <- ActiveModel()
     .activeDataSet <- ActiveDataSet()
-    currentModel <- if (!is.null(.activeModel)) 
-        eval(parse(text=paste("class(", .activeModel, ")[1] == 'multinom'", sep="")), 
-            envir=.GlobalEnv) 
+    currentModel <- if (!is.null(.activeModel))
+        class(get(.activeModel, envir=.GlobalEnv))[1] == "multinom" 
+#        eval(parse(text=paste("class(", .activeModel, ")[1] == 'multinom'", sep="")), 
+#            envir=.GlobalEnv) 
         else FALSE
     if (currentModel) {
-        currentFields <- formulaFields(eval(parse(text=.activeModel), 
-            envir=.GlobalEnv))
+        currentFields <- formulaFields(get(.activeModel, envir=.GlobalEnv))
+#        currentFields <- formulaFields(eval(parse(text=.activeModel), 
+#            envir=.GlobalEnv))
         if (currentFields$data != .activeDataSet) currentModel <- FALSE
         }
     UpdateModelNumber()
@@ -403,7 +412,8 @@ multinomialLogitModel <- function(){
             errorCondition(recall=multinomialLogitModel, message=gettextRcmdr("Right-hand side of model empty."), model=TRUE)
             return()
             }
-        if (!is.factor(eval(parse(text=tclvalue(lhsVariable)), envir=eval(parse(text=.activeDataSet), envir=.GlobalEnv)))){
+        if (!is.factor(eval(parse(text=tclvalue(lhsVariable)), envir=get(.activeDataSet, envir=.GlobalEnv)))){
+#        if (!is.factor(eval(parse(text=tclvalue(lhsVariable)), envir=eval(parse(text=.activeDataSet), envir=.GlobalEnv)))){
             errorCondition(recall=multinomialLogitModel, message=gettextRcmdr("Response variable must be a factor"))
             return()
             }

@@ -1,4 +1,4 @@
-# last modified 11 November 2007 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 6 January 2008 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
                                                                                        
 # utility functions
 
@@ -7,42 +7,48 @@
 listDataSets <- function(envir=.GlobalEnv, ...) {
 	Vars <- ls(envir = envir, all.names = TRUE) # + PhG
 	if (length(Vars) == 0) return(Vars) # + PhG
-    names(which(sapply(Vars, function(.x) is.data.frame(eval(parse(text=.x), envir=envir))))) # + PhG
+#    names(which(sapply(Vars, function(.x) is.data.frame(eval(parse(text=.x), envir=envir))))) # + PhG
+    names(which(sapply(Vars, function(.x) is.data.frame(get(.x, envir=envir)))))
     }
 
 listLinearModels <- function(envir=.GlobalEnv, ...) {
     objects <- ls(envir=envir, ...)
     if (length(objects) == 0) NULL
     else objects[sapply(objects, 
-        function(.x) "lm" == (class(eval(parse(text=.x), envir=envir))[1]))]
+#        function(.x) "lm" == (class(eval(parse(text=.x), envir=envir))[1]))]  
+        function(.x) "lm" == (class(get(.x, envir=envir))[1]))]
     }
 
 listGeneralizedLinearModels <- function(envir=.GlobalEnv, ...) {
     objects <- ls(envir=envir, ...)
     if (length(objects) == 0) NULL
     else objects[sapply(objects, 
-        function(.x) "glm" == (class(eval(parse(text=.x), envir=envir))[1]))]
+#        function(.x) "glm" == (class(eval(parse(text=.x), envir=envir))[1]))]
+        function(.x) "glm" == (class(get(.x, envir=envir))[1]))]
     }
 
 listMultinomialLogitModels <- function(envir=.GlobalEnv, ...) {
     objects <- ls(envir=envir, ...)
     if (length(objects) == 0) NULL
     else objects[sapply(objects, 
-        function(.x) "multinom" == (class(eval(parse(text=.x), envir=envir))[1]))]
+#        function(.x) "multinom" == (class(eval(parse(text=.x), envir=envir))[1]))]
+        function(.x) "multinom" == (class(get(.x, envir=envir))[1]))]
     }
 
 listProportionalOddsModels <- function(envir=.GlobalEnv, ...) {
     objects <- ls(envir=envir, ...)
     if (length(objects) == 0) NULL
     else objects[sapply(objects, 
-        function(.x) "polr" == (class(eval(parse(text=.x), envir=envir))[1]))]
+#        function(.x) "polr" == (class(eval(parse(text=.x), envir=envir))[1]))]
+        function(.x) "polr" == (class(get(.x, envir=envir))[1]))]
     }
 
 listAllModels <- function(envir=.GlobalEnv, ...) {
     objects <- ls(envir=envir, ...)
     if (length(objects) == 0) NULL
     else objects[sapply(objects, 
-        function(.x) (class(eval(parse(text=.x), envir=envir))[1])) %in% getRcmdr("modelClasses")]
+#        function(.x) (class(eval(parse(text=.x), envir=envir))[1])) %in% getRcmdr("modelClasses")]
+        function(.x) (class(get(.x, envir=envir))[1])) %in% getRcmdr("modelClasses")]
     }
                 
 activeDataSet <- function(dsname, flushModel=TRUE){
@@ -67,7 +73,8 @@ activeDataSet <- function(dsname, flushModel=TRUE){
         Message(message=paste(dsname, gettextRcmdr(" has been coerced to a data frame"), sep=""),
             type="warning")
         }
-    varnames <- names(eval(parse(text=dsname), envir=.GlobalEnv))
+#    varnames <- names(eval(parse(text=dsname), envir=.GlobalEnv))
+    varnames <- names(get(dsname, envir=.GlobalEnv))
     newnames <- make.names(varnames)
     badnames <- varnames != newnames
     if (any(badnames)){
@@ -87,7 +94,8 @@ activeDataSet <- function(dsname, flushModel=TRUE){
     # -PhG tkconfigure(.modelLabel, fg="red")
     ActiveDataSet(dsname)
     Message(sprintf(gettextRcmdr("The dataset %s has %d rows and %d columns."), dsname, 
-        nrow(eval(parse(text=dsname))), ncol(eval(parse(text=dsname)))), type="note")
+  #      nrow(eval(parse(text=dsname))), ncol(eval(parse(text=dsname)))), type="note")
+        nrow(get(dsname, envir=.GlobalEnv)), ncol(get(dsname, envir=.GlobalEnv))), type="note")
     if (any(badnames)) Message(message=paste(dsname, gettextRcmdr(" contains non-standard variable names:\n"),
         paste(varnames[badnames], collapse=", "), 
         gettextRcmdr("\nThese have been changed to:\n"), paste(newnames[badnames], collapse=", "),
@@ -127,28 +135,32 @@ activeModel <- function(model){
     }
     
 listVariables <- function(dataSet=ActiveDataSet()) {
-    vars <- eval(parse(text=paste("names(", dataSet,")")), envir=.GlobalEnv)
+#    vars <- eval(parse(text=paste("names(", dataSet,")")), envir=.GlobalEnv) 
+    vars <- names(get(dataSet, envir=.GlobalEnv))
     if (getRcmdr("sort.names")) sort(vars) else vars
     }
 
 listFactors <- function(dataSet=ActiveDataSet()) {
     variables <- if (exists("variables", envir=RcmdrEnv())) getRcmdr("variables") else listVariables(dataSet)
     variables[sapply(variables, function(.x)
-        is.factor(eval(parse(text=.x), envir=eval(parse(text=dataSet), envir=.GlobalEnv))))]
+#        is.factor(eval(parse(text=.x), envir=eval(parse(text=dataSet), envir=.GlobalEnv))))]
+    is.factor(eval(parse(text=.x), envir=get(dataSet, envir=.GlobalEnv))))]
     }
 
 listTwoLevelFactors <- function(dataSet=ActiveDataSet()){
     factors <- listFactors(dataSet)
     if(length(factors) == 0) return(NULL)
     factors[sapply(factors, function(.x)
-        2 == length(levels(eval(parse(text=.x), envir=eval(parse(text=dataSet), 
-            envir=.GlobalEnv)))))]
+#        2 == length(levels(eval(parse(text=.x), envir=eval(parse(text=dataSet), 
+#            envir=.GlobalEnv)))))]
+        2 == length(levels(eval(parse(text=.x), envir=get(dataSet, envir=.GlobalEnv)))))] 
     }
     
 listNumeric <- function(dataSet=ActiveDataSet()) {
     variables <- if (exists("variables", envir=RcmdrEnv())) getRcmdr("variables") else listVariables(dataSet)
     variables[sapply(variables,function(.x)
-        is.numeric(eval(parse(text=.x), envir=eval(parse(text=dataSet), envir=.GlobalEnv))))]
+#        is.numeric(eval(parse(text=.x), envir=eval(parse(text=dataSet), envir=.GlobalEnv))))]
+    is.numeric(eval(parse(text=.x), envir=get(dataSet, envir=.GlobalEnv))))]
     }
 
 trim.blanks <- function(text){
@@ -1416,12 +1428,12 @@ radioButtons <- defmacro(window=top, name, buttons, values=NULL, initialValue=..
             }
         }
     )
-            
-                    
-checkBoxes <- defmacro(window=top, frame, boxes, initialValues=NULL, labels,
+                                
+checkBoxes <- defmacro(window=top, frame, boxes, initialValues=NULL, labels, title=NULL,
     expr={
         ..initialValues <- if (is.null(initialValues)) rep("1", length(boxes)) else initialValues
         assign(frame, tkframe(window))
+        if (!is.null(title)) tkgrid(tklabel(eval(parse(text=frame)), text=title, fg="blue"))
         ..variables <- paste(boxes, "Variable", sep="")
         for (i in 1:length(boxes)) {
             assign(..variables[i], tclVar(..initialValues[i]))
@@ -1725,7 +1737,8 @@ checkMethod <- defmacro(generic, object, message=NULL, default=FALSE, strict=FAL
     expr={
         msg <- if (is.null(message)) sprintf(gettextRcmdr("No appropriate %s method exists\nfor a model of this class."), generic)
             else message
-        method <- exists.method(generic, eval(parse(text=object)), default=default, strict=strict)
+#        method <- exists.method(generic, eval(parse(text=object)), default=default, strict=strict)
+        method <- exists.method(generic, get(object), default=default, strict=strict)
         if ((!method) && reportError) Message(message=msg, type="error")
         method
         }
@@ -1733,9 +1746,10 @@ checkMethod <- defmacro(generic, object, message=NULL, default=FALSE, strict=FAL
     
 checkClass <- defmacro(object, class, message=NULL,
     expr={
-        msg <- if (is.null(message)) sprintf(gettextRcmdr('The model is not of class "%s".'), class)
+       msg <- if (is.null(message)) sprintf(gettextRcmdr('The model is not of class "%s".'), class)
             else message
-       properClass <- eval(parse(text=paste("class(", object, ")")))[1] == class
+#       properClass <- eval(parse(text=paste("class(", object, ")")))[1] == class
+       properClass <- class(get(object))[1] == class
        if (!properClass) Message(message=msg, type="error")
        properClass
        }
@@ -1882,9 +1896,11 @@ modelsP <- function(n=1) activeDataSetP() && length(listAllModels()) >= n
 
 activeModelP <- function() !is.null(ActiveModel())
 
-lmP <- function() activeModelP() && eval(parse(text=paste("class(", ActiveModel(), ")[1] == 'lm'")))
+#lmP <- function() activeModelP() && eval(parse(text=paste("class(", ActiveModel(), ")[1] == 'lm'")))
+lmP <- function() activeModelP() && class(get(ActiveModel()))[1] == 'lm'
 
-glmP <- function() activeModelP() && eval(parse(text=paste("class(", ActiveModel(), ")[1] == 'glm'")))
+#glmP <- function() activeModelP() && eval(parse(text=paste("class(", ActiveModel(), ")[1] == 'glm'")))
+glmP <- function() activeModelP() && class(get(ActiveModel()))[1] == 'glm'
 
 hclustSolutionsP <- function() length(listHclustSolutions()) > 0
 

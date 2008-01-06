@@ -1,6 +1,6 @@
 # this code by Dan Putler, used with permission
 
-# last modified 2 March 06 by J. Fox
+# last modified 28 Dec 07 by J. Fox
 
 assignCluster <- function(clusterData, origData, clusterVec){
     rowsDX <- row.names(clusterData)
@@ -34,11 +34,15 @@ listKmeansSolutions <- function(envir=.GlobalEnv, ...) {
     if (length(objects) == 0) NULL
     else objects[sapply(objects, 
         function(.x) {
-            if(mode(eval(parse(text=.x), envir=envir)) != "list" )
+            .x <- get(.x, envir=envir)
+            if (mode(.x) != "list")
                 return(FALSE)
-            else {"cluster" == (names(eval(parse(text=.x),
-                envir=envir))[1]) &
-              "centers" == (names(eval(parse(text=.x), envir=envir))[2])}
+            else "cluster" == names(.x)[1] && "centers" == names(.x)[2]
+#            if(mode(eval(parse(text=.x), envir=envir)) != "list" )
+#                return(FALSE)
+#            else {"cluster" == (names(eval(parse(text=.x),
+#                envir=envir))[1]) &
+#             "centers" == (names(eval(parse(text=.x), envir=envir))[2])}
             }
          )]
     }
@@ -163,8 +167,9 @@ kmeansClustering <- function(){
 listHclustSolutions <- function(envir=.GlobalEnv, ...) {
     objects <- ls(envir=envir, ...)
     if (length(objects) == 0) NULL
-    else objects[sapply(objects, 
-        function(.x) "hclust" == (class(eval(parse(text=.x), envir=envir))[1]))]
+    else objects[sapply(objects,
+        function(.x) "hclust" == class(get(.x, envir=envir))[1]) ]
+#        function(.x) "hclust" == (class(eval(parse(text=.x), envir=envir))[1]))]
     }
 
 hierarchicalCluster <- function(){
@@ -269,7 +274,8 @@ hierarchicalCluster <- function(){
 
 hclustSummary <- function(){
     parseDataSet <- function(x) {
-        y <- eval(parse(text=paste(x, "$call", sep="")))
+        y <- get(x)$call
+#        y <- eval(parse(text=paste(x, "$call", sep="")))
         string1 <- unlist(strsplit(as.character(y)[2], "\\("))
         string2 <- unlist(strsplit(string1[3], ","))
         if(length(grep("\\[", string2[2])) == 0) {
@@ -321,7 +327,8 @@ hclustSummary <- function(){
           sep="")
         clusterSummary <- tclvalue(summaryClusters)
         clusterPlot <- tclvalue(plotClusters)
-        hclustCall <- eval(parse(text=paste(solution,"$call",sep="")))
+        hclustCall <- get(solution)$call
+#        hclustCall <- eval(parse(text=paste(solution,"$call",sep="")))
         string1 <- unlist(strsplit(as.character(hclustCall)[2], "\\("))
         string2 <- unlist(strsplit(string1[3], ","))
         form.vars <- string2[1]
@@ -364,7 +371,8 @@ hclustSummary <- function(){
 
 appendHclustGroup <- function(){
     parseDataSet <- function(x) {
-        y <- eval(parse(text=paste(x, "$call", sep="")))
+        y <- get(x)$call
+#        y <- eval(parse(text=paste(x, "$call", sep="")))
         string1 <- unlist(strsplit(as.character(y)[2], "\\("))
         string2 <- unlist(strsplit(string1[3], ","))
         if(length(grep("\\[", string2[2])) == 0) {
@@ -418,8 +426,9 @@ appendHclustGroup <- function(){
                 appendHclustGroup()
                 return()
                 }
-            }        
-        hclustCall <- eval(parse(text=paste(solution,"$call",sep="")))
+            }
+        hclustCall <- get(solution)$call        
+#        hclustCall <- eval(parse(text=paste(solution,"$call",sep="")))
         string1 <- unlist(strsplit(as.character(hclustCall)[2], "\\("))
         string2 <- unlist(strsplit(string1[3], ","))
         form.vars <- string2[1]

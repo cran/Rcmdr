@@ -645,6 +645,14 @@ Version 1.3-9
 Version 1.3-10
 
    o  Added check for interactive() to .onAttach(), starting Commander() only if TRUE (suggested by Brian Ripley).
+   
+Version 1.3-11
+
+   o  Speed-up in various places by replacing eval(parse()) with get() where appropriate (suggested by Richard Heiberger).
+   
+   o  Fixes to parsing of commands in the script window (following bug report by Jérémy Mazet; thanks to Duncan Murdoch and Richard Heiberger for help).
+   
+   o  Changed layout of scatterplot dialog (after a suggestion by John Maindonald).
 
    
    

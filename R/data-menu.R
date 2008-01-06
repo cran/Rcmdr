@@ -1,4 +1,4 @@
-# last modified 4 June 2007 by J. Fox
+# last modified 28 Dec 2007 by J. Fox
 
 # Data menu dialogs
 
@@ -27,7 +27,8 @@ newDataSet <- function() {
         command <- "edit(as.data.frame(NULL))"
         assign(dsnameValue, justDoIt(command), envir=.GlobalEnv)
         logger(paste(dsnameValue, "<-", command))
-        if (eval(parse(text=paste("nrow(", dsnameValue, ")"))) == 0){
+        if (nrow(get(dsnameValue)) == 0){
+#        if (eval(parse(text=paste("nrow(", dsnameValue, ")"))) == 0){
             errorCondition(recall=newDataSet, message=gettextRcmdr("empty data set."))
             return()
             }
@@ -903,9 +904,11 @@ numericToFactor <- function(){
                 for (i in 1:nvalues){
                     valVar <- paste("levelName", i, sep="")
                     assign(valVar, tclVar(""))
-                    assign(paste("entry", i, sep=""), tkentry(subdialog, width="20", 
-                        textvariable=eval(parse(text=valVar))))
-                    tkgrid(tklabel(subdialog, text=values[i]), eval(parse(text=paste("entry", i, sep=""))), sticky="w")
+                    assign(paste("entry", i, sep=""), tkentry(subdialog, width="20",
+                        textvariable=get(valVar))) 
+#                        textvariable=eval(parse(text=valVar))))
+                    tkgrid(tklabel(subdialog, text=values[i]), get(paste("entry", i, sep="")), sticky="w")
+#                    tkgrid(tklabel(subdialog, text=values[i]), eval(parse(text=paste("entry", i, sep=""))), sticky="w")
                     }
                 tkgrid(subButtonsFrame, sticky="w", columnspan=2)
                 dialogSuffix(subdialog, rows=nvalues+2, columns=2, focus=entry1, onOK=onOKsub)   
@@ -1003,9 +1006,11 @@ binVariable <- function(){
             for (i in 1:bins){
                 valVar <- paste("levelName", i, sep="")
                 assign(valVar, tclVar(i))
-                assign(paste("entry", i, sep=""), tkentry(subdialog, width="20", 
-                    textvariable=eval(parse(text=valVar))))
-                tkgrid(tklabel(subdialog, text=as.character(i)), eval(parse(text=paste("entry", i, sep=""))), sticky="w")
+                assign(paste("entry", i, sep=""), tkentry(subdialog, width="20",
+                    textvariable=get(valVar))) 
+#                    textvariable=eval(parse(text=valVar))))
+                tkgrid(tklabel(subdialog, text=as.character(i)), get(paste("entry", i, sep="")), sticky="w")
+#                tkgrid(tklabel(subdialog, text=as.character(i)), eval(parse(text=paste("entry", i, sep=""))), sticky="w")
                 }
             tkgrid(subButtonsFrame, sticky="w", columnspan=2)
             dialogSuffix(subdialog, focus=entry1, rows=bins+1, columns=2, bindReturn=FALSE)
@@ -1109,9 +1114,11 @@ reorderFactor <- function(){
         for (i in 1:nvalues){
             valVar <- paste("levelOrder", i, sep="")
             assign(valVar, tclVar(i))
-            assign(paste("entry", i, sep=""), tkentry(subdialog, width="2", 
-                textvariable=eval(parse(text=valVar))))
-            tkgrid(tklabel(subdialog, text=old.levels[i]), eval(parse(text=paste("entry", i, sep=""))), sticky="w")
+            assign(paste("entry", i, sep=""), tkentry(subdialog, width="2",
+                textvariable=get(valVar))) 
+#                textvariable=eval(parse(text=valVar))))
+            tkgrid(tklabel(subdialog, text=old.levels[i]), get(paste("entry", i, sep="")), sticky="w")
+#            tkgrid(tklabel(subdialog, text=old.levels[i]), eval(parse(text=paste("entry", i, sep=""))), sticky="w")
             }
         tkgrid(subButtonsFrame, sticky="w", columnspan=2)
         dialogSuffix(subdialog, focus=entry1, rows=nvalues+1, columns=2)
@@ -1402,7 +1409,8 @@ renameVariables <- function(){
             return()
             }
         .activeDataSet <- ActiveDataSet()
-        unordered.names <- names(eval(parse(text=.activeDataSet)))
+        unordered.names <- names(get(.activeDataSet))
+#        unordered.names <- names(eval(parse(text=.activeDataSet)))
         which.variables <- match(variables, unordered.names)
         initializeDialog(subdialog, title=gettextRcmdr("Variable Names"))
         newnames <- rep("", nvariables)
@@ -1421,8 +1429,9 @@ renameVariables <- function(){
                     message=paste(gettextRcmdr("The following variable names are not valid:\n"),
                     paste(newnames[!test.names], collapse=", ")))
                 return()
-                }                
-            all.names <- eval(parse(text=paste("names(", .activeDataSet, ")")))
+                }
+            all.names <- names(get(.activeDataSet))                
+#            all.names <- eval(parse(text=paste("names(", .activeDataSet, ")")))
             all.names[which.variables] <- newnames
             if (length(unique(all.names)) != length(all.names)){
                 errorCondition(recall=renameVariables, message=gettextRcmdr("Variable names are not unique"))
@@ -1442,8 +1451,10 @@ renameVariables <- function(){
             valVar <- paste("newName", i, sep="")
             assign(valVar, tclVar(""))
             assign(paste("entry", i, sep=""), tkentry(subdialog, width="20", 
-                textvariable=eval(parse(text=valVar))))
-            tkgrid(tklabel(subdialog, text=variables[i]), eval(parse(text=paste("entry", i, sep=""))), sticky="w")
+#                textvariable=eval(parse(text=valVar))))
+                textvariable=get(valVar)))
+            tkgrid(tklabel(subdialog, text=variables[i]), get(paste("entry", i, sep="")), sticky="w")
+#            tkgrid(tklabel(subdialog, text=variables[i]), eval(parse(text=paste("entry", i, sep=""))), sticky="w")
             }
         tkgrid(subButtonsFrame, sticky="w", columnspan=2)
         dialogSuffix(subdialog, rows=nvariables+2, columns=2, focus=entry1, onOK=onOKsub)                 
@@ -1574,7 +1585,8 @@ addObsNumbers <- function(){
                 return()
                 }
         }
-    nrows <- eval(parse(text=paste("nrow(", dsname, ")", sep="")), envir=.GlobalEnv)
+    nrows <- nrow(get(dsname, envir=.GlobalEnv))
+#    nrows <- eval(parse(text=paste("nrow(", dsname, ")", sep="")), envir=.GlobalEnv)
     command <- paste(dsname, "$ObsNumber <- 1:", nrows, sep="")
     logger(command)
     justDoIt(command)

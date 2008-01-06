@@ -98,7 +98,7 @@ ActiveModel(name)
 activeModelP()
 checkActiveDataSet()
 checkActiveModel()
-checkBoxes(window=top, frame, boxes, initialValues=NULL, labels)  # macro
+checkBoxes(window=top, frame, boxes, initialValues=NULL, labels, title=NULL)  # macro
 checkClass(object, class, message=NULL)  # macro
 checkFactors(n=1)
 checkMethod(generic, object, message=NULL, default=FALSE, strict=FALSE, 

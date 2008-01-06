@@ -261,12 +261,10 @@ For more information about R initialization, see \code{?Startup}.
 }
 
 \section{Warning}{
-    The R Commander Script window does not provide a true console to R, and has certain limitations.
+    The R Commander Script window does not provide a true console to R, and may have certain limitations.
     I don't recommend using the R Commander for serious programming or for data analysis that relies
-    primarily on scripts --- use a programming editor instead. For example, compound
-    R statements enclosed in braces \code{"{}"}, including in function defintions,
-    will not be parsed and executed correctly, even if lines after the first are indented.
-    You can execute compound statements from the Script window by separating commands within braces by semicolons.
+    primarily on scripts --- use a programming editor instead. If you encounter any problems with the
+    Script window, however, I'd appreciate it if you brought them to my attention.
     }
 
 \section{Known Problem}{
