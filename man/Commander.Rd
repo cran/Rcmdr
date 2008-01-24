@@ -155,9 +155,13 @@ set none, one, several, or all options. The available options are as follows:
     On some systems, grabbing the focus in this manner apparently causes problems. The default is \code{TRUE}. 
     If you experience focus problems, try setting this option to \code{FALSE}.}
     
+    \item{\code{length.output.stack}}{The R Commander maintains a list of output objects, by default including the last
+    several outputs; the default length of the output stack is 10. \code{popOutput()} ``pops'' (i.e., returns and removes) the first entry
+    of the output stack. Note that, as a stack, the queue is LIFO (``last in, first out'').}
+    
     \item{\code{load.at.startup}}{A character vector of names of packages to be loaded 
-when the \code{Rcmdr} package is loaded; the default is to load only the \code{car} package. Other required packages will be loaded as needed. If it is available, the 
-\code{car} package will be loaded at when the Commander starts in any event.}
+    when the \code{Rcmdr} package is loaded; the default is to load only the \code{car} package. Other required packages will be loaded as needed. If it is available, the 
+    \code{car} package will be loaded at when the Commander starts in any event.}
       
     \item{\code{log.commands}}{If \code{TRUE} (the default), commands are echoed to the script window;
     if \code{FALSE}, the script window is not displayed.}
@@ -240,7 +244,10 @@ when the \code{Rcmdr} package is loaded; the default is to load only the \code{c
     
     \item{\code{use.rgl}}{If \code{TRUE} (the default), the \code{rgl} package will be loaded if it is present in an
     accessible library; if \code{FALSE}, the \code{rgl} package will be ignored even if it is available. 
-    The \code{rgl} package can sometimes cause problems when running R under X11.} 
+    The \code{rgl} package can sometimes cause problems when running R under X11.}
+    
+    \item{\code{variable.list.height}}{the number of variables to display in variable-list boxes; longer lists may be viewed by scrolling. 
+    The default is 4.} 
     
     \item{\code{warning.text.color}}{Color for warning messages; the default is \code{"darkgreen"}.}
     }

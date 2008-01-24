@@ -1,4 +1,4 @@
-# last modified 6 January 2008 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 24 January 2008 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
                                                                                        
 # utility functions
 
@@ -1339,7 +1339,7 @@ dialogSuffix <- defmacro(window=top, onOK=onOK, rows=1, columns=1, focus=top,
     )
             
 variableListBox <- function(parentWindow, variableList=Variables(), bg="white",
-    selectmode="single", export="FALSE", initialSelection=NULL, listHeight=4, title){
+    selectmode="single", export="FALSE", initialSelection=NULL, listHeight=getRcmdr("variable.list.height"), title){
     if (selectmode == "multiple") selectmode <- getRcmdr("multiple.select.mode")
     if (length(variableList) == 1 && is.null(initialSelection)) initialSelection <- 0
     frame <- tkframe(parentWindow)

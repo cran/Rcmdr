@@ -66,6 +66,7 @@
 \alias{OKCancelHelp}
 \alias{OutputWindow}
 \alias{packageAvailable}
+\alias{popOutput}
 \alias{putRcmdr}
 \alias{radioButtons}
 \alias{RcmdrTclSet}
@@ -157,6 +158,7 @@ numericP(n=1)
 OKCancelHelp(window=top, helpSubject=NULL, model=FALSE)  # macro
 OutputWindow()
 packageAvailable(name)
+popOutput()
 putRcmdr(x, value)
 radioButtons(window=top, name, buttons, values=NULL, initialValue=..values[1], 
     labels, title)  # macro
@@ -172,7 +174,7 @@ twoLevelFactorsP(n=1)
 UpdateModelNumber(increment=1)
 variableListBox(parentWindow, variableList=Variables(), bg="white",
     selectmode="single", export="FALSE", initialSelection=NULL, 
-    listHeight = 4, title)
+    listHeight=getRcmdr("variable.list.height"), title)
 Variables(names)
 
 # the following function is exported for technical reasons,
@@ -269,6 +271,9 @@ commanderPosition()
   \code{justDoIt(command)} causes \code{command}
   to be executed. \code{doItAndPrint(command)} does both of these operations, and also prints the
   output produced by the command.
+  The R Commander maintains a list of output objects, by default including the last
+  10 outputs. \code{popOutput()} ``pops'' (i.e., returns and removes) the first entry
+  of the output stack. Note that, as a stack, the queue is LIFO (``last in, first out'').
   
   \emph{Checking for errors: }
   The function \code{is.valid.name} checks whether a character string specifies a valid name

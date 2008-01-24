@@ -1,11 +1,11 @@
 # The R Commander and command logger
 
-# last modified 4 January 2008 by J. Fox
+# last modified 24 January 2008 by J. Fox
 #   slight changes 12 Aug 04 by Ph. Grosjean 
 #   changes 21 June 2007 by Erich Neuwirth for Excel support (marked EN)
 
 Commander <- function(){
-    RcmdrVersion <- "1.3-11"
+    RcmdrVersion <- "1.3-12"
 ##    DESCRIPTION <- readLines(file.path(.find.package("Rcmdr"), "DESCRIPTION")[1])
 ##    RcmdrVersion <- trim.blanks(sub("^Version:", "", 
 ##        grep("^Version:", D, value=TRUE)))
@@ -160,6 +160,9 @@ Commander <- function(){
     setOption("showData.threshold", 100)
     setOption("retain.messages", TRUE)
     setOption("crisp.dialogs",  TRUE)
+    setOption("length.output.stack", 10)
+    putRcmdr("outputStack", as.list(rep(NA, getRcmdr("length.output.stack"))))
+    setOption("variable.list.height", 4)
     if (getRcmdr("suppress.X11.warnings")) {
         putRcmdr("messages.connection", file(open = "w+"))
         sink(getRcmdr("messages.connection"), type="message")
@@ -644,6 +647,7 @@ doItAndPrint <- function(command, log=TRUE) {
 	    return()
 	    }
 	result <- if (result$visible == FALSE) NULL else result$value
+	if (!is.null(result)) pushOutput(result)
 	if (isS4object(result)) show(result) else print(result)
 	.Output <- readLines(output.connection)
 	if (length(.Output) > 0 && .Output[length(.Output)] == "NULL") 
@@ -749,4 +753,17 @@ messageTag <- function(reset=FALSE){
     tagNumber <- getRcmdr("tagNumber") + 1
     putRcmdr("tagNumber", tagNumber)
     paste("message", tagNumber, sep="")
+    }
+    
+pushOutput <- function(element) {
+    stack <- getRcmdr("outputStack")
+    stack <- c(list(element), stack[-getRcmdr("length.output.stack")])
+    putRcmdr("outputStack", stack)
+    }
+    
+popOutput <- function(){
+    stack <- getRcmdr("outputStack")
+    lastOutput <- stack[[1]]
+    putRcmdr("outputStack", c(stack[-1], NA))
+    lastOutput
     }

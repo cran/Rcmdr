@@ -1,4 +1,4 @@
-# last modified 22 May 07 by J. Fox
+# last modified 24 Jan 08 by J. Fox
 
 export(activateMenus, activeDataSet, ActiveDataSet, activeDataSetP, activeModel,
 ActiveModel, activeModelP, assignCluster, bin.var, checkActiveDataSet,
@@ -18,7 +18,7 @@ listProportionalOddsModels, listTwoLevelFactors, listVariables,
 lmP, logger, LogWindow,
 Message, MessagesWindow, modelFormula, modelsP, Numeric,
 numericP, numSummary, OKCancelHelp, OutputWindow, packageAvailable, partial.cor,
-plotMeans, putRcmdr, radioButtons, rglLoaded, RcmdrPager, RcmdrTclSet, 
+plotMeans, popOutput, putRcmdr, radioButtons, rglLoaded, RcmdrPager, RcmdrTclSet, 
 RcmdrTkmessageBox,
 reliability, rowPercents, scatter3d, stem.leaf, subOKCancelHelp,
 subsetBox, totPercents, trim.blanks, TwoLevelFactors, twoLevelFactorsP, 
