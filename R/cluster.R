@@ -1,6 +1,6 @@
 # this code by Dan Putler, used with permission
 
-# last modified 28 Dec 07 by J. Fox
+# last modified 26 March 2008 by J. Fox
 
 assignCluster <- function(clusterData, origData, clusterVec){
     rowsDX <- row.names(clusterData)
@@ -73,7 +73,7 @@ kmeansClustering <- function(){
     assignCB <- tkcheckbutton(optionsFrame)
     tkconfigure(assignCB, variable=assignClusters)
     assignName <- tclVar("KMeans")
-    assignField <- tkentry(optionsFrame, width="15",
+    assignField <- ttkentry(optionsFrame, width="15",
       textvariable=assignName)
     onOK <- function(){
         x <- getSelection(xBox)
@@ -143,22 +143,22 @@ kmeansClustering <- function(){
     OKCancelHelp(helpSubject="KMeans")
     tkgrid(getFrame(xBox), sticky="nw")
     tkgrid(subsetFrame, sticky="w")
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Number of clusters:")),
+    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Number of clusters:")),
       clusterNumSlider, sticky="sw")
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Number of starting seeds:")),
+    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Number of starting seeds:")),
       seedNumSlider, sticky="sw")
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Maximum iterations:")),
+    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Maximum iterations:")),
       iterNumSlider, sticky="sw")
-    tkgrid(tklabel(optionsFrame, 
+    tkgrid(labelRcmdr(optionsFrame, 
       text=gettextRcmdr("Print cluster summary")), summaryCB, sticky="w")
-    tkgrid(tklabel(optionsFrame, 
+    tkgrid(labelRcmdr(optionsFrame, 
       text=gettextRcmdr("Bi-plot of clusters")), plotCB, sticky="w")
-    tkgrid(tklabel(optionsFrame, 
+    tkgrid(labelRcmdr(optionsFrame, 
       text=gettextRcmdr("Assign clusters to\nthe data set         ")),
       assignCB, sticky="w")
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Assignment variable: ")),
+    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Assignment variable: ")),
       assignField, sticky="w")
-    tkgrid(dataFrame, tklabel(top, text="  "), optionsFrame,
+    tkgrid(dataFrame, labelRcmdr(top, text="  "), optionsFrame,
         sticky="nw")
     tkgrid(buttonsFrame, columnspan=3, sticky="w")
     dialogSuffix(rows=3, columns=3)
@@ -178,7 +178,7 @@ hierarchicalCluster <- function(){
     solutionFrame <- tkframe(top)
     solutionName <- tclVar(paste("HClust.", (solutionNumber+1),
         sep=""))
-    solutionField <- tkentry(solutionFrame, width="20",
+    solutionField <- ttkentry(solutionFrame, width="20",
       textvariable=solutionName)
     dataFrame <- tkframe(top)
     xBox <- variableListBox(dataFrame, Numeric(), selectmode="multiple",
@@ -258,13 +258,13 @@ hierarchicalCluster <- function(){
         }
     OKCancelHelp(helpSubject="hclust")
     tkgrid(solutionField, sticky="w")
-    tkgrid(tklabel(top, text=gettextRcmdr("Clustering solution name:")),
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Clustering solution name:")),
       solutionFrame, sticky="w")
     tkgrid(getFrame(xBox), sticky="nw")
     tkgrid(subsetFrame, sticky="w")
     tkgrid(distanceTypeFrame, sticky="w")
-    tkgrid(tklabel(checkFrame, text="  "), sticky="w")
-    tkgrid(tklabel(checkFrame, text=gettextRcmdr("Plot Dendrogram  ")), plotCB,
+    tkgrid(labelRcmdr(checkFrame, text="  "), sticky="w")
+    tkgrid(labelRcmdr(checkFrame, text=gettextRcmdr("Plot Dendrogram  ")), plotCB,
       sticky="w")
     tkgrid(checkFrame, sticky="w")
     tkgrid(dataFrame, methodFrame, optionsFrame, sticky="nw")
@@ -358,11 +358,11 @@ hclustSummary <- function(){
         tkfocus(CommanderWindow())
         } 
     OKCancelHelp(helpSubject="biplot")
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Number of clusters:")), slider,
+    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Number of clusters:")), slider,
       sticky="sw")
-    tkgrid(tklabel(optionsFrame, 
+    tkgrid(labelRcmdr(optionsFrame, 
       text=gettextRcmdr("Print cluster summary")), summaryCB, sticky="w")
-    tkgrid(tklabel(optionsFrame, 
+    tkgrid(labelRcmdr(optionsFrame, 
       text=gettextRcmdr("Bi-plot of clusters")), plotCB, sticky="w")
     tkgrid(getFrame(hclustBox), optionsFrame, sticky="nw")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
@@ -406,7 +406,7 @@ appendHclustGroup <- function(){
       title=gettextRcmdr("Select One Clustering Solution"))
     optionsFrame <- tkframe(top)
     labelName <- tclVar("hclus.label")
-    labelNameField <- tkentry(optionsFrame, width="15",
+    labelNameField <- ttkentry(optionsFrame, width="15",
       textvariable=labelName)
     clusterNumber <- tclVar("2")
     slider <- tkscale(optionsFrame, from=2, to=10, showvalue=TRUE,
@@ -451,9 +451,9 @@ appendHclustGroup <- function(){
         tkfocus(CommanderWindow())
         } 
     OKCancelHelp(helpSubject="assignCluster")
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("  Assigned cluster label:")),
+    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("  Assigned cluster label:")),
       labelNameField, sticky="w")
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("  Number of clusters:")),
+    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("  Number of clusters:")),
         slider, sticky="sw")
     tkgrid(getFrame(hclustBox), optionsFrame, sticky="nw")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")

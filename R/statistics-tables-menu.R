@@ -1,9 +1,9 @@
 # Statistics Menu dialogs
 
-# last modified 28 July 06 by J. Fox
+# last modified 26 March 2008 by J. Fox
 
     # Tables menu
-    
+
 twoWayTable <- function(){
     require("abind")
     initializeDialog(title=gettextRcmdr("Two-Way Table"))
@@ -22,14 +22,14 @@ twoWayTable <- function(){
         if (row == column) {
             errorCondition(recall=twoWayTable, message=gettextRcmdr("Row and column variables are the same."))
             return()
-            }        
+            }
         percents <- as.character(tclvalue(percentsVariable))
         chisq <- tclvalue(chisqTestVariable)
         chisqComp <- tclvalue(chisqComponentsVariable)
         expected <- tclvalue(expFreqVariable)
         fisher <- tclvalue(fisherTestVariable)
         subset <- tclvalue(subsetVariable)
-        subset <- if (trim.blanks(subset) == gettextRcmdr("<all valid cases>")) "" 
+        subset <- if (trim.blanks(subset) == gettextRcmdr("<all valid cases>")) ""
             else paste(", subset=", subset, sep="")
         closeDialog()
         command <- paste("xtabs(~", row, "+", column, ", data=", ActiveDataSet(),
@@ -57,26 +57,26 @@ twoWayTable <- function(){
                 command <- "round(.Test$residuals^2, 2) # Chi-square Components"
                 doItAndPrint(command)
                 }
-            logger("remove(.Test)") 
-            remove(.Test, envir=.GlobalEnv) 
+            logger("remove(.Test)")
+            remove(.Test, envir=.GlobalEnv)
             }
         if (fisher == 1) doItAndPrint("fisher.test(.Table)")
-        logger("remove(.Table)") 
-        remove(.Table, envir=.GlobalEnv)                                                      
+        logger("remove(.Table)")
+        remove(.Table, envir=.GlobalEnv)
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="xtabs")
-    radioButtons(name="percents", 
-        buttons=c("rowPercents", "columnPercents", "totalPercents", "nonePercents"), 
-        values=c("row", "column", "total", "none"), initialValue="none", 
+    radioButtons(name="percents",
+        buttons=c("rowPercents", "columnPercents", "totalPercents", "nonePercents"),
+        values=c("row", "column", "total", "none"), initialValue="none",
         labels=gettextRcmdr(c("Row percentages", "Column percentages", "Percentages of total", "No percentages")), title=gettextRcmdr("Compute Percentages"))
     checkBoxes(frame="testsFrame", boxes=c("chisqTest", "chisqComponents", "expFreq", "fisherTest"), initialValues=c("1", "0", "0", "0"),
-        labels=gettextRcmdr(c("Chi-square test of independence", "Components of chi-square statistic", 
+        labels=gettextRcmdr(c("Chi-square test of independence", "Components of chi-square statistic",
             "Print expected frequencies", "Fisher's exact test")))
-    tkgrid(getFrame(rowBox), tklabel(variablesFrame, text="    "), getFrame(columnBox), sticky="nw")
+    tkgrid(getFrame(rowBox), labelRcmdr(variablesFrame, text="    "), getFrame(columnBox), sticky="nw")
     tkgrid(variablesFrame, sticky="w")
     tkgrid(percentsFrame, sticky="w")
-    tkgrid(tklabel(top, text=gettextRcmdr("Hypothesis Tests"), fg="blue"), sticky="w")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Hypothesis Tests"), fg="blue"), sticky="w")
     tkgrid(testsFrame, sticky="w")
     tkgrid(subsetFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
@@ -90,7 +90,7 @@ multiWayTable <- function(){
     .factors <- Factors()
     rowBox <- variableListBox(variablesFrame, .factors, title=gettextRcmdr("Row variable (pick one)"))
     columnBox <- variableListBox(variablesFrame, .factors, title=gettextRcmdr("Column variable (pick one)"))
-    controlBox <- variableListBox(variablesFrame, .factors, selectmode="multiple", 
+    controlBox <- variableListBox(variablesFrame, .factors, selectmode="multiple",
         title=gettextRcmdr("Control variable(s) (pick one or more)"))
     subsetBox()
     onOK <- function(){
@@ -107,7 +107,7 @@ multiWayTable <- function(){
             }
         percents <- as.character(tclvalue(percentsVariable))
         subset <- tclvalue(subsetVariable)
-        subset <- if (trim.blanks(subset) == gettextRcmdr("<all valid cases>")) "" 
+        subset <- if (trim.blanks(subset) == gettextRcmdr("<all valid cases>")) ""
             else paste(", subset=", subset, sep="")
         closeDialog()
         command <- paste("xtabs(~", row, "+", column, "+", paste(controls, collapse="+"),
@@ -117,14 +117,14 @@ multiWayTable <- function(){
         doItAndPrint(".Table")
         if (percents == "row") doItAndPrint("rowPercents(.Table) # Row Percentages")
         if (percents == "column") doItAndPrint("colPercents(.Table) # Column Percentages")
-        logger("remove(.Table)") 
-        remove(.Table, envir=.GlobalEnv)                                             
+        logger("remove(.Table)")
+        remove(.Table, envir=.GlobalEnv)
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="xtabs")
     radioButtons(name="percents", buttons=c("rowPercents", "columnPercents", "nonePercents"), values=c("row", "column", "none"),
         initialValue="none", labels=gettextRcmdr(c("Row percentages", "Column percentages", "No percentages")), title=gettextRcmdr("Compute Percentages"))
-    tkgrid(getFrame(rowBox), tklabel(variablesFrame, text="    "), getFrame(columnBox), tklabel(variablesFrame, text="    "), 
+    tkgrid(getFrame(rowBox), labelRcmdr(variablesFrame, text="    "), getFrame(columnBox), labelRcmdr(variablesFrame, text="    "),
         getFrame(controlBox), sticky="nw")
     tkgrid(variablesFrame, sticky="w")
     tkgrid(percentsFrame, sticky="w")
@@ -144,27 +144,27 @@ enterTable <- function(){
         assign(".tableFrame", tkframe(outerTableFrame), envir=env)
         nrows <- as.numeric(tclvalue(rowsValue))
         ncols <- as.numeric(tclvalue(colsValue))
-        make.col.names <- "tklabel(.tableFrame, text='')"
+        make.col.names <- "labelRcmdr(.tableFrame, text='')"
         for (j in 1:ncols) {
             col.varname <- paste(".colname.", j, sep="")
             assign(col.varname, tclVar(j), envir=env)
-            make.col.names <- paste(make.col.names, ", ", "tkentry(.tableFrame, width='5', textvariable=", 
+            make.col.names <- paste(make.col.names, ", ", "ttkentry(.tableFrame, width='5', textvariable=",
                     col.varname, ")", sep="")
             }
         eval(parse(text=paste("tkgrid(", make.col.names, ")", sep="")), envir=env)
-        for (i in 1:nrows){   
-            varname <- paste(".tab.", i, ".1", sep="") 
+        for (i in 1:nrows){
+            varname <- paste(".tab.", i, ".1", sep="")
             assign(varname, tclVar("") , envir=env)
             row.varname <- paste(".rowname.", i, sep="")
             assign(row.varname, tclVar(i), envir=env)
-            make.row <- paste("tkentry(.tableFrame, width='5', textvariable=",
+            make.row <- paste("ttkentry(.tableFrame, width='5', textvariable=",
                 row.varname, ")", sep="")
-            make.row <- paste(make.row, ", ", "tkentry(.tableFrame, width='5', textvariable=", 
+            make.row <- paste(make.row, ", ", "ttkentry(.tableFrame, width='5', textvariable=",
                 varname, ")", sep="")
             for (j in 2:ncols){
                 varname <- paste(".tab.", i, ".", j, sep="")
                 assign(varname, tclVar(""), envir=env)
-                make.row <- paste(make.row, ", ", "tkentry(.tableFrame, width='5', textvariable=", 
+                make.row <- paste(make.row, ", ", "ttkentry(.tableFrame, width='5', textvariable=",
                     varname, ")", sep="")
                 }
             eval(parse(text=paste("tkgrid(", make.row, ")", sep="")), envir=env)
@@ -175,11 +175,11 @@ enterTable <- function(){
     rowsValue <- tclVar("2")
     rowsSlider <- tkscale(rowColFrame, from=2, to=10, showvalue=FALSE, variable=rowsValue,
         resolution=1, orient="horizontal", command=setUpTable)
-    rowsShow <- tklabel(rowColFrame, textvariable=rowsValue, width=2, justify="right")
+    rowsShow <- labelRcmdr(rowColFrame, textvariable=rowsValue, width=2, justify="right")
     colsValue <- tclVar("2")
     colsSlider <- tkscale(rowColFrame, from=2, to=10, showvalue=FALSE, variable=colsValue,
         resolution=1, orient="horizontal", command=setUpTable)
-    colsShow <- tklabel(rowColFrame, textvariable=colsValue, width=2, justify="right")
+    colsShow <- labelRcmdr(rowColFrame, textvariable=colsValue, width=2, justify="right")
     onOK <- function(){
         nrows <- as.numeric(tclvalue(rowsValue))
         ncols <- as.numeric(tclvalue(colsValue))
@@ -187,9 +187,9 @@ enterTable <- function(){
         counts <- rep(NA, nrows*ncols)
         row.names <- rep("", nrows)
         col.names <- rep("", ncols)
-        for (i in 1:nrows) row.names[i] <- 
+        for (i in 1:nrows) row.names[i] <-
             eval(parse(text=paste("tclvalue(", paste(".rowname.", i, sep=""),")", sep="")))
-        for (j in 1:ncols) col.names[j] <- 
+        for (j in 1:ncols) col.names[j] <-
             eval(parse(text=paste("tclvalue(", paste(".colname.", j, sep=""),")", sep="")))
         for (i in 1:nrows){
             for (j in 1:ncols){
@@ -206,11 +206,11 @@ enterTable <- function(){
         if (length(unique(row.names)) != nrows){
             errorCondition(recall=enterTable, message=gettextRcmdr("Row names are not unique."))
             return()
-            }     
+            }
         if (length(unique(col.names)) != ncols){
             errorCondition(recall=enterTable, message=gettextRcmdr("Column names are not unique."))
             return()
-            }     
+            }
         percents <- as.character(tclvalue(percentsVariable))
         chisq <- tclvalue(chisqVariable)
         chisqComp <- tclvalue(chisqComponentsVariable)
@@ -248,28 +248,28 @@ enterTable <- function(){
                 command <- "round(.Test$residuals^2, 2) # Chi-square Components"
                 doItAndPrint(command)
                 }
-            logger("remove(.Test)") 
-            remove(.Test, envir=.GlobalEnv) 
+            logger("remove(.Test)")
+            remove(.Test, envir=.GlobalEnv)
             }
         if (fisher == 1) doItAndPrint("fisher.test(.Table)")
-        logger("remove(.Table)") 
-        remove(.Table, envir=.GlobalEnv)                                                      
+        logger("remove(.Table)")
+        remove(.Table, envir=.GlobalEnv)
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="chisq.test")
     radioButtons(name="percents", buttons=c("rowPercents", "columnPercents", "totalPercents", "nonePercents"), values=c("row", "column", "total", "none"),
         initialValue="none", labels=gettextRcmdr(c("Row percentages", "Column percentages",  "Percentages of total", "No percentages")), title=gettextRcmdr("Compute Percentages"))
-    checkBoxes(frame="testsFrame", boxes=c("chisq", "chisqComponents", "expFreq", "fisher"), initialValues=c("1", "0", "0", "0"),                               
-        labels=gettextRcmdr(c("Chi-square test of independence", "Components of chi-square statistic", 
+    checkBoxes(frame="testsFrame", boxes=c("chisq", "chisqComponents", "expFreq", "fisher"), initialValues=c("1", "0", "0", "0"),
+        labels=gettextRcmdr(c("Chi-square test of independence", "Components of chi-square statistic",
             "Print expected frequencies", "Fisher's exact test")))
-    tkgrid(tklabel(rowColFrame, text=gettextRcmdr("Number of Rows:")), rowsSlider, rowsShow, sticky="w")
-    tkgrid(tklabel(rowColFrame, text=gettextRcmdr("Number of Columns:")), colsSlider, colsShow, sticky="w")
+    tkgrid(labelRcmdr(rowColFrame, text=gettextRcmdr("Number of Rows:")), rowsSlider, rowsShow, sticky="w")
+    tkgrid(labelRcmdr(rowColFrame, text=gettextRcmdr("Number of Columns:")), colsSlider, colsShow, sticky="w")
     tkgrid(rowColFrame, sticky="w")
-    tkgrid(tklabel(top, text=gettextRcmdr("Enter counts:"), fg="blue"), sticky="w")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Enter counts:"), fg="blue"), sticky="w")
     tkgrid(outerTableFrame, sticky="w")
     tkgrid(percentsFrame, sticky="w")
-    tkgrid(tklabel(top, text=gettextRcmdr("Hypothesis Tests"), fg="blue"), sticky="w")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Hypothesis Tests"), fg="blue"), sticky="w")
     tkgrid(testsFrame, sticky="w")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     dialogSuffix(rows=7, columns=2)
-    } 
+    }

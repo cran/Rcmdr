@@ -1,20 +1,20 @@
 # Statistics Menu dialogs
 
-# last modified 28 Dec 07 by J. Fox
+# last modified 26 March 08 by J. Fox
 
     # Models menu
-    
+
 linearRegressionModel <- function(){
     initializeDialog(title=gettextRcmdr("Linear Regression"))
     variablesFrame <- tkframe(top)
     .numeric <- Numeric()
-    xBox <- variableListBox(variablesFrame, .numeric, selectmode="multiple", 
+    xBox <- variableListBox(variablesFrame, .numeric, selectmode="multiple",
         title=gettextRcmdr("Explanatory variables (pick one or more)"))
     yBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("Response variable (pick one)"))
     UpdateModelNumber()
     modelName <- tclVar(paste("RegModel.", getRcmdr("modelNumber"), sep=""))
     modelFrame <- tkframe(top)
-    model <- tkentry(modelFrame, width="20", textvariable=modelName)
+    model <- ttkentry(modelFrame, width="20", textvariable=modelName)
     subsetBox()
     onOK <- function(){
         x <- getSelection(xBox)
@@ -29,7 +29,7 @@ linearRegressionModel <- function(){
             UpdateModelNumber(-1)
             errorCondition(recall=linearRegressionModel, message=gettextRcmdr("No explanatory variables selected."))
             return()
-            }        
+            }
         if (is.element(y, x)) {
             UpdateModelNumber(-1)
             errorCondition(recall=linearRegressionModel, message=gettextRcmdr("Response and explanatory variables must be different."))
@@ -66,10 +66,10 @@ linearRegressionModel <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="lm", model=TRUE)
-    tkgrid(tklabel(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
+    tkgrid(labelRcmdr(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
     tkgrid(modelFrame, sticky="w")
-    tkgrid(getFrame(yBox), tklabel(variablesFrame, text="    "), getFrame(xBox), sticky="nw")
-    tkgrid(variablesFrame, sticky="w")    
+    tkgrid(getFrame(yBox), labelRcmdr(variablesFrame, text="    "), getFrame(xBox), sticky="nw")
+    tkgrid(variablesFrame, sticky="w")
     tkgrid(subsetFrame, sticky="w")
     tkgrid(buttonsFrame, stick="w")
     tkgrid.configure(helpButton, sticky="e")
@@ -80,20 +80,20 @@ linearModel <- function(){
     initializeDialog(title=gettextRcmdr("Linear Model"))
     .activeModel <- ActiveModel()
     currentModel <- if (!is.null(.activeModel))
-        class(get(.activeModel, envir=.GlobalEnv))[1] == "lm" 
-#        eval(parse(text=paste("class(", .activeModel, ")[1] == 'lm'", sep="")), 
-#            envir=.GlobalEnv) 
+        class(get(.activeModel, envir=.GlobalEnv))[1] == "lm"
+#        eval(parse(text=paste("class(", .activeModel, ")[1] == 'lm'", sep="")),
+#            envir=.GlobalEnv)
         else FALSE
-    if (currentModel) { 
+    if (currentModel) {
         currentFields <- formulaFields(get(.activeModel, envir=.GlobalEnv))
-#        currentFields <- formulaFields(eval(parse(text=.activeModel), 
+#        currentFields <- formulaFields(eval(parse(text=.activeModel),
 #            envir=.GlobalEnv))
         if (currentFields$data != ActiveDataSet()) currentModel <- FALSE
         }
     UpdateModelNumber()
     modelName <- tclVar(paste("LinearModel.", getRcmdr("modelNumber"), sep=""))
     modelFrame <- tkframe(top)
-    model <- tkentry(modelFrame, width="20", textvariable=modelName)
+    model <- ttkentry(modelFrame, width="20", textvariable=modelName)
     onOK <- function(){
         modelValue <- trim.blanks(tclvalue(modelName))
         closeDialog()
@@ -112,7 +112,7 @@ linearModel <- function(){
             }
         check.empty <- gsub(" ", "", tclvalue(lhsVariable))
         if ("" == check.empty) {
-            errorCondition(recall=linearModel, message=gettextRcmdr("Left-hand side of model empty."), model=TRUE) 
+            errorCondition(recall=linearModel, message=gettextRcmdr("Left-hand side of model empty."), model=TRUE)
             return()
             }
         check.empty <- gsub(" ", "", tclvalue(rhsVariable))
@@ -137,7 +137,7 @@ linearModel <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="linearModel", model=TRUE)
-    tkgrid(tklabel(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
+    tkgrid(labelRcmdr(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
     tkgrid(modelFrame, sticky="w")
     modelFormula()
     subsetBox(model=TRUE)
@@ -150,10 +150,10 @@ linearModel <- function(){
     }
 
 generalizedLinearModel <- function(){
-    families <- c("gaussian", "binomial", "poisson", "Gamma", "inverse.gaussian", 
+    families <- c("gaussian", "binomial", "poisson", "Gamma", "inverse.gaussian",
         "quasibinomial", "quasipoisson")
-    links <- c("identity", "inverse", "log", "logit", "probit", 
-        "cloglog", "sqrt", "1/mu^2")  
+    links <- c("identity", "inverse", "log", "logit", "probit",
+        "cloglog", "sqrt", "1/mu^2")
     availableLinks <- matrix(c(
         TRUE,  TRUE,  TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE,
         FALSE, FALSE, FALSE, TRUE,  TRUE,  TRUE,  FALSE, FALSE,
@@ -170,13 +170,13 @@ generalizedLinearModel <- function(){
     initializeDialog(title=gettextRcmdr("Generalized Linear Model"))
     .activeModel <- ActiveModel()
     currentModel <- if (!is.null(.activeModel))
-        class(get(.activeModel, envir=.GlobalEnv))[1] == "glm"  
-#        eval(parse(text=paste("class(", .activeModel, ")[1] == 'glm'", sep="")), 
+        class(get(.activeModel, envir=.GlobalEnv))[1] == "glm"
+#        eval(parse(text=paste("class(", .activeModel, ")[1] == 'glm'", sep="")),
 #            envir=.GlobalEnv)
         else FALSE
     if (currentModel) {
         currentFields <- formulaFields(get(.activeModel, envir=.GlobalEnv), glm=TRUE)
-#        currentFields <- formulaFields(eval(parse(text=.activeModel), 
+#        currentFields <- formulaFields(eval(parse(text=.activeModel),
 #            envir=.GlobalEnv), glm=TRUE)
         if (currentFields$data != ActiveDataSet()) currentModel <- FALSE
         }
@@ -184,12 +184,12 @@ generalizedLinearModel <- function(){
     UpdateModelNumber()
     modelName <- tclVar(paste("GLM.", getRcmdr("modelNumber"), sep=""))
     modelFrame <- tkframe(top)
-    model <- tkentry(modelFrame, width="20", textvariable=modelName)
+    model <- ttkentry(modelFrame, width="20", textvariable=modelName)
     linkFamilyFrame <- tkframe(top)
     familyFrame <- tkframe(linkFamilyFrame)
     familyBox <- tklistbox(familyFrame, height="4", exportselection="FALSE",
         selectmode="single", background="white")
-    familyScroll <- tkscrollbar(familyFrame, repeatinterval=5, 
+    familyScroll <- ttkscrollbar(familyFrame,
         command=function(...) tkyview(familyBox, ...))
     tkconfigure(familyBox, yscrollcommand=function(...) tkset(familyScroll, ...))
     for (fam in families) tkinsert(familyBox, "end", fam)
@@ -253,21 +253,21 @@ generalizedLinearModel <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="generalizedLinearModel")
-    helpButton <- tkbutton(buttonsFrame, text="Help", width="12", command=onHelp)
-    tkgrid(tklabel(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
-    tkgrid(modelFrame, sticky="w")    
+    helpButton <- buttonRcmdr(buttonsFrame, text="Help", width="12", command=onHelp)
+    tkgrid(labelRcmdr(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
+    tkgrid(modelFrame, sticky="w")
     tkgrid(getFrame(xBox), sticky="w")
     tkgrid(outerOperatorsFrame, sticky="w")
     tkgrid(formulaFrame, sticky="w")
     tkgrid(subsetFrame, sticky="w")
-        tkgrid(tklabel(linkFamilyFrame, text=gettextRcmdr("Family (double-click to select)"), fg="blue"), 
-        tklabel(linkFamilyFrame, text="   "), tklabel(linkFamilyFrame, text=gettextRcmdr("Link function"), fg="blue"), sticky="w")
+        tkgrid(labelRcmdr(linkFamilyFrame, text=gettextRcmdr("Family (double-click to select)"), fg="blue"),
+        labelRcmdr(linkFamilyFrame, text="   "), labelRcmdr(linkFamilyFrame, text=gettextRcmdr("Link function"), fg="blue"), sticky="w")
     tkgrid(familyBox, familyScroll, sticky="nw")
     tkgrid(linkBox, sticky="nw")
-    tkgrid(familyFrame, tklabel(linkFamilyFrame, text="   "), linkFrame, sticky="nw")
-    tkgrid(linkFamilyFrame, sticky="w")    
+    tkgrid(familyFrame, labelRcmdr(linkFamilyFrame, text="   "), linkFrame, sticky="nw")
+    tkgrid(linkFamilyFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
-    tkgrid.configure(familyScroll, sticky="ns")   
+    tkgrid.configure(familyScroll, sticky="ns")
     fam <- if (currentModel) which(currentFields$family == families) - 1
         else 1
     tkselection.set(familyBox, fam)
@@ -287,22 +287,22 @@ ordinalRegressionModel <- function(){
     .activeModel <- ActiveModel()
     .activeDataSet <- ActiveDataSet()
     currentModel <- if (!is.null(.activeModel))
-        class(get(.activeModel, envir=.GlobalEnv))[1] == "polr"  
-#        eval(parse(text=paste("class(", .activeModel, ")[1] == 'polr'", sep="")), 
-#            envir=.GlobalEnv) 
+        class(get(.activeModel, envir=.GlobalEnv))[1] == "polr"
+#        eval(parse(text=paste("class(", .activeModel, ")[1] == 'polr'", sep="")),
+#            envir=.GlobalEnv)
         else FALSE
     if (currentModel) {
         currentFields <- formulaFields(get(.activeModel, envir=.GlobalEnv))
-#        currentFields <- formulaFields(eval(parse(text=.activeModel), 
+#        currentFields <- formulaFields(eval(parse(text=.activeModel),
 #            envir=.GlobalEnv))
         if (currentFields$data != .activeDataSet) currentModel <- FALSE
         }
     UpdateModelNumber()
     modelName <- tclVar(paste("OrdRegModel.", getRcmdr("modelNumber"), sep=""))
     modelFrame <- tkframe(top)
-    model <- tkentry(modelFrame, width="20", textvariable=modelName)
-    radioButtons(name="modelType", 
-        buttons=c("logistic", "probit"), 
+    model <- ttkentry(modelFrame, width="20", textvariable=modelName)
+    radioButtons(name="modelType",
+        buttons=c("logistic", "probit"),
         labels=gettextRcmdr(c("Proportional-odds logit", "Ordered probit")),
         title=gettextRcmdr("Type of Model"))
     onOK <- function(){
@@ -323,7 +323,7 @@ ordinalRegressionModel <- function(){
             }
         check.empty <- gsub(" ", "", tclvalue(lhsVariable))
         if ("" == check.empty) {
-            errorCondition(recall=proportionalOddsModel, message=gettextRcmdr("Left-hand side of model empty."), model=TRUE) 
+            errorCondition(recall=proportionalOddsModel, message=gettextRcmdr("Left-hand side of model empty."), model=TRUE)
             return()
             }
         check.empty <- gsub(" ", "", tclvalue(rhsVariable))
@@ -353,7 +353,7 @@ ordinalRegressionModel <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="polr", model=TRUE)
-    tkgrid(tklabel(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
+    tkgrid(labelRcmdr(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
     tkgrid(modelFrame, sticky="w")
     modelFormula()
     subsetBox(model=TRUE)
@@ -365,27 +365,27 @@ ordinalRegressionModel <- function(){
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix(rows=7, columns=1, focus=lhsEntry, preventDoubleClick=TRUE)
     }
-    
+
 multinomialLogitModel <- function(){
     require("nnet")
     initializeDialog(title=gettextRcmdr("Multinomial Logit Model"))
     .activeModel <- ActiveModel()
     .activeDataSet <- ActiveDataSet()
     currentModel <- if (!is.null(.activeModel))
-        class(get(.activeModel, envir=.GlobalEnv))[1] == "multinom" 
-#        eval(parse(text=paste("class(", .activeModel, ")[1] == 'multinom'", sep="")), 
-#            envir=.GlobalEnv) 
+        class(get(.activeModel, envir=.GlobalEnv))[1] == "multinom"
+#        eval(parse(text=paste("class(", .activeModel, ")[1] == 'multinom'", sep="")),
+#            envir=.GlobalEnv)
         else FALSE
     if (currentModel) {
         currentFields <- formulaFields(get(.activeModel, envir=.GlobalEnv))
-#        currentFields <- formulaFields(eval(parse(text=.activeModel), 
+#        currentFields <- formulaFields(eval(parse(text=.activeModel),
 #            envir=.GlobalEnv))
         if (currentFields$data != .activeDataSet) currentModel <- FALSE
         }
     UpdateModelNumber()
     modelName <- tclVar(paste("MLM.", getRcmdr("modelNumber"), sep=""))
     modelFrame <- tkframe(top)
-    model <- tkentry(modelFrame, width="20", textvariable=modelName)
+    model <- ttkentry(modelFrame, width="20", textvariable=modelName)
     onOK <- function(){
         modelValue <- trim.blanks(tclvalue(modelName))
         closeDialog()
@@ -404,7 +404,7 @@ multinomialLogitModel <- function(){
             }
         check.empty <- gsub(" ", "", tclvalue(lhsVariable))
         if ("" == check.empty) {
-            errorCondition(recall=multinomialLogitModel, message=gettextRcmdr("Left-hand side of model empty."), model=TRUE) 
+            errorCondition(recall=multinomialLogitModel, message=gettextRcmdr("Left-hand side of model empty."), model=TRUE)
             return()
             }
         check.empty <- gsub(" ", "", tclvalue(rhsVariable))
@@ -434,7 +434,7 @@ multinomialLogitModel <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="multinom", model=TRUE)
-    tkgrid(tklabel(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
+    tkgrid(labelRcmdr(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
     tkgrid(modelFrame, sticky="w")
     modelFormula()
     subsetBox(model=TRUE)

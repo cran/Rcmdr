@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 1 July 05 by J. Fox
+# last modified 26 March 2008 by J. Fox
 
     # Dimensional-analysis menu
     
@@ -59,12 +59,12 @@ principalComponents <- function(){
             }
         if (addPC == "1") {
             initializeDialog(subdialog, title=gettextRcmdr("Number of Components"))
-            tkgrid(tklabel(subdialog, text=gettextRcmdr("Number of components to retain:"), fg="blue"), sticky="w")    
+            tkgrid(labelRcmdr(subdialog, text=gettextRcmdr("Number of components to retain:"), fg="blue"), sticky="w")    
             sliderFrame <- tkframe(subdialog)
             sliderValue <- tclVar("1")
             componentsSlider <- tkscale(sliderFrame, from=1, to=nvar, showvalue=FALSE, variable=sliderValue,
                 resolution=1, orient="horizontal")
-            componentsShow <- tklabel(sliderFrame, textvariable=sliderValue, width=2, justify="right")
+            componentsShow <- labelRcmdr(sliderFrame, textvariable=sliderValue, width=2, justify="right")
             onOKsub <- function() {
                 closeDialog(subdialog)
                 putRcmdr("ncomponents", as.numeric(tclvalue(sliderValue)))
@@ -124,12 +124,12 @@ factorAnalysis <- function(){
         f <- function(k, p) ((p - k)^2 - p - k)^2
         max.factors <- floor(optimize(f, c(0, nvar), tol=.0001, p=nvar)$minimum)
         initializeDialog(subdialog, title=gettextRcmdr("Number of Factors"))
-        tkgrid(tklabel(subdialog, text=gettextRcmdr("Number of factors to extract:"), fg="blue"), sticky="w")    
+        tkgrid(labelRcmdr(subdialog, text=gettextRcmdr("Number of factors to extract:"), fg="blue"), sticky="w")    
         sliderFrame <- tkframe(subdialog)
         sliderValue <- tclVar("1")
         componentsSlider <- tkscale(sliderFrame, from=1, to=max.factors, showvalue=FALSE, variable=sliderValue,
             resolution=1, orient="horizontal")
-        componentsShow <- tklabel(sliderFrame, textvariable=sliderValue, width=2, justify="right")
+        componentsShow <- labelRcmdr(sliderFrame, textvariable=sliderValue, width=2, justify="right")
         onOKsub <- function() {
             closeDialog(subdialog)
             putRcmdr("nfactors", as.numeric(tclvalue(sliderValue)))
@@ -165,7 +165,7 @@ factorAnalysis <- function(){
     tkgrid(getFrame(xBox), sticky="nw")
     tkgrid(subsetFrame, sticky="w")
     tkgrid(optionsFrame, sticky="w")
-    tkgrid(rotationFrame, tklabel(checkFrame, text="    "), scoresFrame, sticky="w")
+    tkgrid(rotationFrame, labelRcmdr(checkFrame, text="    "), scoresFrame, sticky="w")
     tkgrid(checkFrame, sticky="w")
     tkgrid(buttonsFrame,  sticky="w")
     dialogSuffix(rows=5, columns=1)

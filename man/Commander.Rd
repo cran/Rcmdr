@@ -289,7 +289,7 @@ For more information about R initialization, see \code{?Startup}.
 
 \author{John Fox \email{jfox@mcmaster.ca}}
 
-\seealso{\link{Plugins}}
+\seealso{\link{Plugins}, \link{Rcmdr.Utilities}}
 
 \examples{
     options(Rcmdr=list(log.font.size=12, contrasts=c("contr.Sum", "contr.poly")))

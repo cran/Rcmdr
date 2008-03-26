@@ -659,6 +659,14 @@ Version 1.3-12
    o  The Rcmdr now maintains a stack of the last several output objects. These may be retrieved via popOutput(). The length of the stack is controlled by the Rcmdr option "lengthOutputStack", which defaults to 10. (To satisfy a request from Liviu Andronic to be able to manipulate Rcmdr output.)
    
    o  The number of variables visible in variable-list boxes in Rcmdr dialogs is now controlled by the Rcmdr option "variable.list.height", which defaults to 4. (After a suggestion by Liviu Andronic.)
+   
+Version 1.3-13
+
+   o  If it is available, the Rcmdr will use the new "themed" widget set available in Tk 8.5 (at the suggestion and with the help of Brian Ripley).
+   
+   o  Small changes for R-Excel (from Erich Neuwirth).
+   
+   o  The name modelsMenu under statisticsMenu in the Rcmdr-menus.txt file is changed to statModelsMenu to differentiate it from the top-level modelsMenu (at the suggestion of Erich Neuwirth); eventually, names of menus and items will be required to be unique.
 
    
    

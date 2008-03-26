@@ -1,9 +1,9 @@
 # Graphs menu dialogs
 
-# last modified 6 January 2008 by J. Fox
+# last modified 26 March 2008 by J. Fox
 
 indexPlot <- function(){
-    initializeDialog(title=gettextRcmdr("Index Plot"))                                               
+    initializeDialog(title=gettextRcmdr("Index Plot"))
     xBox <- variableListBox(top, Numeric(), title=gettextRcmdr("Variable (pick one)"))
     onOK <- function(){
         x <- getSelection(xBox)
@@ -22,25 +22,25 @@ indexPlot <- function(){
             RcmdrTkmessageBox(title="Identify Points",
                 message=gettextRcmdr("Use left mouse button to identify points,\nright button to exit."),
                 icon="info", type="ok")
-            command <- paste("identify(", .activeDataSet, "$", x, 
+            command <- paste("identify(", .activeDataSet, "$", x,
                 ", labels=rownames(", .activeDataSet, "))", sep="")
             doItAndPrint(command)
             }
-        activateMenus()        
+        activateMenus()
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="plot")
     optionsFrame <- tkframe(top)
     typeVariable <- tclVar("spikes")
-    spikesButton <- tkradiobutton(optionsFrame, variable=typeVariable, value="spikes")
-    pointsButton <- tkradiobutton(optionsFrame, variable=typeVariable, value="points")
+    spikesButton <- ttkradiobutton(optionsFrame, variable=typeVariable, value="spikes")
+    pointsButton <- ttkradiobutton(optionsFrame, variable=typeVariable, value="points")
     identifyVariable <- tclVar("0")
     identifyCheckBox <- tkcheckbutton(optionsFrame, variable=identifyVariable)
-    tkgrid(getFrame(xBox), sticky="nw")    
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Identify observations\nwith mouse"), justify="left"), 
+    tkgrid(getFrame(xBox), sticky="nw")
+    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Identify observations\nwith mouse"), justify="left"),
         identifyCheckBox, sticky="w")
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Spikes")), spikesButton, sticky="w")
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Points")), pointsButton, sticky="w")
+    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Spikes")), spikesButton, sticky="w")
+    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Points")), pointsButton, sticky="w")
     tkgrid(optionsFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix(rows=2, columns=1)
@@ -72,9 +72,9 @@ Histogram <- function(){
         labels=gettextRcmdr(c("Frequency counts", "Percentages", "Densities")), title=gettextRcmdr("Axis Scaling"))
     binsFrame <- tkframe(top)
     binsVariable <- tclVar(gettextRcmdr("<auto>"))
-    binsField <- tkentry(binsFrame, width="6", textvariable=binsVariable)
-    tkgrid(getFrame(xBox), sticky="nw")    
-    tkgrid(tklabel(binsFrame, text=gettextRcmdr("Number of bins: ")), binsField, sticky="w")
+    binsField <- ttkentry(binsFrame, width="6", textvariable=binsVariable)
+    tkgrid(getFrame(xBox), sticky="nw")
+    tkgrid(labelRcmdr(binsFrame, text=gettextRcmdr("Number of bins: ")), binsField, sticky="w")
     tkgrid(binsFrame, sticky="w")
     tkgrid(scaleFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
@@ -87,22 +87,22 @@ stemAndLeaf <- function(){
     xBox <- variableListBox(top, Numeric(), title=gettextRcmdr("Variable (pick one)"))
     displayDigits <- tclVar("1")
     onDigits <- function(...){
-        tclvalue(displayDigits) <- formatC(10^as.numeric(tclvalue(leafsDigitValue)), 
+        tclvalue(displayDigits) <- formatC(10^as.numeric(tclvalue(leafsDigitValue)),
             format="fg", big.mark=",")
         tclvalue(leafsAutoVariable) <- "0"
         }
-    radioButtons(name="parts", buttons=c("auto", "one", "two", "five"), 
+    radioButtons(name="parts", buttons=c("auto", "one", "two", "five"),
         values=c("auto", "1", "2", "5"), labels=c(gettextRcmdr("Automatic"), "   1", "   2", "   5"),
         title=gettextRcmdr("Parts Per Stem"))
     radioButtons(name="style", buttons=c("Tukey", "bare"), labels=gettextRcmdr(c("Tukey", "Repeated stem digits")),
         title=gettextRcmdr("Style of Divided Stems"))
-    checkBoxes(frame="optionsFrame", boxes=c("trimOutliers", "showDepths", "reverseNegative"), 
+    checkBoxes(frame="optionsFrame", boxes=c("trimOutliers", "showDepths", "reverseNegative"),
         initialValues=rep(1, 3), labels=gettextRcmdr(c("Trim outliers", "Show depths", "Reverse negative leaves")))
     leafsFrame <- tkframe(top)
     leafsDigitValue <- tclVar("0")
     leafsDigitSlider <- tkscale(leafsFrame, from=-6, to=6, showvalue=FALSE, variable=leafsDigitValue,
         resolution=1, orient="horizontal", command=onDigits)
-    leafsDigitShow <- tklabel(leafsFrame, textvariable=displayDigits, width=8, justify="right")
+    leafsDigitShow <- labelRcmdr(leafsFrame, textvariable=displayDigits, width=8, justify="right")
     leafsAutoVariable <- tclVar("1")
     leafsDigitCheckBox <- tkcheckbutton(leafsFrame, variable=leafsAutoVariable)
     onOK <- function(){
@@ -112,7 +112,7 @@ stemAndLeaf <- function(){
             errorCondition(recall=stemAndLeaf, message=gettextRcmdr("You must select a variable"))
             return()
             }
-        unit <- if (tclvalue(leafsAutoVariable) == "1") "" 
+        unit <- if (tclvalue(leafsAutoVariable) == "1") ""
             else paste(", unit=", 10^as.numeric(tclvalue(leafsDigitValue)), sep="")
         m <- if (tclvalue(partsVariable) == "auto") ""
             else paste(", m=", tclvalue(partsVariable), sep="")
@@ -131,13 +131,13 @@ stemAndLeaf <- function(){
         }
     OKCancelHelp(helpSubject="stem.leaf")
     tkgrid(getFrame(xBox), sticky="nw")
-    tkgrid(tklabel(leafsFrame, text=gettextRcmdr("Leafs Digit:  "), fg="blue"),
-        tklabel(leafsFrame, text=gettextRcmdr("Automatic")), leafsDigitCheckBox,
-        tklabel(leafsFrame, text=gettextRcmdr("  or set:"), fg="red"), leafsDigitShow, leafsDigitSlider, sticky="w")  
-    tkgrid(leafsFrame, sticky="w") 
+    tkgrid(labelRcmdr(leafsFrame, text=gettextRcmdr("Leafs Digit:  "), fg="blue"),
+        labelRcmdr(leafsFrame, text=gettextRcmdr("Automatic")), leafsDigitCheckBox,
+        labelRcmdr(leafsFrame, text=gettextRcmdr("  or set:"), fg="red"), leafsDigitShow, leafsDigitSlider, sticky="w")
+    tkgrid(leafsFrame, sticky="w")
     tkgrid(partsFrame, sticky="w")
     tkgrid(styleFrame, sticky="w")
-    tkgrid(tklabel(top, text=gettextRcmdr("Options"), fg="blue"), sticky="w")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Options"), fg="blue"), sticky="w")
     tkgrid(optionsFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
     tclvalue(leafsAutoVariable) <- "1"
@@ -164,17 +164,17 @@ boxPlot <- function(){
         if (.groups == FALSE) {
             command <- (paste("boxplot(", var, ', ylab="', x, '")', sep=""))
             logger(command)
-            justDoIt(command)     
+            justDoIt(command)
             if (identifyPoints) {
                 RcmdrTkmessageBox(title="Identify Points",
                     message=gettextRcmdr("Use left mouse button to identify points,\nright button to exit."),
                     icon="info", type="ok")
                 doItAndPrint(paste("identify(rep(1, length(", var,
                     ")), ", var, ", rownames(", .activeDataSet,"))", sep=""))
-                }           
+                }
             }
         else {
-            command <- (paste("boxplot(", x, "~", .groups, ', ylab="', x, 
+            command <- (paste("boxplot(", x, "~", .groups, ', ylab="', x,
                 '", xlab="', .groups,'"',
                 ", data=", .activeDataSet, ")", sep=""))
             logger(command)
@@ -192,8 +192,8 @@ boxPlot <- function(){
         }
     groupsBox(boxPlot)
     OKCancelHelp(helpSubject="boxplot")
-    tkgrid(getFrame(xBox), sticky="nw")    
-    tkgrid(tklabel(identifyFrame, text=gettextRcmdr("Identify outliers with mouse"), justify="left"), 
+    tkgrid(getFrame(xBox), sticky="nw")
+    tkgrid(labelRcmdr(identifyFrame, text=gettextRcmdr("Identify outliers with mouse"), justify="left"),
         identifyCheckBox, sticky="w")
     tkgrid(identifyFrame, stick="w")
     tkgrid(groupsFrame, sticky="w")
@@ -208,40 +208,40 @@ scatterPlot <- function(){
     variablesFrame <- tkframe(top)
     xBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("x-variable (pick one)"))
     yBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("y-variable (pick one)"))
-    optionsParFrame <- tkframe(top)    
+    optionsParFrame <- tkframe(top)
     checkBoxes(window=optionsParFrame, frame="optionsFrame", boxes=c("identify", "jitterX", "jitterY", "boxplots", "lsLine", "smoothLine"),
         initialValues=c(0, 0, 0, 1, 1, 1), labels=gettextRcmdr(c("Identify points", "Jitter x-variable", "Jitter y-variable",
         "Marginal boxplots", "Least-squares line", "Smooth Line")), title="Options")
     sliderValue <- tclVar("50")
     slider <- tkscale(optionsFrame, from=0, to=100, showvalue=TRUE, variable=sliderValue,
         resolution=5, orient="horizontal")
-    subsetBox()    
+    subsetBox()
     labelsFrame <- tkframe(top)
     xlabVar <- tclVar(gettextRcmdr("<auto>"))
     ylabVar <- tclVar(gettextRcmdr("<auto>"))
     xlabFrame <- tkframe(labelsFrame)
-    xlabEntry <- tkentry(xlabFrame, width="25", textvariable=xlabVar)
-    xlabScroll <- tkscrollbar(xlabFrame, orient="horizontal",
-        repeatinterval=5, command=function(...) tkxview(xlabEntry, ...))
+    xlabEntry <- ttkentry(xlabFrame, width="25", textvariable=xlabVar)
+    xlabScroll <- ttkscrollbar(xlabFrame, orient="horizontal",
+        command=function(...) tkxview(xlabEntry, ...))
     tkconfigure(xlabEntry, xscrollcommand=function(...) tkset(xlabScroll, ...))
-    tkgrid(tklabel(xlabFrame, text=gettextRcmdr("x-axis label"), fg="blue"), sticky="w")
+    tkgrid(labelRcmdr(xlabFrame, text=gettextRcmdr("x-axis label"), fg="blue"), sticky="w")
     tkgrid(xlabEntry, sticky="w")
     tkgrid(xlabScroll, sticky="ew")
     ylabFrame <- tkframe(labelsFrame)
-    ylabEntry <- tkentry(ylabFrame, width="25", textvariable=ylabVar)
-    ylabScroll <- tkscrollbar(ylabFrame, orient="horizontal",
-        repeatinterval=5, command=function(...) tkxview(ylabEntry, ...))
+    ylabEntry <- ttkentry(ylabFrame, width="25", textvariable=ylabVar)
+    ylabScroll <- ttkscrollbar(ylabFrame, orient="horizontal",
+        command=function(...) tkxview(ylabEntry, ...))
     tkconfigure(ylabEntry, xscrollcommand=function(...) tkset(ylabScroll, ...))
-    tkgrid(tklabel(ylabFrame, text=gettextRcmdr("y-axis label"), fg="blue"), sticky="w")
+    tkgrid(labelRcmdr(ylabFrame, text=gettextRcmdr("y-axis label"), fg="blue"), sticky="w")
     tkgrid(ylabEntry, sticky="w")
     tkgrid(ylabScroll, sticky="ew")
-    tkgrid(xlabFrame, tklabel(labelsFrame, text="     "), ylabFrame, sticky="w")
-    parFrame <- tkframe(optionsParFrame) 
+    tkgrid(xlabFrame, labelRcmdr(labelsFrame, text="     "), ylabFrame, sticky="w")
+    parFrame <- tkframe(optionsParFrame)
     pchVar <- tclVar(gettextRcmdr("<auto>"))
-    pchEntry <- tkentry(parFrame, width=25, textvariable=pchVar)      
+    pchEntry <- ttkentry(parFrame, width=25, textvariable=pchVar)
     cexValue <- tclVar("1")
     cex.axisValue <- tclVar("1")
-    cex.labValue <- tclVar("1")    
+    cex.labValue <- tclVar("1")
     cexSlider <- tkscale(parFrame, from=0.5, to=2.5, showvalue=TRUE, variable=cexValue,
         resolution=0.1, orient="horizontal")
     cex.axisSlider <- tkscale(parFrame, from=0.5, to=2.5, showvalue=TRUE, variable=cex.axisValue,
@@ -277,7 +277,7 @@ scatterPlot <- function(){
         smooth <- as.character("1" == tclvalue(smoothLineVariable))
         span <- as.numeric(tclvalue(sliderValue))
         subset <- tclvalue(subsetVariable)
-        subset <- if (trim.blanks(subset) == gettextRcmdr("<all valid cases>")) "" 
+        subset <- if (trim.blanks(subset) == gettextRcmdr("<all valid cases>")) ""
             else paste(", subset=", subset, sep="")
         xlab <- trim.blanks(tclvalue(xlabVar))
         xlab <- if(xlab == gettextRcmdr("<auto>")) "" else paste(', xlab="', xlab, '"', sep="")
@@ -288,7 +288,7 @@ scatterPlot <- function(){
         cex.axis <- as.numeric(tclvalue(cex.axisValue))
         cex.axis <- if(cex.axis == 1) "" else paste(', cex.axis=', cex.axis, sep="")
         cex.lab <- as.numeric(tclvalue(cex.labValue))
-        cex.lab <- if(cex.lab == 1) "" else paste(', cex.lab=', cex.lab, sep="")        
+        cex.lab <- if(cex.lab == 1) "" else paste(', cex.lab=', cex.lab, sep="")
         pch <- gsub(" ", ",", tclvalue(pchVar))
         if ("" == pch) {
             errorCondition(recall=scatterPlot, message=gettextRcmdr("No plotting characters."))
@@ -315,20 +315,20 @@ scatterPlot <- function(){
         }
     groupsBox(scatterPlot, plotLinesByGroup=TRUE)
     OKCancelHelp(helpSubject="scatterplot")
-    tkgrid(getFrame(xBox), getFrame(yBox), sticky="nw") 
-    tkgrid(variablesFrame, sticky="w")   
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Span for smooth")), slider, sticky="w")
-    tkgrid(tklabel(parFrame, text=gettextRcmdr("Plotting Parameters"), fg="blue"), sticky="w")
-    tkgrid(tklabel(parFrame, text=gettextRcmdr("Plotting characters")), pchEntry, stick="w")
-    tkgrid(tklabel(parFrame, text=gettextRcmdr("Point size")), cexSlider, sticky="w")
-    tkgrid(tklabel(parFrame, text=gettextRcmdr("Axis text size")), cex.axisSlider, sticky="w")
-    tkgrid(tklabel(parFrame, text=gettextRcmdr("Axis-labels text size")), cex.labSlider, sticky="w")
+    tkgrid(getFrame(xBox), getFrame(yBox), sticky="nw")
+    tkgrid(variablesFrame, sticky="w")
+    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Span for smooth")), slider, sticky="w")
+    tkgrid(labelRcmdr(parFrame, text=gettextRcmdr("Plotting Parameters"), fg="blue"), sticky="w")
+    tkgrid(labelRcmdr(parFrame, text=gettextRcmdr("Plotting characters")), pchEntry, stick="w")
+    tkgrid(labelRcmdr(parFrame, text=gettextRcmdr("Point size")), cexSlider, sticky="w")
+    tkgrid(labelRcmdr(parFrame, text=gettextRcmdr("Axis text size")), cex.axisSlider, sticky="w")
+    tkgrid(labelRcmdr(parFrame, text=gettextRcmdr("Axis-labels text size")), cex.labSlider, sticky="w")
     tkgrid(optionsFrame, parFrame, sticky="nw")
     tkgrid(optionsParFrame, sticky="w")
     tkgrid(labelsFrame, sticky="w")
     tkgrid(subsetFrame, sticky="w")
-    tkgrid(groupsFrame, sticky="w")    
-    tkgrid(tklabel(top, text=" "))    
+    tkgrid(groupsFrame, sticky="w")
+    tkgrid(labelRcmdr(top, text=" "))
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     dialogSuffix(rows=8, columns=2)
     }
@@ -359,7 +359,7 @@ scatterPlotMatrix <- function(){
         span <- as.numeric(tclvalue(sliderValue))
         diag <- as.character(tclvalue(diagonalVariable))
         subset <- tclvalue(subsetVariable)
-        subset <- if (trim.blanks(subset) == gettextRcmdr("<all valid cases>")) "" 
+        subset <- if (trim.blanks(subset) == gettextRcmdr("<all valid cases>")) ""
             else paste(", subset=", subset, sep="")
         .activeDataSet <- ActiveDataSet()
         if (.groups == FALSE) {
@@ -384,7 +384,7 @@ scatterPlotMatrix <- function(){
         }
     groupsBox(scatterPlot, plotLinesByGroup=TRUE)
     OKCancelHelp(helpSubject="scatterplot.matrix")
-    tkgrid(getFrame(variablesBox), sticky="nw")    
+    tkgrid(getFrame(variablesBox), sticky="nw")
     tkgrid(optionsFrame, sticky="w")
     tkgrid(diagonalFrame, sticky="w")
     tkgrid(subsetFrame, sticky="w")
@@ -446,13 +446,13 @@ linePlot <- function(){
     variablesFrame <- tkframe(top)
     .numeric <- Numeric()
     xBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("x variable (pick one)"))
-    yBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("y variables (pick one or more)"), 
+    yBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("y variables (pick one or more)"),
         selectmode="multiple", initialSelection=NULL)
     axisLabelVariable <- tclVar(gettextRcmdr("<use y-variable names>"))
     axisLabelFrame <- tkframe(top)
-    axisLabelEntry <- tkentry(axisLabelFrame, width="40", textvariable=axisLabelVariable)
-    axisLabelScroll <- tkscrollbar(axisLabelFrame, orient="horizontal",
-        repeatinterval=5, command=function(...) tkxview(axisLabelEntry, ...))
+    axisLabelEntry <- ttkentry(axisLabelFrame, width="40", textvariable=axisLabelVariable)
+    axisLabelScroll <- ttkscrollbar(axisLabelFrame, orient="horizontal",
+        command=function(...) tkxview(axisLabelEntry, ...))
     tkconfigure(axisLabelEntry, xscrollcommand=function(...) tkset(axisLabelScroll, ...))
     legendFrame <- tkframe(top)
     legendVariable <- tclVar("0")
@@ -462,11 +462,11 @@ linePlot <- function(){
         x <- getSelection(xBox)
         closeDialog()
         if (0 == length(x)) {
-            errorCondition(recall=linePlot, message=gettextRcmdr("No x variable selected.")) 
+            errorCondition(recall=linePlot, message=gettextRcmdr("No x variable selected."))
             return()
             }
         if (0 == length(y)) {
-            errorCondition(recall=linePlot, message=gettextRcmdr("No y variables selected.")) 
+            errorCondition(recall=linePlot, message=gettextRcmdr("No y variables selected."))
             return()
             }
         if (is.element(x, y)) {
@@ -476,7 +476,7 @@ linePlot <- function(){
         .activeDataSet <- ActiveDataSet()
         .x <- na.omit(eval(parse(text=paste(.activeDataSet, "$", x, sep="")), envir=.GlobalEnv))
         if (!identical(order(.x), seq(1:length(.x)))){
-            response <- tclvalue(RcmdrTkmessageBox(message=gettextRcmdr("x-values are not in order.\nContinue?"), 
+            response <- tclvalue(RcmdrTkmessageBox(message=gettextRcmdr("x-values are not in order.\nContinue?"),
                 icon="warning", type="okcancel", default="cancel"))
             if (response == "cancel") {
                 onCancel()
@@ -509,7 +509,7 @@ linePlot <- function(){
             logger(".xpd <- par(xpd=TRUE)")
             justDoIt(".xpd <- par(xpd=TRUE)")
             usr <- par("usr")
-            command <- paste("legend(", usr[1], ", ", usr[4] + 1.2*top*strheight("x"), ", legend=", 
+            command <- paste("legend(", usr[1], ", ", usr[4] + 1.2*top*strheight("x"), ", legend=",
                 paste("c(", paste(paste('"', y, '"', sep=""), collapse=","), ")", sep=""),
                 ", col=c(", paste(cols, collapse=","), "), lty=1, pch=c(",
                 paste(paste('"', as.character(1:n), '"', sep=""), collapse=","), "))", sep="")
@@ -524,19 +524,19 @@ linePlot <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="matplot")
-    tkgrid(getFrame(xBox), tklabel(variablesFrame, text="    "), getFrame(yBox), sticky="nw")
-    tkgrid(variablesFrame, sticky="nw")    
-    tkgrid(tklabel(axisLabelFrame, text=gettextRcmdr("Label for y-axis"), fg="blue"), sticky="w")
+    tkgrid(getFrame(xBox), labelRcmdr(variablesFrame, text="    "), getFrame(yBox), sticky="nw")
+    tkgrid(variablesFrame, sticky="nw")
+    tkgrid(labelRcmdr(axisLabelFrame, text=gettextRcmdr("Label for y-axis"), fg="blue"), sticky="w")
     tkgrid(axisLabelEntry, sticky="w")
     tkgrid(axisLabelScroll, sticky="ew")
     tkgrid(axisLabelFrame, sticky="w")
-    tkgrid(tklabel(legendFrame, text=gettextRcmdr("Plot legend")),
+    tkgrid(labelRcmdr(legendFrame, text=gettextRcmdr("Plot legend")),
         legendCheckBox, sticky="w")
     tkgrid(legendFrame, sticky="w")
     tkgrid(buttonsFrame, stick="w")
     dialogSuffix(rows=4, columns=1)
     }
-    
+
 QQPlot <- function()
 # this function modified by Martin Maechler
 {
@@ -547,7 +547,7 @@ QQPlot <- function()
         x <- getSelection(xBox)
         closeDialog()
        if (0 == length(x)) {
-            errorCondition(recall=QQPlot, message=gettextRcmdr("You must select a variable.")) 
+            errorCondition(recall=QQPlot, message=gettextRcmdr("You must select a variable."))
             return()
             }
         dist <- tclvalue(distVariable)
@@ -585,7 +585,7 @@ QQPlot <- function()
                    if (is.na(df.num1) || df.num1 < 1 ||
                        is.na(df.num2) || df.num2 < 1) {
                        retryMe(gettextRcmdr("numerator and denominator \ndf for F must be positive numbers."))
-                       return()                            
+                       return()
                    }
                    args <- paste('dist="f", df1=', df1, ', df2=', df2, sep="")
                },
@@ -612,48 +612,48 @@ QQPlot <- function()
     OKCancelHelp(helpSubject="qq.plot")
     distFrame <- tkframe(top)
     distVariable <- tclVar("norm")
-    normalButton <- tkradiobutton(distFrame, variable=distVariable, value="norm")
-    tButton <- tkradiobutton(distFrame, variable=distVariable, value="t")
-    chisqButton <- tkradiobutton(distFrame, variable=distVariable, value="chisq")
-    FButton <- tkradiobutton(distFrame, variable=distVariable, value="f")
-    otherButton <- tkradiobutton(distFrame, variable=distVariable, value="other")
+    normalButton <- ttkradiobutton(distFrame, variable=distVariable, value="norm")
+    tButton <- ttkradiobutton(distFrame, variable=distVariable, value="t")
+    chisqButton <- ttkradiobutton(distFrame, variable=distVariable, value="chisq")
+    FButton <- ttkradiobutton(distFrame, variable=distVariable, value="f")
+    otherButton <- ttkradiobutton(distFrame, variable=distVariable, value="other")
     tDfFrame <- tkframe(distFrame)
     tDfVariable <- tclVar("")
-    tDfField <- tkentry(tDfFrame, width="6", textvariable=tDfVariable)
+    tDfField <- ttkentry(tDfFrame, width="6", textvariable=tDfVariable)
     chisqDfFrame <- tkframe(distFrame)
     chisqDfVariable <- tclVar("")
-    chisqDfField <- tkentry(chisqDfFrame, width="6", textvariable=chisqDfVariable)
+    chisqDfField <- ttkentry(chisqDfFrame, width="6", textvariable=chisqDfVariable)
     FDfFrame <- tkframe(distFrame)
     FDf1Variable <- tclVar("")
-    FDf1Field <- tkentry(FDfFrame, width="6", textvariable=FDf1Variable)
+    FDf1Field <- ttkentry(FDfFrame, width="6", textvariable=FDf1Variable)
     FDf2Variable <- tclVar("")
-    FDf2Field <- tkentry(FDfFrame, width="6", textvariable=FDf2Variable)
+    FDf2Field <- ttkentry(FDfFrame, width="6", textvariable=FDf2Variable)
     otherParamsFrame <- tkframe(distFrame)
     otherParamsVariable <- tclVar("")
-    otherParamsField <- tkentry(otherParamsFrame, width="30", textvariable=otherParamsVariable)
+    otherParamsField <- ttkentry(otherParamsFrame, width="30", textvariable=otherParamsVariable)
     otherNameVariable <- tclVar("")
-    otherNameField <- tkentry(otherParamsFrame, width="10", textvariable=otherNameVariable)
+    otherNameField <- ttkentry(otherParamsFrame, width="10", textvariable=otherNameVariable)
     identifyVariable <- tclVar("0")
     identifyFrame <- tkframe(top)
     identifyCheckBox <- tkcheckbutton(identifyFrame, variable=identifyVariable)
     tkgrid(getFrame(xBox), sticky="nw")
-    tkgrid(tklabel(identifyFrame, text=gettextRcmdr("Identify observations with mouse")),
+    tkgrid(labelRcmdr(identifyFrame, text=gettextRcmdr("Identify observations with mouse")),
            identifyCheckBox, sticky="w")
     tkgrid(identifyFrame, sticky="w")
-    tkgrid(tklabel(distFrame, text=gettextRcmdr("Distribution"), fg="blue"), columnspan=6, sticky="w")
-    tkgrid(tklabel(distFrame, text=gettextRcmdr("Normal")), normalButton, sticky="w")
-    tkgrid(tklabel(tDfFrame, text=gettextRcmdr("df = ")), tDfField, sticky="w")
-    tkgrid(tklabel(distFrame, text="t"), tButton, tDfFrame, sticky="w")
-    tkgrid(tklabel(chisqDfFrame, text=gettextRcmdr("df = ")), chisqDfField, sticky="w")
-    tkgrid(tklabel(distFrame, text=gettextRcmdr("Chi-square")), chisqButton,
+    tkgrid(labelRcmdr(distFrame, text=gettextRcmdr("Distribution"), fg="blue"), columnspan=6, sticky="w")
+    tkgrid(labelRcmdr(distFrame, text=gettextRcmdr("Normal")), normalButton, sticky="w")
+    tkgrid(labelRcmdr(tDfFrame, text=gettextRcmdr("df = ")), tDfField, sticky="w")
+    tkgrid(labelRcmdr(distFrame, text="t"), tButton, tDfFrame, sticky="w")
+    tkgrid(labelRcmdr(chisqDfFrame, text=gettextRcmdr("df = ")), chisqDfField, sticky="w")
+    tkgrid(labelRcmdr(distFrame, text=gettextRcmdr("Chi-square")), chisqButton,
            chisqDfFrame, sticky="w")
-    tkgrid(tklabel(FDfFrame, text=gettextRcmdr("Numerator df = ")), FDf1Field,
-           tklabel(FDfFrame, text=gettextRcmdr("Denominator df = ")), FDf2Field, sticky="w")
-    tkgrid(tklabel(distFrame, text="F"), FButton, FDfFrame, sticky="w")
-    tkgrid(tklabel(otherParamsFrame, text=gettextRcmdr("Specify: ")),
-           otherNameField, tklabel(otherParamsFrame, text=gettextRcmdr("Parameters: ")),
+    tkgrid(labelRcmdr(FDfFrame, text=gettextRcmdr("Numerator df = ")), FDf1Field,
+           labelRcmdr(FDfFrame, text=gettextRcmdr("Denominator df = ")), FDf2Field, sticky="w")
+    tkgrid(labelRcmdr(distFrame, text="F"), FButton, FDfFrame, sticky="w")
+    tkgrid(labelRcmdr(otherParamsFrame, text=gettextRcmdr("Specify: ")),
+           otherNameField, labelRcmdr(otherParamsFrame, text=gettextRcmdr("Parameters: ")),
            otherParamsField, sticky="w")
-    tkgrid(tklabel(distFrame, text=gettextRcmdr("Other")), otherButton,
+    tkgrid(labelRcmdr(distFrame, text=gettextRcmdr("Other")), otherButton,
            otherParamsFrame, sticky="w")
     tkgrid(distFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
@@ -683,14 +683,14 @@ PlotMeans <- function(){
         .activeDataSet <- ActiveDataSet()
         error.bars <- tclvalue(errorBarsVariable)
         level <- if (error.bars == "conf.int") paste(", level=", tclvalue(levelVariable), sep="") else ""
-        if (length(groups) == 1) doItAndPrint(paste("plotMeans(", .activeDataSet, "$", response, 
-            ", ", .activeDataSet, "$", groups[1], 
+        if (length(groups) == 1) doItAndPrint(paste("plotMeans(", .activeDataSet, "$", response,
+            ", ", .activeDataSet, "$", groups[1],
             ', error.bars="', error.bars, '"', level, ')', sep=""))
         else {
-            if (eval(parse(text=paste("length(levels(", .activeDataSet, "$", groups[1], 
+            if (eval(parse(text=paste("length(levels(", .activeDataSet, "$", groups[1],
                 ")) < length(levels(", .activeDataSet, "$", groups[2], "))", sep=""))))
                 groups <- rev(groups)
-            doItAndPrint(paste("plotMeans(", .activeDataSet, "$", response, ", ", .activeDataSet, "$", groups[1], 
+            doItAndPrint(paste("plotMeans(", .activeDataSet, "$", response, ", ", .activeDataSet, "$", groups[1],
                 ", ", .activeDataSet, "$", groups[2], ', error.bars="', error.bars, '"', level, ')', sep=""))
             }
         activateMenus()
@@ -698,21 +698,21 @@ PlotMeans <- function(){
         }
     optionsFrame <- tkframe(top)
     errorBarsVariable <- tclVar("se")
-    seButton <- tkradiobutton(optionsFrame, variable=errorBarsVariable, value="se")
-    sdButton <- tkradiobutton(optionsFrame, variable=errorBarsVariable, value="sd")
-    confIntButton <- tkradiobutton(optionsFrame, variable=errorBarsVariable, value="conf.int")
-    noneButton <- tkradiobutton(optionsFrame, variable=errorBarsVariable, value="none")
+    seButton <- ttkradiobutton(optionsFrame, variable=errorBarsVariable, value="se")
+    sdButton <- ttkradiobutton(optionsFrame, variable=errorBarsVariable, value="sd")
+    confIntButton <- ttkradiobutton(optionsFrame, variable=errorBarsVariable, value="conf.int")
+    noneButton <- ttkradiobutton(optionsFrame, variable=errorBarsVariable, value="none")
     levelVariable <- tclVar("0.95")
-    levelEntry <- tkentry(optionsFrame, width="6", textvariable=levelVariable)    
+    levelEntry <- ttkentry(optionsFrame, width="6", textvariable=levelVariable)
     buttonsFrame <- tkframe(top)
     OKCancelHelp(helpSubject="plotMeans")
     tkgrid(getFrame(groupBox), getFrame(responseBox), sticky="nw")
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Error Bars"), fg="blue"), sticky="w")
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Standard errors")), seButton, sticky="w")
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Standard deviations")), sdButton, sticky="w")
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Confidence intervals")), confIntButton,
-        tklabel(optionsFrame, text=gettextRcmdr("   Level of confidence:")), levelEntry, sticky="w")
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("No error bars")), noneButton, sticky="w")
+    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Error Bars"), fg="blue"), sticky="w")
+    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Standard errors")), seButton, sticky="w")
+    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Standard deviations")), sdButton, sticky="w")
+    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Confidence intervals")), confIntButton,
+        labelRcmdr(optionsFrame, text=gettextRcmdr("   Level of confidence:")), levelEntry, sticky="w")
+    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("No error bars")), noneButton, sticky="w")
     tkgrid(optionsFrame, columnspan=2, sticky="w")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     dialogSuffix(rows=3, columns=2)
@@ -723,7 +723,7 @@ Scatter3D <- function(){
     if (length(use.rgl) == 0 || use.rgl) {
         require(rgl)
         require(mgcv)
-        }    
+        }
     initializeDialog(title=gettextRcmdr("3D Scatterplot"))
     variablesFrame <- tkframe(top)
     .numeric <- Numeric()
@@ -731,7 +731,7 @@ Scatter3D <- function(){
         initialSelection=NULL)
     yBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("Response variable (pick one)"))
     surfacesFrame <- tkframe(top)
-    identifyPoints <- tclVar("0") 
+    identifyPoints <- tclVar("0")
     identifyPointsCheckBox <- tkcheckbutton(surfacesFrame, variable=identifyPoints)
     axisScales <- tclVar("1")
     axisScalesCheckBox <- tkcheckbutton(surfacesFrame, variable=axisScales)
@@ -746,17 +746,17 @@ Scatter3D <- function(){
     nonparSurface <- tclVar("0")
     nonparCheckBox <- tkcheckbutton(surfacesFrame, variable=nonparSurface)
     dfNonparVariable <- tclVar(gettextRcmdr("<auto>"))
-    dfNonparField <- tkentry(surfacesFrame, width="6", textvariable=dfNonparVariable)
+    dfNonparField <- ttkentry(surfacesFrame, width="6", textvariable=dfNonparVariable)
     additiveSurface <- tclVar("0")
     additiveCheckBox <- tkcheckbutton(surfacesFrame, variable=additiveSurface)
     dfAddVariable <- tclVar(gettextRcmdr("<auto>"))
-    dfAddField <- tkentry(surfacesFrame, width="6", textvariable=dfAddVariable)
+    dfAddField <- ttkentry(surfacesFrame, width="6", textvariable=dfAddVariable)
     ellipsoid <- tclVar("0")
     ellipsoidCheckBox <- tkcheckbutton(surfacesFrame, variable=ellipsoid)
     bgFrame <- tkframe(top)
     bgVariable <-tclVar("white")
-    whiteButton <- tkradiobutton(bgFrame, variable=bgVariable, value="white")
-    blackButton <- tkradiobutton(bgFrame, variable=bgVariable, value="black")
+    whiteButton <- ttkradiobutton(bgFrame, variable=bgVariable, value="white")
+    blackButton <- ttkradiobutton(bgFrame, variable=bgVariable, value="black")
     onOK <- function(){
         x <- getSelection(xBox)
         y <- getSelection(yBox)
@@ -795,27 +795,27 @@ Scatter3D <- function(){
             else paste(", fit=c(", paste(surfaces, collapse=","), ")", sep="")
         bg <- tclvalue(bgVariable)
         .activeDataSet <- ActiveDataSet()
-        if (.groups != FALSE){ 
+        if (.groups != FALSE){
             groups <- paste(", groups=", .activeDataSet, "$", .groups, sep="")
             parallel <- paste(", parallel=", .linesByGroup, sep="")
             }
-        else groups <- parallel <- ""                   
-        command <- paste("scatter3d(", .activeDataSet, "$", x[1], ", ", 
-            .activeDataSet, "$", y, ", ", .activeDataSet, "$", x[2], fit, resids, dfNonpar, 
+        else groups <- parallel <- ""
+        command <- paste("scatter3d(", .activeDataSet, "$", x[1], ", ",
+            .activeDataSet, "$", y, ", ", .activeDataSet, "$", x[2], fit, resids, dfNonpar,
             dfAdd, groups, parallel, ', bg="', bg, '", axis.scales=', scales, ', grid=', grid,
             ', ellipsoid=', ellips, ', xlab="', x[1], '", ylab="', y, '", zlab="', x[2], '")', sep="")
         doItAndPrint(command)
         putRcmdr("rgl", TRUE)
-        command <- paste("identify3d(", .activeDataSet, "$", x[1], ", ", 
+        command <- paste("identify3d(", .activeDataSet, "$", x[1], ", ",
             .activeDataSet, "$", y, ", ", .activeDataSet, "$", x[2], groups,
-            ', axis.scales=', scales, 
+            ', axis.scales=', scales,
             ", labels=row.names(", .activeDataSet, "))", sep="")
         putRcmdr("Identify3d", command)
         .Tcl("update")
-        if (tclvalue(identifyPoints) == 1){ 
+        if (tclvalue(identifyPoints) == 1){
             RcmdrTkmessageBox(title="Identify Points",
                 message=gettextRcmdr("Drag right mouse button to identify points,\nclick right button to exit."),
-                icon="info", type="ok") 
+                icon="info", type="ok")
             doItAndPrint(command)
             }
         activateMenus()
@@ -824,26 +824,26 @@ Scatter3D <- function(){
         }
     groupsBox(Scatter3D, plotLinesByGroup=TRUE, plotLinesByGroupsText=gettextRcmdr("Parallel regression surfaces"))
     OKCancelHelp(helpSubject="Scatter3DDialog")
-    tkgrid(getFrame(yBox), tklabel(variablesFrame, text="  "), getFrame(xBox), sticky="nw")
+    tkgrid(getFrame(yBox), labelRcmdr(variablesFrame, text="  "), getFrame(xBox), sticky="nw")
     tkgrid(variablesFrame, sticky="nw")
-    tkgrid(tklabel(surfacesFrame, text=gettextRcmdr("Identify observations\nwith mouse")), identifyPointsCheckBox, sticky="w")
-    tkgrid(tklabel(surfacesFrame, text=gettextRcmdr("Show axis scales")), axisScalesCheckBox, sticky="w")
-    tkgrid(tklabel(surfacesFrame, text=gettextRcmdr("Show surface grid lines")), gridLinesCheckBox, sticky="w")
-    tkgrid(tklabel(surfacesFrame, text=gettextRcmdr("Show squared residuals")), squaredResidualsCheckBox, sticky="w")
-    tkgrid(tklabel(surfacesFrame, text=gettextRcmdr("Surfaces to Fit"), fg="blue"), sticky="w")
-    tkgrid(tklabel(surfacesFrame, text=gettextRcmdr("Linear least-squares")), linearLSCheckBox, sticky="w")
-    tkgrid(tklabel(surfacesFrame, text=gettextRcmdr("Quadratic least-squares")), quadLSCheckBox, sticky="w")
-    dfLabel <- tklabel(surfacesFrame, text=gettextRcmdr("df = "))
-    tkgrid(tklabel(surfacesFrame, text=gettextRcmdr("Smooth regression")), nonparCheckBox, 
+    tkgrid(labelRcmdr(surfacesFrame, text=gettextRcmdr("Identify observations\nwith mouse")), identifyPointsCheckBox, sticky="w")
+    tkgrid(labelRcmdr(surfacesFrame, text=gettextRcmdr("Show axis scales")), axisScalesCheckBox, sticky="w")
+    tkgrid(labelRcmdr(surfacesFrame, text=gettextRcmdr("Show surface grid lines")), gridLinesCheckBox, sticky="w")
+    tkgrid(labelRcmdr(surfacesFrame, text=gettextRcmdr("Show squared residuals")), squaredResidualsCheckBox, sticky="w")
+    tkgrid(labelRcmdr(surfacesFrame, text=gettextRcmdr("Surfaces to Fit"), fg="blue"), sticky="w")
+    tkgrid(labelRcmdr(surfacesFrame, text=gettextRcmdr("Linear least-squares")), linearLSCheckBox, sticky="w")
+    tkgrid(labelRcmdr(surfacesFrame, text=gettextRcmdr("Quadratic least-squares")), quadLSCheckBox, sticky="w")
+    dfLabel <- labelRcmdr(surfacesFrame, text=gettextRcmdr("df = "))
+    tkgrid(labelRcmdr(surfacesFrame, text=gettextRcmdr("Smooth regression")), nonparCheckBox,
         dfLabel, dfNonparField, sticky="w")
     tkgrid.configure(dfLabel, sticky="e")
-    tkgrid(tklabel(surfacesFrame, text=gettextRcmdr("Additive regression")), additiveCheckBox, 
-        tklabel(surfacesFrame, text=gettextRcmdr("df(each term) = ")), dfAddField, sticky="w")
-    tkgrid(tklabel(surfacesFrame, text=gettextRcmdr("Plot 50% concentration ellipsoid")), ellipsoidCheckBox, sticky="w")
-    tkgrid(surfacesFrame, sticky="w") 
-    tkgrid(tklabel(bgFrame, text=gettextRcmdr("Background Color"), fg="blue"), sticky="w", columnspan=2)
-    tkgrid(tklabel(bgFrame, text=gettextRcmdr("Black")), blackButton, sticky="w")
-    tkgrid(tklabel(bgFrame, text=gettextRcmdr("White")), whiteButton, sticky="w")
+    tkgrid(labelRcmdr(surfacesFrame, text=gettextRcmdr("Additive regression")), additiveCheckBox,
+        labelRcmdr(surfacesFrame, text=gettextRcmdr("df(each term) = ")), dfAddField, sticky="w")
+    tkgrid(labelRcmdr(surfacesFrame, text=gettextRcmdr("Plot 50% concentration ellipsoid")), ellipsoidCheckBox, sticky="w")
+    tkgrid(surfacesFrame, sticky="w")
+    tkgrid(labelRcmdr(bgFrame, text=gettextRcmdr("Background Color"), fg="blue"), sticky="w", columnspan=2)
+    tkgrid(labelRcmdr(bgFrame, text=gettextRcmdr("Black")), blackButton, sticky="w")
+    tkgrid(labelRcmdr(bgFrame, text=gettextRcmdr("White")), whiteButton, sticky="w")
     tkgrid(bgFrame, sticky="w")
     tkgrid(groupsFrame, sticky="w")
     tkgrid(buttonsFrame, stick="w")
@@ -858,11 +858,11 @@ Identify3D <- function(){
         }
     RcmdrTkmessageBox(title="Identify Points",
         message=gettextRcmdr("Drag right mouse button to identify points,\nclick right button to exit."),
-        icon="info", type="ok") 
+        icon="info", type="ok")
     command <- getRcmdr("Identify3d")
     doItAndPrint(command)
     }
-    
+
 saveBitmap <- function(){
     if (1 == dev.cur()) {
         Message(gettextRcmdr("There is no current graphics device to save."), type="error")
@@ -900,8 +900,8 @@ saveBitmap <- function(){
         }
     OKCancelHelp(helpSubject="png")
     tkgrid(filetypeFrame, sticky="w")
-    tkgrid(tklabel(sliderFrame, text=gettextRcmdr("Width (pixels)")), widthSlider, sticky="sw")
-    tkgrid(tklabel(sliderFrame, text=gettextRcmdr("Height (pixels)")), heightSlider, sticky="sw")
+    tkgrid(labelRcmdr(sliderFrame, text=gettextRcmdr("Width (pixels)")), widthSlider, sticky="sw")
+    tkgrid(labelRcmdr(sliderFrame, text=gettextRcmdr("Height (pixels)")), heightSlider, sticky="sw")
     tkgrid(sliderFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix(rows=3, columns=1)
@@ -913,7 +913,7 @@ savePDF <- function(){
         return()
         }
     initializeDialog(title=gettextRcmdr("Save Graph as PDF/Postscript"))
-    radioButtons(name="filetype", buttons=c("pdf", "postscript", "eps"), 
+    radioButtons(name="filetype", buttons=c("pdf", "postscript", "eps"),
         labels=gettextRcmdr(c("PDF", "Postscript", "Encapsulated Postscript")), title=gettextRcmdr("Graphics File Type"))
     sliderFrame <- tkframe(top)
     widthVariable <- tclVar("5")
@@ -948,18 +948,18 @@ savePDF <- function(){
             }
         filename <- tclvalue(tkgetSaveFile(filetypes=filetypes, defaultextension=ext, initialfile=initial))
         if (filename == "") return()
-        command <- if (type == "eps") paste('dev.copy2eps(file="', filename, '", width=', width, ', height=', height, 
+        command <- if (type == "eps") paste('dev.copy2eps(file="', filename, '", width=', width, ', height=', height,
                 ', pointsize=', pointsize, ')', sep="")
-            else paste('dev.print(', type, ', file="', filename, '", width=', width, ', height=', height, 
+            else paste('dev.print(', type, ', file="', filename, '", width=', width, ', height=', height,
                 ', pointsize=', pointsize, ')', sep="")
         doItAndPrint(command)
         Message(paste(gettextRcmdr("Graph saved to file"), filename), type="note")
         }
     OKCancelHelp(helpSubject="pdf")
     tkgrid(filetypeFrame, sticky="w")
-    tkgrid(tklabel(sliderFrame, text=gettextRcmdr("Width (inches)")), widthSlider, sticky="sw")
-    tkgrid(tklabel(sliderFrame, text=gettextRcmdr("Height (inches)")), heightSlider, sticky="sw")
-    tkgrid(tklabel(sliderFrame, text=gettextRcmdr("Text size (points)")), pointSizeSlider, sticky="sw")
+    tkgrid(labelRcmdr(sliderFrame, text=gettextRcmdr("Width (inches)")), widthSlider, sticky="sw")
+    tkgrid(labelRcmdr(sliderFrame, text=gettextRcmdr("Height (inches)")), heightSlider, sticky="sw")
+    tkgrid(labelRcmdr(sliderFrame, text=gettextRcmdr("Text size (points)")), pointSizeSlider, sticky="sw")
     tkgrid(sliderFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix(rows=3, columns=1)
@@ -970,17 +970,17 @@ saveRglGraph <- function(){
         Message(message=gettextRcmdr("There is no current RGL graphics device to save."),
             type="error")
         return()
-        }  
+        }
     ext <- "png"
     filetypes <- gettextRcmdr('{"PNG Bitmap Files" {".png" ".PNG"}} {"All Files" {"*"}}')
-    initial <- "RGLGraph.png"  
+    initial <- "RGLGraph.png"
     filename <- tclvalue(tkgetSaveFile(filetypes=filetypes, defaultextension=ext, initialfile=initial))
     if (filename == "") return()
     command <- paste('rgl.snapshot("', filename, '")', sep="")
     doItAndPrint(command)
     Message(paste(gettextRcmdr("Graph saved to file"), filename), type="note")
     }
-    
+
 # The following function by Richard Heiberger, with small modifications by J. Fox
 
 Xyplot <- function() {
@@ -992,7 +992,7 @@ Xyplot <- function() {
     checkBoxes(frame="optionsFrame",
                boxes=c("auto.key", "outer"),
                initialValues=c(1,0),
-               labels=gettextRcmdr(c("Automatically draw key", 
+               labels=gettextRcmdr(c("Automatically draw key",
                 "Different panels for different responses")))
     radioButtons(name="x.relation",
                  buttons=c("same", "free", "sliced"),
@@ -1077,16 +1077,16 @@ Xyplot <- function() {
     }
 
 # set the colour palette
-    
+
 setPalette <- function() {
     cval <- function(x,y) -sum((x-y)^2)
-    contrasting <- function(x) 
+    contrasting <- function(x)
         optim(rep(127, 3),cval,lower=0,upper=255,method="L-BFGS-B",y=x)$par
     # the following local function from Thomas Lumley via r-help
     convert <- function (color){
         rgb <- col2rgb(color)/255
         L <- c(0.2, 0.6, 0) %*% rgb
-        ifelse(L >= 0.2, "#000060", "#FFFFA0")    
+        ifelse(L >= 0.2, "#000060", "#FFFFA0")
         }
     env <- environment()
     pal <- palette()
@@ -1185,7 +1185,7 @@ setPalette <- function() {
         palette(c(hex.1, hex.2, hex.3, hex.4, hex.5, hex.6, hex.7, hex.8))
         Message(gettextRcmdr("Color palette reset.", type="note"))
         }
-    OKCancelHelp(helpSubject="palette") 
+    OKCancelHelp(helpSubject="palette")
     tkgrid(button1, button2, button3, button4, button5, button6, button7, button8)
     tkgrid(paletteFrame)
     tkgrid(buttonsFrame, sticky="w")

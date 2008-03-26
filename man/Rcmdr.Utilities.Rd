@@ -81,6 +81,13 @@
 \alias{variableListBox}
 \alias{Variables}
 
+\alias{buttonRcmdr}
+\alias{labelRcmdr}
+\alias{ttkentry}
+\alias{ttkframe}
+\alias{ttkradiobutton}
+\alias{ttkscrollbar}
+
 \title{Rcmdr Utility Functions}
 \description{
   These functions support writing additions to the Rcmdr package. Additional R code
@@ -313,6 +320,18 @@ commanderPosition()
   a dialog-box structure for entering a model formula, \code{modelFormula};
   a text box for entering a subsetting expression, \code{subsetBox};
   \emph{OK}, \emph{Cancel}, and \emph{Help} buttons for dialogs, \code{OKCancelHelp}, and subdialogs, \code{subOKCancelHelp}.
+  
+  \emph{``Themed'' Tk widgets:}
+  Tk 8.5 introduced so-called ``themed'' widgets, which look better than the traditional Tk widgets. 
+  Several functions, contributed by Brian Ripley, are written to access the new widgets by switching automatically 
+  between the new and old widget sets depending upon the availability of the former: \code{buttonRcmdr}, 
+  to access either \code{\link[tcltk]{ttkbutton}} or \code{\link[tcltk]{tkbutton}}; \code{labelRcmdr}, 
+  to access either \code{\link[tcltk]{ttklabel}} or \code{\link[tcltk]{tklabel}}; \code{ttkentry}, 
+  to access either \code{\link[tcltk]{ttkentry}} or \code{\link[tcltk]{tkentry}}; \code{ttkframe}, 
+  to access either \code{\link[tcltk]{ttkframe}} or \code{\link[tcltk]{tkframe}}; \code{ttkradiobutton}, 
+  to access either \code{\link[tcltk]{ttkradiobutton}} or \code{\link[tcltk]{tkradiobutton}}; and \code{ttkscrollbar}, 
+  to access either \code{\link[tcltk]{ttkscrollbar}} or \code{\link[tcltk]{tkscrollbar}}. 
+  Note that the last four functions mask functions of the same names in the \pkg{tcltk} package.
   
   \emph{Translating text:}
   The \code{gettextRcmdr} function simply passes its argument(s) to

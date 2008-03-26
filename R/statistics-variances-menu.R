@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 2 July 05 by J. Fox
+# last modified 26 March 2008 by J. Fox
 
     # Variances menu
     
@@ -37,11 +37,11 @@ twoVariancesFTest <- function(){
         labels=gettextRcmdr(c("Two-sided", "Difference < 0", "Difference > 0")), title=gettextRcmdr("Alternative Hypothesis"))
     confidenceFrame <- tkframe(top)
     confidenceLevel <- tclVar(".95")
-    confidenceField <- tkentry(confidenceFrame, width="6", textvariable=confidenceLevel)
-    tkgrid(getFrame(groupBox), tklabel(variablesFrame, text="    "), getFrame(responseBox), sticky="nw")
+    confidenceField <- ttkentry(confidenceFrame, width="6", textvariable=confidenceLevel)
+    tkgrid(getFrame(groupBox), labelRcmdr(variablesFrame, text="    "), getFrame(responseBox), sticky="nw")
     tkgrid(variablesFrame, sticky="w")
     groupsLabel(groupsBox=groupBox)
-    tkgrid(tklabel(confidenceFrame, text=gettextRcmdr("Confidence Level:  "), fg="blue"), confidenceField, sticky="w")
+    tkgrid(labelRcmdr(confidenceFrame, text=gettextRcmdr("Confidence Level:  "), fg="blue"), confidenceField, sticky="w")
     tkgrid(alternativeFrame, sticky="w")
     tkgrid(confidenceFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
@@ -73,7 +73,7 @@ BartlettTest <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="bartlett.test")
-    tkgrid(getFrame(groupBox), tklabel(variableFrame, text="    "), getFrame(responseBox), sticky="nw")
+    tkgrid(getFrame(groupBox), labelRcmdr(variableFrame, text="    "), getFrame(responseBox), sticky="nw")
     tkgrid(variableFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix(rows=2, columns=1)
@@ -105,7 +105,7 @@ LeveneTest <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="levene.test")
-    tkgrid(getFrame(groupBox), tklabel(variableFrame, text="    "), getFrame(responseBox), sticky="nw")
+    tkgrid(getFrame(groupBox), labelRcmdr(variableFrame, text="    "), getFrame(responseBox), sticky="nw")
     tkgrid(variableFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix(rows=2, columns=1)

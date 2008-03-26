@@ -1,5 +1,5 @@
 # These functions for Excel supportwritten by Erich Neuwirth
-#  last modified: 22 June 2007 by J. Fox
+#  last modified: 20 March 2008 by J. Fox  (following instructions from Erich Neuwirth)
 
     RExcelSupported <- function(){
     	RExcelSupport <- getOption("Rcmdr")$RExcelSupport
@@ -51,11 +51,11 @@
                 justDoIt(current.line)
             	loggerForExcel(current.print.line)
                 }
-            else if (any(sapply(Commander.Input.exceptions,
-                    function(.x) length(grep(paste("^", .x, "\\(", sep=""), current.line)) > 0))){
-                justDoIt(current.line)
-            	loggerForExcel(current.line)
-                }
+##            else if (any(sapply(Commander.Input.exceptions,
+##                    function(.x) length(grep(paste("^", .x, "\\(", sep=""), current.line)) > 0))){
+##                justDoIt(current.line)
+##            	loggerForExcel(current.line)
+##                }
             else if (length(current.line)>0) {
 		          doItAndPrint(current.line, log=FALSE)
             	loggerForExcel(current.line)

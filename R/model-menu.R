@@ -1,6 +1,6 @@
 # Model menu dialogs
 
-# last modified 28 Dec 07 by J. Fox
+# last modified 26 March 2008 by J. Fox
 
 selectActiveModel <- function(){
     models <- listAllModels()
@@ -46,8 +46,8 @@ selectActiveModel <- function(){
         }
     OKCancelHelp()
     nameFrame <- tkframe(top)
-    tkgrid(tklabel(nameFrame, fg="blue", text=gettextRcmdr("Current Model: ")), 
-        tklabel(nameFrame, text=tclvalue(getRcmdr("modelName"))), sticky="w")
+    tkgrid(labelRcmdr(nameFrame, fg="blue", text=gettextRcmdr("Current Model: ")), 
+        labelRcmdr(nameFrame, text=tclvalue(getRcmdr("modelName"))), sticky="w")
     tkgrid(nameFrame, sticky="w", columnspan="2")
     tkgrid(getFrame(modelsBox), columnspan="2", sticky="w")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
@@ -211,8 +211,8 @@ residualQQPlot <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="qq.plot.lm")
-    tkgrid(tklabel(selectFrame, text=gettextRcmdr("Simulated confidence envelope")), simulateCheckBox, sticky="w")
-    tkgrid(tklabel(selectFrame, text=gettextRcmdr("Identify points with mouse")), identifyCheckBox, sticky="w")
+    tkgrid(labelRcmdr(selectFrame, text=gettextRcmdr("Simulated confidence envelope")), simulateCheckBox, sticky="w")
+    tkgrid(labelRcmdr(selectFrame, text=gettextRcmdr("Identify points with mouse")), identifyCheckBox, sticky="w")
     tkgrid(selectFrame, sticky="w")  
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix(rows=2, columns=1)
@@ -233,31 +233,31 @@ testLinearHypothesis <- function(){
         col.names <- names(coef(get(.activeModel)))
 #        col.names <- eval(parse(text=paste("names(coef(", .activeModel, "))")))
         col.names <- substring(paste(abbreviate(col.names, 12), "            "), 1, 12)
-        make.col.names <- "tklabel(.tableFrame, text='')"
+        make.col.names <- "labelRcmdr(.tableFrame, text='')"
         for (j in 1:ncols) {
             make.col.names <- paste(make.col.names, ", ", 
-                "tklabel(.tableFrame, text='", col.names[j], "')", sep="")
+                "labelRcmdr(.tableFrame, text='", col.names[j], "')", sep="")
             }
         rhsText <- gettextRcmdr("Right-hand side")
-        make.col.names <- paste(make.col.names, ", tklabel(.tableFrame, text='          ')",
-            ", tklabel(.tableFrame, text='", rhsText, "')", sep="")
+        make.col.names <- paste(make.col.names, ", labelRcmdr(.tableFrame, text='          ')",
+            ", labelRcmdr(.tableFrame, text='", rhsText, "')", sep="")
         eval(parse(text=paste("tkgrid(", make.col.names, ")", sep="")), envir=env)
         for (i in 1:nrows){   
             varname <- paste(".tab.", i, ".1", sep="") 
             rhs.name <- paste(".rhs.", i, sep="")
             assign(varname, tclVar("0") , envir=env)
             assign(rhs.name, tclVar("0"), envir=env)
-            make.row <- paste("tklabel(.tableFrame, text=", i, ")")
-            make.row <- paste(make.row, ", ", "tkentry(.tableFrame, width='5', textvariable=", 
+            make.row <- paste("labelRcmdr(.tableFrame, text=", i, ")")
+            make.row <- paste(make.row, ", ", "ttkentry(.tableFrame, width='5', textvariable=", 
                 varname, ")", sep="")
             for (j in 2:ncols){
                 varname <- paste(".tab.", i, ".", j, sep="")
                 assign(varname, tclVar("0"), envir=env)
-                make.row <- paste(make.row, ", ", "tkentry(.tableFrame, width='5', textvariable=", 
+                make.row <- paste(make.row, ", ", "ttkentry(.tableFrame, width='5', textvariable=", 
                     varname, ")", sep="")
                 }
-            make.row <- paste(make.row, ", tklabel(.tableFrame, text='     '),",
-                "tkentry(.tableFrame, width='5', textvariable=", rhs.name, ")", sep="")
+            make.row <- paste(make.row, ", labelRcmdr(.tableFrame, text='     '),",
+                "ttkentry(.tableFrame, width='5', textvariable=", rhs.name, ")", sep="")
             eval(parse(text=paste("tkgrid(", make.row, ")", sep="")), envir=env)
             }
         tkgrid(get(".tableFrame", envir=env), sticky="w")
@@ -268,7 +268,7 @@ testLinearHypothesis <- function(){
     rowsValue <- tclVar("1")
     rowsSlider <- tkscale(rowsFrame, from=1, to=ncols, showvalue=FALSE, variable=rowsValue,
         resolution=1, orient="horizontal", command=setUpTable)
-    rowsShow <- tklabel(rowsFrame, textvariable=rowsValue, width=2, justify="right")
+    rowsShow <- labelRcmdr(rowsFrame, textvariable=rowsValue, width=2, justify="right")
     onOK <- function(){
         nrows <- as.numeric(tclvalue(rowsValue))
         cell <- 0
@@ -316,11 +316,11 @@ testLinearHypothesis <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="linear.hypothesis")
-    tkgrid(tklabel(rowsFrame, text=gettextRcmdr("Number of Rows:")), rowsSlider, rowsShow, sticky="w")
+    tkgrid(labelRcmdr(rowsFrame, text=gettextRcmdr("Number of Rows:")), rowsSlider, rowsShow, sticky="w")
     tkgrid(rowsFrame, sticky="w")
-    tkgrid(tklabel(top, text=gettextRcmdr("Enter hypothesis matrix and right-hand side vector:"), fg="blue"), sticky="w")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Enter hypothesis matrix and right-hand side vector:"), fg="blue"), sticky="w")
     tkgrid(outerTableFrame, sticky="w")
-    tkgrid(tklabel(top, text=""))
+    tkgrid(labelRcmdr(top, text=""))
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix(rows=4, columns=1)       
     } 
@@ -368,7 +368,7 @@ BreuschPaganTest <- function(){
     if (is.null(.activeModel)) return()
     require("lmtest")
     initializeDialog(title=gettextRcmdr("Breusch-Pagan Test"))
-    tkgrid(tklabel(top, text=gettextRcmdr("Score Test for Nonconstant Error Variance"), fg="blue"), sticky="w")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Score Test for Nonconstant Error Variance"), fg="blue"), sticky="w")
     optionsFrame <- tkframe(top)
     onOK <- function(){
         .activeModel <- ActiveModel()
@@ -391,7 +391,7 @@ BreuschPaganTest <- function(){
     studentVariable <- tclVar("0")
     studentFrame <- tkframe(optionsFrame)
     studentCheckBox <- tkcheckbutton(studentFrame, variable=studentVariable)
-    tkgrid(tklabel(studentFrame, text=gettextRcmdr("Studentized test statistic"), justify="left"),
+    tkgrid(labelRcmdr(studentFrame, text=gettextRcmdr("Studentized test statistic"), justify="left"),
         studentCheckBox, sticky="w")
     tkgrid(studentFrame, sticky="w")
     radioButtons(optionsFrame, name="var", buttons=c("fitted", "predictors", "other"), 
@@ -410,7 +410,7 @@ DurbinWatsonTest <- function(){
     if (is.null(.activeModel)) return()
     require("lmtest")
     initializeDialog(title=gettextRcmdr("Durbin-Waton Test"))
-    tkgrid(tklabel(top, text=gettextRcmdr("Test for First-Order Error Autocorrelation"), fg="blue"), sticky="w")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Test for First-Order Error Autocorrelation"), fg="blue"), sticky="w")
     onOK <- function(){
         altHypothesis <- tclvalue(altHypothesisVariable)
         closeDialog()
@@ -434,7 +434,7 @@ RESETtest <- function(){
     if (is.null(.activeModel)) return()
     require("lmtest")
     initializeDialog(title=gettextRcmdr("RESET Test"))
-    tkgrid(tklabel(top, text=gettextRcmdr("Test for Nonlinearity"), fg="blue"), sticky="w")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Test for Nonlinearity"), fg="blue"), sticky="w")
     onOK <- function(){
         type <- tclvalue(typeVariable)
         square <- tclvalue(squareVariable)
@@ -465,9 +465,9 @@ RESETtest <- function(){
     radioButtons(optionsFrame, name="type", buttons=c("regressor", "fitted", "princomp"),
         labels=gettextRcmdr(c("Explanatory variables", "Fitted values", "First principal component")),
         title=gettextRcmdr("Type of Test")) 
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Powers to Include"), fg="blue"), sticky="w")
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("2 (squares)")), squareCheckBox, sticky="w")
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("3 (cubes)   ")), cubeCheckBox, sticky="w")
+    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Powers to Include"), fg="blue"), sticky="w")
+    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("2 (squares)")), squareCheckBox, sticky="w")
+    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("3 (cubes)   ")), cubeCheckBox, sticky="w")
     tkgrid(typeFrame, sticky="w")
     tkgrid(optionsFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
@@ -489,7 +489,7 @@ confidenceIntervals <- function(){
     if (is.null(.activeModel)) return()
     require(MASS)
     initializeDialog(title=gettextRcmdr("Confidence Intervals"))
-    tkgrid(tklabel(top, text=gettextRcmdr("Confidence Intervals for Individual Coefficients"), fg="blue"), sticky="w")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Confidence Intervals for Individual Coefficients"), fg="blue"), sticky="w")
     onOK <- function(){
         level <- tclvalue(confidenceLevel)
         opts <- options(warn=-1)
@@ -510,10 +510,10 @@ confidenceIntervals <- function(){
     OKCancelHelp(helpSubject="Confint")
     confidenceFrame <- tkframe(top)
     confidenceLevel <- tclVar(".95")
-    confidenceField <- tkentry(confidenceFrame, width="6", textvariable=confidenceLevel)
+    confidenceField <- ttkentry(confidenceFrame, width="6", textvariable=confidenceLevel)
     radioButtons(top, name="type", buttons=c("LR", "Wald"),
         labels=gettextRcmdr(c("Likelihood-ratio statistic", "Wald statistic")), title=gettextRcmdr("Test Based On"))
-    tkgrid(tklabel(confidenceFrame, text=gettextRcmdr("Confidence Level: ")), confidenceField, sticky="w")
+    tkgrid(labelRcmdr(confidenceFrame, text=gettextRcmdr("Confidence Level: ")), confidenceField, sticky="w")
     tkgrid(confidenceFrame, sticky="w")
     .activeModel <- ActiveModel()
     glm <- class(get(.activeModel))[1] == "glm"

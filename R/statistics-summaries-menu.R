@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 22 May 07 by J. Fox
+# last modified 26 March 2008 by J. Fox
 
     # Summaries menu
     
@@ -27,7 +27,7 @@ numericalSummaries <- function(){
     quantilesFrame <- tkframe(top)
     quantilesCheckBox <- tkcheckbutton(quantilesFrame, variable=quantilesVariable)
     quantiles <- tclVar("0,.25,.5,.75,1")
-    quantilesEntry <- tkentry(quantilesFrame, width="20", textvariable=quantiles)
+    quantilesEntry <- ttkentry(quantilesFrame, width="20", textvariable=quantiles)
     groupsBox(recall=numericalSummaries, label=gettextRcmdr("Summarize by:"), initialLabel=gettextRcmdr("Summarize by groups"))
     onOK <- function(){
         x <- getSelection(xBox)
@@ -60,8 +60,8 @@ numericalSummaries <- function(){
     OKCancelHelp(helpSubject="numSummary")
     tkgrid(getFrame(xBox), sticky="nw")    
     tkgrid(checkBoxFrame, sticky="w")
-    tkgrid(tklabel(quantilesFrame, text=gettextRcmdr("Quantiles")), quantilesCheckBox,
-        tklabel(quantilesFrame, text=gettextRcmdr(" quantiles:")), quantilesEntry, sticky="w")
+    tkgrid(labelRcmdr(quantilesFrame, text=gettextRcmdr("Quantiles")), quantilesCheckBox,
+        labelRcmdr(quantilesFrame, text=gettextRcmdr(" quantiles:")), quantilesEntry, sticky="w")
     tkgrid(quantilesFrame, sticky="w")
     tkgrid(groupsFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
@@ -103,14 +103,14 @@ frequencyDistribution <- function(){
             levs <- eval(parse(text=paste("levels(", .activeDataSet, "$", x, ")", sep="")))
             n.levs <- length(levs)
             assign(".entry.1", tclVar(paste("1/", n.levs, sep="")), envir=env)
-            make.entries <- "tklabel(hypothesisFrame, text='Hypothesized probabilities:   ')"
-            make.lev.names <- "tklabel(hypothesisFrame, text='Factor levels:')"
+            make.entries <- "labelRcmdr(hypothesisFrame, text='Hypothesized probabilities:   ')"
+            make.lev.names <- "labelRcmdr(hypothesisFrame, text='Factor levels:')"
             for (i in 1:n.levs) {
                 entry.varname <- paste(".entry.", i, sep="")
                 assign(entry.varname, tclVar(paste("1/", n.levs, sep="")), envir=env)
-                make.entries <- paste(make.entries, ", ", "tkentry(hypothesisFrame, width='5', textvariable=", 
+                make.entries <- paste(make.entries, ", ", "ttkentry(hypothesisFrame, width='5', textvariable=", 
                         entry.varname, ")", sep="")
-                make.lev.names <- paste(make.lev.names, ", tklabel(hypothesisFrame, text='", levs[i], "')", sep="")
+                make.lev.names <- paste(make.lev.names, ", labelRcmdr(hypothesisFrame, text='", levs[i], "')", sep="")
                 }
             eval(parse(text=paste("tkgrid(", make.lev.names, ", sticky='w')", sep="")), envir=env)
             eval(parse(text=paste("tkgrid(", make.entries, ", stick='w')", sep="")), envir=env)
@@ -166,7 +166,7 @@ frequencyDistribution <- function(){
         }
     OKCancelHelp(helpSubject="table")
     tkgrid(getFrame(xBox), sticky="nw")    
-    tkgrid(tklabel(optionsFrame, 
+    tkgrid(labelRcmdr(optionsFrame, 
         text=gettextRcmdr("Chi-square goodness-of-fit test (for one variable only)")), 
             goodnessOfFitCheckBox, sticky="w")
     tkgrid(optionsFrame, sticky="w")
@@ -183,9 +183,9 @@ statisticsTable <- function(){
         title=gettextRcmdr("Response variables (pick one or more)"))
     radioButtons(name="statistic", buttons=c("mean", "median", "sd"), labels=gettextRcmdr(c("Mean", "Median", "Standard deviation")), title=gettextRcmdr("Statistic"))
     otherVariable <- tclVar("")
-    otherButton <- tkradiobutton(statisticFrame, variable=statisticVariable, value="other")
-    otherEntry <- tkentry(statisticFrame, width="20", textvariable=otherVariable)   
-    tkgrid(tklabel(statisticFrame, text=gettextRcmdr("Other (specify)")), otherButton, otherEntry, sticky="w")
+    otherButton <- ttkradiobutton(statisticFrame, variable=statisticVariable, value="other")
+    otherEntry <- ttkentry(statisticFrame, width="20", textvariable=otherVariable)   
+    tkgrid(labelRcmdr(statisticFrame, text=gettextRcmdr("Other (specify)")), otherButton, otherEntry, sticky="w")
     onOK <- function(){
         groups <- getSelection(groupBox)
         if (0 == length(groups)) {
@@ -211,7 +211,7 @@ statisticsTable <- function(){
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="tapply")
-    tkgrid(getFrame(groupBox), tklabel(variablesFrame, text="    "),getFrame(responseBox), sticky="nw")
+    tkgrid(getFrame(groupBox), labelRcmdr(variablesFrame, text="    "),getFrame(responseBox), sticky="nw")
     tkgrid(variablesFrame, sticky="w")
     tkgrid(statisticFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
@@ -289,7 +289,7 @@ correlationTest <- function(){
   }
   OKCancelHelp(helpSubject="cor.test")
   tkgrid(getFrame(xBox), sticky="nw")
-  tkgrid(tklabel(top, text=""))
+  tkgrid(labelRcmdr(top, text=""))
   tkgrid(correlationsFrame,alternativeFrame, sticky="w")
   tkgrid(buttonsFrame,columnspan=2,sticky="w")
   dialogSuffix(rows=4, columns=1)

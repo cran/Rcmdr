@@ -1,4 +1,4 @@
-# last modified 31 October 2007 by J. Fox
+# last modified 26 March 2008 by J. Fox
 
 # File menu dialogs
 
@@ -20,7 +20,7 @@ loadLog <- function(){
     tkdelete(.log, "1.0", "end")
     tkinsert(.log, "end", paste(contents, collapse="\n"))
     }
-    
+
 saveLog <- function() {
     .logFileName <- getRcmdr("logFileName")
     if (is.null(.logFileName)) {
@@ -89,9 +89,9 @@ saveWorkspace <- function() {
     else save(list=ls(envir=.GlobalEnv), file=.saveFileName)
     Message(paste(gettextRcmdr("R workspace saved to"), .saveFileName), type="note")
     }
-    
+
 CloseCommander <- function() closeCommander(ask.save=getRcmdr("ask.on.exit"))
-    
+
 closeCommander <- function(ask=TRUE, ask.save=ask){
     if (ask){
         response <- tclvalue(RcmdrTkmessageBox(message=gettextRcmdr("Exit?"),
@@ -150,16 +150,16 @@ Options <- function(){
     log.height <- if (!is.null(current$log.height)) current$log.height
                     else if (!log.commands) 0 else 10
     output.height <- if (!is.null(current$output.height)) current$output.height
-        else if (console.output) 0 else 2*log.height 
+        else if (console.output) 0 else 2*log.height
     contrasts <- setOption("contrasts", c("contr.Treatment", "contr.poly"))
     grab.focus <- setOption("grab.focus", TRUE)
     double.click <- setOption("double.click", FALSE)
     sort.names <- setOption("sort.names", TRUE)
     show.edit.button <- setOption("show.edit.button", TRUE)
     scale.factor <- current$scale.factor
-    default.font.size <- setOption("default.font.size", 
+    default.font.size <- setOption("default.font.size",
         if (.Platform$OS.type != "windows") 12 else 10)
-    default.font <- setOption("default.font", 
+    default.font <- setOption("default.font",
         paste("*helvetica-medium-r-normal-*-", default.font.size, "*", sep=""))
     consoleOutputVar <- tclVar(console.output)
     consoleOutputCheckBox <- tkcheckbutton(top, variable=consoleOutputVar)
@@ -170,18 +170,18 @@ Options <- function(){
         resolution=1, orient="horizontal")
     logWidthVar <- tclVar(log.width)
     logWidthSlider <- tkscale(top, from=30, to=120, showvalue=TRUE, variable=logWidthVar,
-        resolution=5, orient="horizontal")    
+        resolution=5, orient="horizontal")
     logHeightVar <- tclVar(log.height)
     logHeightSlider <- tkscale(top, from=0, to=25, showvalue=TRUE, variable=logHeightVar,
-        resolution=1, orient="horizontal")   
+        resolution=1, orient="horizontal")
     outputHeightVar <- tclVar(output.height)
     outputHeightSlider <- tkscale(top, from=0, to=50, showvalue=TRUE, variable=outputHeightVar,
-        resolution=5, orient="horizontal")   
+        resolution=5, orient="horizontal")
     contrasts1 <- tclVar(contrasts[1])
     contrasts2 <- tclVar(contrasts[2])
     contrastsFrame <- tkframe(top)
-    contrasts1Entry <- tkentry(contrastsFrame, width="15", textvariable=contrasts1)  
-    contrasts2Entry <- tkentry(contrastsFrame, width="15", textvariable=contrasts2) 
+    contrasts1Entry <- ttkentry(contrastsFrame, width="15", textvariable=contrasts1)
+    contrasts2Entry <- ttkentry(contrastsFrame, width="15", textvariable=contrasts2)
     grabFocusVar <- tclVar(as.numeric(grab.focus))
     grabFocusCheckBox <- tkcheckbutton(top, variable=grabFocusVar)
     doubleClickVar <- tclVar(as.numeric(double.click))
@@ -192,9 +192,9 @@ Options <- function(){
     showEditButtonCheckBox <- tkcheckbutton(top, variable=showEditButtonVar)
     scaleFactorVar <- tclVar(if (is.null(scale.factor)) 1.0 else scale.factor)
     scaleFactorSlider <- tkscale(top, from=0.2, to=3.0, showvalue=TRUE, variable=scaleFactorVar,
-        resolution=0.2, orient="horizontal")        
+        resolution=0.2, orient="horizontal")
     defaultFont <- tclVar(default.font)
-    defaultFontEntry <- tkentry(top, width="30", textvariable=scaleFactorVar)                  
+    defaultFontEntry <- ttkentry(top, width="30", textvariable=scaleFactorVar)
     onOK <- function(){
         closeDialog(top)
         log.font.size <- round(as.numeric(tclvalue(logFontSizeVar)))
@@ -231,39 +231,39 @@ Options <- function(){
         Commander()
         }
     OKCancelHelp(helpSubject="Commander")
-    tkgrid(tklabel(top, text=gettextRcmdr("Log commands to script window")), logCommandsCheckBox, sticky="e")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Log commands to script window")), logCommandsCheckBox, sticky="e")
     tkgrid.configure(logCommandsCheckBox, sticky="w")
-    tkgrid(tklabel(top, text=gettextRcmdr("Log-font size (points)")), logFontSizeSlider, sticky="se")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Log-font size (points)")), logFontSizeSlider, sticky="se")
     tkgrid.configure(logFontSizeSlider, sticky="w")
-    tkgrid(tklabel(top, text=gettextRcmdr("Log width (characters)")), logWidthSlider, sticky="se")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Log width (characters)")), logWidthSlider, sticky="se")
     tkgrid.configure(logWidthSlider, sticky="w")
-    tkgrid(tklabel(top, text=gettextRcmdr("Log height (lines)")), logHeightSlider, sticky="se")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Log height (lines)")), logHeightSlider, sticky="se")
     tkgrid.configure(logHeightSlider, sticky="w")
-    tkgrid(tklabel(top, text=" "), sticky="w")
-    tkgrid(tklabel(top, text=gettextRcmdr("Send output to R Console")), consoleOutputCheckBox, sticky="e")
+    tkgrid(labelRcmdr(top, text=" "), sticky="w")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Send output to R Console")), consoleOutputCheckBox, sticky="e")
     tkgrid.configure(consoleOutputCheckBox, sticky="w")
-    tkgrid(tklabel(top, text=gettextRcmdr("Output height (lines)")), outputHeightSlider, sticky="se")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Output height (lines)")), outputHeightSlider, sticky="se")
     tkgrid.configure(outputHeightSlider, sticky="w")
-    tkgrid(tklabel(contrastsFrame, text=gettextRcmdr("Unordered factors")), tklabel(contrastsFrame, text="   "),
-        tklabel(contrastsFrame, text=gettextRcmdr("Ordered factors")), sticky="w")
-    tkgrid(contrasts1Entry, tklabel(contrastsFrame, text="   "), contrasts2Entry, sticky="w")
-    tkgrid(tklabel(top, text=gettextRcmdr("Contrasts")), contrastsFrame, sticky="se")
+    tkgrid(labelRcmdr(contrastsFrame, text=gettextRcmdr("Unordered factors")), labelRcmdr(contrastsFrame, text="   "),
+        labelRcmdr(contrastsFrame, text=gettextRcmdr("Ordered factors")), sticky="w")
+    tkgrid(contrasts1Entry, labelRcmdr(contrastsFrame, text="   "), contrasts2Entry, sticky="w")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Contrasts")), contrastsFrame, sticky="se")
     tkgrid.configure(contrastsFrame, sticky="sw")
-    tkgrid(tklabel(top, text=gettextRcmdr("Active window grabs focus")), grabFocusCheckBox, sticky="e")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Active window grabs focus")), grabFocusCheckBox, sticky="e")
     tkgrid.configure(grabFocusCheckBox, sticky="w")
-    tkgrid(tklabel(top, text=gettextRcmdr("Double-click presses OK button")), doubleClickCheckBox, sticky="e")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Double-click presses OK button")), doubleClickCheckBox, sticky="e")
     tkgrid.configure(doubleClickCheckBox, sticky="w")
-    tkgrid(tklabel(top, text=gettextRcmdr("Sort variable names alphabetically")), sortNamesCheckBox, sticky="e")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Sort variable names alphabetically")), sortNamesCheckBox, sticky="e")
     tkgrid.configure(sortNamesCheckBox, sticky="w")
-    tkgrid(tklabel(top, text=gettextRcmdr("Show edit button")), showEditButtonCheckBox, sticky="e")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("Show edit button")), showEditButtonCheckBox, sticky="e")
     tkgrid.configure(showEditButtonCheckBox, sticky="w")
     tkconfigure(OKbutton, text=gettextRcmdr("Exit and Restart\nR Commander"), width=18)
     if (.Platform$OS.type == "windows"){
-        tkgrid(tklabel(top, text=gettextRcmdr("Scale factor for Tk elements")), scaleFactorSlider, sticky="se")
+        tkgrid(labelRcmdr(top, text=gettextRcmdr("Scale factor for Tk elements")), scaleFactorSlider, sticky="se")
         tkgrid.configure(scaleFactorSlider, sticky="w")
         }
     else {
-        tkgrid(tklabel(top, text=gettextRcmdr("Default font")), defaultFontEntry, sticky="e")
+        tkgrid(labelRcmdr(top, text=gettextRcmdr("Default font")), defaultFontEntry, sticky="e")
         tkgrid.configure(defaultFontEntry, sticky="w")
         }
     tkgrid(buttonsFrame, columnspan=2, sticky="w")

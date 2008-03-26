@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 24 February 06 by J. Fox
+# last modified 26 March 2008 by J. Fox
 
     # Proportions menu
     
@@ -36,18 +36,18 @@ singleProportionTest <- function(){
     rightFrame <- tkframe(top)
     confidenceFrame <- tkframe(rightFrame)
     confidenceLevel <- tclVar(".95")
-    confidenceField <- tkentry(confidenceFrame, width="6", textvariable=confidenceLevel)
+    confidenceField <- ttkentry(confidenceFrame, width="6", textvariable=confidenceLevel)
     pFrame <- tkframe(rightFrame)
     pVariable <- tclVar(".5")
-    pField <- tkentry(pFrame, width="6", textvariable=pVariable)
+    pField <- ttkentry(pFrame, width="6", textvariable=pVariable)
     radioButtons(name="test", buttons=c("normal", "corrected", "exact"), 
         labels=gettextRcmdr(c("Normal approximation", "Normal approximation with\ncontinuity correction", "Exact binomial")), 
         title=gettextRcmdr("Type of Test"))
     tkgrid(getFrame(xBox), sticky="nw")    
-    tkgrid(tklabel(pFrame, text=gettextRcmdr("Null hypothesis: p = "), fg="blue"), pField, sticky="w")
+    tkgrid(labelRcmdr(pFrame, text=gettextRcmdr("Null hypothesis: p = "), fg="blue"), pField, sticky="w")
     tkgrid(pFrame, sticky="w")
-    tkgrid(tklabel(rightFrame, text=""))
-    tkgrid(tklabel(confidenceFrame, text=gettextRcmdr("Confidence Level: "), fg="blue"), confidenceField, sticky="w")
+    tkgrid(labelRcmdr(rightFrame, text=""))
+    tkgrid(labelRcmdr(confidenceFrame, text=gettextRcmdr("Confidence Level: "), fg="blue"), confidenceField, sticky="w")
     tkgrid(confidenceFrame, sticky="w")
     tkgrid(alternativeFrame, rightFrame, sticky="nw")
     tkgrid(testFrame, sticky="w")
@@ -99,12 +99,12 @@ twoSampleProportionsTest <- function(){
     rightFrame <- tkframe(top)
     confidenceFrame <- tkframe(rightFrame)
     confidenceLevel <- tclVar(".95")
-    confidenceField <- tkentry(confidenceFrame, width="6", textvariable=confidenceLevel)
+    confidenceField <- ttkentry(confidenceFrame, width="6", textvariable=confidenceLevel)
     radioButtons(name="test", buttons=c("normal", "corrected"), 
         labels=gettextRcmdr(c("Normal approximation", "Normal approximation with\ncontinuity correction")), title=gettextRcmdr("Type of Test"))
     tkgrid(getFrame(groupsBox), getFrame(xBox), sticky="nw")    
     groupsLabel(columnspan=2)
-    tkgrid(tklabel(confidenceFrame, text=gettextRcmdr("Confidence Level: "), fg="blue"), confidenceField, sticky="w")
+    tkgrid(labelRcmdr(confidenceFrame, text=gettextRcmdr("Confidence Level: "), fg="blue"), confidenceField, sticky="w")
     tkgrid(confidenceFrame, sticky="w")
     tkgrid(alternativeFrame, rightFrame, sticky="nw")
     tkgrid(testFrame, sticky="w")

@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 24 May 07 by J. Fox
+# last modified 26 March 2008 by J. Fox
 
     # Means menu
 
@@ -36,15 +36,15 @@ independentSamplesTTest <- function(){
         labels=gettextRcmdr(c("Two-sided", "Difference < 0", "Difference > 0")), title=gettextRcmdr("Alternative Hypothesis"))
     confidenceFrame <- tkframe(optionsFrame)
     confidenceLevel <- tclVar(".95")
-    confidenceField <- tkentry(confidenceFrame, width="6", textvariable=confidenceLevel)
+    confidenceField <- ttkentry(confidenceFrame, width="6", textvariable=confidenceLevel)
     radioButtons(optionsFrame, name="variances", buttons=c("yes", "no"), values=c("TRUE", "FALSE"), initialValue="FALSE",
         labels=gettextRcmdr(c("Yes", "No")), title=gettextRcmdr("Assume equal variances?"))
-    tkgrid(getFrame(groupBox), tklabel(variablesFrame, text="    "), getFrame(responseBox), sticky="nw")
+    tkgrid(getFrame(groupBox), labelRcmdr(variablesFrame, text="    "), getFrame(responseBox), sticky="nw")
     tkgrid(variablesFrame, sticky="nw")
-    tkgrid(tklabel(confidenceFrame, text=gettextRcmdr("Confidence Level"), fg="blue"),sticky="w")
+    tkgrid(labelRcmdr(confidenceFrame, text=gettextRcmdr("Confidence Level"), fg="blue"),sticky="w")
     tkgrid(confidenceField, sticky="w")
     groupsLabel(groupsBox=groupBox)
-    tkgrid(alternativeFrame, tklabel(optionsFrame, text="    "), confidenceFrame, tklabel(optionsFrame, text="    "),
+    tkgrid(alternativeFrame, labelRcmdr(optionsFrame, text="    "), confidenceFrame, labelRcmdr(optionsFrame, text="    "),
         variancesFrame, sticky="nw")
     tkgrid(optionsFrame, sticky="nw")
     tkgrid(buttonsFrame, sticky="w")
@@ -71,9 +71,9 @@ pairedTTest <- function(){
         level <- tclvalue(confidenceLevel)
         closeDialog()
         .activeDataSet <- ActiveDataSet()
-        doItAndPrint(paste("t.test(", .activeDataSet, "$", x, ", ", 
+        doItAndPrint(paste("t.test(", .activeDataSet, "$", x, ", ",
             .activeDataSet, "$", y,
-            ", alternative='", alternative, "', conf.level=", level, 
+            ", alternative='", alternative, "', conf.level=", level,
             ", paired=TRUE)", sep=""))
         tkfocus(CommanderWindow())
         }
@@ -82,9 +82,9 @@ pairedTTest <- function(){
         labels=gettextRcmdr(c("Two-sided", "Difference < 0", "Difference > 0")), title=gettextRcmdr("Alternative Hypothesis"))
     confidenceFrame <- tkframe(top)
     confidenceLevel <- tclVar(".95")
-    confidenceField <- tkentry(confidenceFrame, width="6", textvariable=confidenceLevel)
-    tkgrid(getFrame(xBox), getFrame(yBox), sticky="nw")    
-    tkgrid(tklabel(confidenceFrame, text=gettextRcmdr("Confidence Level"), fg="blue"))
+    confidenceField <- ttkentry(confidenceFrame, width="6", textvariable=confidenceLevel)
+    tkgrid(getFrame(xBox), getFrame(yBox), sticky="nw")
+    tkgrid(labelRcmdr(confidenceFrame, text=gettextRcmdr("Confidence Level"), fg="blue"))
     tkgrid(confidenceField, sticky="w")
     tkgrid(alternativeFrame, confidenceFrame, sticky="nw")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
@@ -105,27 +105,27 @@ singleSampleTTest <- function(){
         mu <- tclvalue(muVariable)
         closeDialog()
         doItAndPrint(paste("t.test(", ActiveDataSet(), "$", x,
-            ", alternative='", alternative, "', mu=", mu, ", conf.level=", level, 
+            ", alternative='", alternative, "', mu=", mu, ", conf.level=", level,
             ")", sep=""))
         tkdestroy(top)
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="t.test")
     radioButtons(top, name="alternative", buttons=c("twosided", "less", "greater"), values=c("two.sided", "less", "greater"),
-        labels=gettextRcmdr(c("Population mean = mu0", "Population mean < mu0", "Population mean > mu0")), 
+        labels=gettextRcmdr(c("Population mean = mu0", "Population mean < mu0", "Population mean > mu0")),
         title=gettextRcmdr("Alternative Hypothesis"))
     rightFrame <- tkframe(top)
     confidenceFrame <- tkframe(rightFrame)
     confidenceLevel <- tclVar(".95")
-    confidenceField <- tkentry(confidenceFrame, width="6", textvariable=confidenceLevel)
+    confidenceField <- ttkentry(confidenceFrame, width="6", textvariable=confidenceLevel)
     muFrame <- tkframe(rightFrame)
     muVariable <- tclVar("0.0")
-    muField <- tkentry(muFrame, width="8", textvariable=muVariable)
-    tkgrid(getFrame(xBox), sticky="nw") 
-    tkgrid(tklabel(rightFrame, text=""), sticky="w")   
-    tkgrid(tklabel(muFrame, text=gettextRcmdr("Null hypothesis: mu = ")), muField, sticky="w")
+    muField <- ttkentry(muFrame, width="8", textvariable=muVariable)
+    tkgrid(getFrame(xBox), sticky="nw")
+    tkgrid(labelRcmdr(rightFrame, text=""), sticky="w")
+    tkgrid(labelRcmdr(muFrame, text=gettextRcmdr("Null hypothesis: mu = ")), muField, sticky="w")
     tkgrid(muFrame, sticky="w")
-    tkgrid(tklabel(confidenceFrame, text=gettextRcmdr("Confidence Level: ")), confidenceField, sticky="w")
+    tkgrid(labelRcmdr(confidenceFrame, text=gettextRcmdr("Confidence Level: ")), confidenceField, sticky="w")
     tkgrid(confidenceFrame, sticky="w")
     tkgrid(alternativeFrame, rightFrame, sticky="nw")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
@@ -158,15 +158,15 @@ oneWayAnova <- function(){
         justDoIt(command)
         logger(command)
         doItAndPrint("anova(.Anova)")
-        doItAndPrint(paste("tapply(", .activeDataSet, "$", response, ", ", .activeDataSet, "$", group, 
+        doItAndPrint(paste("tapply(", .activeDataSet, "$", response, ", ", .activeDataSet, "$", group,
             ", mean, na.rm=TRUE) # means", sep=""))
-        doItAndPrint(paste("tapply(", .activeDataSet, "$", response, ", ", .activeDataSet, "$", group, 
+        doItAndPrint(paste("tapply(", .activeDataSet, "$", response, ", ", .activeDataSet, "$", group,
             ", sd, na.rm=TRUE) # std. deviations", sep=""))
-        doItAndPrint(paste("tapply(", .activeDataSet, "$", response, ", ", .activeDataSet, "$", group, 
+        doItAndPrint(paste("tapply(", .activeDataSet, "$", response, ", ", .activeDataSet, "$", group,
             ", function(x) sum(!is.na(x))) # counts", sep=""))
         pairwise <- tclvalue(pairwiseVariable)
         if (pairwise == 1) {
-            if (eval(parse(text=paste("length(levels(", .activeDataSet, "$", group, ")) < 3")))) 
+            if (eval(parse(text=paste("length(levels(", .activeDataSet, "$", group, ")) < 3"))))
                 Message(message=gettextRcmdr("Factor has fewer than 3 levels; pairwise comparisons omitted."),
                     type="warning")
             # the following lines modified by Richard Heiberger and subsequently by J. Fox
@@ -191,12 +191,12 @@ oneWayAnova <- function(){
         }
     OKCancelHelp(helpSubject="anova")
     tkgrid(getFrame(groupBox), getFrame(responseBox), sticky="nw")
-    tkgrid(tklabel(optionsFrame, text=gettextRcmdr("Pairwise comparisons of means")), pairwiseCheckBox, sticky="w")
+    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Pairwise comparisons of means")), pairwiseCheckBox, sticky="w")
     tkgrid(optionsFrame, sticky="w")
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     dialogSuffix(rows=4, columns=2)
     }
-    
+
 multiWayAnova <- function(){
     initializeDialog(title=gettextRcmdr("Multi-Way Analysis of Variance"))
     groupBox <- variableListBox(top, Factors(), selectmode="multiple", title=gettextRcmdr("Factors (pick one or more)"))

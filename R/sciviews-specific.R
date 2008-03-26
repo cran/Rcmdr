@@ -3,6 +3,7 @@
 # last modified 19 April 2005 by Ph. Grosjean
 #  small fix to call to list.files() by J. Fox 17 Jan 05
 #  modifications 18 Feb 06 by J. Fox
+#  small change 20 Mar 08 by J. Fox
 
 is.SciViews <- function() {
     # SciViews defines the option "SciViews.version".
@@ -51,7 +52,7 @@ svCommander <- function(Version = "1.1-0"){
         current <- options("Rcmdr")[[1]]
         setOption("log.font.size", if (.Platform$OS.type == "windows") 10 else 12)
         putRcmdr("logFont", tkfont.create(family="courier", size=getRcmdr("log.font.size")))
-    	putRcmdr("operatorFont", tkfont.create(family="courier", size=getRcmdr("log.font.size")))
+#    	putRcmdr("operatorFont", tkfont.create(family="courier", size=getRcmdr("log.font.size")))
 		scale.factor <- current$scale.factor
         if (!is.null(scale.factor)) .Tcl(paste("tk scaling ", scale.factor, sep=""))
         if (packageAvailable("car")) {
