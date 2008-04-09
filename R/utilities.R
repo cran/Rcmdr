@@ -1,4 +1,4 @@
-# last modified 26 March 2008 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 9 April 2008 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
 
 # utility functions
 
@@ -2123,7 +2123,7 @@ is.model <- function(object) {
   }
   
 # the following lines, adding support for ttk widgets, adapted from code by Brian Ripley
-if (!as.character(tcl("info", "tclversion")) >= "8.5"){
+if (!(as.character(tcl("info", "tclversion")) >= "8.5" && getRversion() >= "2.7.0")){
     buttonRcmdr <- tkbutton
     labelRcmdr <- tklabel
     ttkentry <- tkentry
