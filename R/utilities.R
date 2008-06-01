@@ -1,4 +1,4 @@
-# last modified 9 April 2008 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 1 June 2008 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
 
 # utility functions
 
@@ -1123,8 +1123,8 @@ RcmdrPager <- function (file, header, title, delete.file)
 
 
 helpCommander <- function() {
-    if (as.numeric(R.Version()$major) >= 2) print(help("Commander"))
-    else help("Commander")
+    if (as.numeric(R.Version()$major) >= 2) print(help(gettextRcmdr("Commander")))
+    else help(gettextRcmdr("Commander"))
     }
 
 helpAboutCommander <- function() {
@@ -1134,7 +1134,7 @@ helpAboutCommander <- function() {
 
 browseManual <- function() {
     browseURL(paste(file.path(.path.package(package="Rcmdr")[1], "doc"),
-        "/Getting-Started-with-the-Rcmdr.pdf", sep=""))
+        "/", gettextRcmdr("Getting-Started-with-the-Rcmdr"), ".pdf", sep=""))
     }
 
 
