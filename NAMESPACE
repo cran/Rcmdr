@@ -1,4 +1,4 @@
-# last modified 26 March 2008 by J. Fox
+# last modified 09 July 2008 by J. Fox
 
 import(tcltk)
 
@@ -19,11 +19,11 @@ listAllModels, listDataSets, listFactors, listGeneralizedLinearModels,
 listLinearModels, listMultinomialLogitModels, listNumeric, listPlugins, 
 listProportionalOddsModels, listTwoLevelFactors, listVariables, 
 lmP, logger, LogWindow,
-Message, MessagesWindow, modelFormula, modelsP, Numeric,
+Message, MessagesWindow, modelFormula, modelsP, nobs, Numeric,
 numericP, numSummary, OKCancelHelp, OutputWindow, packageAvailable, partial.cor,
 plotMeans, popOutput, putRcmdr, radioButtons, rglLoaded, RcmdrPager, RcmdrTclSet, 
 RcmdrTkmessageBox,
-reliability, rowPercents, scatter3d, stem.leaf, subOKCancelHelp,
+reliability, rowPercents, scatter3d, subOKCancelHelp,
 subsetBox, totPercents, trim.blanks, ttkentry, ttkframe, ttkradiobutton,
 ttkscrollbar, TwoLevelFactors, twoLevelFactorsP, 
 UpdateModelNumber, variableListBox, Variables)
@@ -34,7 +34,6 @@ S3method(confint, multinom)
 S3method(confint, polr)
 S3method(print, numSummary)
 S3method(print, reliability)
-S3method(print, stem.leaf)
 S3method(getFrame, listbox)
 S3method(getSelection, listbox)
 

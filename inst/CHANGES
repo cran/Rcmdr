@@ -679,7 +679,41 @@ Version 1.3-15
    o  Spanish translations of Getting-Started-with-the-Rcmdr.pdf and Commander.Rd.
    
    o  New Spanish translation file (courtesy of the Spanish R-UCA Project).
+   
+Version 1.4-0
 
+   o  New "remove" directive for Rcmdr plug-in menu files permits removal of menus and menu items.
    
+   o  Anova tables now allow choice of "types" I, II, or III tests (suggested by several people, and against my better judgment!).
    
+   o  Bug fix: The numerical summaries dialog was ignorning user-entered quantiles (reported by Michael Hallquist).
+
+   o  Duplicate menu names (most likely from a plug-in package) are now an error (requested by Erich Neuwirth).
    
+   o  Added dialog box for "strip charts" (suggested by Didrik Vanhoenacker).
+   
+   o  Added "remove rows" dialog box (suggested by Liviu Andronic).
+   
+   o  Bug fix: The Options dialog wiped out previously set Rcmdr options not included in the dialog (reported by John Maindonald and Richard Heiberger).   
+   
+   o  Added AIC and BIC to Models menu (suggested by Jukka Corander).
+   
+   o  The Rcmdr "contrasts" option was renamed to "default.contrasts" (after a suggestion by Richard Heiberger).
+   
+   o  New "File -> Change working directory..." menu item (suggested by Jose Maria Polo).
+   
+   o  Scatterplot dialog now has options for log axes (suggested by John Maindonald).
+   
+   o  "Data -> Import data -> from text file etc." now can read from a URL (suggested by Frank Harrell).
+   
+   o  "Data -> Import data -> from Excel etc." now handles Excel 2007 and Access 2007 file formats.
+   
+   o  Added Friedman rank-sum test (suggested by Adrian Olszewski).
+   
+   o  Ctrl-x,c,v now work for cut, copy, and paste on all platforms in script and output windows; Ctrl-z is now undo key and Ctrl-w the redo key; Undo and Redo items added to the Edit and right-click context menus (various requests).
+   
+   o  New version of XYplot dialog (contributed by Richard Heiberger, originally in RcmdrPlugin.HH package.).
+   
+   o  Updated Italian and Russian translations (thanks, respectively, to Stefano Calza and Alexey Shipunov).
+
+   o  Small fixes and changes.

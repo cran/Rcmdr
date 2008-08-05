@@ -11,11 +11,12 @@
 An R Commander plug-in is an ordinary R package that (1) provides extensions to 
 the R Commander menus is a file named \code{menus.txt} located in the package's 
 \code{etc} directory; (2) provides call-back functions required by these menus;
-and (3) in optional \code{Log-Exceptions:} and \code{Models:} fields in the
-package's \code{DESCRIPTION} file, augments respectively the list of functions
-for which printed output is suppressed and the list of model objects 
+and (3) in an \code{Models:} field in the
+package's \code{DESCRIPTION} file, augments the list of model objects 
 recognized by the R Commander. The menus provided by a plug-in package are
-merged with the standard Commander menus.
+merged with the standard Commander menus. It is also possible to remove menus
+and menu items from the standard Commander menu file or from the files of
+plug-ins installed before the current one.
 
 Plug-in packages given in the R Commander \code{plugins} option 
 (see \code{\link{Commander}}) are automatically loaded when the Commander

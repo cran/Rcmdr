@@ -1,6 +1,6 @@
 # Graphs menu dialogs
 
-# last modified 26 March 2008 by J. Fox
+# last modified 29 July 2008 by J. Fox
 
 indexPlot <- function(){
     initializeDialog(title=gettextRcmdr("Index Plot"))
@@ -83,6 +83,7 @@ Histogram <- function(){
     }
 
 stemAndLeaf <- function(){
+	require("aplpack")
     initializeDialog(title=gettextRcmdr("Stem and Leaf Display"), preventCrisp=TRUE)
     xBox <- variableListBox(top, Numeric(), title=gettextRcmdr("Variable (pick one)"))
     displayDigits <- tclVar("1")
@@ -125,7 +126,7 @@ stemAndLeaf <- function(){
         style <- if (tclvalue(styleVariable) == "Tukey") ""
             else ', style="bare"'
         command <- paste("stem.leaf(", ActiveDataSet(), "$", x, style, unit, m, trim,
-            depths, reverse, ")", sep="")
+            depths, reverse, ", na.rm=TRUE)", sep="")
         doItAndPrint(command)
         tkfocus(CommanderWindow())
         }
@@ -209,8 +210,10 @@ scatterPlot <- function(){
     xBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("x-variable (pick one)"))
     yBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("y-variable (pick one)"))
     optionsParFrame <- tkframe(top)
-    checkBoxes(window=optionsParFrame, frame="optionsFrame", boxes=c("identify", "jitterX", "jitterY", "boxplots", "lsLine", "smoothLine"),
-        initialValues=c(0, 0, 0, 1, 1, 1), labels=gettextRcmdr(c("Identify points", "Jitter x-variable", "Jitter y-variable",
+    checkBoxes(window=optionsParFrame, frame="optionsFrame", 
+		boxes=c("identify", "jitterX", "jitterY", "logX", "logY", "boxplots", "lsLine", "smoothLine"),
+        initialValues=c(0, 0, 0, 0, 0, 1, 1, 1), 
+		labels=gettextRcmdr(c("Identify points", "Jitter x-variable", "Jitter y-variable", "Log x-axis", "Log y-axis",
         "Marginal boxplots", "Least-squares line", "Smooth Line")), title="Options")
     sliderValue <- tclVar("50")
     slider <- tkscale(optionsFrame, from=0, to=100, showvalue=TRUE, variable=sliderValue,
@@ -265,6 +268,10 @@ scatterPlot <- function(){
             else if ("1" == tclvalue(jitterXVariable)) ", jitter=list(x=1)"
             else if ("1" == tclvalue(jitterYVariable)) ", jitter=list(y=1)"
             else ""
+		logstring <- ""
+		if ("1" == tclvalue(logXVariable)) logstring <- paste(logstring, "x", sep="")
+		if ("1" == tclvalue(logYVariable)) logstring <- paste(logstring, "y", sep="")
+		log <- if(logstring != "") paste(', log="', logstring, '"', sep="") else ""
         if("1" == tclvalue(identifyVariable)){
             RcmdrTkmessageBox(title="Identify Points",
                 message=gettextRcmdr("Use left mouse button to identify points,\nright button to exit."),
@@ -296,7 +303,7 @@ scatterPlot <- function(){
             }
         pch <- if(trim.blanks(pch) == gettextRcmdr("<auto>")) "" else paste(", pch=c(", pch, ")", sep="")
         if (.groups == FALSE) {
-            doItAndPrint(paste("scatterplot(", y, "~", x,
+            doItAndPrint(paste("scatterplot(", y, "~", x, log,
                 ", reg.line=", line, ", smooth=", smooth, ", labels=", labels,
                 ", boxplots=", box, ", span=", span/100, jitter, xlab, ylab,
                 cex, cex.axis, cex.lab, pch,
@@ -983,98 +990,158 @@ saveRglGraph <- function(){
 
 # The following function by Richard Heiberger, with small modifications by J. Fox
 
+## The following function by Richard Heiberger, with small modifications by J. Fox
+## with more modifications by Richard Heiberger.
+## 2008-01-03 added conditions, layout, and multiple colors
 Xyplot <- function() {
-    require("lattice")
-    initializeDialog(title=gettextRcmdr("XY Conditioning Plot"))
-    predictorBox <- variableListBox(top, Numeric(), title=gettextRcmdr("Explanatory variables (pick one or more)"), selectmode="multiple")
-    responseBox <- variableListBox(top, Numeric(), title=gettextRcmdr("Response variables (pick one or more)"), selectmode="multiple")
-    groupsBox <- variableListBox(top, Factors(), title=gettextRcmdr("Groups (pick zero or more)"), selectmode="multiple", initialSelection=FALSE)
-    checkBoxes(frame="optionsFrame",
-               boxes=c("auto.key", "outer"),
-               initialValues=c(1,0),
-               labels=gettextRcmdr(c("Automatically draw key",
-                "Different panels for different responses")))
-    radioButtons(name="x.relation",
-                 buttons=c("same", "free", "sliced"),
-                 labels=gettextRcmdr(c("Identical", "Free", "Same range")),
-                 title=gettextRcmdr("X-Axis Scales in Different Panels"))
-    radioButtons(name="y.relation",
-                 buttons=c("same", "free", "sliced"),
-                 labels=gettextRcmdr(c("Identical", "Free", "Same range")),
-                 title=gettextRcmdr("Y-Axis Scales in Different Panels"))
-    onOK <- function() {
-        predictor <- getSelection(predictorBox)
-        response <- getSelection(responseBox)
-        groups <- getSelection(groupsBox)
-        closeDialog()
-        if (0 == length(response)) {
-            errorCondition(recall=Xyplot, message=gettextRcmdr("At least one response variable must be selected."))
-            return()
-            }
-        if (0 == length(predictor)) {
-            errorCondition(recall=Xyplot, message=gettextRcmdr("At least one explanatory variable must be selected."))
-            return()
-            }
-        auto.key <- ("1" == tclvalue(auto.keyVariable))
-        outer    <- ("1" == tclvalue(outerVariable))
-        x.relation <- as.character(tclvalue(x.relationVariable))
-        y.relation <- as.character(tclvalue(y.relationVariable))
-        .activeDataSet <- ActiveDataSet()
-        xyplot.command <- paste("xyplot(",
-                                paste(response, collapse=' + '),
-                                " ~ ",
-                                paste(predictor, collapse=' + '),
-                                if (length(groups) > 0)
-                                   paste(" | ",
-                                         paste(groups, collapse=' + ')
-                                         ) else "",
-                                if (outer) ", outer=TRUE",
-                                if (length(groups)==0) {
-                                  if (outer) paste(", layout=c(",
-                                                   length(predictor),
-                                                   ",",
-                                                   length(response),
-                                                   ")")
-                                }
-                                else {  ## (length(groups)>0)
-                                  if (outer) {
-                                    group.levels <- prod(sapply(groups, d.f=get(.activeDataSet),
-                                                                function(g, d.f) length(levels(d.f[[g]]))))
-                                    paste(", layout=c(",
-                                          group.levels,
-                                          "*",
-                                          length(predictor),
-                                          ",",
-                                          length(response),
-                                          ")",
-                                          ## ", between=list(x=c(0,0, 1, 0,0), y=1)",
-                                          ", between=list(x=c(",
-                                          paste(rep(c(rep(0, group.levels-1), 1),
-                                                    length=group.levels*length(predictor)-1),
-                                                collapse=","),
-                                          "), y=1)")
-                                  }
-                                },
-                                if (auto.key) ", auto.key=TRUE" else "",
-                                paste(", scales=list(x=list(relation='",
-                                      x.relation,
-                                      "'), y=list(relation='",
-                                      y.relation,
-                                      "'))", sep=""),
-                                ", data=", .activeDataSet, ')', sep="")
-        doItAndPrint(xyplot.command)
-        activateMenus()
-        tkfocus(CommanderWindow())
-        }
-    OKCancelHelp(helpSubject="xyplot")
-    tkgrid(getFrame(predictorBox), getFrame(responseBox), sticky="nw")
-    tkgrid(getFrame(groupsBox), sticky="w")
-    tkgrid(optionsFrame, sticky="w")
-    tkgrid(x.relationFrame, sticky="w")
-    tkgrid(y.relationFrame, sticky="w")
-    tkgrid(buttonsFrame, columnspan=2, sticky="w")
-    dialogSuffix(rows=6, columns=2)
-    }
+	require("lattice")
+	initializeDialog(title=gettextRcmdr("XY Conditioning Plot"))
+	predictorFrame <- tkframe(top)
+	predictorBox <- variableListBox(predictorFrame, Numeric(), title=gettextRcmdr("Explanatory variables (pick one or more)"), selectmode="multiple")
+	responseBox <- variableListBox(predictorFrame, Numeric(), title=gettextRcmdr("Response variables (pick one or more)"), selectmode="multiple")
+	cgFrame <- tkframe(top)
+	conditionsBox <- variableListBox(cgFrame, Factors(), title=gettextRcmdr("Conditions '|' (pick zero or more)"), selectmode="multiple", initialSelection=FALSE)
+	groupsBox <- variableListBox(cgFrame, Factors(), title=gettextRcmdr("Groups 'groups=' (pick zero or more)"), selectmode="multiple", initialSelection=FALSE)
+	checkBoxes(frame="optionsFrame",
+			boxes=c("auto.key", "outer"),
+			initialValues=c(1,0),
+			labels=gettextRcmdr(c("Automatically draw key", 
+							"Different panels for different y~x combinations")))
+	relationFrame <- tkframe(top)
+	radioButtons(window=relationFrame,
+			name="x.relation",
+			buttons=c("same", "free", "sliced"),
+			labels=gettextRcmdr(c("Identical", "Free", "Same range")),
+			title=gettextRcmdr("X-Axis Scales in Different Panels"))
+	radioButtons(window=relationFrame,
+			name="y.relation",
+			buttons=c("same", "free", "sliced"),
+			labels=gettextRcmdr(c("Identical", "Free", "Same range")),
+			title=gettextRcmdr("Y-Axis Scales in Different Panels"))
+	
+	scalarsFrame <- tkframe(top)
+	
+	layoutColumnsVar <- tclVar("")
+	layoutColumnsEntry <- tkentry(scalarsFrame, width="6", textvariable=layoutColumnsVar)
+	layoutRowsVar <- tclVar("")
+	layoutRowsEntry <- tkentry(scalarsFrame, width="6", textvariable=layoutRowsVar)
+	
+	onOK <- function() {
+		predictor <- getSelection(predictorBox)
+		response <- getSelection(responseBox)
+		conditions <- getSelection(conditionsBox)
+		groups <- getSelection(groupsBox)
+		closeDialog()
+		if (0 == length(response)) {
+			errorCondition(recall=Xyplot.HH, message=gettextRcmdr("At least one response variable must be selected."))
+			return()
+		}
+		if (0 == length(predictor)) {
+			errorCondition(recall=Xyplot.HH, message=gettextRcmdr("At least one explanatory variable must be selected."))
+			return()
+		}
+		auto.key <- ("1" == tclvalue(auto.keyVariable))
+		outer    <- ("1" == tclvalue(outerVariable))
+		x.relation <- as.character(tclvalue(x.relationVariable))
+		y.relation <- as.character(tclvalue(y.relationVariable))
+		
+		layoutColumns  <- as.numeric(tclvalue(layoutColumnsVar))
+		layoutRows     <- as.numeric(tclvalue(layoutRowsVar))
+		layout.command <- ""
+		number.na <- is.na(layoutColumns) + is.na(layoutRows)
+		
+		if (number.na==1) {
+			errorCondition(recall=Xyplot.HH,
+					message=gettextRcmdr("Both or neither layout values must be numbers."))
+			return()
+		}
+		if (number.na==0) layout.command <- deparse(c(layoutColumns, layoutRows))
+		
+		.activeDataSet <- ActiveDataSet()
+		
+		
+		
+		condtions.command <-
+				if (length(conditions)==0) {
+					if (outer) {
+						if (layout.command=="")
+							paste(", layout=c(",
+									length(predictor),
+									",",
+									length(response),
+									")")
+						else
+							paste(", layout=", layout.command, sep="")
+					}
+				}
+				else {  ## (length(conditions)>0)
+					if (outer) {
+						condition.levels <- prod(sapply(conditions, d.f=get(.activeDataSet),
+										function(g, d.f) length(levels(d.f[[g]]))))
+						paste(", layout=c(",
+								condition.levels,
+								"*",
+								length(predictor),
+								",",
+								length(response),
+								")",
+								## ", between=list(x=c(0,0, 1, 0,0), y=1)",
+								", between=list(x=c(",
+								paste(rep(c(rep(0, condition.levels-1), 1),
+												length=condition.levels*length(predictor)-1),
+										collapse=","),
+								"), y=1)")
+					}
+				}
+		
+		groups.command <-
+				if (length(groups)==1) paste(", groups=", groups, sep="")
+				else ""
+		
+		xyplot.command <- paste("xyplot(",
+				paste(response, collapse=' + '),
+				" ~ ",
+				paste(predictor, collapse=' + '),
+				if (length(conditions) > 0)
+							paste(" | ",
+									paste(conditions, collapse=' + ')
+							) else "",
+				if (outer) ",\n outer=TRUE",
+				condtions.command,
+				groups.command,
+				", pch=16",
+				if (auto.key) ",\n auto.key=list(border=TRUE), par.settings = simpleTheme(pch=16)" else "",
+				paste(", scales=list(x=list(relation='",
+						x.relation,
+						"'), y=list(relation='",
+						y.relation,
+						"'))", sep=""),
+				",\n data=", .activeDataSet, ')', sep="")
+		doItAndPrint(xyplot.command)
+		activateMenus()
+		tkfocus(CommanderWindow())
+	}
+	OKCancelHelp(helpSubject="xyplot")
+	tkgrid(getFrame(predictorBox), getFrame(responseBox),
+			columnspan=1, sticky="w")
+	tkgrid(predictorFrame, sticky="w")
+	tkgrid(getFrame(conditionsBox),
+			tklabel(cgFrame, text=gettextRcmdr("           ")),
+			getFrame(groupsBox),
+			columnspan=1, sticky="w")
+	tkgrid(cgFrame, sticky="w")
+	tkgrid(tklabel(top, text=gettextRcmdr("Options"), fg="blue"), sticky="w")
+	tkgrid(optionsFrame, sticky="w")
+	tkgrid(x.relationFrame, y.relationFrame, columnspan=2, sticky="w")
+	tkgrid(relationFrame, sticky="w")
+	tkgrid(tklabel(top, text=gettextRcmdr("Layout"), fg="blue"), sticky="w")
+	tkgrid(tklabel(scalarsFrame, text=gettextRcmdr("number of columns:")), layoutColumnsEntry, sticky="w")
+	tkgrid(tklabel(scalarsFrame, text=gettextRcmdr("number of rows:")), layoutRowsEntry, sticky="w")
+	tkgrid(scalarsFrame, sticky="w")
+	tkgrid(buttonsFrame, columnspan=2, sticky="w")
+	dialogSuffix(rows=6, columns=2)
+}
+
 
 # set the colour palette
 
@@ -1191,4 +1258,39 @@ setPalette <- function() {
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix(rows=2)
     }
+	
+	stripChart <- function(){
+		initializeDialog(title=gettextRcmdr("Strip Chart"))
+		groupBox <- variableListBox(top, Factors(), title=gettextRcmdr("Factors (pick zero or more)"), selectmode="multiple")
+		responseBox <- variableListBox(top, Numeric(), title=gettextRcmdr("Response Variable (pick one)"))
+		onOK <- function(){
+			groups <- getSelection(groupBox)
+			response <- getSelection(responseBox)
+			closeDialog()
+			if (0 == length(response)) {
+				errorCondition(recall=stripChart, message=gettextRcmdr("No response variable selected."))
+				return()
+			}
+			.activeDataSet <- ActiveDataSet()
+			plotType <- tclvalue(plotTypeVariable)
+			method <- paste(', method="', plotType, '"', sep="")
+			if (length(groups) == 0) doItAndPrint(paste("stripchart(", .activeDataSet, "$", response,
+								method, ', xlab="', response, '")', sep=""))
+			else {
+				groupNames <- paste(groups, collapse="*")
+				doItAndPrint(paste('stripchart(', response, ' ~ ', groupNames,
+								', vertical=TRUE', method, ', xlab="', groupNames, '", ylab="', response,
+								'", data=', .activeDataSet, ')', sep=""))
+			}
+			activateMenus()
+			tkfocus(CommanderWindow())
+		}
+		radioButtons(name="plotType", buttons=c("stack", "jitter"), labels=gettextRcmdr(c("Stack", "Jitter")), title=gettextRcmdr("Duplicate Values"))
+		buttonsFrame <- tkframe(top)
+		OKCancelHelp(helpSubject="stripchart")
+		tkgrid(getFrame(groupBox), getFrame(responseBox), sticky="nw")
+		tkgrid(plotTypeFrame, sticky="w")
+		tkgrid(buttonsFrame, columnspan=2, sticky="w")
+		dialogSuffix(rows=3, columns=2)
+	}
 

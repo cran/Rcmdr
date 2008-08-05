@@ -61,6 +61,7 @@
 \alias{MessagesWindow}
 \alias{modelFormula}
 \alias{modelsP}
+\alias{nobs}
 \alias{Numeric}
 \alias{numericP}
 \alias{OKCancelHelp}
@@ -160,6 +161,7 @@ Message(message, type=c("note", "error", "warning"))
 MessagesWindow()
 modelFormula(frame=top, hasLhs=TRUE)  # macro
 modelsP(n=1)
+nobs(model)
 Numeric(names)
 numericP(n=1)
 OKCancelHelp(window=top, helpSubject=NULL, model=FALSE)  # macro
@@ -340,7 +342,8 @@ commanderPosition()
   \emph{Miscellaneous:}
   The function \code{trim.blanks} removes spaces from the beginning and end of a character string. The function 
   \code{installPlugin} installs an Rcmdr plug-in from a ZIP file or directory; this function may be used to
-  create self-installing plug-ins in the form of packages.
+  create self-installing plug-ins in the form of packages. The function \code{nobs} returns the number of 
+  observations on which a statistical model is based.
   
   Some of these functions, marked \code{# macro} under \emph{Usage}, are "macro-like" in their behaviour, in that they 
   execute in the environment from which they are called. These were defined with an adaptation (used with permission) of

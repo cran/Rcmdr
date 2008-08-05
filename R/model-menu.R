@@ -1,6 +1,6 @@
 # Model menu dialogs
 
-# last modified 26 March 2008 by J. Fox
+# last modified 31 July 2008 by J. Fox
 
 selectActiveModel <- function(){
     models <- listAllModels()
@@ -95,11 +95,36 @@ anovaTable <- function(){
     require("car")
     .activeModel <- ActiveModel()
     if (is.null(.activeModel)) return()
-    if (!checkMethod("Anova", .activeModel)) {
-        errorCondition(message=gettextRcmdr("There is no appropriate Anova method for a model of this class."))
-        return()
-        }
-    doItAndPrint(paste("Anova(", .activeModel, ")", sep=""))
+	initializeDialog(title=gettextRcmdr("ANOVA Table"))
+	radioButtons(name="type",
+			buttons=c("I", "II", "III"),
+			values=c("I", "II", "III"), initialValue="II",
+			labels=gettextRcmdr(c('Sequential ("Type I")', 'Partial, obeying marginality ("Type II")', 'Partial, ignoring marginality ("Type III")')),
+			title=gettextRcmdr("Type of Tests"))
+	onOK <- function(){
+		type <- as.character(tclvalue(typeVariable))
+		closeDialog()
+		if (type == "I"){
+			if (!checkMethod("anova", .activeModel)) {
+				errorCondition(message=gettextRcmdr("There is no appropriate anova method for a model of this class."))
+				return()
+				}
+			doItAndPrint(paste("anova(", .activeModel, ")", sep=""))
+			}
+		else {
+			if (!checkMethod("Anova", .activeModel)) {
+				errorCondition(message=gettextRcmdr("There is no appropriate Anova method for a model of this class."))
+				return()
+				}
+			doItAndPrint(paste("Anova(", .activeModel, ', type="', type, '")', sep=""))
+			if (type == "III") Message(message=gettextRcmdr("Type III tests require careful attention to contrast coding."),
+				type="warning")
+			}
+		}
+	OKCancelHelp(helpSubject="Anova")
+	tkgrid(typeFrame, sticky="w")
+	tkgrid(buttonsFrame, sticky="w")
+	dialogSuffix(rows=2, columns=1)
     }
 
 VIF <- function(){
@@ -522,4 +547,16 @@ confidenceIntervals <- function(){
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix(rows=3 + glm, columns=1)
     }
+	
+aic <- function(){
+	.activeModel <- ActiveModel()
+	if (is.null(.activeModel)) return()
+	doItAndPrint(paste("AIC(", .activeModel, ")", sep=""))
+	}
+	
+bic <- function(){
+	.activeModel <- ActiveModel()
+	if (is.null(.activeModel)) return()
+	doItAndPrint(paste("AIC(", .activeModel, ", k = log(nobs(", .activeModel, "))) # BIC", sep=""))
+}
 

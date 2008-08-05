@@ -1,4 +1,4 @@
-# last modified 26 March 2008 by J. Fox
+# last modified 31 July 2008 by J. Fox
 
 # File menu dialogs
 
@@ -125,6 +125,7 @@ closeCommander <- function(ask=TRUE, ask.save=ask){
     putRcmdr("logWindow", NULL)
     putRcmdr("messagesWindow", NULL)
     putRcmdr("outputWindow", NULL)
+    options(getRcmdr("quotes"))
     tkwait <- options("Rcmdr")[[1]]$tkwait  # to address problem in Debian Linux
     if ((!is.null(tkwait)) && tkwait) tclvalue(.commander.done) <<- "1"
     return(invisible(response))
@@ -211,19 +212,18 @@ Options <- function(){
         scale.factor <- round(as.numeric(tclvalue(scaleFactorVar)), 1)
         if (scale.factor == 1) scale.factor <- NULL
         default.font <- tclvalue(defaultFont)
-        options <- list(
-            log.font.size=log.font.size,
-            log.width=log.width,
-            log.height=log.height,
-            log.commands=log.commands,
-            output.height=output.height,
-            console.output=console.output,
-            contrasts=contrasts,
-            grab.focus=grab.focus,
-            double.click=double.click,
-            sort.names=sort.names,
-            show.edit.button=show.edit.button
-            )
+		options <- current
+		options$log.font.size <- log.font.size
+		options$log.width <- log.width
+		options$log.height <- log.height
+		options$log.commands <- log.commands
+		options$output.height <- output.height
+		options$console.output <- console.output
+		options$contrasts <- contrasts
+		options$grab.focus <- grab.focus
+		options$double.click <- double.click
+		options$sort.names <- sort.names
+		options$show.edit.button <- show.edit.button
         if (.Platform$OS.type == "windows") options$scale.factor <- scale.factor
             else options$default.font <- default.font
         options(Rcmdr=options)
@@ -297,4 +297,9 @@ loadPackages <- function(){
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix(rows=1, columns=1)
     }
+	
+Setwd <- function(){
+	wd <- tclvalue(tkchooseDirectory(initialdir=getwd()))
+	if (wd != "") doItAndPrint(paste('setwd("', wd, '")', sep=""))
+	}
 

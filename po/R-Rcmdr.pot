@@ -1,8 +1,6 @@
-msgid ""
-msgstr ""
-"Project-Id-Version: Rcmdr 1.3-15\n"
+"Project-Id-Version: Rcmdr 1.4-0\n"
 "Report-Msgid-Bugs-To: jfox@mcmaster.ca\n"
-"POT-Creation-Date: 2008-06-01 14:40\n"
+"POT-Creation-Date: 2008-07-30 19:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3389,3 +3387,106 @@ msgstr ""
 msgid "Getting-Started-with-the-Rcmdr"
 msgstr ""
 
+# messages added to version 1.4-0
+
+msgid "Type of Tests"
+msgstr ""
+
+msgid "Sequential (\"Type I\")"
+msgstr ""
+
+msgid "Partial obeying marginality (\"Type II\")"
+msgstr ""
+
+msgid "Partial ignoring marginality (\"Type III\")"
+msgstr ""
+
+msgid "Type III tests require careful attention to contrast coding."
+msgstr ""
+
+msgid "There is no appropriate anova method for a model of this class."
+msgstr ""
+
+msgid "Duplicate menu names:"
+msgstr ""
+
+msgid "Strip chart..."
+msgstr ""
+
+msgid "Strip Chart"
+msgstr ""
+
+msgid "Factors (pick zero or more)"
+msgstr ""
+
+msgid "Duplicate Values"
+msgstr ""
+
+msgid "Stack"
+msgstr ""
+
+msgid "Jitter"
+msgstr ""
+
+msgid "Remove Rows from Active Data Set"
+msgstr ""
+
+msgid "Remove row(s) from active data set..."
+msgstr ""
+
+msgid "No rows to remove"
+msgstr ""
+
+msgid "Indices or quoted names of row(s) to remove"
+msgstr ""
+
+msgid "Akaike Information Criterion (AIC)"
+msgstr ""
+
+msgid "Bayesian Information Criterion (BIC)"
+msgstr ""
+
+msgid "Change working directory..."
+msgstr ""
+
+msgid "Log x-axis"
+msgstr ""
+
+msgid "Log y-axis"
+msgstr ""
+
+msgid "from text file, clipboard, or URL..."
+msgstr ""
+
+msgid "Read Text Data From File, Clipboard, or URL"
+msgstr ""
+
+msgid "Location of Data File"
+msgstr ""
+
+msgid "Local file system"
+msgstr ""
+
+msgid "Clipboard"
+msgstr ""
+
+msgid "Internet URL"
+msgstr ""
+
+msgid "Friedman rank-sum test..."
+msgstr ""
+
+msgid "Friedman Rank Sum Test"
+msgstr ""
+
+msgid "Repeated-Measures Variables (pick two or more)"
+msgstr ""
+
+msgid "Undo"
+msgstr ""
+
+msgid "Redo"
+msgstr ""
+
+msgid "ANOVA table..."
+msgstr ""

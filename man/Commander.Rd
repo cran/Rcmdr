@@ -74,6 +74,9 @@ Pressing \emph{Control-S} will save the script or output window.
 
 Pressing \emph{Control-A} selects all of the text in the script or output window.
 
+In addition, the following Control-key combinations work in the script and output windows: \emph{Control-X}, cut;
+\emph{Control-C}, copy; \emph{Control-V}, insert; \emph{Control-Z}, undo; and \emph{Control-W}, redo.
+
 Right-clicking the mouse (clicking button 3 on a three-button mouse) in the script or output window brings up
 a "context" menu with the \emph{Edit}-menu items, plus (in the script window) a \emph{Submit} item.
 
@@ -89,7 +92,11 @@ Exit from the Commander via the \emph{File -> Exit} menu or by closing the \emph
 
 \bold{Customization and Configuration}
 
-Configuration files reside in the \code{etc} subdirectory of the package, or in the locations given by the \code{etc} and \code{etcMenus} options (see below).
+The preferred way of customizing the R Commander is to write a plug-in package:
+see \code{help("\link{Plugins}")}.
+
+Alternatively, configuration files reside in the \code{etc} subdirectory of the package, 
+or in the locations given by the \code{etc} and \code{etcMenus} options (see below).
 
 The \code{Rcmdr} menus can be customized by editing the file \code{Rcmdr-menus.txt}.
 
@@ -124,7 +131,7 @@ set none, one, several, or all options. The available options are as follows:
     \item{\code{console.output}}{If \code{TRUE}, output is directed to the \emph{R Console}, and the 
     \emph{R Commander} output window is not displayed. The default is \code{FALSE}.}
     
-    \item{\code{contrasts}}{Serves the same function as the general \code{contrasts} option; the default is\cr
+    \item{\code{default.contrasts}}{Serves the same function as the general \code{contrasts} option; the default is\cr
     \code{c("contr.Treatment", "contr.poly")}. When the Commander exits, the \code{contrasts}
     option is returned to its pre-existing value. Note that \code{contr.Treatment} is from the \code{car} package.}
     
@@ -160,7 +167,8 @@ set none, one, several, or all options. The available options are as follows:
     of the output stack. Note that, as a stack, the queue is LIFO (``last in, first out'').}
     
     \item{\code{load.at.startup}}{A character vector of names of packages to be loaded 
-    when the \code{Rcmdr} package is loaded; the default is to load only the \code{car} package. Other required packages will be loaded as needed. If it is available, the 
+    when the \code{Rcmdr} package is loaded; the default is to load only the \code{car} package. 
+    Other required packages will be loaded as needed. If it is available, the 
     \code{car} package will be loaded at when the Commander starts in any event.}
       
     \item{\code{log.commands}}{If \code{TRUE} (the default), commands are echoed to the script window;
@@ -254,7 +262,8 @@ set none, one, several, or all options. The available options are as follows:
     
 Many options can also be set via the \emph{File -> Options} menu, which will restart the Commander after options are set.
 
-If you want always to launch the R Commander when R starts up, you can include the following code in one of R's start-up files (e.g., in the \code{Rprofile.site} file in R's \code{etc} subdirectory):
+If you want always to launch the R Commander when R starts up, you can include the following code in one of R's start-up 
+files (e.g., in the \code{Rprofile.site} file in R's \code{etc} subdirectory):
 
 \preformatted{
 local({
@@ -275,7 +284,9 @@ For more information about R initialization, see \code{?Startup}.
     }
 
 \section{Known Problem}{
-  Occasionally, under Windows, after typing some text into a dialog box (e.g., a subsetting expression in the Subset  Data Set dialog), buttons in the dialog (e.g., the OK button) will have no effect when they are pressed. Clicking anywhere inside or outside of the dialog box should restore the function of the buttons. As far as I have been able to ascertain, this is a problem with Tcl/Tk for Windows.
+  Occasionally, under Windows, after typing some text into a dialog box (e.g., a subsetting expression in the Subset  Data Set dialog), 
+  buttons in the dialog (e.g., the OK button) will have no effect when they are pressed. Clicking anywhere inside or outside of the dialog 
+  box should restore the function of the buttons. As far as I have been able to ascertain, this is a problem with Tcl/Tk for Windows.
 }
 
 
@@ -292,7 +303,7 @@ For more information about R initialization, see \code{?Startup}.
 \seealso{\link{Plugins}, \link{Rcmdr.Utilities}}
 
 \examples{
-    options(Rcmdr=list(log.font.size=12, contrasts=c("contr.Sum", "contr.poly")))
+    options(Rcmdr=list(log.font.size=12, default.contrasts=c("contr.Sum", "contr.poly")))
     }
 
 \keyword{misc}

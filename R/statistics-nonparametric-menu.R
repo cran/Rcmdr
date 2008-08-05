@@ -129,3 +129,30 @@ KruskalWallisTest <- function(){
     tkgrid(buttonsFrame, columnspan=2, sticky="w")
     dialogSuffix(rows=2, columns=2)
     }
+	
+FriedmanTest <- function(){
+	initializeDialog(title=gettextRcmdr("Friedman Rank Sum Test"))
+	responseBox <- variableListBox(top, Numeric(), selectmode="multiple", 
+			title=gettextRcmdr("Repeated-Measures Variables (pick two or more)"))
+	onOK <- function(){
+		responses <- getSelection(responseBox)
+		closeDialog()
+		if (length(responses) < 2) {
+			errorCondition(recall=FriedmanTest, message=gettextRcmdr("You must select at least two variables."))
+			return()
+			}
+		.activeDataSet <- ActiveDataSet()
+		command <- paste('na.omit(with(', .activeDataSet, ', cbind(', paste(responses, collapse=", "), ')))', sep="")
+		logger(paste(".Responses <- ", command, sep=""))
+		assign(".Responses", justDoIt(command), envir=.GlobalEnv)
+		doItAndPrint("apply(.Responses, 2, median)")
+		doItAndPrint("friedman.test(.Responses)")
+		logger("remove(.Responses)")
+		remove(.Responses, envir=.GlobalEnv)
+		tkfocus(CommanderWindow())
+		}
+	OKCancelHelp(helpSubject="friedman.test")
+	tkgrid(getFrame(responseBox), sticky="nw")
+	tkgrid(buttonsFrame, sticky="w")
+	dialogSuffix(rows=2, columns=1)
+	}

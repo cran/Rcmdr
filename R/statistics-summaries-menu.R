@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 26 March 2008 by J. Fox
+# last modified 27 July 2008 by J. Fox
 
     # Summaries menu
     
@@ -51,9 +51,11 @@ numericalSummaries <- function(){
             }               
         command <- if (.groups != FALSE) {
             grps <- paste(.activeDataSet, "$", .groups, sep="")
-            paste("numSummary(", vars, ", groups=", grps, ", statistics=", stats, ")", sep="")
+            paste("numSummary(", vars, ", groups=", grps, ", statistics=", stats, 
+				", quantiles=", quants, ")", sep="")
             }
-        else  paste("numSummary(", vars, ", statistics=", stats, ")", sep="")
+        else  paste("numSummary(", vars, ", statistics=", stats, 
+			", quantiles=", quants, ")", sep="")
         doItAndPrint(command) 
         tkfocus(CommanderWindow())
         }

@@ -1,4 +1,4 @@
-# last modified 26 March 2008 by J. Fox
+# last modified 30 July 2008 by J. Fox
 
 # Data menu dialogs
 
@@ -280,14 +280,16 @@ deleteVariable <- function(){
     }
 
 readDataSet <- function() {
-    initializeDialog(title=gettextRcmdr("Read Data From Text File or Clipboard"))
+    initializeDialog(title=gettextRcmdr("Read Text Data From File, Clipboard, or URL"))
     optionsFrame <- tkframe(top)
     dsname <- tclVar(gettextRcmdr("Dataset"))
     entryDsname <- ttkentry(optionsFrame, width="20", textvariable=dsname)
+	radioButtons(optionsFrame, "location", buttons=c("local", "clipboard", "url"), 
+		labels=gettextRcmdr(c("Local file system", "Clipboard", "Internet URL")), title=gettextRcmdr("Location of Data File"))
     headerVariable <- tclVar("1")
     headerCheckBox <- tkcheckbutton(optionsFrame, variable=headerVariable)
-    clipboardVariable <- tclVar("0")
-    clipboardCheckBox <- tkcheckbutton(optionsFrame, variable=clipboardVariable)
+ ##   clipboardVariable <- tclVar("0")
+ ##   clipboardCheckBox <- tkcheckbutton(optionsFrame, variable=clipboardVariable)
     radioButtons(optionsFrame, "delimiter", buttons=c("whitespace", "commas", "tabs"),
         labels=gettextRcmdr(c("White space", "Commas", "Tabs")), title=gettextRcmdr("Field Separator"))
     otherButton <- ttkradiobutton(delimiterFrame, variable=delimiterVariable, value="other")
@@ -316,9 +318,30 @@ readDataSet <- function() {
                 return()
                 }
             }
-        clip <- tclvalue(clipboardVariable) == "1"
-        file <- if (clip) "clipboard" else tclvalue(tkgetOpenFile(filetypes=
-            gettextRcmdr('{"Text Files" {".txt" ".TXT" ".dat" ".DAT" ".csv" ".CSV"}} {"All Files" {"*"}}')))
+##        clip <- tclvalue(clipboardVariable) == "1"
+		location <- tclvalue(locationVariable)
+        file <- if (location == "clipboard") "clipboard" 
+			else if (location == "local") tclvalue(tkgetOpenFile(filetypes=
+            	gettextRcmdr('{"Text Files" {".txt" ".TXT" ".dat" ".DAT" ".csv" ".CSV"}} {"All Files" {"*"}}')))
+			else {
+				initializeDialog(subdialog, title=gettextRcmdr("Internet URL"))
+				onOKsub <- function(){
+					closeDialog(subdialog)
+					}
+				urlFrame <- tkframe(subdialog)
+				urlVar <- tclVar("")
+				url <- ttkentry(urlFrame, font=getRcmdr("logFont"), width="30", textvariable=urlVar)
+				urlXscroll <- ttkscrollbar(urlFrame,
+						orient="horizontal", command=function(...) tkxview(url, ...))
+				tkconfigure(url, xscrollcommand=function(...) tkset(urlXscroll, ...))
+				subOKCancelHelp()
+				tkgrid(url, sticky="w")
+				tkgrid(urlXscroll, sticky="ew")
+				tkgrid(urlFrame, sticky="nw")
+				tkgrid(subButtonsFrame, sticky="w")
+				dialogSuffix(subdialog, rows=2, columns=1, focus=url, onOK=onOKsub)
+				tclvalue(urlVar)
+				}
         if (file == "") {
             if (getRcmdr("grab.focus")) tkgrab.release(top)
             tkdestroy(top)
@@ -342,15 +365,16 @@ readDataSet <- function() {
     OKCancelHelp(helpSubject="read.table")
     tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Enter name for data set:")), entryDsname, sticky="w")
     tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Variable names in file:")), headerCheckBox, sticky="w")
-    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Read data from clipboard:")), clipboardCheckBox, sticky="w")
+##    tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Read data from clipboard:")), clipboardCheckBox, sticky="w")
     tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Missing data indicator:")), missingEntry, sticky="w")
+	tkgrid(locationFrame, sticky="w")
     tkgrid(labelRcmdr(delimiterFrame, text=gettextRcmdr("Other")), otherButton,
         labelRcmdr(delimiterFrame, text=gettextRcmdr("  Specify:")), otherEntry, sticky="w")
     tkgrid(delimiterFrame, sticky="w", columnspan=2)
     tkgrid(decimalFrame, sticky="w")
     tkgrid(optionsFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
-    dialogSuffix(rows=4, columns=1)
+    dialogSuffix(rows=5, columns=1)
     }
 
 readDataFromPackage <- function() {
@@ -727,7 +751,7 @@ importSTATA <- function() {
     }
 
 # The following function was contributed by Matthieu Lesnoff
-#  (added with small changes by J. Fox, 20 July 06)
+#  (added with small changes by J. Fox, 20 July 06 & 30 July 08)
 
 importRODBCtable <- function(){
     # load the RODBC package and stops the program if not available
@@ -760,7 +784,7 @@ importRODBCtable <- function(){
                 }
             }
         File <- tclvalue(tkgetOpenFile(filetypes = gettextRcmdr(
-            '{"MS Excel file" {*.xls ".XLS"}} {"MS Access database" {*.mdb ".MDB"}} {"dBase-like file" {*.dbf ".DBF"}} {"All Files" {"*"}}'
+            '{"MS Excel file" {*.xls ".XLS"}} {"MS Excel 2007 file" {*.xlsx ".XLSX"}} {"MS Access database" {*.mdb ".MDB"}} {"MS Access 2007 database" {*.accdb ".ACCDB"}} {"dBase-like file" {*.dbf ".DBF"}} {"All Files" {"*"}}'
             )))
         if(File == ""){
             tkfocus(CommanderWindow())
@@ -770,15 +794,17 @@ importRODBCtable <- function(){
         ext <- tolower(substring(File, nchar(File) - sop + 2, nchar(File)))
         channel <- switch(EXPR = ext,
             xls = odbcConnectExcel(File),
+			xlsx = odbcConnectExcel2007(File),
             mdb = odbcConnectAccess(File),
+			accdb = odbcConnectAccess2007(File),
             dbf = odbcConnectDbase(File))
     # For Excel and Access cases, need to select a particular sheet or table
         if(ext != "dbf"){
             tabdat <- sqlTables(channel)
             names(tabdat) <- tolower(names(tabdat))
-            if(ext == "mdb")
+            if(ext == "mdb" || ext == "accdb")
                 tabdat <- tabdat[tabdat$table_type == "TABLE", 3]
-            if(ext == "xls"){
+            if(ext == "xls" || ext == "xlsx"){
                 tabname <- tabdat$table_name
                 tabdat <- ifelse(tabdat$table_type =="TABLE",
                 substring(tabname, 2, nchar(tabname) - 2),
@@ -794,7 +820,7 @@ importRODBCtable <- function(){
             errorCondition(message=gettextRcmdr("No table selected"))
             return()
             }
-          if(ext == "xls")
+          if(ext == "xls" || ext == "xlsx")
             fil <- paste("[", fil, "$]", sep = "")
           }
     # dBase file
@@ -955,7 +981,7 @@ binVariable <- function(){
     newVariable <- ttkentry(newVariableFrame, width="18", textvariable=newVariableName)
     binsFrame <- tkframe(top)
     binsVariable <- tclVar("3")
-    slider <- tkscale(binsFrame, from=2, to=10, showvalue=TRUE, variable=binsVariable,
+    slider <- tkscale(binsFrame, from=2, to=20, showvalue=TRUE, variable=binsVariable,
         resolution=1, orient="horizontal")
     optionsFrame <- tkframe(top)
     radioButtons(optionsFrame, name="levels", buttons=c("specify", "numbers", "ranges"),
@@ -1679,4 +1705,69 @@ saveDataSet <- function() {
     justDoIt(command)
     logger(command)
     }
+	
+RemoveRows <- function(){
+		dataSet <- activeDataSet()
+		initializeDialog(title=gettextRcmdr("Remove Rows from Active Data Set"))
+		removeVariable <- tclVar(gettextRcmdr(""))
+		removeFrame <- tkframe(top)
+		removeEntry <- ttkentry(removeFrame, width="60", textvariable=removeVariable)
+		removeScroll <- ttkscrollbar(removeFrame, orient="horizontal",
+				command=function(...) tkxview(removeEntry, ...))
+		tkconfigure(removeEntry, xscrollcommand=function(...) tkset(removeScroll, ...))
+		newDataSetName <- tclVar(gettextRcmdr("<same as active data set>"))
+		dataSetNameFrame <- tkframe(top)
+		dataSetNameEntry <- ttkentry(dataSetNameFrame, width="25", textvariable=newDataSetName)
+		onOK <- function(){
+			newName <- trim.blanks(tclvalue(newDataSetName))
+			if (newName == gettextRcmdr("<same as active data set>")) newName <- ActiveDataSet()
+			if (!is.valid.name(newName)){
+				errorCondition(recall=RemoveRows,
+						message=paste('"', newName, '" ', gettextRcmdr("is not a valid name."), sep=""))
+				return()
+			}
+			if (is.element(newName, listDataSets())) {
+				if ("no" == tclvalue(checkReplace(newName, type=gettextRcmdr("Data set")))){
+					closeDialog()
+					RemoveRows()
+					return()
+				}
+			}
+			remove <- tclvalue(removeVariable)
+			if (remove==""){
+				errorCondition(recall=RemoveRows,
+						message="No rows to remove")
+				closeDialog()
+				return()
+			}
+			removeRows <- paste("c(", gsub(" ", ",", remove), ")", sep="")
+			remove <- try(eval(parse(text=removeRows)), silent=TRUE)
+			if (class(remove) == "try-error"){
+				errorCondition(recall=RemoveRows,
+						message=remove)
+				closeDialog()
+				return()
+			}
+			closeDialog()
+			removeRows <- if (is.numeric(remove)) paste("-", removeRows, sep="") 
+					else paste("!(rownames(", ActiveDataSet(), ") %in% ", removeRows, ")", sep="")
+			command <- paste(newName, " <- ", ActiveDataSet(), "[", removeRows, ",]", sep="")
+			logger(command)
+			justDoIt(command)
+			activeDataSet(newName)
+			tkfocus(CommanderWindow())
+		}
+		OKCancelHelp(helpSubject="[.data.frame")
+		tkgrid(labelRcmdr(removeFrame, text=gettextRcmdr("Indices or quoted names of row(s) to remove"),
+			foreground="blue"), sticky="w")
+		tkgrid(removeEntry, sticky="w")
+		tkgrid(removeScroll, sticky="ew")
+		tkgrid(removeFrame, sticky="w")
+		tkgrid(labelRcmdr(dataSetNameFrame, text=gettextRcmdr("Name for new data set")), sticky="w")
+		tkgrid(dataSetNameEntry, sticky="w")
+		tkgrid(dataSetNameFrame, sticky="w")
+		tkgrid(buttonsFrame, sticky="w")
+		dialogSuffix(rows=3, columns=1)
+	}
+	
 

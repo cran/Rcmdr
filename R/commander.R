@@ -1,14 +1,15 @@
 # The R Commander and command logger
 
-# last modified 1 June 2008 by J. Fox
+# last modified 31 July 2008 by J. Fox
 #   slight changes 12 Aug 04 by Ph. Grosjean
 #   changes 21 June 2007 by Erich Neuwirth for Excel support (marked EN)
 
 Commander <- function(){
-    RcmdrVersion <- "1.3-15"
+    RcmdrVersion <- "1.4-0"
 ##    DESCRIPTION <- readLines(file.path(.find.package("Rcmdr"), "DESCRIPTION")[1])
 ##    RcmdrVersion <- trim.blanks(sub("^Version:", "",
 ##        grep("^Version:", D, value=TRUE)))
+    putRcmdr("quotes", options(useFancyQuotes=FALSE))
     # the following test suggested by Richard Heiberger
     if ("RcmdrEnv" %in% search() &&
         exists("commanderWindow", "RcmdrEnv") &&
@@ -114,6 +115,18 @@ Commander <- function(){
         onSelectAll()
         onDelete()
         }
+	onUndo <- function(){
+		focused <- tkfocus()
+		if ((tclvalue(focused) != LogWindow()$ID) && (tclvalue(focused) != OutputWindow()$ID))
+			focused <- LogWindow()
+		tcl(focused, "edit", "undo")
+		}
+	onRedo <- function(){
+		focused <- tkfocus()
+		if ((tclvalue(focused) != LogWindow()$ID) && (tclvalue(focused) != OutputWindow()$ID))
+			focused <- LogWindow()
+		tcl(focused, "edit", "redo")
+		}
     messageTag(reset=TRUE)
     putRcmdr("RcmdrVersion", RcmdrVersion)
     putRcmdr(".activeDataSet", NULL)
@@ -131,9 +144,9 @@ Commander <- function(){
     if (!is.null(scale.factor)) .Tcl(paste("tk scaling ", scale.factor, sep=""))
     if (packageAvailable("car")){
         require("car")
-        setOption("contrasts", c("contr.Treatment", "contr.poly"))
+        setOption("default.contrasts", c("contr.Treatment", "contr.poly"))
         }
-    else setOption("contrasts", c("contr.treatment", "contr.poly"))
+    else setOption("default.contrasts", c("contr.treatment", "contr.poly"))
     setOption("log.commands", TRUE)
     setOption("console.output", FALSE)
     log.height <- as.character(setOption("log.height", if (!getRcmdr("log.commands")) 0 else 10, global=FALSE))
@@ -142,7 +155,7 @@ Commander <- function(){
         if (getRcmdr("console.output")) 0
         else if ((as.numeric(log.height) != 0) || (!getRcmdr("log.commands"))) 2*as.numeric(log.height)
         else 20, global=FALSE))
-    putRcmdr("saveOptions", options(warn=1, contrasts=getRcmdr("contrasts"), width=as.numeric(log.width),
+    putRcmdr("saveOptions", options(warn=1, contrasts=getRcmdr("default.contrasts"), width=as.numeric(log.width),
         na.action="na.exclude", graphics.record=TRUE))
     setOption("ask.on.exit", TRUE)
     setOption("double.click", FALSE)
@@ -195,6 +208,12 @@ Commander <- function(){
         }
     Menus <- read.table(file.path(etcMenus, "Rcmdr-menus.txt"), colClasses = "character")
     addMenus <- function(Menus){
+		removeMenus <- function(what){
+			children <- Menus[Menus[,3] == what, 2]
+			which <- what == Menus[,2] |  what == Menus[,5]
+			Menus <<- Menus[!which,]
+			for (child in children) removeMenus(child)
+			}
         nms <- c("type", "menuOrItem", "operationOrParent", "label",
             "commandOrMenu", "activation", "install")
         names(Menus) <- nms
@@ -204,6 +223,12 @@ Commander <- function(){
             names(MenusToAdd) <- nms
             for (i in 1:nrow(MenusToAdd)){
                 line <- MenusToAdd[i,]
+				if (line[1, "type"] == "remove"){
+##					which <- line[1, "menuOrItem"] == Menus[,2] | line[1, "menuOrItem"] == Menus[,3] | line[1, "menuOrItem"] == Menus[,5]
+##					Menus <- Menus[!which,]
+					removeMenus(line[1, "menuOrItem"])
+					next
+					}
                 if (line[1, "type"] == "menu"){
                     where <- if (line[1, "operationOrParent"] == "topMenu") 0
                         else which((Menus[, "type"] == "menu") &
@@ -240,6 +265,10 @@ Commander <- function(){
         Menus
         }
     Menus <- addMenus(Menus)
+	menuNames <- Menus[Menus[,1] == "menu",]
+	duplicateMenus <- duplicated(menuNames)
+	if (any(duplicateMenus)) stop(paste(gettextRcmdr("Duplicate menu names:"),
+		menuNames[duplicateMenus]))
     .Menus <- menus <- list()
     menuItems <- 0
     oldMenu <- ncol(Menus) == 6
@@ -356,6 +385,8 @@ Commander <- function(){
         tkadd(contextMenu, "command", label=gettextRcmdr("Delete"), command=onDelete)
         tkadd(contextMenu, "command", label=gettextRcmdr("Find..."), command=onFind)
         tkadd(contextMenu, "command", label=gettextRcmdr("Select all"), command=onSelectAll)
+		tkadd(contextMenu, "command", label=gettextRcmdr("Undo"), command=onUndo)
+		tkadd(contextMenu, "command", label=gettextRcmdr("Redo"), command=onRedo)
         tkpopup(contextMenu, tkwinfo("pointerx", .log), tkwinfo("pointery", .log))
         }
     contextMenuOutput <- function(){
@@ -368,6 +399,8 @@ Commander <- function(){
         tkadd(contextMenu, "command", label=gettextRcmdr("Delete"), command=onDelete)
         tkadd(contextMenu, "command", label=gettextRcmdr("Find..."), command=onFind)
         tkadd(contextMenu, "command", label=gettextRcmdr("Select all"), command=onSelectAll)
+		tkadd(contextMenu, "command", label=gettextRcmdr("Undo"), command=onUndo)
+		tkadd(contextMenu, "command", label=gettextRcmdr("Redo"), command=onRedo)
         tkpopup(contextMenu, tkwinfo("pointerx", .output), tkwinfo("pointery", .output))
         }
     if (getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
@@ -431,7 +464,7 @@ Commander <- function(){
         relief="groove", command=selectActiveDataSet))
     logFrame <- tkframe(CommanderWindow())
     putRcmdr("logWindow", tktext(logFrame, bg="white", foreground=getRcmdr("log.text.color"),
-        font=getRcmdr("logFont"), height=log.height, width=log.width, wrap="none"))
+        font=getRcmdr("logFont"), height=log.height, width=log.width, wrap="none", undo=TRUE))
     .log <- LogWindow()
     logXscroll <- ttkscrollbar(logFrame, orient="horizontal",
         command=function(...) tkxview(.log, ...))
@@ -449,7 +482,7 @@ Commander <- function(){
             borderwidth="2", command=onSubmit)
         else buttonRcmdr(outputFrame, text=gettextRcmdr("Submit"), borderwidth="2", command=onSubmit)
     putRcmdr("outputWindow", tktext(outputFrame, bg="white", foreground=getRcmdr("output.text.color"),
-        font=getRcmdr("logFont"), height=output.height, width=log.width, wrap="none"))
+        font=getRcmdr("logFont"), height=output.height, width=log.width, wrap="none", undo=TRUE))
     .output <- OutputWindow()
     outputXscroll <- ttkscrollbar(outputFrame, orient="horizontal",
         command=function(...) tkxview(.output, ...))
@@ -528,6 +561,14 @@ Commander <- function(){
     tkgrid.columnconfigure(messagesFrame, 0, weight=1)
     tkgrid.columnconfigure(messagesFrame, 1, weight=0)
     .Tcl("update idletasks")
+	tkbind(.commander, "<Control-x>", onCut)
+	tkbind(.commander, "<Control-X>", onCut)
+	tkbind(.commander, "<Control-c>", onCopy)
+	tkbind(.commander, "<Control-C>", onCopy)
+	if (.Platform$OS.type != "windows"){
+		tkbind(.commander, "<Control-v>", onPaste)
+		tkbind(.commander, "<Control-V>", onPaste)
+		}
     tkbind(.commander, "<Control-r>", onSubmit)
     tkbind(.commander, "<Control-R>", onSubmit)
     tkbind(.commander, "<Control-Tab>", onSubmit)
@@ -537,6 +578,8 @@ Commander <- function(){
     tkbind(.commander, "<Control-S>", saveLog)
     tkbind(.commander, "<Control-a>", onSelectAll)
     tkbind(.commander, "<Control-A>", onSelectAll)
+	tkbind(.commander, "<Control-w>", onRedo)
+	tkbind(.commander, "<Control-W>", onRedo)
     tkbind(.log, "<ButtonPress-3>", contextMenuLog)
     tkbind(.output, "<ButtonPress-3>", contextMenuOutput)
     tkwm.deiconify(.commander)

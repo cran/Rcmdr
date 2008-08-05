@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: Rcmdr 1.2-0\n"
 "Report-Msgid-Bugs-To: bugs@R-project.org\n"
 "POT-Creation-Date: 2005-06-02 13:06+0100\n"
-"PO-Revision-Date: 2007-06-02 17:36-0800\n"
-"Last-Translator: Alexey Shipunov <dactylorhiza@gmail.com>\n"
+"PO-Revision-Date: 2008-08-02 00:54-0500\n"
+"Last-Translator: Alexey Shipunov <dactylorhiza at gmail>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=KOI8-R\n"
@@ -3457,4 +3457,140 @@ msgstr "Размер текста для осей"
 
 msgid "Axis-labels text size"
 msgstr "Размер текста для меток осей"
+
+# message added to version 1.3-3 (because of inadvertent omission)
+msgid "Scale (inverse rate)"
+msgstr "Шкала (в обратном порядке)"
+
+# messages added to version 1.3-5
+msgid " has been coerced to a data frame"
+msgstr "преобразовано в таблицу данных"
+
+msgid "the dataset %s is no longer available"
+msgstr "данные %s больше не доступны"
+
+# message added to version 1.3-10
+msgid "The Commander GUI is launched only in interactive sessions"
+msgstr "Commander GUI можно вызвать только из итнерактивной сессии"
+
+# messages added to version 1.3-15
+# Note: translate these messages only if the corresponding
+#  translated documents are supplied
+# For the following, you must supply a file named Commander-xx.Rd containing
+# a translation of the file Commander.Rd, where xx is the code for your
+# language. The \name{} and \alias{} fields in the .Rd file should both be
+# Commander-xx, where again xx is the language code.
+# Example: "Commander-es"
+msgid "Commander"
+msgstr "Commander"
+
+# For the following you must supply a PDF document containing a translation
+# of "Getting-Started-with-the-Rcmdr.pdf". I suggest using a translation
+# including -xx, where xx is the code for your language.
+# Example: "Empezando-con-Rcmdr-es"
+msgid "Getting-Started-with-the-Rcmdr"
+msgstr "Getting-Started-with-the-Rcmdr"
+
+# messages added to version 1.4-0
+msgid "Type of Tests"
+msgstr "Тип тестов"
+
+msgid "Sequential (\"Type I\")"
+msgstr "Последовательный (\"Тип I\")"
+
+msgid "Partial obeying marginality (\"Type II\")"
+msgstr "Частичный с учетом пределов (\"Тип II\")"
+
+msgid "Partial ignoring marginality (\"Type III\")"
+msgstr "Частичный без учета пределов (\"Тип III\")"
+
+msgid "Type III tests require careful attention to contrast coding."
+msgstr "Тесты типа III требуют всяческого внимания к контрастному кодированию."
+
+msgid "There is no appropriate anova method for a model of this class."
+msgstr "Нет подходящего метода ANOVA для модели этого класса."
+
+msgid "Duplicate menu names:"
+msgstr "Повторяющиеся имена в меню:"
+
+msgid "Strip chart..."
+msgstr "Полосной график..."
+
+msgid "Strip Chart"
+msgstr "Полосной график"
+
+msgid "Factors (pick zero or more)"
+msgstr "Факторы (укажите ноль или более)"
+
+msgid "Duplicate Values"
+msgstr "Повторяющиеся значения"
+
+msgid "Stack"
+msgstr "Стек"
+
+msgid "Jitter"
+msgstr "Шум"
+
+msgid "Remove Rows from Active Data Set"
+msgstr "Удалить строки из активных данных"
+
+msgid "Remove row(s) from active data set..."
+msgstr "Удалить строк(и) из активных данных..."
+
+msgid "No rows to remove"
+msgstr "Нет строк для удаления"
+
+msgid "Indices or quoted names of row(s) to remove"
+msgstr "Индексы или закавыченные имена строк для удаления"
+
+msgid "Akaike Information Criterion (AIC)"
+msgstr "Критерий информации Акайке (AIC)"
+
+msgid "Bayesian Information Criterion (BIC)"
+msgstr "Байесов критерий информации (BIC)"
+
+msgid "Change working directory..."
+msgstr "Изменить рабочую папку"
+
+msgid "Log x-axis"
+msgstr "Логарифмическая ось x"
+
+msgid "Log y-axis"
+msgstr "Логарифмическая ось y"
+
+msgid "from text file, clipboard, or URL..."
+msgstr "из текстового файла, буфера обмена или URL..."
+
+msgid "Read Text Data From File, Clipboard, or URL"
+msgstr "Прочитать текстовые денные из файла, буфера обмена или URL"
+
+msgid "Location of Data File"
+msgstr "Местонахождение файла данных"
+
+msgid "Local file system"
+msgstr "Локальная файловая система"
+
+msgid "Clipboard"
+msgstr "Буфер обмена"
+
+msgid "Internet URL"
+msgstr "URL интернет"
+
+msgid "Friedman rank-sum test..."
+msgstr "Ранговый тест Фридмана..."
+
+msgid "Friedman Rank Sum Test"
+msgstr "Ранговый тест Фридмана"
+
+msgid "Repeated-Measures Variables (pick two or more)"
+msgstr "Переменные с повторными измерениями (укажите две или более)"
+
+msgid "Undo"
+msgstr "Отменить"
+
+msgid "Redo"
+msgstr "Вернуть"
+
+msgid "ANOVA table..."
+msgstr "Таблица ANOVA..."
 
