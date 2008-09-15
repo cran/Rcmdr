@@ -28,6 +28,10 @@ plug-in.
 
 An illustrative R Commander plug-in package, \pkg{RcmdrPlugin.TeachingDemos}, is
 available on CRAN.
+
+For more details, see my (slightly out-of-date) article on ``Extending the Rcmdr by 
+Plug-in Packages'' in the December 2007 issue of \emph{R News} 
+<\url{http://www.r-project.org/doc/Rnews/Rnews_2007-3.pdf}>.
 }
 
 \seealso{\code{\link{Commander}}}

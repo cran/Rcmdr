@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Rcmdr 1.3-0\n"
 "Report-Msgid-Bugs-To: jfox@mcmaster.ca\n"
-"POT-Creation-Date: 2005-06-30 16:10\n"
-"PO-Revision-Date: 2007-06-03 18:16+0100\n"
-"Last-Translator: manel <10133msb@comb.es>\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2008-08-21 09:41+0100\n"
+"Last-Translator: manel salamero <10133msb@comb.es>\n"
 "Language-Team:  <10133msb@comb.es>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
@@ -3438,4 +3438,131 @@ msgstr "Grandària del text de l'eix"
 
 msgid "Axis-labels text size"
 msgstr "Grandària de les etiquetes de l'eix"
+
+# message added to version 1.3-3 (because of inadvertent omission)
+msgid "Scale (inverse rate)"
+msgstr "Escala (raó inversa)"
+
+# messages added to version 1.3-5
+msgid " has been coerced to a data frame"
+msgstr "ha estat coaccionada a una taula de dades"
+
+msgid "the dataset %s is no longer available"
+msgstr "la taula de dades %s ja no està disponible"
+
+# message added to version 1.3-10
+msgid "The Commander GUI is launched only in interactive sessions"
+msgstr "El GUI del Commander només s'inicia a les sessions interactives"
+
+msgid "Commander"
+msgstr "Commander"
+
+# For the following you must supply a PDF document containing a translation
+# of "Getting-Started-with-the-Rcmdr.pdf". I suggest using a translation
+# including -xx, where xx is the code for your language.
+# Example: "Empezando-con-Rcmdr-es"
+msgid "Getting-Started-with-the-Rcmdr"
+msgstr "Iniciant-el-Rcmdr"
+
+msgid "Type of Tests"
+msgstr "Tipus de tests"
+
+msgid "Sequential (\"Type I\")"
+msgstr "Seqüencial(\"Tipus I\")"
+
+msgid "Partial obeying marginality (\"Type II\")"
+msgstr "Parcial considerant la marginalitat (\"Tipus II\")"
+
+msgid "Partial ignoring marginality (\"Type III\")"
+msgstr "Parcial ignorant la marginalitat (\"Tipus III\")"
+
+msgid "Type III tests require careful attention to contrast coding."
+msgstr "Tipus III demana una acurada atenció en la codificació dels contrasts."
+
+msgid "There is no appropriate anova method for a model of this class."
+msgstr "No hi ha cap mètode ANOVA apropiat per a un model d'aquesta classe."
+
+msgid "Duplicate menu names:"
+msgstr "Noms de menus duplicats:"
+
+msgid "Strip chart..."
+msgstr "Gràfic de franja..."
+
+msgid "Strip Chart"
+msgstr "Gràfic de franja"
+
+msgid "Factors (pick zero or more)"
+msgstr "Factors (triï'n cap o més)"
+
+msgid "Duplicate Values"
+msgstr "Valors duplicats"
+
+msgid "Stack"
+msgstr "Pila"
+
+msgid "Jitter"
+msgstr "Sacsejar"
+
+msgid "Remove Rows from Active Data Set"
+msgstr "Elimina columnes de la taula de dades activa"
+
+msgid "Remove row(s) from active data set..."
+msgstr "Elimina filera(es) de la taula de dades activa..."
+
+msgid "No rows to remove"
+msgstr "No hi ha columnes per eliminar"
+
+msgid "Indices or quoted names of row(s) to remove"
+msgstr "Indexs o noms entrecomillats de la(es) columna(es) a eliminar"
+
+msgid "Akaike Information Criterion (AIC)"
+msgstr "Criteri d'Informació d'Akaike (AIC)"
+
+msgid "Bayesian Information Criterion (BIC)"
+msgstr "Criteri d'Informació Bayesià (BIC)"
+
+msgid "Change working directory..."
+msgstr "Canvia el directori de treball..."
+
+msgid "Log x-axis"
+msgstr "Eix log-x"
+
+msgid "Log y-axis"
+msgstr "Eix log-y"
+
+msgid "from text file, clipboard, or URL..."
+msgstr "des d'un fitxer de text, portapapers o URL..."
+
+msgid "Read Text Data From File, Clipboard, or URL"
+msgstr "Llegeix dades des d'un fitxer,l portapapers o URL"
+
+msgid "Location of Data File"
+msgstr "Ubicació del fitxer de dades"
+
+msgid "Local file system"
+msgstr "Fitxer de sistema local"
+
+msgid "Clipboard"
+msgstr "Portapapers"
+
+msgid "Internet URL"
+msgstr "Internet URL"
+
+msgid "Friedman rank-sum test..."
+msgstr "Test de la suma de rangs de Friedman..."
+
+msgid "Friedman Rank Sum Test"
+msgstr "Test de la suma de rangs de Friedman"
+
+msgid "Repeated-Measures Variables (pick two or more)"
+msgstr "Variables amb mesures repetides (triï'n dues o més)"
+
+msgid "Undo"
+msgstr "Desfés"
+
+msgid "Redo"
+msgstr "Restaura"
+
+msgid "ANOVA table..."
+msgstr "Taula de l'ANOVA..."
 

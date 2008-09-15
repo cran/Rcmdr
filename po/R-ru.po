@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: Rcmdr 1.2-0\n"
 "Report-Msgid-Bugs-To: bugs@R-project.org\n"
 "POT-Creation-Date: 2005-06-02 13:06+0100\n"
-"PO-Revision-Date: 2008-08-02 00:54-0500\n"
+"PO-Revision-Date: 2008-09-14 22:25-0500\n"
 "Last-Translator: Alexey Shipunov <dactylorhiza at gmail>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -3482,14 +3482,14 @@ msgstr "Commander GUI можно вызвать только из итнерактивной сессии"
 # Commander-xx, where again xx is the language code.
 # Example: "Commander-es"
 msgid "Commander"
-msgstr "Commander"
+msgstr ""
 
 # For the following you must supply a PDF document containing a translation
 # of "Getting-Started-with-the-Rcmdr.pdf". I suggest using a translation
 # including -xx, where xx is the code for your language.
 # Example: "Empezando-con-Rcmdr-es"
 msgid "Getting-Started-with-the-Rcmdr"
-msgstr "Getting-Started-with-the-Rcmdr"
+msgstr ""
 
 # messages added to version 1.4-0
 msgid "Type of Tests"

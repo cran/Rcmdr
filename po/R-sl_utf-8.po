@@ -14,10 +14,10 @@ msgstr ""
 
 
 msgid "KMeans Clustering"
-msgstr "Razvršèanje z voditelji"
+msgstr "RazvrÅ¡Äanje z voditelji"
 
 msgid "Variables (pick one or more)"
-msgstr "Spremenljivke (izberite eno ali veè)"
+msgstr "Spremenljivke (izberite eno ali veÄ)"
 
 msgid "No variables selected."
 msgstr "Nobena spremenljivka ni izbrana."
@@ -26,16 +26,16 @@ msgid "<all valid cases>"
 msgstr "<vse veljavne enote>"
 
 msgid "Number of clusters:"
-msgstr "Število skupin:"
+msgstr "Å tevilo skupin:"
 
 msgid "Number of starting seeds:"
-msgstr "Število zaèetnih jeder:"
+msgstr "Å tevilo zaÄetnih jeder:"
 
 msgid "Maximum iterations:"
-msgstr "Najveèje število ponovitev:"
+msgstr "NajveÄje Å¡tevilo ponovitev:"
 
 msgid "Print cluster summary"
-msgstr "Izpiši povzetek razvršèanja"
+msgstr "IzpiÅ¡i povzetek razvrÅ¡Äanja"
 
 msgid "Bi-plot of clusters"
 msgstr "Bivariatni prikaz skupin"
@@ -47,7 +47,7 @@ msgid "Assignment variable:"
 msgstr "Prireditvena spremenljivka:"
 
 msgid "Hierarchical Clustering"
-msgstr "Hierarhièno razvršèanje"
+msgstr "HierarhiÄno razvrÅ¡Äanje"
 
 msgid "Ward's Method"
 msgstr "Wardova metoda"
@@ -59,7 +59,7 @@ msgid "Complete Linkage"
 msgstr "Maksimalna metoda"
 
 msgid "Average Linkage"
-msgstr "Povpreèna metoda"
+msgstr "PovpreÄna metoda"
 
 msgid "McQuitty's Method"
 msgstr "McQuittyjeva metoda"
@@ -71,7 +71,7 @@ msgid "Centroid Linkage"
 msgstr "Centroidna metoda"
 
 msgid "Clustering Method"
-msgstr "Metoda razvršèanja"
+msgstr "Metoda razvrÅ¡Äanja"
 
 msgid "Euclidean"
 msgstr "Evklidska"
@@ -92,25 +92,25 @@ msgid "Clustering solution name:"
 msgstr "Ime dobljene razvrstitve:"
 
 msgid "Plot Dendrogram"
-msgstr "Nariši dendrogram"
+msgstr "NariÅ¡i dendrogram"
 
 msgid "Hierarchical Cluster Summary"
-msgstr "Povzetek hierarhiènega razvršèanja"
+msgstr "Povzetek hierarhiÄnega razvrÅ¡Äanja"
 
 msgid "Select One Clustering Solution"
 msgstr "Izberite eno dobljeno razvrstitev"
 
 msgid "There are no hierachical clustering solutions"
-msgstr "Ni dobljenih hierarhiènih razvrstitev"
+msgstr "Ni dobljenih hierarhiÄnih razvrstitev"
 
 msgid "No hierachical clustering solutions are associated with this data set."
-msgstr "S tem naborom podatkov ni povezanih hierarhiènih razvrstitev."
+msgstr "S tem naborom podatkov ni povezanih hierarhiÄnih razvrstitev."
 
 msgid "A clustering solution has not been selected."
 msgstr "Ni izbrane razvrstitve."
 
 msgid "Append Cluster Groups to the Active Data Set"
-msgstr "Vkljuèim razvrstitvene skupine v aktivni nabor podatkov"
+msgstr "VkljuÄim razvrstitvene skupine v aktivni nabor podatkov"
 
 msgid "Assigned cluster label:"
 msgstr "Oznaka, prirejena skupini:"
@@ -122,7 +122,7 @@ msgid "Regular-expression search"
 msgstr "Iskanje z regularnimi izrazi"
 
 msgid "Case sensitive"
-msgstr "Loèi velike in male èrke"
+msgstr "LoÄi velike in male Ärke"
 
 msgid "Forward"
 msgstr "Navzdol"
@@ -140,7 +140,7 @@ msgid "Text not found."
 msgstr "Besedila ne najdem."
 
 msgid "Search for:"
-msgstr "Išèi:"
+msgstr "IÅ¡Äi:"
 
 msgid "R Commander"
 msgstr "R Commander"
@@ -152,16 +152,16 @@ msgid "menu definition error:"
 msgstr "napaka definicije menija:"
 
 msgid "Nothing is selected."
-msgstr "Niè ni izbrano."
+msgstr "NiÄ ni izbrano."
 
 msgid "Clear window"
-msgstr "Poèisti okno"
+msgstr "PoÄisti okno"
 
 msgid "Submit"
 msgstr "Izvedi"
 
 msgid "Cut"
-msgstr "Izrei"
+msgstr "IzreÅ¾i"
 
 msgid "Copy"
 msgstr "Kopiraj"
@@ -170,7 +170,7 @@ msgid "Paste"
 msgstr "Prilepi"
 
 msgid "Delete"
-msgstr "Izbriši"
+msgstr "IzbriÅ¡i"
 
 msgid "Find..."
 msgstr "Najdi"
@@ -203,13 +203,13 @@ msgid "Output Window"
 msgstr "Okno za izpis"
 
 msgid "Messages"
-msgstr "Sporoèila"
+msgstr "SporoÄila"
 
 msgid "The rgl package is absent; 3D plots are unavailable."
 msgstr "Paket rgl manjka; 3D-diagrami niso na voljo."
 
 msgid "R Commander Version"
-msgstr "R Commander - razlièica"
+msgstr "R Commander - razliÄica"
 
 msgid "First and last 5 warnings:"
 msgstr "Prvih in zadnjih 5 opozoril:"
@@ -284,13 +284,13 @@ msgid "New variable name"
 msgstr "Ime nove spremenljivke"
 
 msgid "Enter recode directives"
-msgstr "Vnesite doloèila za prekodiranje"
+msgstr "Vnesite doloÄila za prekodiranje"
 
 msgid "Make new variable a factor"
 msgstr "Nova spremenljivka naj bo faktor"
 
 msgid "Compute New Variable"
-msgstr "Izraèunaj novo spremenljivko"
+msgstr "IzraÄunaj novo spremenljivko"
 
 msgid "[factor]"
 msgstr "[faktor]"
@@ -305,22 +305,22 @@ msgid "Variable"
 msgstr "Spremenljivka"
 
 msgid "Expression to compute"
-msgstr "Izraz za izraèun"
+msgstr "Izraz za izraÄun"
 
 msgid "Delete Variables"
-msgstr "Izbriši spremenljivke"
+msgstr "IzbriÅ¡i spremenljivke"
 
 msgid "Variable(s) to delete (pick one or more)"
-msgstr "Spremenljivka za izbrisanje (izberite eno ali veè)"
+msgstr "Spremenljivka za izbrisanje (izberite eno ali veÄ)"
 
 msgid "You must select one or more variables."
-msgstr "Izbrati morate eno ali veè spremenljivk."
+msgstr "Izbrati morate eno ali veÄ spremenljivk."
 
 msgid "Delete %s?\nPlease confirm."
-msgstr "Izbrišem %s?\nPotrdite."
+msgstr "IzbriÅ¡em %s?\nPotrdite."
 
 msgid "Delete %d variables?\nPlease confirm."
-msgstr "Izbrišem spremenljivke %d?\nPotrdite."
+msgstr "IzbriÅ¡em spremenljivke %d?\nPotrdite."
 
 msgid "Read Data From Text File"
 msgstr "Preberi podatke iz besedilne datoteke"
@@ -335,7 +335,7 @@ msgid "Tabs"
 msgstr "Tabulatorji"
 
 msgid "Field Separator"
-msgstr "Loèilo polj"
+msgstr "LoÄilo polj"
 
 msgid "Period [.]"
 msgstr "Pika [.]"
@@ -344,7 +344,7 @@ msgid "Comma [,]"
 msgstr "Vejica [,]"
 
 msgid "Decimal-Point Character"
-msgstr "Decimalno loèilo"
+msgstr "Decimalno loÄilo"
 
 msgid "You must enter a name for the data set."
 msgstr "Vnesti morate ime nabora podatkov."
@@ -356,13 +356,13 @@ msgid "Variable names in file:"
 msgstr "Imena spremenljivk so v datoteki:"
 
 msgid "Missing data indicator:"
-msgstr "Oznaka za manjkajoèe podatke:"
+msgstr "Oznaka za manjkajoÄe podatke:"
 
 msgid "Other"
 msgstr "Drugo"
 
 msgid "Specify:"
-msgstr "Doloèite:"
+msgstr "DoloÄite:"
 
 msgid "Read Data From Package"
 msgstr "Preberi podatke iz paketa"
@@ -401,7 +401,7 @@ msgid "Convert value labels\nto factor levels"
 msgstr "Pretvori oznake vrednosti\nv ravni faktorjev"
 
 msgid "Maximum number\nof value labels\nfor factor conversion"
-msgstr "Najveèje število\noznak vrednosti\nza faktorsko pretvorbo"
+msgstr "NajveÄje Å¡tevilo\noznak vrednosti\nza faktorsko pretvorbo"
 
 msgid "Import Minitab Data Set"
 msgstr "Uvoz podatkov v zapisu Minitab"
@@ -410,7 +410,7 @@ msgid "{\"Minitab portable files\" {\".mtp\" \".MTP\"}} {\"All Files\" {\"*\"}}"
 msgstr "{\"Prenosne datoteke Minitab\" {\".mtp\" \".MTP\"}} {\"Vse datoteke\" {\"*\"}}"
 
 msgid "Minitab data set contains elements of unequal length.\nData set cannot be converted."
-msgstr "Nabor podatkov Minitab vsebuje elemente neenake doline.\nNabora podatkov ni mogoèe pretvoriti."
+msgstr "Nabor podatkov Minitab vsebuje elemente neenake dolÅ¾ine.\nNabora podatkov ni mogoÄe pretvoriti."
 
 msgid "Import STATA Data Set"
 msgstr "Uvoz podatkov v zapisu STATA"
@@ -422,28 +422,28 @@ msgid "Convert dates to R format"
 msgstr "Pretvori datume v R-ov zapis"
 
 msgid "Multiple missing types (>=Stata 8)"
-msgstr "Veè manjkajoèih tipov (>=Stata 8)"
+msgstr "VeÄ manjkajoÄih tipov (>=Stata 8)"
 
 msgid "from Excel, Access or dBase data set ..."
 msgstr "iz nabora podatkov v Excelu, Accessu ali dBase"
 
 msgid "Convert underscore to period"
-msgstr "Pretvori podèrtaje v pike"
+msgstr "Pretvori podÄrtaje v pike"
 
 msgid "Warn on missing labels"
-msgstr "Opozori na manjkajoèe oznake"
+msgstr "Opozori na manjkajoÄe oznake"
 
 msgid "Convert Numeric Variable to Factor"
-msgstr "Pretvori številsko spremenljivko v faktor"
+msgstr "Pretvori Å¡tevilsko spremenljivko v faktor"
 
 msgid "Variable (pick one)"
 msgstr "Spremenljivka (izberite eno)"
 
 msgid "Supply level names"
-msgstr "Doloèi imena ravni"
+msgstr "DoloÄi imena ravni"
 
 msgid "Use numbers"
-msgstr "Uporabi številke"
+msgstr "Uporabi Å¡tevilke"
 
 msgid "Factor Levels"
 msgstr "Ravni faktorja"
@@ -452,19 +452,19 @@ msgid "<same as variable>"
 msgstr "<enako kot spremenljivka>"
 
 msgid "Number of levels (%d) too large."
-msgstr "Število ravni (%d) je preveliko."
+msgstr "Å tevilo ravni (%d) je preveliko."
 
 msgid "Level Names"
 msgstr "Imena ravni"
 
 msgid "Levels names are not unique."
-msgstr "Imena ravni niso enolièno doloèena."
+msgstr "Imena ravni niso enoliÄno doloÄena."
 
 msgid "A level name is empty."
 msgstr "Ime ravni je prazno."
 
 msgid "Numeric value"
-msgstr "Številska vrednost"
+msgstr "Å tevilska vrednost"
 
 msgid "Level name"
 msgstr "Ime ravni"
@@ -473,28 +473,28 @@ msgid "Name for factor"
 msgstr "Ime za faktor"
 
 msgid "Bin a Numeric Variable"
-msgstr "Številsko spremenljivko v predale"
+msgstr "Å tevilsko spremenljivko v predale"
 
 msgid "Variable to bin (pick one)"
 msgstr "Spremenljivka za razvrstitev v predale (izberite eno)"
 
 msgid "Specify names"
-msgstr "Doloèi imena"
+msgstr "DoloÄi imena"
 
 msgid "Numbers"
-msgstr "Številke"
+msgstr "Å tevilke"
 
 msgid "Ranges"
 msgstr "Razponi"
 
 msgid "Equal-width bins"
-msgstr "Predali enake širine"
+msgstr "Predali enake Å¡irine"
 
 msgid "Equal-count bins"
-msgstr "Predali z enakim številom"
+msgstr "Predali z enakim Å¡tevilom"
 
 msgid "Natural breaks\n(from K-means clustering)"
-msgstr "Naravne meje\n(iz razvršèanja z voditelji)"
+msgstr "Naravne meje\n(iz razvrÅ¡Äanja z voditelji)"
 
 msgid "Binning Method"
 msgstr "Metoda razmestitve v predale"
@@ -503,7 +503,7 @@ msgid "Bin Names"
 msgstr "Imena predalov"
 
 msgid "Level names must be unique."
-msgstr "Imena ravni morajo biti enolièno doloèena."
+msgstr "Imena ravni morajo biti enoliÄno doloÄena."
 
 msgid "Bin"
 msgstr "Predal"
@@ -512,7 +512,7 @@ msgid "Name"
 msgstr "Ime"
 
 msgid "Number of bins:"
-msgstr "Število predalov:"
+msgstr "Å tevilo predalov:"
 
 msgid "Reorder Factor Levels"
 msgstr "Prerazporedi ravni faktorjev"
@@ -545,10 +545,10 @@ msgid "Export Active Data Set"
 msgstr "Izvozi aktivni nabor podatkov"
 
 msgid "Write variable names:"
-msgstr "Zapiši imena spremenljivk:"
+msgstr "ZapiÅ¡i imena spremenljivk:"
 
 msgid "Write row names:"
-msgstr "Zapiši imena vrstic:"
+msgstr "ZapiÅ¡i imena vrstic:"
 
 msgid "Quotes around character values:"
 msgstr "Narekovaji okrog znakovnih vrednosti:"
@@ -560,13 +560,13 @@ msgid "Active dataset exported to file"
 msgstr "Aktivni nabor shranjen v datoteko"
 
 msgid "Missing values:"
-msgstr "Manjkajoèe vrednosti:"
+msgstr "ManjkajoÄe vrednosti:"
 
 msgid "Remove Missing Data"
-msgstr "Odstrani manjkajoèe podatke"
+msgstr "Odstrani manjkajoÄe podatke"
 
 msgid "Variables (select one or more)"
-msgstr "Spremenljivke (izberite eno ali veè)"
+msgstr "Spremenljivke (izberite eno ali veÄ)"
 
 msgid "<same as active data set>"
 msgstr "<kot v aktivnem naboru podatkov>"
@@ -575,13 +575,13 @@ msgid "No variables were selected."
 msgstr "Nobena spremenljivka ni izbrana."
 
 msgid "Include all variables"
-msgstr "Vkljuèi vse spremenljivke"
+msgstr "VkljuÄi vse spremenljivke"
 
 msgid "Name for new data set"
 msgstr "Ime za nov nabor podatkov"
 
 msgid "Subset Data Set"
-msgstr "Podmnoica podatkov"
+msgstr "PodmnoÅ¾ica podatkov"
 
 msgid "<all cases>"
 msgstr "<vse enote>"
@@ -590,16 +590,16 @@ msgid "New data set same as active data set."
 msgstr "Novi nabor podatkov je isti kot aktivni."
 
 msgid "Subset expression"
-msgstr "Izraz za izbiro podmnoice"
+msgstr "Izraz za izbiro podmnoÅ¾ice"
 
 msgid "Set Case Names"
-msgstr "Doloèi imena enot"
+msgstr "DoloÄi imena enot"
 
 msgid "Select variable containing row names"
 msgstr "Izberite spremenljivko, ki vsebuje imena vrstic"
 
 msgid "Case names must be unique."
-msgstr "Imena enot morajo biti enolièno doloèena."
+msgstr "Imena enot morajo biti enoliÄno doloÄena."
 
 msgid "Rename Variables"
 msgstr "Preimenuj spremenljivke"
@@ -614,7 +614,7 @@ msgid "The following variable names are not valid:"
 msgstr "Naslednja imena spremenljivk niso veljavna:"
 
 msgid "Variable names are not unique"
-msgstr "Imena spremenljivk niso enolièno doloèena."
+msgstr "Imena spremenljivk niso enoliÄno doloÄena."
 
 msgid "Old Name"
 msgstr "Staro ime"
@@ -623,13 +623,13 @@ msgid "New name"
 msgstr "Novo ime"
 
 msgid "Set Contrasts for Factor"
-msgstr "Doloèi kontraste za faktor"
+msgstr "DoloÄi kontraste za faktor"
 
 msgid "Treatment (dummy) contrasts"
 msgstr "Kontrasti obravnavanj (dummy)"
 
 msgid "Sum (deviation) contrasts"
-msgstr "Kontrasti z nièelno vsoto"
+msgstr "Kontrasti z niÄelno vsoto"
 
 msgid "Helmert contrasts"
 msgstr "Helmertovi kontrasti"
@@ -644,7 +644,7 @@ msgid "Contrasts"
 msgstr "Kontrasti"
 
 msgid "Specify Contrasts"
-msgstr "Doloèite kontraste"
+msgstr "DoloÄite kontraste"
 
 msgid "Enter Contrast Coefficients"
 msgstr "Vnesite koeficiente kontrastov"
@@ -653,13 +653,13 @@ msgid "Contrast Name:"
 msgstr "Ime kontrasta:"
 
 msgid "Number of valid entries in contrast matrix(%d)\nnot equal to number of levels (%d) * number of contrasts (%d)."
-msgstr "Število veljavnih vnosov v matriki kontrastov (%d)\nni enako zmnoku število ravni (%d) * število kontrastov (%d)."
+msgstr "Å tevilo veljavnih vnosov v matriki kontrastov (%d)\nni enako zmnoÅ¾ku Å¡tevilo ravni (%d) * Å¡tevilo kontrastov (%d)."
 
 msgid "Contrast matrix is not of full column rank"
-msgstr "Matrika kontrastov ni polnega stolpiènega ranga"
+msgstr "Matrika kontrastov ni polnega stolpiÄnega ranga"
 
 msgid "Contrast names must be unique"
-msgstr "Imena konstrastov morajo biti enolièno doloèena."
+msgstr "Imena konstrastov morajo biti enoliÄno doloÄena."
 
 msgid "Normal Quantiles"
 msgstr "Kvantili normalne porazdelitve"
@@ -671,7 +671,7 @@ msgid "Probabilities"
 msgstr "Verjetnosti"
 
 msgid "mu (mean)"
-msgstr "mi (povpreèje)"
+msgstr "mi (povpreÄje)"
 
 msgid "sigma (standard deviation)"
 msgstr "sigma (standardni odklon)"
@@ -695,7 +695,7 @@ msgid "t Quantiles"
 msgstr "Kvantili t-porazdelitve"
 
 msgid "Degrees of freedom not specified."
-msgstr "Stopinje prostosti niso doloèene."
+msgstr "Stopinje prostosti niso doloÄene."
 
 msgid "Degrees of freedom"
 msgstr "Stopinje prostosti"
@@ -716,7 +716,7 @@ msgid "Probabilities not specified"
 msgstr "Verjetnosti niso navedene"
 
 msgid "Numerator degrees of freedom"
-msgstr "Stopinje prostosti v števcu"
+msgstr "Stopinje prostosti v Å¡tevcu"
 
 msgid "Denominator degrees of freedom"
 msgstr "Stopinje prostosti v imenovalcu"
@@ -749,31 +749,31 @@ msgid "Cumulative Binomial Probabilities"
 msgstr "Kumulativne binomske verjetnosti"
 
 msgid "Number of trials, %d, is large.\nCreate long output?"
-msgstr "Število poskusov, %d, je veliko.\nelite dolgi izpis?"
+msgstr "Å tevilo poskusov, %d, je veliko.\nÅ½elite dolgi izpis?"
 
 msgid "Binomial Probabilities"
 msgstr "Verjetnosti binomske porazdelitve"
 
 msgid "Range of values over which to plot, %d, is large.\nCreate long output?"
-msgstr "Razpon vrednosti za risanje, %d, je velik.\nelite dolgi izpis?"
+msgstr "Razpon vrednosti za risanje, %d, je velik.\nÅ½elite dolgi izpis?"
 
 msgid "Poisson Probabilities"
 msgstr "Verjetnosti Poissonove porazdelitve"
 
 msgid "Poisson mean not specified."
-msgstr "Poissonovo povpreèje ni navedeno."
+msgstr "Poissonovo povpreÄje ni navedeno."
 
 msgid "Mean"
-msgstr "Povpreèje"
+msgstr "PovpreÄje"
 
 msgid "Normal Distribution"
 msgstr "Normalna porazdelitev"
 
 msgid "Plot density function"
-msgstr "Nariši funkcijo gostote"
+msgstr "NariÅ¡i funkcijo gostote"
 
 msgid "Plot distribution function"
-msgstr "Nariši porazdelitveno funkcijo"
+msgstr "NariÅ¡i porazdelitveno funkcijo"
 
 msgid "t Distribution"
 msgstr "t-porazdelitev"
@@ -785,7 +785,7 @@ msgid "F Distribution"
 msgstr "F-porazdelitev"
 
 msgid "Numerator degrees of freedom not specified."
-msgstr "Stopinje prostosti v števcu niso navedene."
+msgstr "Stopinje prostosti v Å¡tevcu niso navedene."
 
 msgid "Denominator degrees of freedom not specified."
 msgstr "Stopinje prostosti v imenovalcu niso navedene."
@@ -794,22 +794,22 @@ msgid "Binomial Distribution"
 msgstr "Binomska porazdelitev"
 
 msgid "Plot probability mass function"
-msgstr "Nariši funkcijo mase verjetnosti"
+msgstr "NariÅ¡i funkcijo mase verjetnosti"
 
 msgid "Poisson Distribution"
 msgstr "Poissonova porazdelitev"
 
 msgid "Mean not specified."
-msgstr "Povpreèje ni navedeno."
+msgstr "PovpreÄje ni navedeno."
 
 msgid "mean"
-msgstr "povpreèje"
+msgstr "povpreÄje"
 
 msgid "{\"Script Files\" {\".R\"}} {\"All Files\" {\"*\"}}"
 msgstr "{\"Skriptne datoteke\" {\".R\"}} {\"Vse datoteke\" {\"*\"}}"
 
 msgid "Save current log file?"
-msgstr "Shrani trenutno dnevniško datoteko?"
+msgstr "Shrani trenutno dnevniÅ¡ko datoteko?"
 
 msgid "Script saved to"
 msgstr "Skript shranjen v"
@@ -836,25 +836,25 @@ msgid "Save output file?"
 msgstr "Shrani izhodno datoteko?"
 
 msgid "Commander Options"
-msgstr "Commanderjeve monosti"
+msgstr "Commanderjeve moÅ¾nosti"
 
 msgid "Log commands to script window"
-msgstr "Belei ukaze v skriptno okno"
+msgstr "BeleÅ¾i ukaze v skriptno okno"
 
 msgid "Log-font size (points)"
 msgstr "Velikost pisave dnevnika (pike)"
 
 msgid "Log width (characters)"
-msgstr "Širina dnevnika (znaki)"
+msgstr "Å irina dnevnika (znaki)"
 
 msgid "Log height (lines)"
-msgstr "Višina dnevnika (vrstice)"
+msgstr "ViÅ¡ina dnevnika (vrstice)"
 
 msgid "Send output to R Console"
-msgstr "Pošlji izpis na R-ovo konzolo"
+msgstr "PoÅ¡lji izpis na R-ovo konzolo"
 
 msgid "Output height (lines)"
-msgstr "Višina izpisa (vrstice)"
+msgstr "ViÅ¡ina izpisa (vrstice)"
 
 msgid "Unordered factors"
 msgstr "Neurejeni faktorji"
@@ -872,7 +872,7 @@ msgid "Sort variable names alphabetically"
 msgstr "Razvrsti imena spremenljivk po abecedi"
 
 msgid "Show edit button"
-msgstr "Pokai gumb za urejanje"
+msgstr "PokaÅ¾i gumb za urejanje"
 
 msgid "Exit and Restart\nR Commander"
 msgstr "Izhod in ponovni zagon\nR Commanderja"
@@ -884,19 +884,19 @@ msgid "Default font"
 msgstr "Privzeta pisava"
 
 msgid "No packages available to load."
-msgstr "Ni paketov, ki bi jih naloil."
+msgstr "Ni paketov, ki bi jih naloÅ¾il."
 
 msgid "Load Packages"
-msgstr "Naloi pakete"
+msgstr "NaloÅ¾i pakete"
 
 msgid "Packages (pick one or more)"
-msgstr "Paketi (izberite enega ali veè)"
+msgstr "Paketi (izberite enega ali veÄ)"
 
 msgid "You must select at least one package."
 msgstr "Izbrati morate vsaj en paket."
 
 msgid "Packages loaded:"
-msgstr "Naloeni paketi:"
+msgstr "NaloÅ¾eni paketi:"
 
 msgid "Index Plot"
 msgstr "Indeksni diagram"
@@ -905,7 +905,7 @@ msgid "You must select a variable"
 msgstr "Izbrati morate spremenljivko."
 
 msgid "Identify observations\nwith mouse"
-msgstr "Oznaèitev opazovanja\nz miško"
+msgstr "OznaÄitev opazovanja\nz miÅ¡ko"
 
 msgid "Spikes"
 msgstr "Daljice"
@@ -935,7 +935,7 @@ msgid "Stem and Leaf Display"
 msgstr "Steblo z listi"
 
 msgid "Automatic"
-msgstr "Avtomatièno"
+msgstr "AvtomatiÄno"
 
 msgid "Parts Per Stem"
 msgstr "Delov na steblo"
@@ -944,34 +944,34 @@ msgid "Tukey"
 msgstr "Tukey"
 
 msgid "Repeated stem digits"
-msgstr "Ponavljanje števk na steblu"
+msgstr "Ponavljanje Å¡tevk na steblu"
 
 msgid "Style of Divided Stems"
 msgstr "Slog razdeljenih stebel"
 
 msgid "Trim outliers"
-msgstr "Odrei osamelce"
+msgstr "OdreÅ¾i osamelce"
 
 msgid "Show depths"
-msgstr "Prikai globine"
+msgstr "PrikaÅ¾i globine"
 
 msgid "Reverse negative leaves"
 msgstr "Obrni negativne liste"
 
 msgid "Leafs Digit:"
-msgstr "Števka listov:"
+msgstr "Å tevka listov:"
 
 msgid "or set:"
 msgstr "ali nastavite:"
 
 msgid "Options"
-msgstr "Monosti"
+msgstr "MoÅ¾nosti"
 
 msgid "Boxplot"
-msgstr "Okvir z roèaji"
+msgstr "Okvir z roÄaji"
 
 msgid "Identify outliers with mouse"
-msgstr "Oznaèitev osamelcev z miško"
+msgstr "OznaÄitev osamelcev z miÅ¡ko"
 
 msgid "Scatterplot"
 msgstr "Razsevni diagram"
@@ -983,7 +983,7 @@ msgid "y-variable (pick one)"
 msgstr "spremenljivka y (izberite eno)"
 
 msgid "Identify points"
-msgstr "Doloèite toèke"
+msgstr "DoloÄite toÄke"
 
 msgid "Jitter x-variable"
 msgstr "Zatresi spremenljivko x"
@@ -992,19 +992,19 @@ msgid "Jitter y-variable"
 msgstr "Zatresi spremenljivko y"
 
 msgid "Marginal boxplots"
-msgstr "Robni okvirji z roèaji"
+msgstr "Robni okvirji z roÄaji"
 
 msgid "Least-squares line"
-msgstr "Èrta najmanjših kvadratov"
+msgstr "ÄŒrta najmanjÅ¡ih kvadratov"
 
 msgid "Smooth Line"
-msgstr "Glajena èrta"
+msgstr "Glajena Ärta"
 
 msgid "You must select two variables"
 msgstr "Izbrati morate dve spremenljivki."
 
 msgid "x and y variables must be different"
-msgstr "spremenljivki x in y morata biti razlièni"
+msgstr "spremenljivki x in y morata biti razliÄni"
 
 msgid "Span for smooth"
 msgstr "Stopnja glajenja"
@@ -1013,13 +1013,13 @@ msgid "Scatterplot Matrix"
 msgstr "Matrika razsevnih diagramov"
 
 msgid "Select variables (three or more)"
-msgstr "Izberite spremenljivke (tri ali veè)"
+msgstr "Izberite spremenljivke (tri ali veÄ)"
 
 msgid "Least-squares lines"
-msgstr "Èrte najmanjših kvadratov"
+msgstr "ÄŒrte najmanjÅ¡ih kvadratov"
 
 msgid "Smooth lines"
-msgstr "Glajene èrte"
+msgstr "Glajene Ärte"
 
 msgid "Density plots"
 msgstr "Diagrami gostote"
@@ -1028,13 +1028,13 @@ msgid "Histograms"
 msgstr "Histogrami"
 
 msgid "Boxplots"
-msgstr "Okvirji z roèaji"
+msgstr "Okvirji z roÄaji"
 
 msgid "Normal QQ plots"
 msgstr "Normalni QQ diagrami"
 
 msgid "Nothing (empty)"
-msgstr "Niè (prazno)"
+msgstr "NiÄ (prazno)"
 
 msgid "On Diagonal"
 msgstr "Na diagonali"
@@ -1043,19 +1043,19 @@ msgid "Fewer than 3 variable selected."
 msgstr "Izbrali ste manj kot 3 spremenljivke."
 
 msgid "Bar Graph"
-msgstr "Stolpièni diagram"
+msgstr "StolpiÄni diagram"
 
 msgid "Pie Chart"
 msgstr "Tortni grafikon"
 
 msgid "Line Plot"
-msgstr "Èrtni diagram"
+msgstr "ÄŒrtni diagram"
 
 msgid "x variable (pick one)"
 msgstr "spremenljivka x (izberite eno)"
 
 msgid "y variables (pick one or more)"
-msgstr "spremenljivke y (izberite eno ali veè)"
+msgstr "spremenljivke y (izberite eno ali veÄ)"
 
 msgid "<use y-variable names>"
 msgstr "<uporabi imena spremenljivke y>"
@@ -1067,7 +1067,7 @@ msgid "No y variables selected."
 msgstr "Spremenljivka y ni izbrana."
 
 msgid "x and y variables must be different."
-msgstr "spremenljivki x in y morata biti razlièni."
+msgstr "spremenljivki x in y morata biti razliÄni."
 
 msgid "x-values are not in order.\nContinue?"
 msgstr "vrednosti x niso urejene.\nNadaljujem?"
@@ -1076,22 +1076,22 @@ msgid "Label for y-axis"
 msgstr "Oznaka za os y"
 
 msgid "Plot legend (position with mouse click)"
-msgstr "Vpiši legendo (poloaj doloèite s klikom miške)"
+msgstr "VpiÅ¡i legendo (poloÅ¾aj doloÄite s klikom miÅ¡ke)"
 
 msgid "Quantile-Comparison (QQ) Plot"
 msgstr "Diagram primerjave kvantilov (QQ)"
 
 msgid "df for t must be a positive number."
-msgstr "sp za t mora biti pozitivno število."
+msgstr "sp za t mora biti pozitivno Å¡tevilo."
 
 msgid "df for chi-square must be a positive number."
-msgstr "sp za hi-kvadrat mora biti pozitivno število."
+msgstr "sp za hi-kvadrat mora biti pozitivno Å¡tevilo."
 
 msgid "numerator and denominator \ndf for F must be positive numbers."
-msgstr "sp v števcu in imenovalcu \nza F morata biti pozitivni števili."
+msgstr "sp v Å¡tevcu in imenovalcu \nza F morata biti pozitivni Å¡tevili."
 
 msgid "Identify observations with mouse"
-msgstr "Oznaèitev opazovanj z miško"
+msgstr "OznaÄitev opazovanj z miÅ¡ko"
 
 msgid "Distribution"
 msgstr "Porazdelitev"
@@ -1103,7 +1103,7 @@ msgid "Chi-square"
 msgstr "Hi-kvadrat"
 
 msgid "Numerator df ="
-msgstr "sp v števcu ="
+msgstr "sp v Å¡tevcu ="
 
 msgid "Denominator df ="
 msgstr "sp v imenovalcu ="
@@ -1112,7 +1112,7 @@ msgid "Parameters:"
 msgstr "Parametri:"
 
 msgid "Plot Means"
-msgstr "Prikai povpreèja"
+msgstr "PrikaÅ¾i povpreÄja"
 
 msgid "Factors (pick one or two)"
 msgstr "Faktorji (izberite enega ali dva)"
@@ -1124,7 +1124,7 @@ msgid "No factors selected."
 msgstr "Izbran ni noben faktor."
 
 msgid "More than two factors selected."
-msgstr "Izbrana sta veè kot dva faktorja."
+msgstr "Izbrana sta veÄ kot dva faktorja."
 
 msgid "No response variable selected."
 msgstr "Odvisna spremenljivka ni izbrana."
@@ -1166,22 +1166,22 @@ msgid "You must select 2 explanatory variables."
 msgstr "Izbrati morate 2 neodvisni spremenljivki."
 
 msgid "Response and explanatory variables must be different."
-msgstr "Odvisna in neodvisna spremenljivka morata biti razlièni."
+msgstr "Odvisna in neodvisna spremenljivka morata biti razliÄni."
 
 msgid "Parallel regression surfaces"
-msgstr "Vzporedne regresijske površine"
+msgstr "Vzporedne regresijske povrÅ¡ine"
 
 msgid "Show surface grid lines"
-msgstr "Prikai mreo na površini"
+msgstr "PrikaÅ¾i mreÅ¾o na povrÅ¡ini"
 
 msgid "Surfaces to Fit"
-msgstr "Površine za prileganje"
+msgstr "PovrÅ¡ine za prileganje"
 
 msgid "Linear least-squares"
-msgstr "Linearni najmanjši kvadrati"
+msgstr "Linearni najmanjÅ¡i kvadrati"
 
 msgid "Quadratic least-squares"
-msgstr "Kvadratni najmanjši kvadrati"
+msgstr "Kvadratni najmanjÅ¡i kvadrati"
 
 msgid "Smooth regression"
 msgstr "Glajena regresija"
@@ -1196,7 +1196,7 @@ msgid "Background Color"
 msgstr "Barva ozadja"
 
 msgid "Black"
-msgstr "Èrna"
+msgstr "ÄŒrna"
 
 msgid "White"
 msgstr "Bela"
@@ -1205,10 +1205,10 @@ msgid "Save Graph as Bitmap"
 msgstr "Shrani sliko kot bitno"
 
 msgid "There is no current graphics device to save."
-msgstr "Ni odprte grafiène naprave, s katere bi shranjevali."
+msgstr "Ni odprte grafiÄne naprave, s katere bi shranjevali."
 
 msgid "Graphics File Type"
-msgstr "Tip grafiène datoteke"
+msgstr "Tip grafiÄne datoteke"
 
 msgid "{\"PNG Files\" {\".png\" \".PNG\"}} {\"All Files\" {\"*\"}}"
 msgstr "{\"Datoteke PNG\" {\".png\" \".PNG\"}} {\"Vse datoteke\" {\"*\"}}"
@@ -1220,10 +1220,10 @@ msgid "Graph saved to file"
 msgstr "Slika shranjena v datoteko"
 
 msgid "Width (pixels)"
-msgstr "Širina (piksli)"
+msgstr "Å irina (piksli)"
 
 msgid "Height (pixels)"
-msgstr "Višina (piksli)"
+msgstr "ViÅ¡ina (piksli)"
 
 msgid "Save Graph as PDF/Postscript"
 msgstr "Shrani sliko kot PDF/postscript"
@@ -1247,16 +1247,16 @@ msgid "{\"Encapsulated Postscript Files\" {\".eps\" \".EPS\"}} {\"All Files\" {\
 msgstr "{\"Oviti postscript\" {\".eps\" \".EPS\"}} {\"Vse datoteke\" {\"*\"}}"
 
 msgid "Width (inches)"
-msgstr "Širina (palci)"
+msgstr "Å irina (palci)"
 
 msgid "Height (inches)"
-msgstr "Višina (palci)"
+msgstr "ViÅ¡ina (palci)"
 
 msgid "Text size (points)"
 msgstr "Velikost besedila (pike)"
 
 msgid "There is no current RGL graphics device to save."
-msgstr "Ni odprte grafiène naprave RGL, s katere bi shranjevali."
+msgstr "Ni odprte grafiÄne naprave RGL, s katere bi shranjevali."
 
 msgid "{\"PNG Bitmap Files\" {\".png\" \".PNG\"}} {\"All Files\" {\"*\"}}"
 msgstr "{\"Datoteke PNG\" {\".png\" \".PNG\"}} {\"Vse datoteke\" {\"*\"}}"
@@ -1283,19 +1283,19 @@ msgid "Current Model:"
 msgstr "Trenutni model:"
 
 msgid "Identify points with mouse?"
-msgstr "Oznaèitev toèk z miško?"
+msgstr "OznaÄitev toÄk z miÅ¡ko?"
 
 msgid "There is no appropriate Anova method for a model of this class."
 msgstr "Za model tega razreda ni ustrezne metode ANOVA."
 
 msgid "Observation statistics not available\nfor a model fit to a subset of the data."
-msgstr "Statistike niso na voljo za\nmodel, prileen podmnoici podatkov."
+msgstr "Statistike niso na voljo za\nmodel, prileÅ¾en podmnoÅ¾ici podatkov."
 
 msgid "Add Observation Statistics to Data"
-msgstr "Vkljuèitev statistik v nabor podatkov"
+msgstr "VkljuÄitev statistik v nabor podatkov"
 
 msgid "Fitted values"
-msgstr "Prileene vrednosti"
+msgstr "PrileÅ¾ene vrednosti"
 
 msgid "Residuals"
 msgstr "Ostanki"
@@ -1319,22 +1319,22 @@ msgid "Simulated confidence envelope"
 msgstr "Simulirana ovojnica zaupanja"
 
 msgid "Identify points with mouse"
-msgstr "Oznaèitev toèk z miško"
+msgstr "OznaÄitev toÄk z miÅ¡ko"
 
 msgid "Test Linear Hypothesis"
 msgstr "Test linearne hipoteze"
 
 msgid "Number of valid entries in hypothesis matrix(%d)\nnot equal to number of rows (%d) * number of columns (%d)."
-msgstr "Število veljavnih vnosov v matriki hipoteze (%d)\nni enako zmnoku število vrstic (%d) * število stolpcev (%d)."
+msgstr "Å tevilo veljavnih vnosov v matriki hipoteze (%d)\nni enako zmnoÅ¾ku Å¡tevilo vrstic (%d) * Å¡tevilo stolpcev (%d)."
 
 msgid "Hypothesis matrix is not of full row rank."
-msgstr "Matrika hipoteze ni polnega vrstiènega ranga."
+msgstr "Matrika hipoteze ni polnega vrstiÄnega ranga."
 
 msgid "Number of valid entries in rhs vector (%d)\nis not equal to number of rows (%d)."
-msgstr "Število veljavnih vnosov v vektorju desne strani (%d)\nni enako številu vrstic (%d)."
+msgstr "Å tevilo veljavnih vnosov v vektorju desne strani (%d)\nni enako Å¡tevilu vrstic (%d)."
 
 msgid "Number of Rows:"
-msgstr "Število vrstic:"
+msgstr "Å tevilo vrstic:"
 
 msgid "Enter hypothesis matrix and right-hand side vector:"
 msgstr "Vnesite matriko hipotez in vektor desne strani:"
@@ -1388,7 +1388,7 @@ msgid "Test for Nonlinearity"
 msgstr "Test nelinearnosti"
 
 msgid "No powers are checked."
-msgstr "Ni oznaèenih potenc."
+msgstr "Ni oznaÄenih potenc."
 
 msgid "First principal component"
 msgstr "Prva glavna komponenta"
@@ -1397,7 +1397,7 @@ msgid "Type of Test"
 msgstr "Tip testa"
 
 msgid "Powers to Include"
-msgstr "Vkljuèitev potenc"
+msgstr "VkljuÄitev potenc"
 
 msgid "2 (squares)"
 msgstr "2 (kvadrati)"
@@ -1415,7 +1415,7 @@ msgid "Confidence Intervals for Individual Coefficients"
 msgstr "Intervali zaupanja za posamezne koeficiente"
 
 msgid "Confidence level must be a number between 0 and 1."
-msgstr "Interval zaupanja mora biti število med 0 in 1."
+msgstr "Interval zaupanja mora biti Å¡tevilo med 0 in 1."
 
 msgid "Likelihood-ratio statistic"
 msgstr "Razmerju verjetij"
@@ -1430,7 +1430,7 @@ msgid "Confidence Level:"
 msgstr "Raven zaupanja:"
 
 msgid "Rcmdr Version"
-msgstr "Rcmdr - razlièica"
+msgstr "Rcmdr - razliÄica"
 
 msgid "The tcltk package is absent. The R Commander cannot function."
 msgstr "Paket tcltk manjka. R Commander ne more delovati."
@@ -1442,13 +1442,13 @@ msgid "The following packages used by Rcmdr are missing:"
 msgstr "Manjkajo naslednji paketi, potrebni za R Commander:"
 
 msgid "Without these packages, some features will not be available."
-msgstr "Brez teh paketov nekatere monosti ne bodo na voljo."
+msgstr "Brez teh paketov nekatere moÅ¾nosti ne bodo na voljo."
 
 msgid "Install these packages?"
 msgstr "Namestim te pakete?"
 
 msgid "Install Missing Packages"
-msgstr "Namesti manjkajoèe pakete"
+msgstr "Namesti manjkajoÄe pakete"
 
 msgid "Browse..."
 msgstr "Prebrskaj ..."
@@ -1457,25 +1457,25 @@ msgid "Install Packages From:"
 msgstr "Namesti pakete s:"
 
 msgid "Specify package  \ndirectory:"
-msgstr "Doloèite imenik \ns paketi:"
+msgstr "DoloÄite imenik \ns paketi:"
 
 msgid "Local package directory\n(must include PACKAGES index file)"
 msgstr "Lokalnega imenika s paketi\n(vsebovati mora indeksno datoteko PACKAGES)"
 
 msgid "The following packages were not found at the specified location:"
-msgstr "Naslednjih paketov ni bilo mogoèe najti na navedenem mestu:"
+msgstr "Naslednjih paketov ni bilo mogoÄe najti na navedenem mestu:"
 
 msgid "Cancel"
-msgstr "Preklièi"
+msgstr "PrekliÄi"
 
 msgid "Help"
-msgstr "Pomoè"
+msgstr "PomoÄ"
 
 msgid "Scale Reliability"
 msgstr "Zanesljivost lestvice"
 
 msgid "Variables (pick three or more)"
-msgstr "Spremenljivke (izberite tri ali veè)"
+msgstr "Spremenljivke (izberite tri ali veÄ)"
 
 msgid "Fewer than 3 variables selected."
 msgstr "Izbrali ste manj kot 3 spremenljivke."
@@ -1484,25 +1484,25 @@ msgid "Principal Components Analysis"
 msgstr "Analiza glavnih komponent"
 
 msgid "Variables (pick two or more)"
-msgstr "Spremenljivke (izberite dve ali veè)"
+msgstr "Spremenljivke (izberite dve ali veÄ)"
 
 msgid "Analyze correlation matrix"
 msgstr "Analiziraj korelacijsko matriko"
 
 msgid "Screeplot"
-msgstr "Plazišèni diagram"
+msgstr "PlaziÅ¡Äni diagram"
 
 msgid "Add principal components to data set"
-msgstr "Vkljuèi glavne komponente v nabor podatkov"
+msgstr "VkljuÄi glavne komponente v nabor podatkov"
 
 msgid "Fewer than 2 variables selected."
 msgstr "Izbrali ste manj kot 2 spremenljivki."
 
 msgid "Number of Components"
-msgstr "Število komponent"
+msgstr "Å tevilo komponent"
 
 msgid "Number of components to retain:"
-msgstr "Število komponent, ki jih ohranim:"
+msgstr "Å tevilo komponent, ki jih ohranim:"
 
 msgid "Factor Analysis"
 msgstr "Faktorska analiza"
@@ -1529,10 +1529,10 @@ msgid "Factor Scores"
 msgstr "Faktorske vrednosti"
 
 msgid "Number of Factors"
-msgstr "Število faktorjev"
+msgstr "Å tevilo faktorjev"
 
 msgid "Number of factors to extract:"
-msgstr "eleno število faktorjev:"
+msgstr "Å½eleno Å¡tevilo faktorjev:"
 
 msgid "Independent Samples t-Test"
 msgstr "t-test za neodvisne vzorce"
@@ -1577,22 +1577,22 @@ msgid "You must select two variables."
 msgstr "Izbrati morate dve spremenljivki."
 
 msgid "Variables must be different."
-msgstr "Spremenljivke morajo biti razliène."
+msgstr "Spremenljivke morajo biti razliÄne."
 
 msgid "Single-Sample t-Test"
 msgstr "t-test za en vzorec"
 
 msgid "Population mean = mu0"
-msgstr "Populacijsko povpreèje = mi0"
+msgstr "Populacijsko povpreÄje = mi0"
 
 msgid "Population mean < mu0"
-msgstr "Populacijsko povpreèje < mi0"
+msgstr "Populacijsko povpreÄje < mi0"
 
 msgid "Population mean > mu0"
-msgstr "Populacijsko povpreèje > mi0"
+msgstr "Populacijsko povpreÄje > mi0"
 
 msgid "Null hypothesis: mu ="
-msgstr "Nièelna hipoteza: mi ="
+msgstr "NiÄelna hipoteza: mi ="
 
 msgid "One-Way Analysis of Variance"
 msgstr "Enosmerna analiza variance"
@@ -1604,13 +1604,13 @@ msgid "Factor has fewer than 3 levels; pairwise comparisons omitted."
 msgstr "Faktor ima manj kot 3 ravni; primerjava po parih ni narejena."
 
 msgid "Pairwise comparisons of means"
-msgstr "Primerjava popvreèij po parih"
+msgstr "Primerjava popvreÄij po parih"
 
 msgid "Multi-Way Analysis of Variance"
-msgstr "Veèsmerna analiza variance"
+msgstr "VeÄsmerna analiza variance"
 
 msgid "Factors (pick one or more)"
-msgstr "Faktorji (izberite enega ali veè)"
+msgstr "Faktorji (izberite enega ali veÄ)"
 
 msgid "You must select at least one factor."
 msgstr "Izbrati morate vsaj en faktor."
@@ -1619,7 +1619,7 @@ msgid "Linear Regression"
 msgstr "Linearna regresija"
 
 msgid "Explanatory variables (pick one or more)"
-msgstr "Neodvisne spremenljivke (izberite eno ali veè)"
+msgstr "Neodvisne spremenljivke (izberite eno ali veÄ)"
 
 msgid "No explanatory variables selected."
 msgstr "Ni izbranih neodvisnih spremenljivk."
@@ -1643,10 +1643,10 @@ msgid "Right-hand side of model empty."
 msgstr "Desna stran modela je prazna."
 
 msgid "Generalized Linear Model"
-msgstr "Posplošen linearni model"
+msgstr "PosploÅ¡en linearni model"
 
 msgid "Family (double-click to select)"
-msgstr "Druina (dvokliknite za izbiro)"
+msgstr "DruÅ¾ina (dvokliknite za izbiro)"
 
 msgid "Link function"
 msgstr "Funkcija povezave"
@@ -1670,49 +1670,49 @@ msgid "Exact"
 msgstr "Eksaktno"
 
 msgid "Normal approximation"
-msgstr "Normalen pribliek"
+msgstr "Normalen pribliÅ¾ek"
 
 msgid "Normal approximation with\ncontinuity correction"
-msgstr "Normalen pribliek s\npopravkom za zveznost"
+msgstr "Normalen pribliÅ¾ek s\npopravkom za zveznost"
 
 msgid "Paired Wilcoxon Test"
 msgstr "Parni Wilcoxonov test"
 
 msgid "The two variables must be different."
-msgstr "Spremenljivki morata biti razlièni."
+msgstr "Spremenljivki morata biti razliÄni."
 
 msgid "Kruskal-Wallis Rank Sum Test"
 msgstr "Kruskal-Wallisov test vsote rangov"
 
 msgid "Single-Sample Proportion Test"
-msgstr "Test deleev za en vzorec"
+msgstr "Test deleÅ¾ev za en vzorec"
 
 msgid "Population proportion = p0"
-msgstr "Populacijski dele = p0"
+msgstr "Populacijski deleÅ¾ = p0"
 
 msgid "Population proportion < p0"
-msgstr "Populacijski dele < p0"
+msgstr "Populacijski deleÅ¾ < p0"
 
 msgid "Population proportion > p0"
-msgstr "Populacijski dele > p0"
+msgstr "Populacijski deleÅ¾ > p0"
 
 msgid "Exact binomial"
 msgstr "Eksaktni binomski"
 
 msgid "Null hypothesis: p ="
-msgstr "Nièelna hipoteza: p ="
+msgstr "NiÄelna hipoteza: p ="
 
 msgid "Two-Sample Proportions Test"
-msgstr "Test deleev za dva vzorca"
+msgstr "Test deleÅ¾ev za dva vzorca"
 
 msgid "Groups and response variables must be different."
-msgstr "Spremenljivka za skupine in odvisna spremenljivka morata biti razlièni."
+msgstr "Spremenljivka za skupine in odvisna spremenljivka morata biti razliÄni."
 
 msgid "There are %d variables in the data set %s.\nDo you want to proceed?"
-msgstr "V naboru podatkov %s je %d spremenljivk.\nelite nadaljevati?"
+msgstr "V naboru podatkov %s je %d spremenljivk.\nÅ½elite nadaljevati?"
 
 msgid "Numerical Summaries"
-msgstr "Številski povzetki"
+msgstr "Å tevilski povzetki"
 
 msgid "Standard Deviation"
 msgstr "Standardni odklon"
@@ -1730,7 +1730,7 @@ msgid "quantiles:"
 msgstr "kvantili:"
 
 msgid "Frequency Distribution"
-msgstr "Frekvenèna porazdelitev"
+msgstr "FrekvenÄna porazdelitev"
 
 msgid "Goodness-of-Fit Test"
 msgstr "Testiranje skladnosti"
@@ -1739,16 +1739,16 @@ msgid "Invalid entry."
 msgstr "Neveljaven vnos."
 
 msgid "Missing entry."
-msgstr "Manjkajoè vnos."
+msgstr "ManjkajoÄ vnos."
 
 msgid "Number of valid entries (%d)\nnot equal to number levels (%d)."
-msgstr "Število veljavnih vnosov (%d)\nni enako številu ravni (%d)."
+msgstr "Å tevilo veljavnih vnosov (%d)\nni enako Å¡tevilu ravni (%d)."
 
 msgid "Negative probabilities not allowed."
 msgstr "Negativne verjetnosti niso dovoljene."
 
 msgid "Probabilities rescaled to sum to 1."
-msgstr "Preraèun verjetnosti, da se seštejejo v 1."
+msgstr "PreraÄun verjetnosti, da se seÅ¡tejejo v 1."
 
 msgid "Chi-square goodness-of-fit test"
 msgstr "Testiranje skladnosti s hi-kvadrat"
@@ -1784,7 +1784,7 @@ msgid "Fewer than 3 variables selected\nfor partial correlations."
 msgstr "Za delne korelacije ste izbrali\nmanj kot 3 spremenljivke."
 
 msgid "Two-Way Table"
-msgstr "Dvorazsena tabela"
+msgstr "DvorazseÅ¾na tabela"
 
 msgid "Row variable (pick one)"
 msgstr "Spremenljivka v vrstici (izberite eno)"
@@ -1796,10 +1796,10 @@ msgid "Row and column variables are the same."
 msgstr "Spremenljivka v vrsticah in stolpcih je ista."
 
 msgid "expected frequencies are less than 1"
-msgstr "prièakovane frekvence so manj kot 1"
+msgstr "priÄakovane frekvence so manj kot 1"
 
 msgid "expected frequencies are less than 5"
-msgstr "prièakovane frekvence so manj kot 5"
+msgstr "priÄakovane frekvence so manj kot 5"
 
 msgid "Row percentages"
 msgstr "Odstotki po vrstah"
@@ -1811,49 +1811,49 @@ msgid "No percentages"
 msgstr "Brez odstotkov"
 
 msgid "Compute Percentages"
-msgstr "Izraèunaj odstotke"
+msgstr "IzraÄunaj odstotke"
 
 msgid "Chi-square test of independence"
 msgstr "Test hi-kvadrat za neodvisnost"
 
 msgid "Print expected frequencies"
-msgstr "Izpis prièakovanih frekvenc"
+msgstr "Izpis priÄakovanih frekvenc"
 
 msgid "Fisher's exact test"
 msgstr "Fisherjev eksaktni test"
 
 msgid "Hypothesis Tests"
-msgstr "Preizkušanje hipotez"
+msgstr "PreizkuÅ¡anje hipotez"
 
 msgid "Multi-Way Table"
-msgstr "Veèrazsena tabela"
+msgstr "VeÄrazseÅ¾na tabela"
 
 msgid "Control variable(s) (pick one or more)"
-msgstr "Kontrolne spremenljivke (izberite eno ali veè)"
+msgstr "Kontrolne spremenljivke (izberite eno ali veÄ)"
 
 msgid "You must select row, column, and control variables"
 msgstr "Izbrati morate spremenljivke v vrsticah, stolpcih in kontrolne spremenljivke"
 
 msgid "Row, column, and control variables must be different."
-msgstr "Spremenljivke v vrsticah, stolpcih ni kontrolne spremenljivke morajo biti razliène."
+msgstr "Spremenljivke v vrsticah, stolpcih ni kontrolne spremenljivke morajo biti razliÄne."
 
 msgid "Enter Two-Way Table"
-msgstr "Vnos dvorazsene tabele"
+msgstr "Vnos dvorazseÅ¾ne tabele"
 
 msgid "Number of valid entries (%d)\nnot equal to number of rows (%d) * number of columns (%d)."
-msgstr "Število veljavnih vnosov (%d)\nni enako zmnoku število vrstic (%d) * število stolpcev (%d)."
+msgstr "Å tevilo veljavnih vnosov (%d)\nni enako zmnoÅ¾ku Å¡tevilo vrstic (%d) * Å¡tevilo stolpcev (%d)."
 
 msgid "Row names are not unique."
-msgstr "Imena vrstic niso enolièno doloèena."
+msgstr "Imena vrstic niso enoliÄno doloÄena."
 
 msgid "Column names are not unique."
-msgstr "Imena stolpcev niso enolièno doloèena."
+msgstr "Imena stolpcev niso enoliÄno doloÄena."
 
 msgid "Number of Columns:"
-msgstr "Število stolpcev:"
+msgstr "Å tevilo stolpcev:"
 
 msgid "Enter counts:"
-msgstr "Vnesite število:"
+msgstr "Vnesite Å¡tevilo:"
 
 msgid "Two Variances F-Test"
 msgstr "F-test dveh varianc"
@@ -1868,7 +1868,7 @@ msgid "There is no active data set."
 msgstr "Ni aktivnega nabora podatkov."
 
 msgid "is not a data frame and cannot be attached."
-msgstr "ni podatkovni okvir in ga ni mogoèe pripeti."
+msgstr "ni podatkovni okvir in ga ni mogoÄe pripeti."
 
 msgid "The dataset %s has %d rows and %d columns."
 msgstr "Nabor podatkov %s ima %d vrstic in %d stolpcev."
@@ -1877,13 +1877,13 @@ msgid "There is no active model."
 msgstr "Ni aktivnega modela."
 
 msgid "argument must be a square, symmetric, numeric covariance matrix"
-msgstr "argument mora biti kvadratna, simetrièna, številska kovarianèna matrika"
+msgstr "argument mora biti kvadratna, simetriÄna, Å¡tevilska kovarianÄna matrika"
 
 msgid "there are fewer than 3 items in the scale"
 msgstr "lestvica ima manj kot 3 stopnje"
 
 msgid "Argument response must be numeric."
-msgstr "Argument odziv mora biti številski."
+msgstr "Argument odziv mora biti Å¡tevilski."
 
 msgid "Argument factor1 must be a factor."
 msgstr "Argument faktor1 mora biti faktor."
@@ -1892,19 +1892,19 @@ msgid "Arguments factor1 and factor2 must be factors."
 msgstr "Argumenta faktor1 in faktor2 morata biti faktorja."
 
 msgid "Number of groups for factor2, %d, exceeds number of distinct colours, %d."
-msgstr "Število skupin za faktor2, %d, presega število razliènih barv, %d."
+msgstr "Å tevilo skupin za faktor2, %d, presega Å¡tevilo razliÄnih barv, %d."
 
 msgid "The number of bins exceeds the number of data values"
-msgstr "Število predalov presega število vrednosti v podatkih"
+msgstr "Å tevilo predalov presega Å¡tevilo vrednosti v podatkih"
 
 msgid "Number of groups (%d) exceeds number of colors (%d)."
-msgstr "Število skupin (%d) presega število barv (%d)."
+msgstr "Å tevilo skupin (%d) presega Å¡tevilo barv (%d)."
 
 msgid "groups variable must be a factor."
 msgstr "spremenljivka za skupine mora biti faktor."
 
 msgid "cannot plot both multiple surfaces and residuals"
-msgstr "Ne morem prikazati veè površin IN še ostankov"
+msgstr "Ne morem prikazati veÄ povrÅ¡in IN Å¡e ostankov"
 
 msgid "not supplied"
 msgstr "ni naveden"
@@ -1925,10 +1925,10 @@ msgid "There are no two-level factors in the active data set."
 msgstr "V aktivnem naboru podatkov ni faktorjev z dvema ravnema."
 
 msgid "There fewer than %d numeric variables in the active data set."
-msgstr "V aktivnem naboru podatkov je manj kot %d številskih spremenljivk."
+msgstr "V aktivnem naboru podatkov je manj kot %d Å¡tevilskih spremenljivk."
 
 msgid "There are no numeric variables in the active data set."
-msgstr "V aktivnem naboru podatkov ni številskih spremenljivk."
+msgstr "V aktivnem naboru podatkov ni Å¡tevilskih spremenljivk."
 
 msgid "There fewer than %d variables in the active data set."
 msgstr "V aktivnem naboru podatkov je manj kot %d spremenljivk."
@@ -1937,16 +1937,16 @@ msgid "There are no variables in the active data set."
 msgstr "V aktivnem naboru podatkov ni spremenljivk."
 
 msgid "%s %s already exists.\nOverwrite %s?"
-msgstr "%s %s e obstaja.\nPrepišem %s?"
+msgstr "%s %s Å¾e obstaja.\nPrepiÅ¡em %s?"
 
 msgid "Plot by:"
-msgstr "Nariši po:"
+msgstr "NariÅ¡i po:"
 
 msgid "Plot by groups"
-msgstr "Nariši po skupinah"
+msgstr "NariÅ¡i po skupinah"
 
 msgid "Plot lines by group"
-msgstr "Nariši èrte po skupini"
+msgstr "NariÅ¡i Ärte po skupini"
 
 msgid "There no factors in the active data set."
 msgstr "V aktivnem naboru podatkov ni faktorjev."
@@ -1958,7 +1958,7 @@ msgid "Groups variable (pick one)"
 msgstr "Spremenljivka za skupine (izberite eno)"
 
 msgid "Position legend with mouse click"
-msgstr "Poloaj legende doloèite s klikom miške"
+msgstr "PoloÅ¾aj legende doloÄite s klikom miÅ¡ke"
 
 msgid "<No groups selected>"
 msgstr "<Ni izbranih skupin>"
@@ -2045,19 +2045,19 @@ msgid "Select active data set..."
 msgstr "Izberi aktivni nabor podatkov"
 
 msgid "Help on active data set (if available)"
-msgstr "Pomoè o aktivnem naboru podatkov (èe je na voljo)"
+msgstr "PomoÄ o aktivnem naboru podatkov (Äe je na voljo)"
 
 msgid "Variables in active data set"
 msgstr "Spremenljivke v aktivnem naboru podatkov"
 
 msgid "Set case names..."
-msgstr "Doloèi imena enot"
+msgstr "DoloÄi imena enot"
 
 msgid "Subset active data set..."
-msgstr "Podmnoica aktivnega nabora podatkov"
+msgstr "PodmnoÅ¾ica aktivnega nabora podatkov"
 
 msgid "Remove cases with missing data..."
-msgstr "Odstrani enote z manjkajoèimi podatki"
+msgstr "Odstrani enote z manjkajoÄimi podatki"
 
 msgid "Export active data set..."
 msgstr "Izvozi aktivni nabor podatkov"
@@ -2069,22 +2069,22 @@ msgid "Recode variable..."
 msgstr "Prekodiranje spremenljivke"
 
 msgid "Compute new variable..."
-msgstr "Izraèun nove spremenljivke"
+msgstr "IzraÄun nove spremenljivke"
 
 msgid "Standardize variables..."
 msgstr "Standardizacija spremenljivk"
 
 msgid "Convert numeric variable to factor..."
-msgstr "Pretvorba številske spremenljivke v faktor"
+msgstr "Pretvorba Å¡tevilske spremenljivke v faktor"
 
 msgid "Bin numeric variable..."
-msgstr "Številsko spremenljivko v predale"
+msgstr "Å tevilsko spremenljivko v predale"
 
 msgid "Reorder factor levels..."
 msgstr "Prerazpored ravni faktorjev"
 
 msgid "Define contrasts for a factor..."
-msgstr "Doloèitev kontrastov za faktor"
+msgstr "DoloÄitev kontrastov za faktor"
 
 msgid "Rename variables..."
 msgstr "Preimenovanje spremenljivk"
@@ -2099,10 +2099,10 @@ msgid "Data"
 msgstr "Podatki"
 
 msgid "Numerical summaries..."
-msgstr "Številski povzetki"
+msgstr "Å tevilski povzetki"
 
 msgid "Frequency distribution..."
-msgstr "Frekvenèna porazdelitev"
+msgstr "FrekvenÄna porazdelitev"
 
 msgid "Table of statistics..."
 msgstr "Tabela statistik"
@@ -2111,13 +2111,13 @@ msgid "Correlation matrix..."
 msgstr "Korelacijska matrika"
 
 msgid "Two-way table..."
-msgstr "Dvorazsena tabela"
+msgstr "DvorazseÅ¾na tabela"
 
 msgid "Multi-way table..."
-msgstr "Veèrazsena tabela"
+msgstr "VeÄrazseÅ¾na tabela"
 
 msgid "Enter and analyze two-way table..."
-msgstr "Vnos in analiza dvorazsene tabele"
+msgstr "Vnos in analiza dvorazseÅ¾ne tabele"
 
 msgid "Single-sample t-test..."
 msgstr "t-test za en vzorec"
@@ -2132,13 +2132,13 @@ msgid "One-way ANOVA..."
 msgstr "Enosmerna ANOVA"
 
 msgid "Multi-way ANOVA..."
-msgstr "Veèsmerna ANOVA"
+msgstr "VeÄsmerna ANOVA"
 
 msgid "Single-sample proportion test..."
-msgstr "Test deleev za en vzorec"
+msgstr "Test deleÅ¾ev za en vzorec"
 
 msgid "Two-sample proportions test..."
-msgstr "Test deleev za dva vzorca"
+msgstr "Test deleÅ¾ev za dva vzorca"
 
 msgid "Two-variances F-test..."
 msgstr "F-test za dve varianci"
@@ -2168,19 +2168,19 @@ msgid "Factor analysis..."
 msgstr "Faktorska analiza "
 
 msgid "k-means cluster analysis..."
-msgstr "Razvršèanje z voditelji"
+msgstr "RazvrÅ¡Äanje z voditelji"
 
 msgid "Hierarchical cluster analysis..."
-msgstr "Hierarhièno razvršèanje"
+msgstr "HierarhiÄno razvrÅ¡Äanje"
 
 msgid "Summarize hierarchical clustering..."
-msgstr "Povzetek hierarhiènega razvršèanja"
+msgstr "Povzetek hierarhiÄnega razvrÅ¡Äanja"
 
 msgid "Add hierarchical clustering to data set..."
-msgstr "Vkljuèitev hierarhiène razvrstitve v nabor podatkov"
+msgstr "VkljuÄitev hierarhiÄne razvrstitve v nabor podatkov"
 
 msgid "Cluster analysis"
-msgstr "Razvršèanje"
+msgstr "RazvrÅ¡Äanje"
 
 msgid "Linear regression..."
 msgstr "Linearna regresija"
@@ -2189,7 +2189,7 @@ msgid "Linear model..."
 msgstr "Linearni model"
 
 msgid "Generalized linear model..."
-msgstr "Posplošen linearni model"
+msgstr "PosploÅ¡en linearni model"
 
 msgid "Multinomial logit model..."
 msgstr "Multinomski logit model"
@@ -2204,19 +2204,19 @@ msgid "Summaries"
 msgstr "Povzetki"
 
 msgid "Contingency tables"
-msgstr "Kontingenène tabele"
+msgstr "KontingenÄne tabele"
 
 msgid "Means"
-msgstr "Povpreèja"
+msgstr "PovpreÄja"
 
 msgid "Proportions"
-msgstr "Delei"
+msgstr "DeleÅ¾i"
 
 msgid "Variances"
 msgstr "Variance"
 
 msgid "Nonparametric tests"
-msgstr "Neparametrièni testi"
+msgstr "NeparametriÄni testi"
 
 msgid "Dimensional analysis"
 msgstr "Multivariatne analize"
@@ -2234,7 +2234,7 @@ msgid "Stem-and-leaf display..."
 msgstr "Steblo z listi"
 
 msgid "Boxplot..."
-msgstr "Okvir z roèaji"
+msgstr "Okvir z roÄaji"
 
 msgid "Quantile-comparison plot..."
 msgstr "Diagram primerjave kvantilov"
@@ -2249,13 +2249,13 @@ msgid "3D scatterplot..."
 msgstr "3D razsevni diagram"
 
 msgid "Line graph..."
-msgstr "Èrtni diagram"
+msgstr "ÄŒrtni diagram"
 
 msgid "Plot of means..."
-msgstr "Diagram povpreèij"
+msgstr "Diagram povpreÄij"
 
 msgid "Bar graph..."
-msgstr "Stolpièni diagram"
+msgstr "StolpiÄni diagram"
 
 msgid "Pie chart..."
 msgstr "Tortni grafikon "
@@ -2282,13 +2282,13 @@ msgid "Summarize model"
 msgstr "Povzetek modela"
 
 msgid "Add observation statistics to data..."
-msgstr "Vkljuèitev statistik v nabor podatkov"
+msgstr "VkljuÄitev statistik v nabor podatkov"
 
 msgid "Confidence intervals..."
 msgstr "Intervali zaupanja"
 
 msgid "Hypothesis tests"
-msgstr "Preizkušanje hipotez"
+msgstr "PreizkuÅ¡anje hipotez"
 
 msgid "ANOVA table"
 msgstr "Tabela ANOVA"
@@ -2300,13 +2300,13 @@ msgid "Linear hypothesis..."
 msgstr "Linearna hipoteza"
 
 msgid "Numerical diagnostics"
-msgstr "Številska diagnostika"
+msgstr "Å tevilska diagnostika"
 
 msgid "Variance-inflation factors"
-msgstr "Faktorji poveèanja variance"
+msgstr "Faktorji poveÄanja variance"
 
 msgid "Breusch-Pagan test for heteroscedasticity..."
-msgstr "Breusch-Paganov test heteroskedastiènosti"
+msgstr "Breusch-Paganov test heteroskedastiÄnosti"
 
 msgid "Durbin-Watson test for autocorrelation..."
 msgstr "Durbin-Watsonov test avtokorelacije"
@@ -2318,7 +2318,7 @@ msgid "Bonferroni outlier test"
 msgstr "Bonferronijev test za osamelce"
 
 msgid "Basic diagnostic plots"
-msgstr "Osnovni diagnostièni diagrami"
+msgstr "Osnovni diagnostiÄni diagrami"
 
 msgid "Residual quantile-comparison plot..."
 msgstr "Diagram ostankov in kvantilov"
@@ -2333,7 +2333,7 @@ msgid "Influence plot"
 msgstr "Diagram vpliva"
 
 msgid "Effect plots"
-msgstr "Diagram uèinka"
+msgstr "Diagram uÄinka"
 
 msgid "Models"
 msgstr "Modeli"
@@ -2414,16 +2414,16 @@ msgid "Distributions"
 msgstr "Porazdelitve"
 
 msgid "Load package(s)..."
-msgstr "Naloi paket(e) ..."
+msgstr "NaloÅ¾i paket(e) ..."
 
 msgid "Options..."
-msgstr "Monosti "
+msgstr "MoÅ¾nosti "
 
 msgid "Tools"
 msgstr "Orodja"
 
 msgid "Commander help"
-msgstr "Pomoè za R Commander"
+msgstr "PomoÄ za R Commander"
 
 msgid "Introduction to the R Commander"
 msgstr "Uvod v R Commander"
@@ -2437,7 +2437,7 @@ msgstr "sp ="
 ## messages added to Rcmdr version 1.1-1
 
 msgid "There is no current RGL graphics device."
-msgstr "Ni odprte grafiène naprave RGL."
+msgstr "Ni odprte grafiÄne naprave RGL."
 
 msgid "3D graph"
 msgstr "3D slika"
@@ -2481,7 +2481,7 @@ msgid "Degrees of freedom must be positive."
 msgstr "Stopinje prostosti morajo biti pozitivne."
 
 msgid "Numerator degrees of freedom must be positive."
-msgstr "Števec stopinj prostosti mora biti pozitiven."
+msgstr "Å tevec stopinj prostosti mora biti pozitiven."
 
 msgid "Denominator degrees of freedom must be positive."
 msgstr "Imenovalec stopinj prostosti mora biti pozitiven."
@@ -2499,7 +2499,7 @@ msgid "Uniform Distribution"
 msgstr "Enakomerna porazdelitev"
 
 msgid "Lower limit must be less than upper limit."
-msgstr "Spodnja meja mora biti nija od zgornje."
+msgstr "Spodnja meja mora biti niÅ¾ja od zgornje."
 
 msgid "Minimum"
 msgstr "Minimum"
@@ -2535,13 +2535,13 @@ msgid "Scale"
 msgstr "Merilo"
 
 msgid "Logistic Distribution"
-msgstr "Logistièna porazdelitev"
+msgstr "LogistiÄna porazdelitev"
 
 msgid "Lognormal Distribution"
 msgstr "Lognormalna porazdelitev"
 
 msgid "Mean (log scale)"
-msgstr "Povpreèje (log-lestvica)"
+msgstr "PovpreÄje (log-lestvica)"
 
 msgid "Standard deviation (log scale)"
 msgstr "Standardni odklon (log-lestvica)"
@@ -2583,10 +2583,10 @@ msgid "Cauchy Probabilities"
 msgstr "Verjetnosti Cauchyjeve porazdelitve"
 
 msgid "Logistic Quantiles"
-msgstr "Kvantili logistiène porazdelitve"
+msgstr "Kvantili logistiÄne porazdelitve"
 
 msgid "Logistic Probabilities"
-msgstr "Verjetnosti logistiène porazdelitve"
+msgstr "Verjetnosti logistiÄne porazdelitve"
 
 msgid "Lognormal Quantiles"
 msgstr "Kvantili lognormalne porazdelitve"
@@ -2649,19 +2649,19 @@ msgid "The k parameter was not specified."
 msgstr "Parameter k ni naveden."
 
 msgid "The k parameter cannot be greater than m + n."
-msgstr "Parameter k ne more biti veèji kot m + n."
+msgstr "Parameter k ne more biti veÄji kot m + n."
 
 msgid "The k parameter cannot be negative."
 msgstr "Parameter k ne more biti negativen."
 
 msgid "m (number of white balls in the urn)"
-msgstr "m (število belih kroglic v posodi)"
+msgstr "m (Å¡tevilo belih kroglic v posodi)"
 
 msgid "n (number of black balls in the urn)"
-msgstr "n (število èrnih kroglic v posodi)"
+msgstr "n (Å¡tevilo Ärnih kroglic v posodi)"
 
 msgid "k (number of balls drawn from the urn)"
-msgstr "k (število kroglic, vzetih iz posode)"
+msgstr "k (Å¡tevilo kroglic, vzetih iz posode)"
 
 msgid "Hypergeometric Probabilities"
 msgstr "Verjetnosti hipergeometrijske porazdelitve"
@@ -2670,13 +2670,13 @@ msgid "Negative Binomial Quantiles"
 msgstr "Kvantili negativne binomske porazdelitve"
 
 msgid "Target number of successes not specified."
-msgstr "Ciljno število uspehov ni navedeno."
+msgstr "Ciljno Å¡tevilo uspehov ni navedeno."
 
 msgid "Target number of successes cannot be negative."
-msgstr "Ciljno število uspehov ne more biti negativno."
+msgstr "Ciljno Å¡tevilo uspehov ne more biti negativno."
 
 msgid "Target number of successes"
-msgstr "Ciljno število uspehov"
+msgstr "Ciljno Å¡tevilo uspehov"
 
 msgid "Negative Binomial Probabilities"
 msgstr "Verjetnosti negativne binomske porazdelitve"
@@ -2697,7 +2697,7 @@ msgid "NormalSamples"
 msgstr "NormalniVzorec"
 
 msgid "Sample means"
-msgstr "Povpreèja vzorca"
+msgstr "PovpreÄja vzorca"
 
 msgid "Sample sums"
 msgstr "Vsote vzorca"
@@ -2709,13 +2709,13 @@ msgid "Sample size must be positive."
 msgstr "Velikost vzorca mora biti pozitivna."
 
 msgid "Number of samples must be positive."
-msgstr "Število vzorcev mora biti pozitivno."
+msgstr "Å tevilo vzorcev mora biti pozitivno."
 
 msgid "Number of samples (rows)"
-msgstr "Število vzorcev (vrstice)"
+msgstr "Å tevilo vzorcev (vrstice)"
 
 msgid "Number of observations (columns)"
-msgstr "Število opazovanj (stolpci)"
+msgstr "Å tevilo opazovanj (stolpci)"
 
 msgid "Add to Data Set:"
 msgstr "Dodaj naboru podatkov:"
@@ -2763,7 +2763,7 @@ msgid "CauchySamples"
 msgstr "CauchyVzorec"
 
 msgid "Sample from Logistic Distribution"
-msgstr "vzorec iz logistiène porazdelitve"
+msgstr "vzorec iz logistiÄne porazdelitve"
 
 msgid "LogisticSamples"
 msgstr "LogisticniVzorec"
@@ -2799,7 +2799,7 @@ msgid "BinomialSamples"
 msgstr "BinomskiVzorec"
 
 msgid "Poisson mean cannot be negative."
-msgstr "Poissonovo povpreèje ne more biti negativno."
+msgstr "Poissonovo povpreÄje ne more biti negativno."
 
 msgid "Sample from Poisson Distribution"
 msgstr "vzorec iz Poissonove porazdelitve"
@@ -2898,7 +2898,7 @@ msgid "Sample from Cauchy distribution..."
 msgstr "vzorec iz Cauchyjeve porazdelitve"
 
 msgid "Logistic distribution"
-msgstr "Logistièna porazdelitev"
+msgstr "LogistiÄna porazdelitev"
 
 msgid "Logistic quantiles..."
 msgstr "kvantili"
@@ -2910,7 +2910,7 @@ msgid "Plot logistic distribution..."
 msgstr "prikaz porazdelitve"
 
 msgid "Sample from logistic distribution..."
-msgstr "vzorec iz logistiène porazdelitve"
+msgstr "vzorec iz logistiÄne porazdelitve"
 
 msgid "Lognormal distribution"
 msgstr "Lognormalna porazdelitev"
@@ -3050,19 +3050,19 @@ msgid "XY Conditioning Plot"
 msgstr "Pogojni diagram XY"
 
 msgid "Response variables (pick one or more)"
-msgstr "Odvisne spremenljivke (izberite eno ali veè)"
+msgstr "Odvisne spremenljivke (izberite eno ali veÄ)"
 
 msgid "Groups (pick zero or more)"
-msgstr "Skupine (izberite niè ali veè)"
+msgstr "Skupine (izberite niÄ ali veÄ)"
 
 msgid "Automatically draw key"
-msgstr "Samodejno nariši legendo"
+msgstr "Samodejno nariÅ¡i legendo"
 
 msgid "Different panels for different responses"
-msgstr "Razlièni panoji za razliène odzive"
+msgstr "RazliÄni panoji za razliÄne odzive"
 
 msgid "Identical"
-msgstr "Identièno"
+msgstr "IdentiÄno"
 
 msgid "Free"
 msgstr "Prosto"
@@ -3071,10 +3071,10 @@ msgid "Same range"
 msgstr "Enak razpon"
 
 msgid "X-Axis Scales in Different Panels"
-msgstr "Merilo osi X na razliènih panojih"
+msgstr "Merilo osi X na razliÄnih panojih"
 
 msgid "Y-Axis Scales in Different Panels"
-msgstr "Merilo osi Y na razliènih panojih"
+msgstr "Merilo osi Y na razliÄnih panojih"
 
 msgid "At least one response variable must be selected."
 msgstr "Izbrati morate vsaj eno odvisno spremenljivko."
@@ -3096,23 +3096,23 @@ msgstr "Komponente statistike hi-kvadrat"
     # 3D scatterplots dialog
 
 msgid "Show squared residuals"
-msgstr "Pokai kvadrirane ostanke"
+msgstr "PokaÅ¾i kvadrirane ostanke"
 
 msgid "Show axis scales"
-msgstr "Pokai merila osi"
+msgstr "PokaÅ¾i merila osi"
 
 msgid "Plot 50% concentration ellipsoid"
-msgstr "Nariši elipsoid 50 % koncentracije"
+msgstr "NariÅ¡i elipsoid 50 % koncentracije"
 
     # scatterplot matrices dialog
 
 msgid "One-dimensional scatterplots"
-msgstr "Enorazsenostni razsevni diagram"
+msgstr "EnorazseÅ¾nostni razsevni diagram"
 
     # count NAs (menu item)
 
 msgid "Count missing observations"
-msgstr "Preštej manjkajoèa opazovanja"
+msgstr "PreÅ¡tej manjkajoÄa opazovanja"
 
     # Correlation test dialog
 
@@ -3135,7 +3135,7 @@ msgid "Correlation > 0"
 msgstr "Korelacija > 0"
 
 msgid "More than 2 variables selected."
-msgstr "Izbrani sta veè kot 2 spremenljivki."
+msgstr "Izbrani sta veÄ kot 2 spremenljivki."
 
 msgid "Correlation test..."
 msgstr "Test korelacije"
@@ -3146,10 +3146,10 @@ msgid "Recode Variables"
 msgstr "Prekodiraj spremenljivke"
 
 msgid "Variables to recode (pick one or more)"
-msgstr "Spremenljivke za prekodiranje (izberite eno ali veè)"
+msgstr "Spremenljivke za prekodiranje (izberite eno ali veÄ)"
 
 msgid "New variable name or prefix for multiple recodes:"
-msgstr "Ime nove spremenljivke ali predpona za veè prekodiranj:"
+msgstr "Ime nove spremenljivke ali predpona za veÄ prekodiranj:"
 
 msgid "Make (each) new variable a factor"
 msgstr "(Vsaka) nova spremenljivka naj bo faktor"
@@ -3160,21 +3160,21 @@ msgstr "Prekodiraj spremenljivke "
     # Frequency distributions dialog
 
 msgid "Frequency Distributions"
-msgstr "Frekvenène porazdelitve"
+msgstr "FrekvenÄne porazdelitve"
 
 msgid "Chi-square goodness-of-fit test (for one variable only)"
 msgstr "Testiranje skladnosti s hi-kvadrat (samo za eno spremenljivko)"
 
 msgid "Goodness-of-fit test not available when more than one variable is selected."
-msgstr "Testiranje skladnosti je na voljo le, èe je izbrana samo ena spremenljivka."
+msgstr "Testiranje skladnosti je na voljo le, Äe je izbrana samo ena spremenljivka."
 
 msgid "Frequency distributions..."
-msgstr "Frekvenène porazdelitve"
+msgstr "FrekvenÄne porazdelitve"
 
     # Numeric to factor dialog
 
 msgid "Convert Numeric Variables to Factors"
-msgstr "Spremeni številske spremenljivke v faktorje"
+msgstr "Spremeni Å¡tevilske spremenljivke v faktorje"
 
 msgid "<same as variables>"
 msgstr "<enaka imenom spremenljivk>"
@@ -3186,10 +3186,10 @@ msgid "Factors"
 msgstr "Faktorji"
 
 msgid "New variable name or prefix for multiple variables:"
-msgstr "Ime nove spremenljivke ali predpona za veè spremenljivk:"
+msgstr "Ime nove spremenljivke ali predpona za veÄ spremenljivk:"
 
 msgid "Convert numeric variables to factors..."
-msgstr "Spremeni številske spremenljivke v faktorje"
+msgstr "Spremeni Å¡tevilske spremenljivke v faktorje"
 
     # Stack dialog
 
@@ -3206,7 +3206,7 @@ msgid "You must select at least two variables."
 msgstr "Izbrati morate vsaj dve spremenljivki."
 
 msgid "Name for stacked data set:"
-msgstr "Ime za nabor zloenih podatkov:"
+msgstr "Ime za nabor zloÅ¾enih podatkov:"
 
 msgid "Name for variable:"
 msgstr "Ime za spremenljivko:"
@@ -3220,28 +3220,28 @@ msgstr "Spremenljivke v aktivnem naboru eno nad drugo"
     # miscelaneous
 
 msgid "Identify Points"
-msgstr "Doloèite toèke"
+msgstr "DoloÄite toÄke"
 
 msgid "Use left mouse button to identify points,\nright button to exit."
-msgstr "Uporabite levi gumb miške za \noznaèitev toèk, desni gumb za izhod."
+msgstr "Uporabite levi gumb miÅ¡ke za \noznaÄitev toÄk, desni gumb za izhod."
 
 msgid "Drag right mouse button to identify points,\nclick right button to exit."
-msgstr "Povlecite z desnim gumbom miške za \noznaèitev toèk, kliknite desnega za izhod."
+msgstr "Povlecite z desnim gumbom miÅ¡ke za \noznaÄitev toÄk, kliknite desnega za izhod."
 
 msgid "Read Data From Text File or Clipboard"
-msgstr "Preberi podatke iz besedilne datoteke ali z odloišèa"
+msgstr "Preberi podatke iz besedilne datoteke ali z odloÅ¾iÅ¡Äa"
 
 msgid "Read data from clipboard:"
-msgstr "Preberi podatke z odloišèa:"
+msgstr "Preberi podatke z odloÅ¾iÅ¡Äa:"
 
 msgid "from text file or clipboard..."
-msgstr "iz besedilne datoteke ali z odloišèa"
+msgstr "iz besedilne datoteke ali z odloÅ¾iÅ¡Äa"
 
 msgid "Add observation numbers to data set"
-msgstr "Naboru podatkov dodaj številke opazovanj"
+msgstr "Naboru podatkov dodaj Å¡tevilke opazovanj"
 
 msgid "Refresh active data set"
-msgstr "Osvei aktivni nabor podatkov"
+msgstr "OsveÅ¾i aktivni nabor podatkov"
 
 msgid "No statistics selected."
 msgstr "Izbrana ni nobena statistika."
@@ -3254,28 +3254,28 @@ msgstr "Desna stran"
     # handling plug-ins
 
 msgid "Load Plugins"
-msgstr "Naloi dodatke"
+msgstr "NaloÅ¾i dodatke"
 
 msgid "Plug-ins (pick one or more)"
-msgstr "Dodatki (izberite enega ali veè)"
+msgstr "Dodatki (izberite enega ali veÄ)"
 
 msgid "You must select at least one plug-in."
 msgstr "Izbrati morate vsaj en dodatek."
 
 msgid "Plug-ins loaded:"
-msgstr "Naloeni dodatki:"
+msgstr "NaloÅ¾eni dodatki:"
 
 msgid "The plug-in(s) will not be available until the Commander is restarted.\nRestart now?"
-msgstr "Dodatki ne bodo na voljo, dokler znova ne zaenete Commanderja.\nGa elite ponovno zagnati zdaj?"
+msgstr "Dodatki ne bodo na voljo, dokler znova ne zaÅ¾enete Commanderja.\nGa Å¾elite ponovno zagnati zdaj?"
 
 msgid "objects have different numbers of columns"
-msgstr "objekti imajo razlièno število stolpcev"
+msgstr "objekti imajo razliÄno Å¡tevilo stolpcev"
 
 msgid "objects have different column names"
-msgstr "objekti imajo razlièna imena stolpcev"
+msgstr "objekti imajo razliÄna imena stolpcev"
 
 msgid "Load Rcmdr plug-in(s)..."
-msgstr "Naloi dodatke za Rcmdr"
+msgstr "NaloÅ¾i dodatke za Rcmdr"
 
 msgid "the plug-in package %s is missing"
 msgstr "dodatni paket %s manjka"
@@ -3304,7 +3304,7 @@ msgid "Save active data set..."
 msgstr "Shrani aktivni nabor podatkov "
 
 msgid "Load data set..."
-msgstr "Naloi nabor podatkov "
+msgstr "NaloÅ¾i nabor podatkov "
 
 msgid "{\"R Data Files\" {\".rda\" \".Rda\" \".RDA\"}} {\"All Files\" {\"*\"}}"
 msgstr "{\"R-ove podatkovne datoteke\" {\".rda\" \".Rda\" \".RDA\"}} {\"Vse datoteke\" {\"*\"}}"
@@ -3360,15 +3360,15 @@ msgid " has been coerced to a data frame"
 msgstr " je bil spremenjen v podatkovni okvir"
 
 msgid "the dataset %s is no longer available"
-msgstr "nabor podatkov %s ni veè na voljo"
+msgstr "nabor podatkov %s ni veÄ na voljo"
 
 msgid "the model %s is no longer available"
-msgstr "model %s ni veè na voljo"
+msgstr "model %s ni veÄ na voljo"
 
 # message added to version 1.3-10
 
 msgid "The Commander GUI is launched only in interactive sessions"
-msgstr "Grafièni vmesnik Commanderja se odpre le v interaktivnem naèinu"
+msgstr "GrafiÄni vmesnik Commanderja se odpre le v interaktivnem naÄinu"
 
 # messages added to version 1.3-15
 
@@ -3398,13 +3398,13 @@ msgid "Type of Tests"
 msgstr "Vrsta testov"
 
 msgid "Sequential (\"Type I\")"
-msgstr "Sekvenèni (\"tip I\")"
+msgstr "SekvenÄni (\"tip I\")"
 
 msgid "Partial obeying marginality (\"Type II\")"
-msgstr "Delni z upoštevanjem marginalnosti (\"tip II\")"
+msgstr "Delni z upoÅ¡tevanjem marginalnosti (\"tip II\")"
 
 msgid "Partial ignoring marginality (\"Type III\")"
-msgstr "Delni brez upoštevanja marginalnosti (\"tip III\")"
+msgstr "Delni brez upoÅ¡tevanja marginalnosti (\"tip III\")"
 
 msgid "Type III tests require careful attention to contrast coding."
 msgstr "Testi tipa III zahtevajo posebno pozornost pri kodiranju kontrastov."
@@ -3416,13 +3416,13 @@ msgid "Duplicate menu names:"
 msgstr "Podvojena menijska imena:"
 
 msgid "Strip chart..."
-msgstr "Tekoèi grafikon"
+msgstr "TekoÄi grafikon"
 
 msgid "Strip Chart"
-msgstr "Tekoèi grafikon"
+msgstr "TekoÄi grafikon"
 
 msgid "Factors (pick zero or more)"
-msgstr "Faktorji (izberite niè ali veè)"
+msgstr "Faktorji (izberite niÄ ali veÄ)"
 
 msgid "Duplicate Values"
 msgstr "Podvojene vrednosti"
@@ -3461,19 +3461,19 @@ msgid "Log y-axis"
 msgstr "Logaritmiraj os y"
 
 msgid "from text file, clipboard, or URL..."
-msgstr "iz besedilne datoteke, z odloišèa ali URL"
+msgstr "iz besedilne datoteke, z odloÅ¾iÅ¡Äa ali URL"
 
 msgid "Read Text Data From File, Clipboard, or URL"
-msgstr "Preberi podatke iz datoteke, z odloišèa ali URL"
+msgstr "Preberi podatke iz datoteke, z odloÅ¾iÅ¡Äa ali URL"
 
 msgid "Location of Data File"
 msgstr "Mesto podatkovne datoteke"
 
 msgid "Local file system"
-msgstr "Lokalni datoteèni sistem"
+msgstr "Lokalni datoteÄni sistem"
 
 msgid "Clipboard"
-msgstr "Odloišèe"
+msgstr "OdloÅ¾iÅ¡Äe"
 
 msgid "Internet URL"
 msgstr "Internetni URL"
@@ -3485,7 +3485,7 @@ msgid "Friedman Rank Sum Test"
 msgstr "Friedmanov test vsote rangov"
 
 msgid "Repeated-Measures Variables (pick two or more)"
-msgstr "Spremenljivke s ponovljenimi meritvami (izberite dve ali veè)"
+msgstr "Spremenljivke s ponovljenimi meritvami (izberite dve ali veÄ)"
 
 msgid "Undo"
 msgstr "Razveljavi"
@@ -3495,3 +3495,4 @@ msgstr "Uveljavi"
 
 msgid "ANOVA table..."
 msgstr "Tabela ANOVA"
+

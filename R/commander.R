@@ -5,7 +5,7 @@
 #   changes 21 June 2007 by Erich Neuwirth for Excel support (marked EN)
 
 Commander <- function(){
-    RcmdrVersion <- "1.4-0"
+    RcmdrVersion <- "1.4-1"
 ##    DESCRIPTION <- readLines(file.path(.find.package("Rcmdr"), "DESCRIPTION")[1])
 ##    RcmdrVersion <- trim.blanks(sub("^Version:", "",
 ##        grep("^Version:", D, value=TRUE)))

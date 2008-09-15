@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Rcmdr 1.3-0\n"
 "Report-Msgid-Bugs-To: bugs@r-project.org\n"
-"POT-Creation-Date: 2007-05-31 21:05\n"
-"PO-Revision-Date: 2007-06-19 15:59+0100\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2008-08-21 13:46+0100\n"
 "Last-Translator: Philippe Grosjean <phgrosjean@sciviews.org>\n"
 "Language-Team: French <R-core@r-project.org>\n"
 "MIME-Version: 1.0\n"
@@ -2540,14 +2540,14 @@ msgstr "A propos de Rcmdr"
 msgid "df ="
 msgstr "ddl ="
 
-## messages added to Rcmdr version 1.1-1
+# # messages added to Rcmdr version 1.1-1
 msgid "There is no current RGL graphics device."
 msgstr "Aucun périphérique RGL n'est ouvert."
 
 msgid "3D graph"
 msgstr "Graphe 3D"
 
-## messages added to Rcmdr version 1.1-6
+# # messages added to Rcmdr version 1.1-6
 msgid " contains non-standard variable names:\n"
 msgstr "contient des noms de variables non conventionnels :\n"
 
@@ -2558,7 +2558,7 @@ msgstr ""
 "\n"
 "Ceux-ci ont été modifiés en :\n"
 
-## messages added to Rcmdr version 1.2-0
+# # messages added to Rcmdr version 1.2-0
 # importRODBCtable dialog
 msgid "This function requires the RODBC package.\n"
 msgstr "Cette fonction nécessite le package RODBC.\n"
@@ -3348,7 +3348,7 @@ msgstr "Aucune statistique sélectionnée."
 msgid "Right-hand side"
 msgstr "Côté gauche"
 
-## messages added to Rcmdr version 1.3-0
+# # messages added to Rcmdr version 1.3-0
 # handling plug-ins
 msgid "Load Plugins"
 msgstr "Charger des plug-ins"
@@ -3453,4 +3453,131 @@ msgstr "Taille du texte des axes"
 
 msgid "Axis-labels text size"
 msgstr "Taille du texte des libellés d'axes"
+
+# message added to version 1.3-3 (because of inadvertent omission)
+msgid "Scale (inverse rate)"
+msgstr "Echelle (taux inverse)"
+
+# messages added to version 1.3-5
+msgid " has been coerced to a data frame"
+msgstr "est transformé automatiquement en un tableau de données (data.frame)"
+
+msgid "the dataset %s is no longer available"
+msgstr "le jeu de données %s n'est plus disponible"
+
+# message added to version 1.3-10
+msgid "The Commander GUI is launched only in interactive sessions"
+msgstr "L'interface graphique de R Commander n'est utilisable que dans des sessions interactives"
+
+msgid "Commander"
+msgstr "R Commander"
+
+# For the following you must supply a PDF document containing a translation
+# of "Getting-Started-with-the-Rcmdr.pdf". I suggest using a translation
+# including -xx, where xx is the code for your language.
+# Example: "Empezando-con-Rcmdr-es"
+msgid "Getting-Started-with-the-Rcmdr"
+msgstr "Getting-Started-with-the-Rcmdr"
+
+msgid "Type of Tests"
+msgstr "Type de tests"
+
+msgid "Sequential (\"Type I\")"
+msgstr "(\"Type I\") séquentiel"
+
+msgid "Partial obeying marginality (\"Type II\")"
+msgstr "Moyennes marginales partielles (\"Type II\")"
+
+msgid "Partial ignoring marginality (\"Type III\")"
+msgstr "Pas de moyennes marginales (\"Type III\")"
+
+msgid "Type III tests require careful attention to contrast coding."
+msgstr "Les tests de Type III nécessitent une attention particulière dans l'encodage des contrastes."
+
+msgid "There is no appropriate anova method for a model of this class."
+msgstr "Pas de méthode ANOVA appropriée pour un modèle de cette classe."
+
+msgid "Duplicate menu names:"
+msgstr "Noms de menus dupliqués :"
+
+msgid "Strip chart..."
+msgstr "Graphe en bande..."
+
+msgid "Strip Chart"
+msgstr "Graphe en bande"
+
+msgid "Factors (pick zero or more)"
+msgstr "Facteurs (un au plus)"
+
+msgid "Duplicate Values"
+msgstr "Valeurs dupliquées"
+
+msgid "Stack"
+msgstr "Données empilées"
+
+msgid "Jitter"
+msgstr "Décalage"
+
+msgid "Remove Rows from Active Data Set"
+msgstr "Eliminer des lignes du jeu de données actif"
+
+msgid "Remove row(s) from active data set..."
+msgstr "Eliminer une ou des ligne(s) du jeu de données actif..."
+
+msgid "No rows to remove"
+msgstr "Pas de lignes à éliminer"
+
+msgid "Indices or quoted names of row(s) to remove"
+msgstr "Indices ou noms de ligne(s) (entre guillemets) à éliminer"
+
+msgid "Akaike Information Criterion (AIC)"
+msgstr "Critère d'information d'Akaike (AIC)"
+
+msgid "Bayesian Information Criterion (BIC)"
+msgstr "Critère d'information Bayésien (BIC)"
+
+msgid "Change working directory..."
+msgstr "Changer le répertoire de travail..."
+
+msgid "Log x-axis"
+msgstr "Axe X logarithmique"
+
+msgid "Log y-axis"
+msgstr "Axe Y logarithmique"
+
+msgid "from text file, clipboard, or URL..."
+msgstr "depuis un fichier texte, le presse-papier ou un lien URL..."
+
+msgid "Read Text Data From File, Clipboard, or URL"
+msgstr "Lire des données depuis un fichier texte, le presse-papier ou un lien URL"
+
+msgid "Location of Data File"
+msgstr "Fichier de données"
+
+msgid "Local file system"
+msgstr "Système de fichiers local"
+
+msgid "Clipboard"
+msgstr "Presse-papier"
+
+msgid "Internet URL"
+msgstr "Lien internet (URL)"
+
+msgid "Friedman rank-sum test..."
+msgstr "Test de somme des rangs de Friedman"
+
+msgid "Friedman Rank Sum Test"
+msgstr "Test de Friedman"
+
+msgid "Repeated-Measures Variables (pick two or more)"
+msgstr "Variables pour les mesures répétées (deux ou plus)"
+
+msgid "Undo"
+msgstr "Annuler"
+
+msgid "Redo"
+msgstr "Refaire"
+
+msgid "ANOVA table..."
+msgstr "Table de l'ANOVA..."
 
