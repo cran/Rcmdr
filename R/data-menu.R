@@ -1,4 +1,4 @@
-# last modified 30 July 2008 by J. Fox
+# last modified 17 July 2008 by J. Fox
 
 # Data menu dialogs
 
@@ -25,14 +25,17 @@ newDataSet <- function() {
                 }
             }
         command <- "edit(as.data.frame(NULL))"
-        assign(dsnameValue, justDoIt(command), envir=.GlobalEnv)
-        logger(paste(dsnameValue, "<-", command))
-        if (nrow(get(dsnameValue)) == 0){
-#        if (eval(parse(text=paste("nrow(", dsnameValue, ")"))) == 0){
-            errorCondition(recall=newDataSet, message=gettextRcmdr("empty data set."))
-            return()
-            }
-        activeDataSet(dsnameValue)
+		result <- justDoIt(command)
+		if (class(result)[1] !=  "try-error"){ 
+        	assign(dsnameValue, result, envir=.GlobalEnv)
+        	logger(paste(dsnameValue, "<-", command))
+	        if (nrow(get(dsnameValue)) == 0){
+	#        	if (eval(parse(text=paste("nrow(", dsnameValue, ")"))) == 0){
+	            	errorCondition(recall=newDataSet, message=gettextRcmdr("empty data set."))
+	            	return()
+	            	}
+	        activeDataSet(dsnameValue)
+			}
         closeDialog()
         tkfocus(CommanderWindow())
         }
@@ -141,8 +144,8 @@ Recode <- function(){
             cmd <- paste("recode(", dataSet,"$",variable, ", '", recode.directives,
                 "', as.factor.result=", asFactor, ")", sep="")
             logger(paste(dataSet,"$",newVar, " <- ", cmd, sep=""))
-            justDoIt(paste(dataSet,"$",newVar, " <- ", cmd, sep=""))
-            activeDataSet(dataSet, flushModel=FALSE)
+            result <- justDoIt(paste(dataSet,"$",newVar, " <- ", cmd, sep=""))
+			if (class(result)[1] !=  "try-error") activeDataSet(dataSet, flushModel=FALSE)
             tkfocus(CommanderWindow())
             }
         }
@@ -221,8 +224,8 @@ Compute <- function(){
         command <-  paste(dataSet,"$",newVar, " <- with(", ActiveDataSet(),
             ", ", express, ")", sep="")
         logger(command)
-        justDoIt(command)
-        activeDataSet(dataSet, flushModel=FALSE)
+        result <- justDoIt(command)
+        if (class(result)[1] !=  "try-error") activeDataSet(dataSet, flushModel=FALSE)
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="Compute")
@@ -358,8 +361,11 @@ readDataSet <- function() {
         command <- paste('read.table("', file,'", header=', head,
             ', sep="', del, '", na.strings="', miss, '", dec="', dec, '", strip.white=TRUE)', sep="")
         logger(paste(dsnameValue, " <- ", command, sep=""))
-        assign(dsnameValue, justDoIt(command), envir=.GlobalEnv)
-        activeDataSet(dsnameValue)
+		result <- justDoIt(command)
+		if (class(result)[1] !=  "try-error"){
+        	assign(dsnameValue, result, envir=.GlobalEnv)
+        	activeDataSet(dsnameValue)
+			}
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="read.table")
@@ -537,9 +543,9 @@ readDataFromPackage <- function() {
                 }
             closeDialog()
             command <- paste("data(", datasetName, ', package="', package, '")', sep="")
-            justDoIt(command)
+            result <- justDoIt(command)
             logger(command)
-            activeDataSet(datasetName)
+			if (class(result)[1] !=  "try-error") activeDataSet(datasetName)
             tkfocus(CommanderWindow())
             }
         }
@@ -602,8 +608,11 @@ importSPSS <- function() {
         command <- paste('read.spss("', file,'", use.value.labels=', factor,
             ", max.value.labels=", levels, ", to.data.frame=TRUE)", sep="")
         logger(paste(dsnameValue, " <- ", command, sep=""))
-        assign(dsnameValue, justDoIt(command), envir=.GlobalEnv)
-        activeDataSet(dsnameValue)
+		result <- justDoIt(command)
+		if (class(result)[1] !=  "try-error"){
+	        assign(dsnameValue, result, envir=.GlobalEnv)
+	        activeDataSet(dsnameValue)
+			}
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="read.spss")
@@ -725,8 +734,11 @@ importSTATA <- function() {
             ", convert.factors=", factor, ", missing.type=", missingtype,
             ", convert.underscore=", convertunderscore, ", warn.missing.labels=TRUE)", sep="")
         logger(paste(dsnameValue, " <- ", command, sep=""))
-        assign(dsnameValue, justDoIt(command), envir=.GlobalEnv)
-        activeDataSet(dsnameValue)
+		result <- justDoIt(command)
+		if (class(result)[1] !=  "try-error"){
+        	assign(dsnameValue, result, envir=.GlobalEnv)
+        	activeDataSet(dsnameValue)
+			}
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="read.dta")
@@ -943,16 +955,16 @@ numericToFactor <- function(){
                 if (!exists("labels", mode="character")) return()
                 command <- paste("factor(", .activeDataSet, "$", name,
                     ", labels=c(", labels, "))", sep="")
-                justDoIt(paste(.activeDataSet, "$", fname, " <- ", command, sep=""))
+                result <- justDoIt(paste(.activeDataSet, "$", fname, " <- ", command, sep=""))
                 logger(paste(.activeDataSet,"$", fname," <- ", command, sep=""))
-                activeDataSet(.activeDataSet)
+				if (class(result)[1] !=  "try-error") activeDataSet(.activeDataSet)
                 tkfocus(CommanderWindow())
                 }
             else{
                 command <- paste("as.factor(", .activeDataSet, "$", name, ")", sep="")
-                justDoIt(paste(.activeDataSet, "$", fname, " <- ", command, sep=""))
+                result <- justDoIt(paste(.activeDataSet, "$", fname, " <- ", command, sep=""))
                 logger(paste(.activeDataSet, "$", fname," <- ", command, sep=""))
-                activeDataSet(.activeDataSet, flushModel=FALSE)
+				if (class(result)[1] !=  "try-error") activeDataSet(.activeDataSet, flushModel=FALSE)
                 tkfocus(CommanderWindow())
                 }
             }
@@ -1056,8 +1068,8 @@ binVariable <- function(){
             "bin.var(", .activeDataSet,"$", varName, ", bins=", bins,
             ", method=", "'", method, "', labels=", labels, ")", sep="")
         logger(command)
-        justDoIt(command)
-        activeDataSet(.activeDataSet, flushModel=FALSE)
+        result <- justDoIt(command)
+		if (class(result)[1] !=  "try-error") activeDataSet(.activeDataSet, flushModel=FALSE)
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="bin.var")
@@ -1130,9 +1142,9 @@ reorderFactor <- function(){
             command <- paste("factor(", .activeDataSet, "$", variable,
                 ", levels=c(", paste(paste("'", levels, "'", sep=""), collapse=","), ")",
                 ordered, ")", sep="")
-            justDoIt(paste(.activeDataSet, "$", name, " <- ", command, sep=""))
+            result <- justDoIt(paste(.activeDataSet, "$", name, " <- ", command, sep=""))
             logger(paste(.activeDataSet,"$", name," <- ", command, sep=""))
-            activeDataSet(.activeDataSet, flushModel=FALSE)
+			if (class(result)[1] !=  "try-error") activeDataSet(.activeDataSet, flushModel=FALSE)
             }
         subOKCancelHelp()
         tkgrid(labelRcmdr(subdialog, text=gettextRcmdr("Old Levels"), fg="blue"),
@@ -1174,7 +1186,8 @@ standardize <- function(X){
         .activeDataSet <- ActiveDataSet()
         command <- paste("scale(", .activeDataSet, "[,c(", paste(xx, collapse=","),
             ")])", sep="")
-        assign(".Z", justDoIt(command), envir=.GlobalEnv)
+		result <- justDoIt(command)
+        assign(".Z", result, envir=.GlobalEnv)
         logger(paste(".Z <- ", command, sep=""))
         for (i in 1:length(x)){
             Z <- paste("Z.", x[i], sep="")
@@ -1190,7 +1203,7 @@ standardize <- function(X){
             }
         remove(.Z, envir=.GlobalEnv)
         logger("remove(.Z)")
-        activeDataSet(.activeDataSet, flushModel=FALSE)
+		if (class(result)[1] !=  "try-error") activeDataSet(.activeDataSet, flushModel=FALSE)
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="scale")
@@ -1285,8 +1298,8 @@ filterNA <- function(){
         if (tclvalue(allVariables) == "1"){
             command <- paste(newName, " <- na.omit(", .activeDataSet, ")", sep="")
             logger(command)
-            justDoIt(command)
-            activeDataSet(newName)
+            result <- justDoIt(command)
+			if (class(result)[1] !=  "try-error") activeDataSet(newName)
             tkfocus(CommanderWindow())
             }
         else {
@@ -1298,8 +1311,8 @@ filterNA <- function(){
             command <- paste(newName, " <- na.omit(", .activeDataSet, "[,c(", paste(x, collapse=","),
                 ')])', sep="")
             logger(command)
-            justDoIt(command)
-            activeDataSet(newName)
+            result <- justDoIt(command)
+			if (class(result)[1] !=  "try-error") activeDataSet(newName)
             tkfocus(CommanderWindow())
             }
         }
@@ -1370,8 +1383,8 @@ subsetDataSet <- function(){
         command <- paste(newName, " <- subset(", ActiveDataSet(), selectCases, selectVars, ")",
             sep="")
         logger(command)
-        justDoIt(command)
-        activeDataSet(newName)
+        result <- justDoIt(command)
+		if (class(result)[1] !=  "try-error") activeDataSet(newName)
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="subset")
@@ -1409,11 +1422,11 @@ setCaseNames <- function(){
             return()
             }
         command <- paste("row.names(", dataSet, ") <- as.character(", dataSet, "$", variable, ")", sep="")
-        justDoIt(command)
+        result <- justDoIt(command)
         logger(command)
         eval(parse(text=paste(dataSet, "$", variable, "<- NULL", sep="")), envir=.GlobalEnv)
         logger(paste(dataSet, "$", variable, " <- NULL", sep=""))
-        activeDataSet(dataSet, flushModel=FALSE)
+		if (class(result)[1] !=  "try-error") activeDataSet(dataSet, flushModel=FALSE)
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="row.names")
@@ -1465,9 +1478,9 @@ renameVariables <- function(){
                 }
             command <- paste("names(", .activeDataSet, ")[c(", paste(which.variables, collapse=","),
                 ")] <- c(", paste('"', newnames, '"', collapse=",", sep=""), ")", sep="")
-            justDoIt(command)
+            result <- justDoIt(command)
             logger(command)
-            activeDataSet(.activeDataSet, flushModel=FALSE)
+			if (class(result)[1] !=  "try-error") activeDataSet(.activeDataSet, flushModel=FALSE)
             tkfocus(CommanderWindow())
             }
         subOKCancelHelp()
@@ -1508,9 +1521,9 @@ setContrasts <- function(){
         contrasts <- tclvalue(contrastsVariable)
         if (contrasts != "specify"){
             command <- paste("contrasts(", ActiveDataSet(), "$", variable, ') <- "', contrasts, '"', sep="")
-            justDoIt(command)
+            result <- justDoIt(command)
             logger(command)
-            activeDataSet(ActiveDataSet())
+			if (class(result)[1] !=  "try-error") activeDataSet(ActiveDataSet())
             tkfocus(CommanderWindow())
             }
         else{
@@ -1581,11 +1594,11 @@ setContrasts <- function(){
                 justDoIt(command)
                 logger(command)
                 command <- paste("contrasts(", ActiveDataSet(), "$", variable, ") <- .Contrasts", sep="")
-                justDoIt(command)
+                result <- justDoIt(command)
                 logger(command)
                 justDoIt("remove(.Contrasts, envir=.GlobalEnv)")
                 logger("remove(.Contrasts)")
-                activeDataSet(ActiveDataSet(), flushModel=FALSE)
+				if (class(result)[1] !=  "try-error") activeDataSet(ActiveDataSet(), flushModel=FALSE)
                 tkfocus(CommanderWindow())
                 }
             subOKCancelHelp(helpSubject="contrasts")
@@ -1615,8 +1628,8 @@ addObsNumbers <- function(){
 #    nrows <- eval(parse(text=paste("nrow(", dsname, ")", sep="")), envir=.GlobalEnv)
     command <- paste(dsname, "$ObsNumber <- 1:", nrows, sep="")
     logger(command)
-    justDoIt(command)
-    activeDataSet(dsname, flushModel=FALSE)
+    result <- justDoIt(command)
+	if (class(result)[1] !=  "try-error") activeDataSet(dsname, flushModel=FALSE)
     }
 
 Stack <- function(){
@@ -1664,12 +1677,12 @@ Stack <- function(){
         command <- paste(dsname, " <- stack(", activeDataSet(), "[, c(",
             paste(paste('"', variables, '"', sep=""), collapse=","), ")])", sep="")
         logger(command)
-        justDoIt(command)
+        result <- justDoIt(command)
         command <- paste("names(", dsname, ') <- c("', varname, '", "', facname, '")',
             sep="")
         logger(command)
         justDoIt(command)
-        activeDataSet(dsname)
+		if (class(result)[1] !=  "try-error") activeDataSet(dsname)
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="stack")
@@ -1692,7 +1705,7 @@ loadDataSet <- function() {
     command <- paste('load("', file,'")', sep="")
     dsname <- justDoIt(command)
     logger(command)
-    activeDataSet(dsname)
+	if (class(dsname)[1] !=  "try-error") activeDataSet(dsname)
     tkfocus(CommanderWindow())
     }
 
@@ -1753,8 +1766,8 @@ RemoveRows <- function(){
 					else paste("!(rownames(", ActiveDataSet(), ") %in% ", removeRows, ")", sep="")
 			command <- paste(newName, " <- ", ActiveDataSet(), "[", removeRows, ",]", sep="")
 			logger(command)
-			justDoIt(command)
-			activeDataSet(newName)
+			result <- justDoIt(command)
+			if (class(result)[1] !=  "try-error") activeDataSet(newName)
 			tkfocus(CommanderWindow())
 		}
 		OKCancelHelp(helpSubject="[.data.frame")

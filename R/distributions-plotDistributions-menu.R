@@ -1,6 +1,6 @@
 # Distributions menu dialogs for plots
 
-# last modified 26 March 2008 by J. Fox
+# last modified 17 September 2008 by J. Fox
 
 #   many distributions added (and some other changes) by Miroslav Ristic  (20 July 06)
 
@@ -15,8 +15,14 @@ normalDistributionPlot <- function(){
     distributionButton <- ttkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         mu <- as.numeric(tclvalue(muVar))
         sigma <- as.numeric(tclvalue(sigmaVar))
+		options(warn)
+		if (is.na(mu)) {
+			errorCondition(recall=normalDistributionPlot, message=gettextRcmdr("Mean not specified."))
+			return()
+		}
         if (is.na(sigma) || sigma <= 0) {
             errorCondition(recall=normalDistributionPlot, message=gettextRcmdr("Standard deviation must be positive."))
             return()
@@ -59,7 +65,9 @@ tDistributionPlot <- function(){
     distributionButton <- ttkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         df <- as.numeric(tclvalue(dfVar))
+		options(warn)
         if (is.na(df)) {
             errorCondition(recall=tDistributionPlot, message=gettextRcmdr("Degrees of freedom not specified."))
             return()
@@ -103,7 +111,9 @@ chisquareDistributionPlot <- function(){
     distributionButton <- ttkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         df <- as.numeric(tclvalue(dfVar))
+		options(warn)
         if (is.na(df)) {
             errorCondition(recall=chisquareDistributionPlot,message=gettextRcmdr("Degrees of freedom not specified."))
             return()
@@ -149,8 +159,10 @@ FDistributionPlot <- function(){
     distributionButton <- ttkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         df1 <- as.numeric(tclvalue(df1Var))
         df2 <- as.numeric(tclvalue(df2Var))
+		options(warn)
         if (is.na(df1)) {
             errorCondition(recall=FDistributionPlot, message=gettextRcmdr("Numerator degrees of freedom not specified."))
             return()
@@ -205,7 +217,9 @@ exponentialDistributionPlot <- function() {
     distributionButton <- ttkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         rate <- as.numeric(tclvalue(rateVar))
+		options(warn)
         if (is.na(rate) || rate <= 0) {
             errorCondition(recall=exponentialDistributionPlot, message=gettextRcmdr("Rate must be positive."))
             return()
@@ -247,8 +261,10 @@ uniformDistributionPlot <- function() {
     distributionButton <- ttkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         minValue <- as.numeric(tclvalue(minVar))
         maxValue <- as.numeric(tclvalue(maxVar))
+		options(warn)
         if (is.na(minValue) || is.na(maxValue) || minValue >= maxValue) {
             errorCondition(recall=uniformDistributionPlot, message=gettextRcmdr("Lower limit must be less than upper limit."))
             return()
@@ -292,8 +308,10 @@ betaDistributionPlot <- function(){
     distributionButton <- ttkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         shape1 <- as.numeric(tclvalue(shape1Var))
         shape2 <- as.numeric(tclvalue(shape2Var))
+		options(warn)
         if (is.na(shape1) || is.na(shape2)) {
             errorCondition(recall=betaDistributionPlot, message=gettextRcmdr("Shapes not specified."))
             return()
@@ -342,8 +360,10 @@ CauchyDistributionPlot <- function(){
     distributionButton <- ttkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         location <- as.numeric(tclvalue(locationVar))
         s <- as.numeric(tclvalue(sVar))
+		options(warn)
         if (is.na(s) || s <= 0) {
             errorCondition(recall=CauchyDistributionPlot, message=gettextRcmdr("Scale must be positive."))
             return()
@@ -388,8 +408,10 @@ logisticDistributionPlot <- function(){
     distributionButton <- ttkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         location <- as.numeric(tclvalue(locationVar))
         s <- as.numeric(tclvalue(sVar))
+		options(warn)
         if (is.na(s) || s <= 0) {
             errorCondition(recall=logisticDistributionPlot, message=gettextRcmdr("Scale must be positive."))
             return()
@@ -434,8 +456,10 @@ lognormalDistributionPlot <- function(){
     distributionButton <- ttkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         meanlog <- as.numeric(tclvalue(meanlogVar))
         sdlog <- as.numeric(tclvalue(sdlogVar))
+		options(warn)
         if (is.na(sdlog) || sdlog <= 0) {
             errorCondition(recall=lognormalDistributionPlot, message=gettextRcmdr("Standard deviation must be positive."))
             return()
@@ -480,7 +504,10 @@ gammaDistributionPlot <- function(){
     distributionButton <- ttkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         shape <- as.numeric(tclvalue(shapeVar))
+		s <- as.numeric(tclvalue(sVar))
+		options(warn)
         if (is.na(shape)) {
             errorCondition(recall=gammaDistributionPlot, message=gettextRcmdr("Shape not specified."))
             return()
@@ -489,7 +516,6 @@ gammaDistributionPlot <- function(){
             errorCondition(recall=gammaDistributionPlot, message=gettextRcmdr("Shape must be positive."))
             return()
             }
-        s <- as.numeric(tclvalue(sVar))
         if (is.na(s) || s <= 0) {
             errorCondition(recall=gammaDistributionPlot, message=gettextRcmdr("Scale must be positive."))
             return()
@@ -534,7 +560,10 @@ WeibullDistributionPlot <- function(){
     distributionButton <- ttkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         shape <- as.numeric(tclvalue(shapeVar))
+		s <- as.numeric(tclvalue(sVar))
+		options(warn)
         if (is.na(shape)) {
             errorCondition(recall=WeibullDistributionPlot, message=gettextRcmdr("Shape not specified."))
             return()
@@ -543,7 +572,6 @@ WeibullDistributionPlot <- function(){
             errorCondition(recall=WeibullDistributionPlot, message=gettextRcmdr("Shape must be positive."))
             return()
             }
-        s <- as.numeric(tclvalue(sVar))
         if (is.na(s) || s <= 0) {
             errorCondition(recall=WeibullDistributionPlot, message=gettextRcmdr("Scale must be positive."))
             return()
@@ -588,7 +616,10 @@ GumbelDistributionPlot <- function(){
     distributionButton <- ttkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         shape <- as.numeric(tclvalue(shapeVar))
+		s <- as.numeric(tclvalue(sVar))
+		options(warn)
         if (is.na(shape)) {
             errorCondition(recall=GumbelDistributionPlot, message=gettextRcmdr("Shape not specified."))
             return()
@@ -597,7 +628,6 @@ GumbelDistributionPlot <- function(){
             errorCondition(recall=GumbelDistributionPlot, message=gettextRcmdr("Shape must be positive."))
             return()
             }
-        s <- as.numeric(tclvalue(sVar))
         if (is.na(s) || s <= 0) {
             errorCondition(recall=GumbelDistributionPlot, message=gettextRcmdr("Scale must be positive."))
             return()
@@ -643,12 +673,14 @@ binomialDistributionPlot <- function(){
     distributionButton <- ttkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         trials <- round(as.numeric(tclvalue(trialsVar)))
+		prob <- as.numeric(tclvalue(probVar))
+		options(warn)
         if (is.na(trials)) {
             errorCondition(recall=binomialDistributionPlot, message=gettextRcmdr("Binomial trials not specified."))
             return()
             } 
-        prob <- as.numeric(tclvalue(probVar))
         if (is.na(prob)) {
             errorCondition(recall=binomialDistributionPlot, message=gettextRcmdr("Probability of success not specified."))
             return()
@@ -701,7 +733,9 @@ PoissonDistributionPlot <- function(){
     distributionButton <- ttkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         mean <- as.numeric(tclvalue(meanVar))
+		options(warn)
         if (is.na(mean)) {
             errorCondition(recall=PoissonDistributionPlot, message=gettextRcmdr("Mean not specified."))
             return()
@@ -759,7 +793,9 @@ geomDistributionPlot  <- function(){
     distributionButton <- ttkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         prob <- as.numeric(tclvalue(probVar))
+		options(warn)
         if ( is.na(prob) ) {
               errorCondition(recall=geomDistributionPlot, message=gettextRcmdr("Probability of success was not specified."))
               return()
@@ -815,9 +851,11 @@ hyperDistributionPlot  <- function(){
     distributionButton <- ttkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         m <- as.numeric(tclvalue(mVar))
         n <- as.numeric(tclvalue(nVar))
         k <- as.numeric(tclvalue(kVar))
+		options(warn)
         fun <- tclvalue(functionVar)
         # Do some error checking
         if ( is.na(m) ){
@@ -905,7 +943,10 @@ negbinomialDistributionPlot  <- function(){
     distributionButton <- ttkradiobutton(top, variable=functionVar, value="Cumulative Probability")
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         trials <- as.numeric(tclvalue(trialsVar))
+		prob <- as.numeric(tclvalue(probVar))
+		options(warn)
         if ( is.na(trials) ){
               errorCondition(recall=negbinomialDistributionPlot, 
                 message=gettextRcmdr("Target number of successes not specified."))
@@ -917,7 +958,6 @@ negbinomialDistributionPlot  <- function(){
               return()
           }
         trials <- round(trials)
-        prob <- as.numeric(tclvalue(probVar))
         if ( is.na(prob) ){
               errorCondition(recall=negbinomialDistributionPlot, 
                 message=gettextRcmdr("Probability of success not specified."))

@@ -1,6 +1,6 @@
-"Project-Id-Version: Rcmdr 1.4-0\n"
+"Project-Id-Version: Rcmdr 1.4-2\n"
 "Report-Msgid-Bugs-To: jfox@mcmaster.ca\n"
-"POT-Creation-Date: 2008-07-30 19:00\n"
+"POT-Creation-Date: 2008-09-17 10:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3376,6 +3376,13 @@ msgstr ""
 # Commander-xx, where again xx is the language code.
 # Example: "Commander-es"
 
+# Note: Some translated Commander-xx.Rd files have not been compiling properly. As
+# an alternative, you can supply a PDF file named Commander-xx.pdf, and this will
+# be accessed when the user selects Help -> Commander help.
+
+# If you supply neither Commander-xx.Rd nor Commander-xx.pdf, then
+# the string "Commander" should not be translated. 
+
 msgid "Commander"
 msgstr ""
 
@@ -3489,4 +3496,9 @@ msgid "Redo"
 msgstr ""
 
 msgid "ANOVA table..."
+msgstr ""
+
+# messages added to version 1.4-2
+
+msgid "Location not specified."
 msgstr ""

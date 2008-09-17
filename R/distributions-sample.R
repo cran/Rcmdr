@@ -1,6 +1,6 @@
 # Distributions menu dialogs for selecting samples
 
-# last modified 26 March 2008 by J. Fox
+# last modified 17 September 2008 by J. Fox
 
 normalDistributionSamples <- function(){
     initializeDialog(title=gettextRcmdr("Sample from Normal Distribution"))
@@ -38,10 +38,16 @@ normalDistributionSamples <- function(){
                 return()
                 }
             }
+		warn <- options(warn=-1)
         mu <- as.numeric(tclvalue(muVar))
         sigma <- as.numeric(tclvalue(sigmaVar))
         n <- as.numeric(tclvalue(nVar))
         samples <- as.numeric(tclvalue(samplesVar))
+		options(warn)
+		if (is.na(mu)) {
+			errorCondition(recall=normalDistributionSamples, message=gettextRcmdr("Mean not specified."))
+			return()
+		}
         if (is.na(sigma) || sigma <= 0) {
             errorCondition(recall=normalDistributionSamples, message=gettextRcmdr("Standard deviation must be positive."))
             return()
@@ -145,7 +151,11 @@ tDistributionSamples <- function(){
                 return()
                 }
             }
+		warn <- options(warn=-1)
         df <- as.numeric(tclvalue(dfVar))
+		n <- as.numeric(tclvalue(nVar))
+		samples <- as.numeric(tclvalue(samplesVar))
+		options(warn)
         if (is.na(df)) {
             errorCondition(recall=tDistributionSamples, 
                 message=gettextRcmdr("Degrees of freedom not specified."))
@@ -156,8 +166,6 @@ tDistributionSamples <- function(){
                 message=gettextRcmdr("Degrees of freedom must be positive."))
             return()
             }
-        n <- as.numeric(tclvalue(nVar))
-        samples <- as.numeric(tclvalue(samplesVar))
         if (is.na(n) || n <= 0) {
             errorCondition(recall=tDistributionSamples, 
                 message=gettextRcmdr("Sample size must be positive."))
@@ -256,7 +264,11 @@ chisquareDistributionSamples <- function(){
                 return()
                 }
             }
+		warn <- options(warn=-1)
         df <- as.numeric(tclvalue(dfVar))
+		n <- as.numeric(tclvalue(nVar))
+		samples <- as.numeric(tclvalue(samplesVar))
+		options(warn)
         if (is.na(df)) {
             errorCondition(recall=chisquareDistributionSamples, 
                 message=gettextRcmdr("Degrees of freedom not specified."))
@@ -267,8 +279,6 @@ chisquareDistributionSamples <- function(){
                 message=gettextRcmdr("Degrees of freedom must be positive."))
             return()
             }
-        n <- as.numeric(tclvalue(nVar))
-        samples <- as.numeric(tclvalue(samplesVar))
         if (is.na(n) || n <= 0) {
             errorCondition(recall=chisquareDistributionSamples, 
                 message=gettextRcmdr("Sample size must be positive."))
@@ -369,8 +379,12 @@ FDistributionSamples <- function(){
                 return()
                 }
             }
+		warn <- options(warn=-1)
         df1 <- as.numeric(tclvalue(df1Var))
         df2 <- as.numeric(tclvalue(df2Var))
+		n <- as.numeric(tclvalue(nVar))
+		samples <- as.numeric(tclvalue(samplesVar))
+		options(warn)
         if (is.na(df1)) {
             errorCondition(recall=FDistributionSamples, 
                 message=gettextRcmdr("Numerator degrees of freedom not specified."))
@@ -391,8 +405,6 @@ FDistributionSamples <- function(){
                 message=gettextRcmdr("Denominator degrees of freedom must be positive."))
             return()
             }
-        n <- as.numeric(tclvalue(nVar))
-        samples <- as.numeric(tclvalue(samplesVar))
         if (is.na(n) || n <= 0) {
             errorCondition(recall=FDistributionSamples, 
                 message=gettextRcmdr("Sample size must be positive."))
@@ -492,14 +504,16 @@ exponentialDistributionSamples <- function(){
                 return()
                 }
             }
+		warn <- options(warn=-1)
         rate <- as.numeric(tclvalue(rateVar))
+		n <- as.numeric(tclvalue(nVar))
+		samples <- as.numeric(tclvalue(samplesVar))
+		options(warn)
         if (is.na(rate) || rate <= 0) {
             errorCondition(recall=exponentialDistributionPlot, 
                 message=gettextRcmdr("Rate must be positive."))
             return()
             }
-        n <- as.numeric(tclvalue(nVar))
-        samples <- as.numeric(tclvalue(samplesVar))
         if (is.na(n) || n <= 0) {
             errorCondition(recall=tDistributionSamples, 
                 message=gettextRcmdr("Sample size must be positive."))
@@ -600,15 +614,17 @@ uniformDistributionSamples <- function(){
                 return()
                 }
             }
+		warn <- options(warn=-1)
         minValue <- as.numeric(tclvalue(minVar))
         maxValue <- as.numeric(tclvalue(maxVar))
+		n <- as.numeric(tclvalue(nVar))
+		samples <- as.numeric(tclvalue(samplesVar))
+		options(warn)
         if (is.na(minValue) || is.na(maxValue) || minValue >= maxValue) {
             errorCondition(recall=uniformDistributionSamples, 
                 message=gettextRcmdr("Lower limit must be less than upper limit."))
             return()
             }
-        n <- as.numeric(tclvalue(nVar))
-        samples <- as.numeric(tclvalue(samplesVar))
         if (is.na(n) || n <= 0) {
             errorCondition(recall=uniformDistributionSamples, 
                 message=gettextRcmdr("Sample size must be positive."))
@@ -710,8 +726,12 @@ betaDistributionSamples <- function(){
                 return()
                 }
             }
+		warn <- options(warn=-1)
         shape1 <- as.numeric(tclvalue(shape1Var))
         shape2 <- as.numeric(tclvalue(shape2Var))
+		n <- as.numeric(tclvalue(nVar))
+		samples <- as.numeric(tclvalue(samplesVar))
+		options(warn)
         if (is.na(shape1) || is.na(shape2)) {
             errorCondition(recall=betaDistributionSamples, 
                 message=gettextRcmdr("Shapes not specified."))
@@ -722,8 +742,6 @@ betaDistributionSamples <- function(){
                 message=gettextRcmdr("Shapes must be positive."))
             return()
             }
-        n <- as.numeric(tclvalue(nVar))
-        samples <- as.numeric(tclvalue(samplesVar))
         if (is.na(n) || n <= 0) {
             errorCondition(recall=betaDistributionSamples, 
                 message=gettextRcmdr("Sample size must be positive."))
@@ -825,15 +843,21 @@ CauchyDistributionSamples <- function(){
                 return()
                 }
             }
+		warn <- options(warn=-1)
         location <- as.numeric(tclvalue(locationVar))
         s <- as.numeric(tclvalue(sVar))
+		n <- as.numeric(tclvalue(nVar))
+		samples <- as.numeric(tclvalue(samplesVar))
+		options(warn)
+		if (is.na(location)){
+			errorCondition(recall=CauchyDistributionSamples,
+					message=gettextRcmdr("Location not specified."))
+		}		
         if (is.na(s) || s <= 0) {
             errorCondition(recall=CauchyDistributionSamples, 
                 message=gettextRcmdr("Scale must be positive."))
             return()
             }
-        n <- as.numeric(tclvalue(nVar))
-        samples <- as.numeric(tclvalue(samplesVar))
         if (is.na(n) || n <= 0) {
             errorCondition(recall=CauchyDistributionSamples, 
                 message=gettextRcmdr("Sample size must be positive."))
@@ -935,15 +959,21 @@ logisticDistributionSamples <- function(){
                 return()
                 }
             }
+		warn <- options(warn=-1)
         location <- as.numeric(tclvalue(locationVar))
         s <- as.numeric(tclvalue(sVar))
+		n <- as.numeric(tclvalue(nVar))
+		samples <- as.numeric(tclvalue(samplesVar))
+		options(warn)
+		if (is.na(location)){
+			errorCondition(recall=logisticDistributionSamples,
+					message=gettextRcmdr("Location not specified."))
+			}
         if (is.na(s) || s <= 0) {
             errorCondition(recall=logisticDistributionSamples, 
                 message=gettextRcmdr("Scale must be positive."))
             return()
             }
-        n <- as.numeric(tclvalue(nVar))
-        samples <- as.numeric(tclvalue(samplesVar))
         if (is.na(n) || n <= 0) {
             errorCondition(recall=logisticDistributionSamples, 
                 message=gettextRcmdr("Sample size must be positive."))
@@ -1045,15 +1075,21 @@ lognormalDistributionSamples <- function(){
                 return()
                 }
             }
+		warn <- options(warn=-1)
         meanlog <- as.numeric(tclvalue(meanlogVar))
         sdlog <- as.numeric(tclvalue(sdlogVar))
+		n <- as.numeric(tclvalue(nVar))
+		samples <- as.numeric(tclvalue(samplesVar))
+		options(warn)
+		if (is.na(meanlog)){
+			errorCondition(recall=lognormalDistributionSamples,
+				message=gettextRcmdr("Mean not specified."))
+			}
         if (is.na(sdlog) || sdlog <= 0) {
             errorCondition(recall=lognormalDistributionSamples, 
                 message=gettextRcmdr("Standard deviation must be positive."))
             return()
             }
-        n <- as.numeric(tclvalue(nVar))
-        samples <- as.numeric(tclvalue(samplesVar))
         if (is.na(n) || n <= 0) {
             errorCondition(recall=lognormalDistributionSamples, 
                 message=gettextRcmdr("Sample size must be positive."))
@@ -1155,7 +1191,12 @@ gammaDistributionSamples <- function(){
                 return()
                 }
             }
+		warn <- options(warn=-1)
         shape <- as.numeric(tclvalue(shapeVar))
+		s <- as.numeric(tclvalue(sVar))
+		n <- as.numeric(tclvalue(nVar))
+		samples <- as.numeric(tclvalue(samplesVar))
+		options(warn)
         if (is.na(shape)) {
             errorCondition(recall=gammaDistributionSamples, 
                 message=gettextRcmdr("Shape not specified."))
@@ -1166,14 +1207,11 @@ gammaDistributionSamples <- function(){
                 message=gettextRcmdr("Shape must be positive."))
             return()
             }
-        s <- as.numeric(tclvalue(sVar))
         if (is.na(s) || s <= 0) {
             errorCondition(recall=gammaDistributionSamples, 
                 message=gettextRcmdr("Scale must be positive."))
             return()
             }
-        n <- as.numeric(tclvalue(nVar))
-        samples <- as.numeric(tclvalue(samplesVar))
         if (is.na(n) || n <= 0) {
             errorCondition(recall=gammaDistributionSamples, 
                 message=gettextRcmdr("Sample size must be positive."))
@@ -1275,7 +1313,12 @@ WeibullDistributionSamples <- function(){
                 return()
                 }
             }
+		warn <- options(warn=-1)
         shape <- as.numeric(tclvalue(shapeVar))
+		s <- as.numeric(tclvalue(sVar))
+		n <- as.numeric(tclvalue(nVar))
+		samples <- as.numeric(tclvalue(samplesVar))
+		options(warn)
         if (is.na(shape)) {
             errorCondition(recall=WeibullDistributionSamples, 
                 message=gettextRcmdr("Shape not specified."))
@@ -1286,14 +1329,11 @@ WeibullDistributionSamples <- function(){
                 message=gettextRcmdr("Shape must be positive."))
             return()
             }
-        s <- as.numeric(tclvalue(sVar))
         if (is.na(s) || s <= 0) {
             errorCondition(recall=WeibullDistributionSamples, 
                 message=gettextRcmdr("Scale must be positive."))
             return()
             }
-        n <- as.numeric(tclvalue(nVar))
-        samples <- as.numeric(tclvalue(samplesVar))
         if (is.na(n) || n <= 0) {
             errorCondition(recall=WeibullDistributionSamples, 
                 message=gettextRcmdr("Sample size must be positive."))
@@ -1395,7 +1435,12 @@ GumbelDistributionSamples <- function(){
                 return()
                 }
             }
+		warn <- options(warn=-1)
         shape <- as.numeric(tclvalue(shapeVar))
+		s <- as.numeric(tclvalue(sVar))
+		n <- as.numeric(tclvalue(nVar))
+		samples <- as.numeric(tclvalue(samplesVar))
+		options(warn)
         if (is.na(shape)) {
             errorCondition(recall=GumbelDistributionSamples, 
                 message=gettextRcmdr("Shape not specified."))
@@ -1406,14 +1451,11 @@ GumbelDistributionSamples <- function(){
                 message=gettextRcmdr("Shape must be positive."))
             return()
             }
-        s <- as.numeric(tclvalue(sVar))
         if (is.na(s) || s <= 0) {
             errorCondition(recall=GumbelDistributionSamples, 
                 message=gettextRcmdr("Scale must be positive."))
             return()
             }
-        n <- as.numeric(tclvalue(nVar))
-        samples <- as.numeric(tclvalue(samplesVar))
         if (is.na(n) || n <= 0) {
             errorCondition(recall=GumbelDistributionSamples, 
                 message=gettextRcmdr("Sample size must be positive."))
@@ -1515,7 +1557,12 @@ binomialDistributionSamples <- function(){
                 return()
                 }
             }
+		warn <- options(warn=-1)
         prob <- as.numeric(tclvalue(probVar))
+		trials <- round(as.numeric(tclvalue(trialsVar)))
+		n <- as.numeric(tclvalue(nVar))
+		samples <- as.numeric(tclvalue(samplesVar))
+		options(warn)
         if (is.na(prob)) {
             errorCondition(recall=binomialDistributionSamples, 
                 message=gettextRcmdr("Probability of success not specified."))
@@ -1526,14 +1573,11 @@ binomialDistributionSamples <- function(){
                 message=gettextRcmdr("Probability of success must be between 0 and 1."))
             return()
             }
-        trials <- round(as.numeric(tclvalue(trialsVar)))
         if (is.na(trials)) {
             errorCondition(recall=binomialDistributionSamples, 
                 message=gettextRcmdr("Binomial trials not specified."))
             return()
             }
-        n <- as.numeric(tclvalue(nVar))
-        samples <- as.numeric(tclvalue(samplesVar))
         if (is.na(n) || n <= 0) {
             errorCondition(recall=binomialDistributionSamples, 
                 message=gettextRcmdr("Sample size must be positive."))
@@ -1633,7 +1677,11 @@ PoissonDistributionSamples <- function(){
                 return()
                 }
             }
+		warn <- options(warn=-1)
         mean <- as.numeric(tclvalue(meanVar))
+		n <- as.numeric(tclvalue(nVar))
+		samples <- as.numeric(tclvalue(samplesVar))
+		options(warn)
         if (is.na(mean)) {
             errorCondition(recall=PoissonDistributionPlot, 
                 message=gettextRcmdr("Mean not specified."))
@@ -1644,8 +1692,6 @@ PoissonDistributionSamples <- function(){
                 message=gettextRcmdr("Poisson mean cannot be negative."))
             return()
             }
-        n <- as.numeric(tclvalue(nVar))
-        samples <- as.numeric(tclvalue(samplesVar))
         if (is.na(n) || n <= 0) {
             errorCondition(recall=PoissonDistributionSamples, 
                 message=gettextRcmdr("Sample size must be positive."))
@@ -1744,7 +1790,11 @@ geomDistributionSamples <- function(){
                 return()
                 }
             }
+		warn <- options(warn=-1)
         prob <- as.numeric(tclvalue(probVar))
+		n <- as.numeric(tclvalue(nVar))
+		samples <- as.numeric(tclvalue(samplesVar))
+		options(warn)
         if (is.na(prob)) {
             errorCondition(recall=geomDistributionSamples, 
                 message=gettextRcmdr("Probability of success not specified."))
@@ -1755,8 +1805,6 @@ geomDistributionSamples <- function(){
                 message=gettextRcmdr("Probability of success must be between 0 and 1."))
             return()
             }
-        n <- as.numeric(tclvalue(nVar))
-        samples <- as.numeric(tclvalue(samplesVar))
         if (is.na(n) || n <= 0) {
             errorCondition(recall=geomDistributionSamples, 
                 message=gettextRcmdr("Sample size must be positive."))
@@ -1860,9 +1908,11 @@ hyperDistributionSamples <- function(){
                 return()
                 }
             }
+		warn <- options(warn=-1)
         m <- as.numeric(tclvalue(mVar))
         n <- as.numeric(tclvalue(nVar))
         k <- as.numeric(tclvalue(kVar))
+		options(warn)
         if ( is.na(m) ){
               errorCondition(recall=hyperDistributionSamples, 
                 message=gettextRcmdr("The m parameter was not specified."))
@@ -2003,7 +2053,12 @@ negbinomialDistributionSamples <- function(){
                 return()
                 }
             }
+		warn <- options(warn=-1)
         prob <- as.numeric(tclvalue(probVar))
+		trials <- round(as.numeric(tclvalue(trialsVar)))
+		n <- as.numeric(tclvalue(nVar))
+		samples <- as.numeric(tclvalue(samplesVar))
+		options(warn)
         if (is.na(prob)) {
             errorCondition(recall=negbinomialDistributionSamples, 
               message=gettextRcmdr("Probability of success not specified."))
@@ -2014,7 +2069,6 @@ negbinomialDistributionSamples <- function(){
               message=gettextRcmdr("Probability of success must be between 0 and 1."))
             return()
             }
-        trials <- round(as.numeric(tclvalue(trialsVar)))
         if (is.na(trials)) {
             errorCondition(recall=negbinomialDistributionSamples, 
               message=gettextRcmdr("Target number of successes not specified."))
@@ -2025,8 +2079,6 @@ negbinomialDistributionSamples <- function(){
                 message=gettextRcmdr("Target number of successes cannot be negative."))
               return()
           }
-        n <- as.numeric(tclvalue(nVar))
-        samples <- as.numeric(tclvalue(samplesVar))
         if (is.na(n) || n <= 0) {
             errorCondition(recall=negbinomialDistributionSamples, 
               message=gettextRcmdr("Sample size must be positive."))

@@ -722,3 +722,11 @@ Version 1.4-1
 
    o  The following updated translations have been added: Catalan (thanks to Manel Salamero), French (thanks to Philippe Grojean), Japanese (thanks to Takaharu Araki), Romanian (thanks to Adrian Dusa), and Slovenian (thanks to Jaro.Lajovic).
    
+Version 1.4-2
+
+   o  For cases where translated help files of the form Commander-xx.Rd won't compile (where "xx" is the language code), translators can now provide a PDF file named Commander-xx.pdf to be substituted when users select Menu -> Commander help. (Thanks to Alexey Shipunov for helping me with this problem.)
+   
+   o  Dialogs that reset the active data set no longer do so if an error occurs; previously, resetting the active data set caused error messages to scroll off out of sight in the Messages window (problem reported by Peter Dalgaard).
+   
+   o  Improved error checking and protection in distributions dialogs.
+   

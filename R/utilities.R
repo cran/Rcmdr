@@ -1005,11 +1005,22 @@ RcmdrPager <- function (file, header, title, delete.file)
 
 
 
+#helpCommander <- function() {
+#    if (as.numeric(R.Version()$major) >= 2) print(help(gettextRcmdr("Commander")))
+#    else help(gettextRcmdr("Commander"))
+#    }
+	
 helpCommander <- function() {
-    if (as.numeric(R.Version()$major) >= 2) print(help(gettextRcmdr("Commander")))
-    else help(gettextRcmdr("Commander"))
-    }
-
+	PDF <- file.access(paste(file.path(.path.package(package="Rcmdr")[1], "doc"), 
+		"/", gettextRcmdr("Commander"), ".pdf", sep=""), mode=4)
+	if (PDF == 0){
+		browseURL(paste(file.path(.path.package(package="Rcmdr")[1], "doc"),
+			"/", gettextRcmdr("Commander"), ".pdf", sep=""))
+		} 
+	else if (as.numeric(R.Version()$major) >= 2) print(help(gettextRcmdr("Commander")))
+	else help(gettextRcmdr("Commander"))
+	}
+	
 helpAboutCommander <- function() {
     if (as.numeric(R.Version()$major) >= 2) print(help("Rcmdr"))
     else help("Rcmdr")

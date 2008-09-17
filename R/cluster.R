@@ -1,6 +1,6 @@
 # this code by Dan Putler, used with permission
 
-# last modified 26 March 2008 by J. Fox
+# last modified 17 September 2008 by J. Fox
 
 assignCluster <- function(clusterData, origData, clusterVec){
     rowsDX <- row.names(clusterData)
@@ -445,9 +445,9 @@ appendHclustGroup <- function(){
           sep="")
         command <- paste(.activeDataSet, "$", label, " <- assignCluster(",
           xmat, ", ", .activeDataSet, ", ", clusterVar, ")", sep="")
-        justDoIt(command)
+        result <- justDoIt(command)
         logger(command)
-        activeDataSet(.activeDataSet)
+		if (class(result)[1] !=  "try-error") activeDataSet(.activeDataSet)
         tkfocus(CommanderWindow())
         } 
     OKCancelHelp(helpSubject="assignCluster")

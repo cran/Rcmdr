@@ -1,6 +1,6 @@
 # Distributions menu dialogs
 
-# last modified 26 March 2008 by J. Fox
+# last modified 17 September 2008 by J. Fox
 
 #   many distributions added (and some other changes) by Miroslav Ristic (20 July 06)
 
@@ -22,8 +22,14 @@ normalQuantiles <- function(){
             errorCondition(recall=normalQuantiles, message=gettextRcmdr("No probabilities specified."))
             return()
             }
+		warn <- options(warn=-1)
         mu <- as.numeric(tclvalue(muVar))
         sigma <- as.numeric(tclvalue(sigmaVar))
+		options(warn)
+		if (is.na(mu)) {
+			errorCondition(recall=normalQuantiles, message=gettextRcmdr("Mean not specified."))
+			return()
+			}
         if (is.na(sigma) || sigma <= 0) {
             errorCondition(recall=normalQuantiles, message=gettextRcmdr("Standard deviation must be positive."))
             return()
@@ -66,8 +72,14 @@ normalProbabilities <- function(){
             errorCondition(recall=normalProbabilities, message=gettextRcmdr("No values specified."))
             return()
             }
+		warn <- options(warn=-1)
         mu <- as.numeric(tclvalue(muVar))
         sigma <- as.numeric(tclvalue(sigmaVar))
+		options(warn)
+		if (is.na(mu)) {
+			errorCondition(recall=normalQuantiles, message=gettextRcmdr("Mean not specified."))
+			return()
+		}
         if (is.na(sigma) || sigma <= 0) {
             errorCondition(recall=normalProbabilities, message=gettextRcmdr("Standard deviation must be positive."))
             return()
@@ -108,7 +120,9 @@ tQuantiles <- function(){
             errorCondition(recall=tQuantiles, message=gettextRcmdr("No probabilities specified.")) 
             return()
             }
+		warn <- options(warn=-1)
         df <- as.numeric(tclvalue(dfVar))
+		options(warn)
         if (is.na(df)) {
             errorCondition(recall=tQuantiles, message=gettextRcmdr("Degrees of freedom not specified."))
             return()
@@ -147,12 +161,13 @@ tProbabilities <- function(){
     onOK <- function(){
         closeDialog()
         probabilities <- gsub(" ", ",", tclvalue(probabilitiesVar))
+		warn <- options(warn=-1)
         df <- as.numeric(tclvalue(dfVar))
+		options(warn)
         if ("" == probabilities) {
             errorCondition(recall=tProbabilities, message=gettextRcmdr("No values specified."))
             return()
             }
-        df <- as.numeric(tclvalue(dfVar))
         if (is.na(df)) {
             errorCondition(recall=tProbabilities, message=gettextRcmdr("Degrees of freedom not specified."))
             return()
@@ -195,7 +210,9 @@ chisqQuantiles <- function(){
             errorCondition(recall=chisqQuantiles, message=gettextRcmdr("No probabilities specified."))
             return()
             }
+		warn <- options(warn=-1)
         df <- as.numeric(tclvalue(dfVar))
+		options(warn)
         if (is.na(df)) {
             errorCondition(recall=chisqQuantiles, message=gettextRcmdr("Degrees of freedom not specified."))
             return()
@@ -238,7 +255,9 @@ chisqProbabilities <- function(){
             errorCondition(recall=chisqProbabilities, message=gettextRcmdr("No values specified."))
             return()
             }
+		warn <- options(warn=-1)
         df <- as.numeric(tclvalue(dfVar))
+		options(warn)
         if (is.na(df)) {
             errorCondition(recall=chisqProbabilities, message=gettextRcmdr("Degrees of freedom not specified."))
             return()
@@ -284,8 +303,10 @@ FQuantiles <- function(){
             errorCondition(recall=FQuantiles, message=gettextRcmdr("Probabilities not specified"))
             return()
             }
+		warn <- options(warn=-1)
         df1 <- as.numeric(tclvalue(df1Var))
         df2 <- as.numeric(tclvalue(df2Var))
+		options(warn)
         if (is.na(df1) || is.na(df2)) {
             errorCondition(recall=FQuantiles, message=gettextRcmdr("Degrees of freedom not specified."))
             return()
@@ -332,8 +353,10 @@ FProbabilities <- function(){
             errorCondition(recall=FProbabilities, message=gettextRcmdr("Values not specified."))
             return()
             }
+		warn <- options(warn=-1)
         df1 <- as.numeric(tclvalue(df1Var))
         df2 <- as.numeric(tclvalue(df2Var))
+		options(warn=-1)
         if (is.na(df1) || is.na(df2)) {
             errorCondition(recall=FProbabilities, message=gettextRcmdr("Degrees of freedom not specified."))
             return()
@@ -378,7 +401,9 @@ exponentialQuantiles<-function() {
             errorCondition(recall=exponentialQuantiles, message=gettextRcmdr("Probabilities not specified."))
             return()
             }
+		warn <- options(warn=-1)
         rate <- as.numeric(tclvalue(rateVar))
+		options(warn)
         if (is.na(rate) || rate <= 0) {
             errorCondition(recall=exponentialQuantiles, message=gettextRcmdr("Rate must be positive."))
             return()
@@ -416,7 +441,9 @@ exponentialProbabilities <- function(){
             errorCondition(recall=exponentialProbabilities, message=gettextRcmdr("No values specified."))
             return()
             }
+		warn <- options(warn=-1)
         rate <- as.numeric(tclvalue(rateVar))
+		options(warn)
         if (is.na(rate) || rate <= 0) {
             errorCondition(recall=exponentialProbabilities, message=gettextRcmdr("Rate must be positive."))
             return()
@@ -456,8 +483,10 @@ uniformQuantiles<-function() {
             errorCondition(recall=uniformQuantiles, message=gettextRcmdr("Probabilities not specified."))
             return()
             }
+		warn <- options(warn=-1)
         min <- as.numeric(tclvalue(minVar))
         max <- as.numeric(tclvalue(maxVar))
+		options(warn)
         if (is.na(min) || is.na(max) || min >= max) {
             errorCondition(recall=uniformQuantiles, message=gettextRcmdr("Lower limit must be less than upper limit."))
             return()
@@ -495,8 +524,10 @@ uniformProbabilities <- function(){
     onOK <- function(){
         closeDialog()
         probabilities <- gsub(" ", ",", tclvalue(probabilitiesVar))
+		warn <- options(warn=-1)
         min <- as.numeric(tclvalue(minVar))
         max <- as.numeric(tclvalue(maxVar))
+		options(warn)
         tail <- tclvalue(tailVar)
         if ("" == probabilities) {
             errorCondition(recall=uniformProbabilities, message=gettextRcmdr("No values specified."))
@@ -542,8 +573,10 @@ betaQuantiles <- function(){
             errorCondition(recall=betaQuantiles, message=gettextRcmdr("Probabilities not specified"))
             return()
             }
+		warn <- options(warn=-1)
         shape1 <- as.numeric(tclvalue(shape1Var))
         shape2 <- as.numeric(tclvalue(shape2Var))
+		options(warn)
         if (is.na(shape1) || is.na(shape2)) {
             errorCondition(recall=betaQuantiles, message=gettextRcmdr("Shapes not specified."))
             return()
@@ -590,8 +623,10 @@ betaProbabilities <- function(){
             errorCondition(recall=betaProbabilities, message=gettextRcmdr("Values not specified."))
             return()
             }
+		warn <- options(warn=-1)
         shape1 <- as.numeric(tclvalue(shape1Var))
         shape2 <- as.numeric(tclvalue(shape2Var))
+		options(warn)
         if (is.na(shape1) || is.na(shape2)) {
             errorCondition(recall=betaProbabilities, message=gettextRcmdr("Shapes not specified."))
             return()
@@ -638,8 +673,10 @@ CauchyQuantiles <- function(){
             errorCondition(recall=CauchyQuantiles, message=gettextRcmdr("No probabilities specified."))
             return()
             }
+		warn <- options(warn=-1)
         location <- as.numeric(tclvalue(locationVar))
         s <- as.numeric(tclvalue(sVar))
+		options(warn)
         if (is.na(s) || s <= 0) {
             errorCondition(recall=CauchyQuantiles, message=gettextRcmdr("Scale must be positive."))
             return()
@@ -682,8 +719,10 @@ CauchyProbabilities <- function(){
             errorCondition(recall=CauchyProbabilities, message=gettextRcmdr("No values specified."))
             return()
             }
+		warn <- options(warn=-1)
         location <- as.numeric(tclvalue(locationVar))
         s <- as.numeric(tclvalue(sVar))
+		options(warn)
         if (is.na(s) || s <= 0) {
             errorCondition(recall=CauchyProbabilities, message=gettextRcmdr("Scale must be positive."))
             return()
@@ -726,8 +765,10 @@ logisticQuantiles <- function(){
             errorCondition(recall=logisticQuantiles, message=gettextRcmdr("No probabilities specified."))
             return()
             }
+		warn <- options(warn=-1)
         location <- as.numeric(tclvalue(locationVar))
         s <- as.numeric(tclvalue(sVar))
+		options(warn)
         if (is.na(s) || s <= 0) {
             errorCondition(recall=logisticQuantiles, message=gettextRcmdr("Scale must be positive."))
             return()
@@ -770,8 +811,10 @@ logisticProbabilities <- function(){
             errorCondition(recall=logisticProbabilities, message=gettextRcmdr("No values specified."))
             return()
             }
+		warn <- options(warn=-1)
         location <- as.numeric(tclvalue(locationVar))
         s <- as.numeric(tclvalue(sVar))
+		options(warn)
         if (is.na(s) || s <= 0) {
             errorCondition(recall=logisticProbabilities, message=gettextRcmdr("Scale must be positive."))
             return()
@@ -814,8 +857,14 @@ lognormalQuantiles <- function(){
             errorCondition(recall=lognormalQuantiles, message=gettextRcmdr("No probabilities specified."))
             return()
             }
+		warn <- options(warn=-1)
         meanlog <- as.numeric(tclvalue(meanlogVar))
         sdlog <- as.numeric(tclvalue(sdlogVar))
+		options(warn)
+		if (is.na(meanlog)){
+			errorCondition(recall=lognormalQuantiles, message=gettextRcmdr("Mean not specified."))
+			return()
+			}
         if (is.na(sdlog) || sdlog <= 0) {
             errorCondition(recall=lognormalQuantiles, message=gettextRcmdr("Standard deviation must be positive."))
             return()
@@ -858,12 +907,18 @@ lognormalProbabilities <- function(){
             errorCondition(recall=lognormalProbabilities, message=gettextRcmdr("No values specified."))
             return()
             }
+		warn <- options(warn=-1)
         meanlog <- as.numeric(tclvalue(meanlogVar))
         sdlog <- as.numeric(tclvalue(sdlogVar))
-        if (is.na(sdlog) || sdlog <= 0) {
-            errorCondition(recall=lognormalProbabilities, message=gettextRcmdr("Scale must be positive."))
-            return()
-            }
+		options(warn)
+		if (is.na(meanlog)) {
+			errorCondition(recall=lognormalProbabilities, message=gettextRcmdr("Mean not specified."))
+			return()
+			}
+	    if (is.na(sdlog) || sdlog <= 0) {
+	        errorCondition(recall=lognormalProbabilities, message=gettextRcmdr("Scale must be positive."))
+	        return()
+	        }
         tail <- tclvalue(tailVar)
         doItAndPrint(paste("plnorm(c(", probabilities, "), meanlog=", meanlog, 
             ", sdlog=", sdlog, ", lower.tail=", tail == "lower",")", sep=""))
@@ -902,7 +957,10 @@ gammaQuantiles <- function(){
             errorCondition(recall=gammaQuantiles, message=gettextRcmdr("No probabilities specified."))
             return()
             }
+		warn <- options(warn=-1)
         shape <- as.numeric(tclvalue(shapeVar))
+		s <- as.numeric(tclvalue(sVar))
+		options(warn)
         if (is.na(shape)) {
             errorCondition(recall=gammaQuantiles, message=gettextRcmdr("Shape not specified."))
             return()
@@ -911,7 +969,6 @@ gammaQuantiles <- function(){
             errorCondition(recall=gammaQuantiles, message=gettextRcmdr("Shape must be positive."))
             return()
             }
-        s <- as.numeric(tclvalue(sVar))
         if (is.na(s) || s <= 0) {
             errorCondition(recall=gammaQuantiles, message=gettextRcmdr("Scale must be positive."))
             return()
@@ -954,7 +1011,10 @@ gammaProbabilities <- function(){
             errorCondition(recall=gammaProbabilities, message=gettextRcmdr("No values specified."))
             return()
             }
+		warn <- options(warn=-1)
         shape <- as.numeric(tclvalue(shapeVar))
+		s <- as.numeric(tclvalue(sVar))
+		options(warn)
         if (is.na(shape)) {
             errorCondition(recall=gammaProbabilities, message=gettextRcmdr("Shape not specified."))
             return()
@@ -963,7 +1023,6 @@ gammaProbabilities <- function(){
             errorCondition(recall=gammaProbabilities, message=gettextRcmdr("Shape must be positive."))
             return()
             }
-        s <- as.numeric(tclvalue(sVar))
         if (is.na(s) || s <= 0) {
             errorCondition(recall=gammaProbabilities, message=gettextRcmdr("Scale must be positive."))
             return()
@@ -1006,7 +1065,10 @@ WeibullQuantiles <- function(){
             errorCondition(recall=WeibullQuantiles, message=gettextRcmdr("No probabilities specified."))
             return()
             }
+		warn <- options(warn=-1)
         shape <- as.numeric(tclvalue(shapeVar))
+		s <- as.numeric(tclvalue(sVar))
+		options(warn)
         if (is.na(shape)) {
             errorCondition(recall=WeibullQuantiles, message=gettextRcmdr("Shape not specified."))
             return()
@@ -1015,7 +1077,6 @@ WeibullQuantiles <- function(){
             errorCondition(recall=WeibullQuantiles, message=gettextRcmdr("Shape must be positive."))
             return()
             }
-        s <- as.numeric(tclvalue(sVar))
         if (is.na(s) || s <= 0) {
             errorCondition(recall=WeibullQuantiles, message=gettextRcmdr("Scale must be positive."))
             return()
@@ -1058,7 +1119,10 @@ WeibullProbabilities <- function(){
             errorCondition(recall=WeibullProbabilities, message=gettextRcmdr("No values specified."))
             return()
             }
+		warn <- options(warn=-1)
         shape <- as.numeric(tclvalue(shapeVar))
+		s <- as.numeric(tclvalue(sVar))
+		options(warn)
         if (is.na(shape)) {
             errorCondition(recall=WeibullProbabilities, message=gettextRcmdr("Shape not specified."))
             return()
@@ -1067,7 +1131,6 @@ WeibullProbabilities <- function(){
             errorCondition(recall=WeibullProbabilities, message=gettextRcmdr("Shape must be positive."))
             return()
             }
-        s <- as.numeric(tclvalue(sVar))
         if (is.na(s) || s <= 0) {
             errorCondition(recall=WeibullProbabilities, message=gettextRcmdr("Scale must be positive."))
             return()
@@ -1110,7 +1173,10 @@ GumbelQuantiles <- function(){
             errorCondition(recall=GumbelQuantiles, message=gettextRcmdr("No probabilities specified."))
             return()
             }
+		warn <- options(warn=-1)
         shape <- as.numeric(tclvalue(shapeVar))
+		s <- as.numeric(tclvalue(sVar))
+		options(warn)
         if (is.na(shape)) {
             errorCondition(recall=GumbelQuantiles, message=gettextRcmdr("Shape not specified."))
             return()
@@ -1119,7 +1185,6 @@ GumbelQuantiles <- function(){
             errorCondition(recall=GumbelQuantiles, message=gettextRcmdr("Shape must be positive."))
             return()
             }
-        s <- as.numeric(tclvalue(sVar))
         if (is.na(s) || s <= 0) {
             errorCondition(recall=GumbelQuantiles, message=gettextRcmdr("Scale must be positive."))
             return()
@@ -1162,7 +1227,10 @@ GumbelProbabilities <- function(){
             errorCondition(recall=GumbelProbabilities, message=gettextRcmdr("No values specified."))
             return()
             }
+		warn <- options(warn=-1)
         shape <- as.numeric(tclvalue(shapeVar))
+		s <- as.numeric(tclvalue(sVar))
+		options(warn)
         if (is.na(shape)) {
             errorCondition(recall=GumbelProbabilities, message=gettextRcmdr("Shape not specified."))
             return()
@@ -1171,7 +1239,6 @@ GumbelProbabilities <- function(){
             errorCondition(recall=GumbelProbabilities, message=gettextRcmdr("Shape must be positive."))
             return()
             }
-        s <- as.numeric(tclvalue(sVar))
         if (is.na(s) || s <= 0) {
             errorCondition(recall=GumbelProbabilities, message=gettextRcmdr("Scale must be positive."))
             return()
@@ -1211,8 +1278,10 @@ binomialQuantiles <- function(){
     onOK <- function(){
         closeDialog()
         quantiles <- gsub(" ", ",", tclvalue(quantilesVar))
+		warn <- options(warn=-1)
         trials <- round(as.numeric(tclvalue(trialsVar)))
         prob <- as.numeric(tclvalue(probVar))
+		options(warn)
         if ("" == quantiles) {
             errorCondition(recall=binomialQuantiles, message=gettextRcmdr("Probabilities not specified."))
             return()
@@ -1263,8 +1332,10 @@ binomialProbabilities <- function(){
     onOK <- function(){
         closeDialog()
         probabilities <- gsub(" ", ",", tclvalue(probabilitiesVar))
+		warn <- options(warn=-1)
         trials <- round(as.numeric(tclvalue(trialsVar)))
         prob <- as.numeric(tclvalue(probVar))
+		options(warn)
         if ("" == probabilities) {
             errorCondition(recall=binomialProbabilities, message=gettextRcmdr("Values not specified.")) 
             return()
@@ -1309,7 +1380,10 @@ binomialMass <- function(){
     probEntry <- ttkentry(top, width="6", textvariable=probVar)
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         trials <- as.numeric(tclvalue(trialsVar))
+		prob <- as.numeric(tclvalue(probVar))
+		options(warn)
         if (is.na(trials)) {
             errorCondition(recall=binomialMass, message=gettextRcmdr("Binomial trials not specified."))
             return()
@@ -1322,7 +1396,6 @@ binomialMass <- function(){
                 return()
                 }
             }
-        prob <- as.numeric(tclvalue(probVar))
         if (is.na(prob)) {
             errorCondition(recall=binomialMass, message=gettextRcmdr("Probability of success not specified."))
             return()
@@ -1357,7 +1430,9 @@ PoissonMass <- function(){
     meanEntry <- ttkentry(top, width="6", textvariable=meanVar)
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         mean <- as.numeric(tclvalue(meanVar))
+		options(warn)
         if (is.na(mean)) {
             errorCondition(recall=PoissonMass, message=gettextRcmdr("Poisson mean not specified."))
             return()
@@ -1579,7 +1654,9 @@ geomMass  <- function(){
     probEntry <- ttkentry(top, width="6", textvariable=probVar)
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         prob <- as.numeric(tclvalue(probVar))
+		options(warn)
         if (is.na(prob) ) {
               errorCondition(recall=geomMass, message=gettextRcmdr("Probability of success was not specified."))
               return()
@@ -1636,9 +1713,11 @@ hyperQuantiles  <- function(){
               errorCondition(recall=hyperQuantiles, message=gettextRcmdr("No probabilities specified."))
               return()
         }
+		warn <- options(warn=-1)
         m <- as.numeric(tclvalue(mVar))
         n <- as.numeric(tclvalue(nVar))
         k <- as.numeric(tclvalue(kVar))
+		options(warn)
         # Do some error checking
         if ( is.na(m) ){
               errorCondition(recall=hyperQuantiles, message=gettextRcmdr("The m parameter was not specified."))
@@ -1715,9 +1794,11 @@ hyperProbabilities  <- function(){
               errorCondition(recall=hyperProbabilities.ipsr, message=gettextRcmdr("No values specified."))
               return()
         }
+		warn <- options(warn=-1)
         m <- as.numeric(tclvalue(mVar))
         n <- as.numeric(tclvalue(nVar))
         k <- as.numeric(tclvalue(kVar))
+		options(warn)
         # Do some error checking
         if ( is.na(m) ){
               errorCondition(recall=hyperProbabilities, message=gettextRcmdr("The m parameter was not specified."))
@@ -1789,9 +1870,11 @@ hyperMass  <- function(){
     kEntry <- ttkentry(top, width="6", textvariable=kVar)
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         m <- as.numeric(tclvalue(mVar))
         n <- as.numeric(tclvalue(nVar))
         k <- as.numeric(tclvalue(kVar))
+		options(warn)
         # Do some error checking
         if ( is.na(m) ){
               errorCondition(recall=hyperMass, message=gettextRcmdr("The m parameter was not specified."))
@@ -1876,8 +1959,10 @@ hyperMass  <- function(){
                 message=gettextRcmdr("No probabilities specified."))
               return()
           }
+	  	warn <- options(warn=-1)
         size <- as.numeric(tclvalue(sizeVar))
         prob <- as.numeric(tclvalue(probVar))
+		options(warn)
         # Do some error checking
         if ( is.na(size) ){
               errorCondition(recall=negbinomialQuantiles, 
@@ -1939,8 +2024,10 @@ negbinomialProbabilities  <- function(){
                 message=gettextRcmdr("No values specified."))
               return()
         }
+		warn <- options(warn=-1)
         size <- as.numeric(tclvalue(sizeVar))
         prob <- as.numeric(tclvalue(probVar))
+		options(warn)
         # Do some error checking
         if ( is.na(size) ){
               errorCondition(recall=negbinomialProbabilities, 
@@ -1995,7 +2082,10 @@ negbinomialMass  <- function(){
     probEntry <- ttkentry(top, width="6", textvariable=probVar)
     onOK <- function(){
         closeDialog()
+		warn <- options(warn=-1)
         trials <- as.numeric(tclvalue(trialsVar))
+		prob <- as.numeric(tclvalue(probVar))
+		options(warn)
         if ( is.na(trials) ){
               errorCondition(recall=negbinomialMass, 
                 message=gettextRcmdr("Target number of successes not specified."))
@@ -2007,7 +2097,6 @@ negbinomialMass  <- function(){
               return()
           }
         trials <- round(trials)
-        prob <- as.numeric(tclvalue(probVar))
         if ( is.na(prob) ){
               errorCondition(recall=negbinomialMass, 
                 message=gettextRcmdr("Probability of success not specified."))

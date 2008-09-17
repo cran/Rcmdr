@@ -1,11 +1,11 @@
 # The R Commander and command logger
 
-# last modified 31 July 2008 by J. Fox
+# last modified 17 September 2008 by J. Fox
 #   slight changes 12 Aug 04 by Ph. Grosjean
 #   changes 21 June 2007 by Erich Neuwirth for Excel support (marked EN)
 
 Commander <- function(){
-    RcmdrVersion <- "1.4-1"
+    RcmdrVersion <- "1.4-2"
 ##    DESCRIPTION <- readLines(file.path(.find.package("Rcmdr"), "DESCRIPTION")[1])
 ##    RcmdrVersion <- trim.blanks(sub("^Version:", "",
 ##        grep("^Version:", D, value=TRUE)))
@@ -640,7 +640,7 @@ justDoIt <- function(command) {
     if (class(result)[1] ==  "try-error"){
         Message(message=paste(strsplit(result, ":")[[1]][2]), type="error")
         tkfocus(CommanderWindow())
-        return()
+        return(result)
         }
     checkWarnings(readLines(messages.connection))
     result
@@ -677,7 +677,7 @@ doItAndPrint <- function(command, log=TRUE) {
     	Message(message=paste(strsplit(result, ":")[[1]][2]), type="error")
     	if (.console.output) sink(type="output")
     	tkfocus(CommanderWindow())
-    	return()
+    	return(result)
     } else {
         exprs <- result
         result <- NULL
@@ -689,7 +689,7 @@ doItAndPrint <- function(command, log=TRUE) {
 	    Message(message=paste(strsplit(result, ":")[[1]][2]), type="error")
 	    if (.console.output) sink(type="output")
 	    tkfocus(CommanderWindow())
-	    return()
+	    return(result)
 	    }
 	result <- if (result$visible == FALSE) NULL else result$value
 	if (!is.null(result)) pushOutput(result)
