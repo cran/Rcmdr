@@ -748,3 +748,22 @@ Version 1.4-5
    
    o  Updated Indonesian translation (thanks to I. Made Tirta).
    
+Version 1.4-6
+
+   o  Added polr and multinom models to effect-plots, consistent with latest version of effects package.
+   
+   o  ttkentry() redefined to trim leading and trailing blanks (to avoid potential problems when user introduces a leading or trailing blank in a text field, as reported by Rich Heiberger).
+   
+   o  An attempt is made to break commands at blanks and commas to fit them in the script and output windows.
+   
+   o  Improvements to the one-way and multi-way ANOVA dialogs, including saving the models that are produced (suggested by Rich Heiberger).
+   
+   o  Improvements and bug fixes to handling of plug-in menu installation.
+   
+   o  New function MacOSXP() to test for Mac OS X; used to suppress "Data -> New data set" menu, since the Mac data editor causes R to hang when called with an empty data frame (reported by Rob Goedman and Tracy Lightcap).
+   
+   o  When character values are entered in the data editor after "Data -> New data set", the corresponding variable is converted to a factor.
+   
+   o  When console.output is TRUE, messages as well as output now go to the R Console and the Commander Messages window (as well as the Output window) is suppressed (with code contributed by Richard Heiberger).
+   
+   o  Small changes.

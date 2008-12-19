@@ -29,6 +29,7 @@
 \alias{exists.method}
 \alias{Factors}
 \alias{factorsP}
+\alias{formulaFields}
 \alias{getFrame}
 \alias{getFrame.listbox}
 \alias{getRcmdr}
@@ -44,6 +45,7 @@
 \alias{is.valid.name}
 \alias{justDoIt}
 \alias{listAllModels}
+\alias{listAOVModels}
 \alias{listDataSets}
 \alias{listGeneralizedLinearModels}
 \alias{listFactors}
@@ -57,16 +59,19 @@
 \alias{lmP}
 \alias{logger}
 \alias{LogWindow}
+\alias{MacOSXP}
 \alias{Message}
 \alias{MessagesWindow}
 \alias{modelFormula}
 \alias{modelsP}
+\alias{multinomP}
 \alias{nobs}
 \alias{Numeric}
 \alias{numericP}
 \alias{OKCancelHelp}
 \alias{OutputWindow}
 \alias{packageAvailable}
+\alias{polrP}
 \alias{popOutput}
 \alias{putRcmdr}
 \alias{radioButtons}
@@ -75,6 +80,7 @@
 \alias{rglLoaded}
 \alias{subOKCancelHelp}
 \alias{subsetBox}
+\alias{tclvalue}
 \alias{trim.blanks}
 \alias{TwoLevelFactors}
 \alias{twoLevelFactorsP}
@@ -128,6 +134,7 @@ errorCondition(window=top, recall=NULL, message, model=FALSE)  # macro
 exists.method(generic, object, default=TRUE, strict=FALSE)
 Factors(names)
 factorsP(n=1)
+formulaFields(model, hasLhs=TRUE, glm=FALSE)
 \method{getFrame}{listbox}(object)
 \method{getSelection}{listbox}(object)
 getRcmdr(x, mode="any")
@@ -144,6 +151,7 @@ initializeDialog(window=top, title="", offset=10, preventCrisp=FALSE)  # macro
 is.valid.name(x)
 justDoIt(command)
 listAllModels(envir=.GlobalEnv, ...)
+listAOVModels(envir=.GlobalEnv, ...)
 listDataSets(envir=.GlobalEnv, ...)
 listFactors(dataSet=ActiveDataSet())
 listGeneralizedLinearModels(envir=.GlobalEnv, ...)
@@ -157,16 +165,19 @@ listVariables(dataSet=ActiveDataSet())
 lmP()
 logger(command)
 LogWindow()
+MacOSXP()
 Message(message, type=c("note", "error", "warning"))
 MessagesWindow()
 modelFormula(frame=top, hasLhs=TRUE)  # macro
 modelsP(n=1)
+multinomP()
 nobs(model)
 Numeric(names)
 numericP(n=1)
 OKCancelHelp(window=top, helpSubject=NULL, model=FALSE)  # macro
 OutputWindow()
 packageAvailable(name)
+polrP()
 popOutput()
 putRcmdr(x, value)
 radioButtons(window=top, name, buttons, values=NULL, initialValue=..values[1], 
@@ -177,6 +188,7 @@ RcmdrTkmessageBox(message, icon=c("info", "question", "warning",
 rglLoaded()
 subOKCancelHelp(window=subdialog, helpSubject=NULL)  # macro
 subsetBox(window=top, model=FALSE)  # macro
+tclvalue(x)
 trim.blanks(text)
 TwoLevelFactors(names)
 twoLevelFactorsP(n=1)
@@ -214,6 +226,7 @@ commanderPosition()
   \item{focus}{Tk window to get the focus.}
   \item{frame}{frame or quoted name for frame depending upon the function.}
   \item{generic}{quoted name of generic function.}
+  \item{glm}{\code{TRUE} if the model is a \code{glm} object, \code{FALSE} otherwise.}
   \item{groupsBox}{listbox object for selecting groups variable.}
   \item{hasLhs}{does the model formula have a left-hand side?}
   \item{helpSubject}{the quoted name of a help subject, to be called as \code{help(helpSubject)}
@@ -232,8 +245,8 @@ commanderPosition()
   \item{log}{echo command to the log window, as well as executing it and printing its output.}
   \item{message}{error (or other) message.}
   \item{mode}{mode of object to retrieve.}
-  \item{model}{the name of a model, as a character string, or \code{TRUE} or \code{FALSE}, depending
-    upon the function.}
+  \item{model}{the name of a model, as a character string, or a model object, 
+  	or \code{TRUE} or \code{FALSE}, depending upon the function.}
   \item{name}{quoted name.}
   \item{names}{optional names to be stored.}
   \item{n}{number of items to check for.}
@@ -263,7 +276,7 @@ commanderPosition()
   \item{value}{an object to be stored.}
   \item{variableList}{a vector of variable names.}
   \item{window, parentWindow}{a Tk window.}
-  \item{x}{an R object name, as a character string.}
+  \item{x}{an R object name, as a character string, or a tcl variable or object.}
   \item{\dots}{For \code{gettextRcmdr}, text string or vector of text strings
     to translate; for \code{defmacro}, arguments for the macro; otherwise disregard.}
 }
@@ -299,7 +312,7 @@ commanderPosition()
   
   \emph{Information: }
   Several functions return vectors of object names: \code{listAllModels}, \cr
-  \code{listDataSets}, \code{listGeneralizedLinearModels},
+  \code{listAOVModels}, \code{listDataSets}, \code{listGeneralizedLinearModels},
   \code{listFactors}, \code{listLinearModels}, \code{listMultinomialLogitModels},
   \code{listNumeric}, \code{listProportionalOddsModels},
   \code{listTwoLevelFactors},
@@ -340,10 +353,11 @@ commanderPosition()
    \code{\link[base]{gettext}}, adding the argument \code{domain="R-Rcmdr"}.
    
   \emph{Miscellaneous:}
-  The function \code{trim.blanks} removes spaces from the beginning and end of a character string. The function 
+  The function \code{trim.blanks} removes spaces from the beginning and end of a character string. The function
   \code{installPlugin} installs an Rcmdr plug-in from a ZIP file or directory; this function may be used to
   create self-installing plug-ins in the form of packages. The function \code{nobs} returns the number of 
-  observations on which a statistical model is based.
+  observations on which a statistical model is based. The function \code{formulaFields} returns information
+  about the left-hand side, right-hand side, data, subject, and (for GLMs) family and link, of a model object.
   
   Some of these functions, marked \code{# macro} under \emph{Usage}, are "macro-like" in their behaviour, in that they 
   execute in the environment from which they are called. These were defined with an adaptation (used with permission) of

@@ -1,4 +1,4 @@
-# last modified 22 October 2008 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 12 December 2008 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
 
 # utility functions
 
@@ -18,6 +18,13 @@ listLinearModels <- function(envir=.GlobalEnv, ...) {
 #        function(.x) "lm" == (class(eval(parse(text=.x), envir=envir))[1]))]
         function(.x) "lm" == (class(get(.x, envir=envir))[1]))]
     }
+	
+listAOVModels <- function(envir=.GlobalEnv, ...) {
+	objects <- ls(envir=envir, ...)
+	if (length(objects) == 0) NULL
+	else objects[sapply(objects,
+				function(.x) "aov" == (class(get(.x, envir=envir))[1]))]
+}
 
 listGeneralizedLinearModels <- function(envir=.GlobalEnv, ...) {
     objects <- ls(envir=envir, ...)
@@ -167,7 +174,7 @@ listNumeric <- function(dataSet=ActiveDataSet()) {
 trim.blanks <- function(text){
     gsub("^\ *", "", gsub("\ *$", "", text))
     }
-
+	
 is.valid.name <- function(x){
     length(x) == 1 && is.character(x) && x == make.names(x)
     }
@@ -1239,67 +1246,67 @@ dialogSuffix <- defmacro(window=top, onOK=onOK, rows=1, columns=1, focus=top,
         }
     )
 
-variableListBox <- function(parentWindow, variableList=Variables(), bg="white",
-    selectmode="single", export="FALSE", initialSelection=NULL, listHeight=getRcmdr("variable.list.height"), title){
-    if (selectmode == "multiple") selectmode <- getRcmdr("multiple.select.mode")
-    if (length(variableList) == 1 && is.null(initialSelection)) initialSelection <- 0
-    frame <- tkframe(parentWindow)
-    listbox <- tklistbox(frame, height=min(listHeight, length(variableList)),
-        selectmode=selectmode, background=bg, exportselection=export, width=max(20, nchar(variableList)))
-    scrollbar <- ttkscrollbar(frame, command=function(...) tkyview(listbox, ...))
-    tkconfigure(listbox, yscrollcommand=function(...) tkset(scrollbar, ...))
-    for (var in variableList) tkinsert(listbox, "end", var)
-    if (is.numeric(initialSelection)) tkselection.set(listbox, initialSelection)
-    firstChar <- tolower(substr(variableList, 1, 1))
-    len <- length(variableList)
-    onLetter <- function(letter){
-        letter <- tolower(letter)
-        current <- 1 + round(as.numeric(unlist(strsplit(tclvalue(tkyview(listbox) ), " "))[1])*len)
-        mat <- match(letter, firstChar[-(1:current)])
-        if (is.na(mat)) return()
-        tkyview.scroll(listbox, mat, "units")
-        }
-    onA <- function() onLetter("a")
-    onB <- function() onLetter("b")
-    onC <- function() onLetter("c")
-    onD <- function() onLetter("d")
-    onE <- function() onLetter("e")
-    onF <- function() onLetter("f")
-    onG <- function() onLetter("g")
-    onH <- function() onLetter("h")
-    onI <- function() onLetter("i")
-    onJ <- function() onLetter("j")
-    onK <- function() onLetter("k")
-    onL <- function() onLetter("l")
-    onM <- function() onLetter("m")
-    onN <- function() onLetter("n")
-    onO <- function() onLetter("o")
-    onP <- function() onLetter("p")
-    onQ <- function() onLetter("q")
-    onR <- function() onLetter("r")
-    onS <- function() onLetter("s")
-    onT <- function() onLetter("t")
-    onU <- function() onLetter("u")
-    onV <- function() onLetter("v")
-    onW <- function() onLetter("w")
-    onX <- function() onLetter("x")
-    onY <- function() onLetter("y")
-    onZ <- function() onLetter("z")
-    for (letter in c(letters, LETTERS)){
-        tkbind(listbox, paste("<", letter, ">", sep=""),
-            get(paste("on", toupper(letter), sep="")))
-        }
-    onClick <- function() tkfocus(listbox)
-    tkbind(listbox, "<ButtonPress-1>", onClick)
-    tkgrid(labelRcmdr(frame, text=title, foreground="blue"), columnspan=2, sticky="w")
-    tkgrid(listbox, scrollbar, sticky="nw")
-    tkgrid.configure(scrollbar, sticky="wns")
-    tkgrid.configure(listbox, sticky="ew")
-    result <- list(frame=frame, listbox=listbox, scrollbar=scrollbar,
-        selectmode=selectmode, varlist=variableList)
-    class(result) <- "listbox"
-    result
-    }
+	variableListBox <- function(parentWindow, variableList=Variables(), bg="white",
+		selectmode="single", export="FALSE", initialSelection=NULL, listHeight=getRcmdr("variable.list.height"), title){
+		if (selectmode == "multiple") selectmode <- getRcmdr("multiple.select.mode")
+		if (length(variableList) == 1 && is.null(initialSelection)) initialSelection <- 0
+		frame <- tkframe(parentWindow)
+		listbox <- tklistbox(frame, height=min(listHeight, length(variableList)),
+			selectmode=selectmode, background=bg, exportselection=export, width=max(20, nchar(variableList)))
+		scrollbar <- ttkscrollbar(frame, command=function(...) tkyview(listbox, ...))
+		tkconfigure(listbox, yscrollcommand=function(...) tkset(scrollbar, ...))
+		for (var in variableList) tkinsert(listbox, "end", var)
+		if (is.numeric(initialSelection)) for (sel in initialSelection) tkselection.set(listbox, sel)
+		firstChar <- tolower(substr(variableList, 1, 1))
+		len <- length(variableList)
+		onLetter <- function(letter){
+			letter <- tolower(letter)
+			current <- 1 + round(as.numeric(unlist(strsplit(tclvalue(tkyview(listbox) ), " "))[1])*len)
+			mat <- match(letter, firstChar[-(1:current)])
+			if (is.na(mat)) return()
+			tkyview.scroll(listbox, mat, "units")
+		}
+		onA <- function() onLetter("a")
+		onB <- function() onLetter("b")
+		onC <- function() onLetter("c")
+		onD <- function() onLetter("d")
+		onE <- function() onLetter("e")
+		onF <- function() onLetter("f")
+		onG <- function() onLetter("g")
+		onH <- function() onLetter("h")
+		onI <- function() onLetter("i")
+		onJ <- function() onLetter("j")
+		onK <- function() onLetter("k")
+		onL <- function() onLetter("l")
+		onM <- function() onLetter("m")
+		onN <- function() onLetter("n")
+		onO <- function() onLetter("o")
+		onP <- function() onLetter("p")
+		onQ <- function() onLetter("q")
+		onR <- function() onLetter("r")
+		onS <- function() onLetter("s")
+		onT <- function() onLetter("t")
+		onU <- function() onLetter("u")
+		onV <- function() onLetter("v")
+		onW <- function() onLetter("w")
+		onX <- function() onLetter("x")
+		onY <- function() onLetter("y")
+		onZ <- function() onLetter("z")
+		for (letter in c(letters, LETTERS)){
+			tkbind(listbox, paste("<", letter, ">", sep=""),
+				get(paste("on", toupper(letter), sep="")))
+		}
+		onClick <- function() tkfocus(listbox)
+		tkbind(listbox, "<ButtonPress-1>", onClick)
+		tkgrid(labelRcmdr(frame, text=title, foreground="blue"), columnspan=2, sticky="w")
+		tkgrid(listbox, scrollbar, sticky="nw")
+		tkgrid.configure(scrollbar, sticky="wns")
+		tkgrid.configure(listbox, sticky="ew")
+		result <- list(frame=frame, listbox=listbox, scrollbar=scrollbar,
+			selectmode=selectmode, varlist=variableList)
+		class(result) <- "listbox"
+		result
+	}
 
 getSelection <- function(object) UseMethod("getSelection")
 
@@ -1606,7 +1613,7 @@ modelFormula <- defmacro(frame=top, hasLhs=TRUE, expr={
         tkgrid.configure(lhsScroll, sticky="ew")
         }
     else{
-        rhsVariable <- tclVar("")
+        rhsVariable <- if (currentModel) tclVar(currentFields$rhs) else tclVar("")
         rhsEntry <- ttkentry(formulaFrame, width="50", textvariable=rhsVariable)
         rhsXscroll <- ttkscrollbar(formulaFrame,
             orient="horizontal", command=function(...) tkxview(rhs, ...))
@@ -1795,12 +1802,21 @@ modelsP <- function(n=1) activeDataSetP() && length(listAllModels()) >= n
 activeModelP <- function() !is.null(ActiveModel())
 
 #lmP <- function() activeModelP() && eval(parse(text=paste("class(", ActiveModel(), ")[1] == 'lm'")))
-lmP <- function() activeModelP() && class(get(ActiveModel()))[1] == 'lm'
+lmP <- function() activeModelP() && any(class(get(ActiveModel()))[1] == c('lm', 'aov'))
 
 #glmP <- function() activeModelP() && eval(parse(text=paste("class(", ActiveModel(), ")[1] == 'glm'")))
 glmP <- function() activeModelP() && class(get(ActiveModel()))[1] == 'glm'
 
+polrP <- function() activeModelP() && class(get(ActiveModel()))[1] == 'polr'
+
+multinomP <- function() activeModelP() && class(get(ActiveModel()))[1] == 'multinom'
+
 hclustSolutionsP <- function() length(listHclustSolutions()) > 0
+
+MacOSXP <- function() {
+	sys <- Sys.info()
+	!is.null(sys) && length(grep("[Dd]arwin", sys["sysname"]) > 0)
+}
 
 packageAvailable <- function(name) 0 != length(.find.package(name, quiet=TRUE))
 
@@ -2024,7 +2040,7 @@ is.model <- function(object) {
 if (!(as.character(tcl("info", "tclversion")) >= "8.5" && getRversion() >= "2.7.0")){
     buttonRcmdr <- tkbutton
     labelRcmdr <- tklabel
-    ttkentry <- tkentry
+    ttkentry <- function(parent, ...) tkentry(parent, ...)
     ttkframe <- tkframe
     ttkradiobutton <- tkradiobutton
     ttkscrollbar <- function(...) tkscrollbar(..., repeatinterval=5)
@@ -2032,7 +2048,11 @@ if (!(as.character(tcl("info", "tclversion")) >= "8.5" && getRversion() >= "2.7.
     buttonRcmdr <- function(..., borderwidth, fg, foreground, relief) ttkbutton(...)
     labelRcmdr <- function(..., fg)
         if(missing(fg)) ttklabel(...) else ttklabel(..., foreground=fg)
-    } 
+    }
+	
+# the following function alters the default behaviour of tclvalue() by trimming leading and trailing blanks
+
+tclvalue <- function(x) trim.blanks(tcltk::tclvalue(x))
 	
 # the following function returns the number of observations for a statistical model
 
@@ -2040,4 +2060,40 @@ nobs <- function(model){
 	fitted <- na.omit(fitted(model))
 	if (is.matrix(fitted)) nrow(fitted) else length(fitted)
 	}
+	
+# the following function slips a character string at blanks and commas according to width
 
+splitCmd <- function(cmd, width=getOption("width") - 4, at="[ ,]"){
+	if (nchar(cmd) <= width) return(cmd)
+	where <- gregexpr(at, cmd)[[1]]
+	if (where[1] < 0) return(cmd)
+	singleQuotes <- gregexpr("'", cmd)[[1]]
+	doubleQuotes <- gregexpr('"', cmd)[[1]]
+	comment <- regexpr("#", cmd)
+	if (singleQuotes[1] > 0){
+		nquotes <- length(singleQuotes)
+		if (nquotes %% 2 != 0) stop("unbalanced quotes")
+		for (left in seq(1, nquotes, 2)){
+			where[(where > singleQuotes[left]) & (where < singleQuotes[left + 1])] <- NA
+		}
+		where <- na.omit(where)
+	}  
+	if (doubleQuotes[1] > 0){
+		nquotes <- length(doubleQuotes)
+		if (nquotes %% 2 != 0) stop("unbalanced quotes")
+		for (left in seq(1, nquotes, 2)){
+			where[(where > doubleQuotes[left]) & (where < doubleQuotes[left + 1])] <- NA
+		}
+		where <- na.omit(where)
+	}
+	if (comment > 0){
+		where[where > comment] <- NA
+		where <- na.omit(where)
+	}
+	if (length(where) == 0) return(cmd)
+	where2 <- where[where <= width]
+	where2 <- if (length(where2) == 0) where[1]
+		else where2[length(where2)]
+	paste(substr(cmd, 1, where2), "\n  ", 
+		Recall(substr(cmd, where2 + 1, nchar(cmd)), width, at), sep="")
+} 
