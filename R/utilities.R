@@ -1,4 +1,4 @@
-# last modified 23 December 2008 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 6 March 2009 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
 
 # utility functions
 
@@ -1297,7 +1297,13 @@ dialogSuffix <- defmacro(window=top, onOK=onOK, rows=1, columns=1, focus=top,
 				get(paste("on", toupper(letter), sep="")))
 		}
 		onClick <- function() tkfocus(listbox)
+		toggleSelection <- function(){
+			active <- tclvalue(tkindex(listbox, "active"))
+			selected <- tclvalue(tkcurselection(listbox))
+			if (selected == active) tkselection.clear(listbox, "active") else tkselection.set(listbox, "active")
+		}
 		tkbind(listbox, "<ButtonPress-1>", onClick)
+		if (selectmode == "single") tkbind(listbox, "<Control-ButtonPress-1>", toggleSelection)
 		tkgrid(labelRcmdr(frame, text=title, foreground="blue"), columnspan=2, sticky="w")
 		tkgrid(listbox, scrollbar, sticky="nw")
 		tkgrid.configure(scrollbar, sticky="wns")
@@ -1774,7 +1780,9 @@ GrabFocus <- function(value){
 
 UpdateModelNumber <- function(increment=1){
     modelNumber <- getRcmdr("modelNumber")
-    putRcmdr("modelNumber", modelNumber + increment)
+	modelNumber <- modelNumber + increment
+	if (modelNumber < 1) modelNumber <- 1 # sanity check
+    putRcmdr("modelNumber", modelNumber)
     }
 
 CommanderWindow <- function() getRcmdr("commanderWindow")
@@ -1834,6 +1842,17 @@ activateMenus <- function(){
 # for internationalization
 
 gettextRcmdr <- function(...) gettext(..., domain="R-Rcmdr")
+
+gettextMenus <- function(...){
+	text <- gettextRcmdr(...)
+	plugins <- getOption("Rcmdr")$plugins
+	if (is.null(plugins)) return(text)
+	plugins <- paste("R-", plugins, sep="")
+	for (plugin in plugins){
+		text <- gettext(text, domain=plugin)
+	}
+	text
+}
 
 English <- function() {
     env <- Sys.getenv()
@@ -2063,6 +2082,41 @@ nobs <- function(model){
 	
 # the following function splits a character string at blanks and commas according to width
 
+#splitCmd <- function(cmd, width=getOption("width") - 4, at="[ ,]"){
+#	if (nchar(cmd) <= width) return(cmd)
+#	where <- gregexpr(at, cmd)[[1]]
+#	if (where[1] < 0) return(cmd)
+#	singleQuotes <- gregexpr("'", cmd)[[1]]
+#	doubleQuotes <- gregexpr('"', cmd)[[1]]
+#	comment <- regexpr("#", cmd)
+#	if (singleQuotes[1] > 0){
+#		nquotes <- length(singleQuotes)
+#		if (nquotes %% 2 != 0) stop("unbalanced quotes")
+#		for (left in seq(1, nquotes, 2)){
+#			where[(where > singleQuotes[left]) & (where < singleQuotes[left + 1])] <- NA
+#		}
+#		where <- na.omit(where)
+#	}  
+#	if (doubleQuotes[1] > 0){
+#		nquotes <- length(doubleQuotes)
+#		if (nquotes %% 2 != 0) stop("unbalanced quotes")
+#		for (left in seq(1, nquotes, 2)){
+#			where[(where > doubleQuotes[left]) & (where < doubleQuotes[left + 1])] <- NA
+#		}
+#		where <- na.omit(where)
+#	}
+#	if (comment > 0){
+#		where[where > comment] <- NA
+#		where <- na.omit(where)
+#	}
+#	if (length(where) == 0) return(cmd)
+#	where2 <- where[where <= width]
+#	where2 <- if (length(where2) == 0) where[1]
+#		else where2[length(where2)]
+#	paste(substr(cmd, 1, where2), "\n  ", 
+#		Recall(substr(cmd, where2 + 1, nchar(cmd)), width, at), sep="")
+#} 
+
 splitCmd <- function(cmd, width=getOption("width") - 4, at="[ ,]"){
 	if (nchar(cmd) <= width) return(cmd)
 	where <- gregexpr(at, cmd)[[1]]
@@ -2070,23 +2124,19 @@ splitCmd <- function(cmd, width=getOption("width") - 4, at="[ ,]"){
 	singleQuotes <- gregexpr("'", cmd)[[1]]
 	doubleQuotes <- gregexpr('"', cmd)[[1]]
 	comment <- regexpr("#", cmd)
-	if (singleQuotes[1] > 0){
+	if (singleQuotes[1] > 0 && (singleQuotes[1] < doubleQuotes[1] || doubleQuotes[1] < 0 ) && (singleQuotes[1] < comment[1] || comment[1] < 0 )){
 		nquotes <- length(singleQuotes)
-		if (nquotes %% 2 != 0) stop("unbalanced quotes")
-		for (left in seq(1, nquotes, 2)){
-			where[(where > singleQuotes[left]) & (where < singleQuotes[left + 1])] <- NA
-		}
+		if (nquotes < 2) stop("unbalanced quotes")
+		where[(where > singleQuotes[1]) & (where < singleQuotes[2])] <- NA
 		where <- na.omit(where)
 	}  
-	if (doubleQuotes[1] > 0){
+	else if (doubleQuotes[1] > 0 && (doubleQuotes[1] < singleQuotes[1] || singleQuotes[1] < 0) && (doubleQuotes[1] < comment[1] || comment[1] < 0 )){
 		nquotes <- length(doubleQuotes)
-		if (nquotes %% 2 != 0) stop("unbalanced quotes")
-		for (left in seq(1, nquotes, 2)){
-			where[(where > doubleQuotes[left]) & (where < doubleQuotes[left + 1])] <- NA
-		}
+		if (nquotes < 2) stop("unbalanced quotes")
+		where[(where > doubleQuotes[1]) & (where < doubleQuotes[2])] <- NA
 		where <- na.omit(where)
 	}
-	if (comment > 0){
+	else if (comment > 0){
 		where[where > comment] <- NA
 		where <- na.omit(where)
 	}
