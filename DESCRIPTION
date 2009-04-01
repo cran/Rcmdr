@@ -1,6 +1,6 @@
 Package: Rcmdr
-Version: 1.4-8
-Date: 2009/03/07
+Version: 1.4-9
+Date: 2009/04/01
 Title: R Commander
 Author: John Fox <jfox@mcmaster.ca>, with contributions from Michael
         Ash, Theophilius Boye, Stefano Calza, Andy Chang, Philippe
@@ -19,7 +19,9 @@ Description: A platform-independent basic-statistics GUI (graphical
 License: GPL (>= 2)
 URL: http://www.r-project.org,
         http://socserv.socsci.mcmaster.ca/jfox/Misc/Rcmdr/
-Revision: 33
-Packaged: Fri Mar 13 04:56:35 2009; rforge
 Repository: CRAN
-Date/Publication: 2009-03-13 13:29:47
+Repository/R-Forge/Project: rcmdr
+Repository/R-Forge/Revision: 35
+Publication/Date: 2009-04-03 01:11:47
+Packaged: Fri Apr 3 05:02:55 2009; rforge
+Date/Publication: 2009-04-04 20:38:58
