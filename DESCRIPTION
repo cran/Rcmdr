@@ -1,6 +1,6 @@
 Package: Rcmdr
-Version: 1.4-9
-Date: 2009/04/01
+Version: 1.4-10
+Date: 2009/04/26
 Title: R Commander
 Author: John Fox <jfox@mcmaster.ca>, with contributions from Michael
         Ash, Theophilius Boye, Stefano Calza, Andy Chang, Philippe
@@ -21,7 +21,6 @@ URL: http://www.r-project.org,
         http://socserv.socsci.mcmaster.ca/jfox/Misc/Rcmdr/
 Repository: CRAN
 Repository/R-Forge/Project: rcmdr
-Repository/R-Forge/Revision: 35
-Publication/Date: 2009-04-03 01:11:47
-Packaged: Fri Apr 3 05:02:55 2009; rforge
-Date/Publication: 2009-04-04 20:38:58
+Repository/R-Forge/Revision: 43
+Date/Publication: 2009-04-27 18:24:50
+Packaged: 2009-04-27 03:01:12 UTC; rforge
