@@ -7,6 +7,7 @@
 \alias{activeModel}
 \alias{ActiveModel}
 \alias{activeModelP}
+\alias{aicP}
 \alias{checkActiveDataSet}
 \alias{checkActiveModel}
 \alias{checkBoxes}
@@ -44,6 +45,7 @@
 \alias{initializeDialog}
 \alias{is.valid.name}
 \alias{justDoIt}
+\alias{Library}
 \alias{listAllModels}
 \alias{listAOVModels}
 \alias{listDataSets}
@@ -112,6 +114,7 @@ activeDataSetP()
 activeModel(model)
 ActiveModel(name)
 activeModelP()
+aicP()
 checkActiveDataSet()
 checkActiveModel()
 checkBoxes(window=top, frame, boxes, initialValues=NULL, labels, title=NULL)  # macro
@@ -126,7 +129,7 @@ checkVariables(n=1)
 closeCommander(ask=TRUE, ask.save=ask)
 closeDialog(window, release=TRUE)  # macro
 CommanderWindow()
-dataSetsP()
+dataSetsP(n=1)
 defmacro(..., expr)
 dialogSuffix(window=top, onOK=onOK, rows=1, columns=1, focus=top, bindReturn=TRUE, 
     preventGrabFocus=FALSE, preventDoubleClick=FALSE, preventCrisp=FALSE)  # macro
@@ -151,6 +154,7 @@ hclustSolutionsP()
 initializeDialog(window=top, title="", offset=10, preventCrisp=FALSE)  # macro
 is.valid.name(x)
 justDoIt(command)
+Library(package, pos=4)
 listAllModels(envir=.GlobalEnv, ...)
 listAOVModels(envir=.GlobalEnv, ...)
 listDataSets(envir=.GlobalEnv, ...)
@@ -255,8 +259,10 @@ commanderPosition()
   \item{object}{an object (depends on context).}
   \item{offset}{in pixels, from top-left of Commander window.}
   \item{onOK}{function to execute when the \emph{OK} button is pressed.}
+  \item{package}{quoted name of package to load.}
   \item{plotLinesByGroup}{include a check box for plotting lines by group?}
   \item{plotLinesByGroupsText}{the label for the plot-lines-by-group check box.}
+  \item{pos}{position on search path at which to load package; default is \code{4}.}
   \item{positionLegend}{include a check box for a legend?}
   \item{preventGrabFocus}{prevent the dialog box from grabbing the focus.}
   \item{preventDoubleClick}{prevent double-clicking from pressing the OK button, even when the
@@ -343,13 +349,19 @@ commanderPosition()
   Tk 8.5 introduced so-called ``themed'' widgets, which look better than the traditional Tk widgets. 
   Several functions, contributed by Brian Ripley, are written to access the new widgets by switching automatically 
   between the new and old widget sets depending upon the availability of the former: \code{buttonRcmdr}, 
-  to access either \code{\link[tcltk]{ttkbutton}} or \code{\link[tcltk]{tkbutton}}; \code{labelRcmdr}, 
-  to access either \code{\link[tcltk]{ttklabel}} or \code{\link[tcltk]{tklabel}}; \code{ttkentry}, 
-  to access either \code{\link[tcltk]{ttkentry}} or \code{\link[tcltk]{tkentry}}; \code{ttkframe}, 
-  to access either \code{\link[tcltk]{ttkframe}} or \code{\link[tcltk]{tkframe}}; \code{ttkradiobutton}, 
-  to access either \code{\link[tcltk]{ttkradiobutton}} or \code{\link[tcltk]{tkradiobutton}}; and \code{ttkscrollbar}, 
-  to access either \code{\link[tcltk]{ttkscrollbar}} or \code{\link[tcltk]{tkscrollbar}}. 
+  to access either \code{\link{ttkbutton}} or \code{\link{tkbutton}}; \code{labelRcmdr}, 
+  to access either \code{\link{ttklabel}} or \code{\link{tklabel}}; \code{ttkentry}, 
+  to access either \code{\link{ttkentry}} or \code{\link{tkentry}}; \code{ttkframe}, 
+  to access either \code{\link{ttkframe}} or \code{\link{tkframe}}; \code{ttkradiobutton}, 
+  to access either \code{\link{ttkradiobutton}} or \code{\link{tkradiobutton}}; and \code{ttkscrollbar}, 
+  to access either \code{\link{ttkscrollbar}} or \code{\link{tkscrollbar}}. 
   Note that the last four functions mask functions of the same names in the \pkg{tcltk} package.
+  
+  \emph{`Predicate' functions:}
+  A number of functions of the form \emph{name}\code{P} are `predicate' functions, which return
+  \code{TRUE} or \code{FALSE} depending upon whether some condition obtains. For example, \code{lmP()} 
+  returns \code{TRUE} if there is an active model that is a linear model; and \code{factorsP(2)}
+  returns \code{TRUE} if there are at least two factors in the active data set.
   
   \emph{Translating text:}
   The \code{gettextRcmdr} function simply passes its argument(s) to
@@ -362,7 +374,9 @@ commanderPosition()
   observations on which a statistical model is based. The function \code{formulaFields} returns information
   about the left-hand side, right-hand side, data, subject, and (for GLMs) family and link, of a model object.
   The function \code{sortVarNames} sorts variable names, including those containing numerals, into a more
-  "natural" order than does the standard \code{sort} function.
+  "natural" order than does the standard \code{sort} function. The function \code{Library} may be used to
+  load packages; it checks whether a package is already loaded, and if not by default puts it in position
+  4 on the search path.
   
   Some of these functions, marked \code{# macro} under \emph{Usage}, are "macro-like" in their behaviour, in that they 
   execute in the environment from which they are called. These were defined with an adaptation (used with permission) of

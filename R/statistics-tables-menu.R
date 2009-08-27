@@ -1,11 +1,11 @@
 # Statistics Menu dialogs
 
-# last modified 26 March 2008 by J. Fox
+# last modified 18 August 2009 by J. Fox
 
     # Tables menu
 
 twoWayTable <- function(){
-    require("abind")
+    Library("abind")
     initializeDialog(title=gettextRcmdr("Two-Way Table"))
     variablesFrame <- tkframe(top)
     .factors <- Factors()
@@ -84,7 +84,7 @@ twoWayTable <- function(){
     }
 
 multiWayTable <- function(){
-    require("abind")
+    Library("abind")
     initializeDialog(title=gettextRcmdr("Multi-Way Table"))
     variablesFrame <- tkframe(top)
     .factors <- Factors()
@@ -134,7 +134,7 @@ multiWayTable <- function(){
     }
 
 enterTable <- function(){
-    require("abind")
+    Library("abind")
     env <- environment()
     initializeDialog(title=gettextRcmdr("Enter Two-Way Table"))
     outerTableFrame <- tkframe(top)

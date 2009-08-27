@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 4 December 2008 by J. Fox
+# last modified 22 August 2009 by J. Fox
 
     # Means menu
 
@@ -112,7 +112,7 @@ singleSampleTTest <- function(){
         }
     OKCancelHelp(helpSubject="t.test")
     radioButtons(top, name="alternative", buttons=c("twosided", "less", "greater"), values=c("two.sided", "less", "greater"),
-        labels=gettextRcmdr(c("Population mean = mu0", "Population mean < mu0", "Population mean > mu0")),
+        labels=gettextRcmdr(c("Population mean != mu0", "Population mean < mu0", "Population mean > mu0")),
         title=gettextRcmdr("Alternative Hypothesis"))
     rightFrame <- tkframe(top)
     confidenceFrame <- tkframe(rightFrame)
@@ -134,8 +134,8 @@ singleSampleTTest <- function(){
     }
 
 	oneWayAnova <- function(){
-		require("multcomp")
-		require("abind")
+		Library("multcomp")
+		Library("abind")
 		initializeDialog(title=gettextRcmdr("One-Way Analysis of Variance"))
 		UpdateModelNumber()
 		modelName <- tclVar(paste("AnovaModel.", getRcmdr("modelNumber"), sep=""))
@@ -204,11 +204,11 @@ singleSampleTTest <- function(){
 			tkfocus(CommanderWindow())
 		}
 		OKCancelHelp(helpSubject="anova", model=TRUE)
-		tkgrid(labelRcmdr(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
-		tkgrid(modelFrame, sticky="w")
+		tkgrid(labelRcmdr(modelFrame, text=gettextRcmdr("Enter name for model: ")), model, sticky="w")
+		tkgrid(modelFrame, sticky="w", columnspan=2)
 		tkgrid(getFrame(groupBox), getFrame(responseBox), sticky="nw")
 		tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Pairwise comparisons of means")), pairwiseCheckBox, sticky="w")
-		tkgrid(optionsFrame, sticky="w")
+		tkgrid(optionsFrame, sticky="w", columnspan=2)
 		tkgrid(buttonsFrame, columnspan=2, sticky="w")
 		dialogSuffix(rows=4, columns=2)
 	}
@@ -262,8 +262,8 @@ singleSampleTTest <- function(){
 			tkfocus(CommanderWindow())
 		}
 		OKCancelHelp(helpSubject="Anova", model=TRUE)
-		tkgrid(labelRcmdr(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
-		tkgrid(modelFrame, sticky="w")
+		tkgrid(labelRcmdr(modelFrame, text=gettextRcmdr("Enter name for model: ")), model, sticky="w")
+		tkgrid(modelFrame, sticky="w", columnspan=2)
 		tkgrid(getFrame(groupBox), getFrame(responseBox), sticky="nw")
 		tkgrid(buttonsFrame, columnspan=2, sticky="w")
 		dialogSuffix(rows=4, columns=2)

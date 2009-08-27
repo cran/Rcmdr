@@ -1,6 +1,6 @@
 # Model menu dialogs
 
-# last modified 02 April 2009 by J. Fox
+# last modified 18 August 2009 by J. Fox
 
 selectActiveModel <- function(){
     models <- listAllModels()
@@ -73,7 +73,7 @@ plotModel <- function(){
     }
 
 CRPlots <- function(){
-    require("car")
+    Library("car")
     .activeModel <- ActiveModel()
     if (is.null(.activeModel) || !checkMethod("cr.plot", .activeModel)) return()
     doItAndPrint(paste("cr.plots(", .activeModel, ", ask=FALSE)", sep=""))
@@ -81,7 +81,7 @@ CRPlots <- function(){
     }
 
 AVPlots <- function(){
-    require("car")
+    Library("car")
     .activeModel <- ActiveModel()
     if (is.null(.activeModel) || !checkMethod("av.plot", .activeModel)) return()
     response <- tclvalue(RcmdrTkmessageBox(message=gettextRcmdr("Identify points with mouse?"), 
@@ -92,7 +92,7 @@ AVPlots <- function(){
     }
 
 anovaTable <- function(){
-    require("car")
+    Library("car")
     .activeModel <- ActiveModel()
     if (is.null(.activeModel)) return()
 	initializeDialog(title=gettextRcmdr("ANOVA Table"))
@@ -104,19 +104,32 @@ anovaTable <- function(){
 	onOK <- function(){
 		type <- as.character(tclvalue(typeVariable))
 		closeDialog()
+		if (is.glm <- glmP()){
+			family <- eval(parse(text=paste(.activeModel, "$family$family", sep="")))
+		}
 		if (type == "I"){
 			if (!checkMethod("anova", .activeModel)) {
 				errorCondition(message=gettextRcmdr("There is no appropriate anova method for a model of this class."))
 				return()
 				}
-			doItAndPrint(paste("anova(", .activeModel, ")", sep=""))
+			if (is.glm){
+				test <- if (family %in% c("binomial", "poisson")) "Chisq"
+					else "F"
+				doItAndPrint(paste("anova(", .activeModel, ', test="',  test, '")', sep=""))
+			}
+			else doItAndPrint(paste("anova(", .activeModel, ")", sep=""))
 			}
 		else {
 			if (!checkMethod("Anova", .activeModel)) {
 				errorCondition(message=gettextRcmdr("There is no appropriate Anova method for a model of this class."))
 				return()
 				}
-			doItAndPrint(paste("Anova(", .activeModel, ', type="', type, '")', sep=""))
+			if (is.glm){
+				test <- if (family %in% c("binomial", "poisson")) "LR"
+					else "F"
+				doItAndPrint(paste("Anova(", .activeModel, ', type="', type, '", test="', test, '")', sep=""))
+			}
+			else doItAndPrint(paste("Anova(", .activeModel, ', type="', type, '")', sep=""))
 			if (type == "III") Message(message=gettextRcmdr("Type III tests require careful attention to contrast coding."),
 				type="warning")
 			}
@@ -128,14 +141,14 @@ anovaTable <- function(){
     }
 
 VIF <- function(){
-    require("car")
+    Library("car")
     .activeModel <- ActiveModel()
     if (is.null(.activeModel) || !checkMethod("vif", .activeModel)) return()
     doItAndPrint(paste("vif(", .activeModel, ")", sep=""))
     }
             
 InfluencePlot <- function(){
-    require("car")
+    Library("car")
     .activeModel <- ActiveModel()
     if (is.null(.activeModel) || !checkMethod("influencePlot", .activeModel)) return()
     response <- tclvalue(RcmdrTkmessageBox(message=gettextRcmdr("Identify points with mouse?"), 
@@ -145,7 +158,7 @@ InfluencePlot <- function(){
     }  
     
 effectPlots <- function(){
-    require("effects")
+    Library("effects")
     .activeModel <- ActiveModel()
     if (is.null(.activeModel) || !checkMethod("effect", .activeModel)) return()
     doItAndPrint('trellis.device(theme="col.whitebg")')
@@ -215,7 +228,7 @@ addObservationStatistics <- function(){
     }
 
 residualQQPlot <- function(){
-    require("car")
+    Library("car")
     .activeModel <- ActiveModel()
     if (is.null(.activeModel) || !checkMethod("qq.plot", .activeModel)) return()
     initializeDialog(title=gettextRcmdr("Residual Quantile-Comparison Plot"))
@@ -244,7 +257,7 @@ residualQQPlot <- function(){
     }
 
 testLinearHypothesis <- function(){
-    require("car")
+    Library("car")
     .activeModel <- ActiveModel()
     if (is.null(.activeModel) || !checkMethod("linear.hypothesis", .activeModel, default=TRUE)) return()
     env <- environment()
@@ -380,7 +393,20 @@ compareModels <- function(){
                 compareModels()
                 return()
                 }
-        doItAndPrint(paste("anova(", model1, ",", model2, ")", sep=""))
+		if (glmP()){
+			family1 <- eval(parse(text=paste(model1, "$family$family", sep="")))
+			family2 <- eval(parse(text=paste(model2, "$family$family", sep="")))
+			if (family1 != family2){
+				Message(message=gettextRcmdr("Models do not have the same family."),
+					type="error")
+				compareModels()
+				return()
+			}
+			test <- if (family1 %in% c("binomial", "poisson")) "Chisq"
+				else "F"
+			doItAndPrint(paste("anova(", model1, ", ", model2, ', test="', test, '")', sep=""))
+		}
+        else doItAndPrint(paste("anova(", model1, ", ", model2, ")", sep=""))
         tkfocus(CommanderWindow())
         }
     OKCancelHelp(helpSubject="anova")
@@ -391,7 +417,7 @@ compareModels <- function(){
     
 BreuschPaganTest <- function(){
     if (is.null(.activeModel)) return()
-    require("lmtest")
+    Library("lmtest")
 	currentModel <- FALSE
     initializeDialog(title=gettextRcmdr("Breusch-Pagan Test"))
     tkgrid(labelRcmdr(top, text=gettextRcmdr("Score Test for Nonconstant Error Variance"), fg="blue"), sticky="w")
@@ -434,7 +460,7 @@ BreuschPaganTest <- function(){
 
 DurbinWatsonTest <- function(){
     if (is.null(.activeModel)) return()
-    require("lmtest")
+    Library("lmtest")
     initializeDialog(title=gettextRcmdr("Durbin-Waton Test"))
     tkgrid(labelRcmdr(top, text=gettextRcmdr("Test for First-Order Error Autocorrelation"), fg="blue"), sticky="w")
     onOK <- function(){
@@ -458,7 +484,7 @@ DurbinWatsonTest <- function(){
 
 RESETtest <- function(){
     if (is.null(.activeModel)) return()
-    require("lmtest")
+    Library("lmtest")
     initializeDialog(title=gettextRcmdr("RESET Test"))
     tkgrid(labelRcmdr(top, text=gettextRcmdr("Test for Nonlinearity"), fg="blue"), sticky="w")
     onOK <- function(){
@@ -502,7 +528,7 @@ RESETtest <- function(){
 
 outlierTest <- function(){
     if (is.null(.activeModel)) return()
-    require("car")
+    Library("car")
     .activeModel <- ActiveModel()
     if (!checkMethod("outlier.test", .activeModel)) {
         errorCondition(gettextRcmdr("There is no appropriate outlier.test method for a model of this class."))
@@ -513,7 +539,7 @@ outlierTest <- function(){
     
 confidenceIntervals <- function(){
     if (is.null(.activeModel)) return()
-    require(MASS)
+    Library("MASS")
     initializeDialog(title=gettextRcmdr("Confidence Intervals"))
     tkgrid(labelRcmdr(top, text=gettextRcmdr("Confidence Intervals for Individual Coefficients"), fg="blue"), sticky="w")
     onOK <- function(){
@@ -561,3 +587,66 @@ bic <- function(){
 	doItAndPrint(paste("AIC(", .activeModel, ", k = log(nobs(", .activeModel, "))) # BIC", sep=""))
 }
 
+stepwiseRegression <- function(){
+	initializeDialog(title=gettextRcmdr("Stepwise Model Selection"))
+	onOK <- function(){
+		direction <- as.character(tclvalue(directionVariable))
+		criterion <- as.character(tclvalue(criterionVariable))
+		closeDialog()
+		doItAndPrint(paste("stepwise(", ActiveModel(),
+						", direction='", direction, "', criterion='", criterion,
+						"')", sep=""))
+		tkdestroy(top)
+		tkfocus(CommanderWindow())
+	}
+	OKCancelHelp(helpSubject="stepwise")
+	radioButtons(top, name="direction", buttons=c("bf", "fb", "b", "f"), 
+			values=c("backward/forward", "forward/backward", "backward", "forward"),
+			labels=gettextRcmdr(c("backward/forward", "forward/backward", "backward", "forward")),
+			title=gettextRcmdr("Direction"))
+	radioButtons(top, name="criterion", buttons=c("bic", "aic"), 
+			values=c("BIC", "AIC"),
+			labels=gettextRcmdr(c("BIC", "AIC")),
+			title=gettextRcmdr("Criterion"))
+	tkgrid(directionFrame, criterionFrame, sticky="nw")
+	tkgrid(buttonsFrame, columnspan=2, sticky="w")
+	dialogSuffix(rows=2, columns=2)
+}
+
+subsetRegression <- function(){
+	Library("leaps")
+	initializeDialog(title=gettextRcmdr("Subset Model Selection"))
+	onOK <- function(){
+		formula <- paste(sub("^[ ]*", "", deparse(formula(get(ActiveModel())))), collapse="")
+		criterion <- as.character(tclvalue(criterionVariable))
+		nbest <- as.numeric(tclvalue(nbestValue))
+		nvmax <- as.numeric(tclvalue(nvmaxValue))
+		really.big <- if (nvmax > 50) "TRUE" else "FALSE"
+		closeDialog()
+		doItAndPrint(paste("plot(regsubsets(", formula, ", data=", ActiveDataSet(),
+						", nbest=", nbest, ", nvmax=", nvmax, "), scale='", criterion,
+						"')", sep=""))
+		tkdestroy(top)
+		tkfocus(CommanderWindow())
+	}
+	OKCancelHelp(helpSubject="regsubsets")
+	radioButtons(top, name="criterion", buttons=c("bic", "Cp", "adjr2", "r2"), 
+			labels=gettextRcmdr(c("BIC", "Mallows Cp", "Adjusted R-sq.", "R-squared")),
+			title=gettextRcmdr("Criterion for Model Plot"))
+	nvar <- ncol(model.matrix(get(ActiveModel())))
+	nbestValue <- tclVar("1")
+	nvmaxValue <- tclVar(as.character(min(25, nvar)))
+	slidersFrame <- tkframe(top)
+	nbestSlider <- tkscale(slidersFrame, from=1, to=10, showvalue=TRUE, variable=nbestValue,
+			resolution=1, orient="horizontal")
+	nvmaxSlider <- tkscale(slidersFrame, from=1, to=nvar, 
+			showvalue=TRUE, variable=nvmaxValue, resolution=1, orient="horizontal")
+	tkgrid(tklabel(slidersFrame, text="     "),
+		tklabel(slidersFrame, text=gettextRcmdr("Number of best models\nof each size:"), fg="blue"), 
+			nbestSlider, sticky="w")
+	tkgrid(tklabel(slidersFrame, text="     "),
+		tklabel(slidersFrame, text=gettextRcmdr("Maximum size:"), fg="blue"),nvmaxSlider, sticky="e")
+	tkgrid(criterionFrame, slidersFrame, sticky="nw")
+	tkgrid(buttonsFrame, columnspan=2, sticky="w")
+	dialogSuffix(rows=2, columns=2)
+}

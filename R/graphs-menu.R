@@ -1,6 +1,6 @@
 # Graphs menu dialogs
 
-# last modified 29 July 2008 by J. Fox
+# last modified 18 August 2009 by J. Fox
 
 indexPlot <- function(){
     initializeDialog(title=gettextRcmdr("Index Plot"))
@@ -83,7 +83,7 @@ Histogram <- function(){
     }
 
 stemAndLeaf <- function(){
-	require("aplpack")
+	Library("aplpack")
     initializeDialog(title=gettextRcmdr("Stem and Leaf Display"), preventCrisp=TRUE)
     xBox <- variableListBox(top, Numeric(), title=gettextRcmdr("Variable (pick one)"))
     displayDigits <- tclVar("1")
@@ -424,6 +424,7 @@ barGraph <- function(){
     }
 
 pieChart <- function(){
+	Library(colorspace)
     initializeDialog(title=gettextRcmdr("Pie Chart"))
     variableBox <- variableListBox(top, Factors(), title=gettextRcmdr("Variable (pick one)"))
     onOK <- function(){
@@ -435,7 +436,7 @@ pieChart <- function(){
             }
         .activeDataSet <- ActiveDataSet()
         command <- (paste("pie(table(", .activeDataSet, "$", variable, "), labels=levels(",
-            .activeDataSet, "$", variable, '), main="', variable, '", col=rainbow(length(levels(',
+            .activeDataSet, "$", variable, '), main="', variable, '", col=rainbow_hcl(length(levels(',
             .activeDataSet, "$", variable, "))))", sep=""))
         logger(command)
         justDoIt(command)
@@ -728,8 +729,8 @@ PlotMeans <- function(){
 Scatter3D <- function(){
     use.rgl <- options("Rcmdr")[[1]]$use.rgl
     if (length(use.rgl) == 0 || use.rgl) {
-        require(rgl)
-        require(mgcv)
+        Library("rgl")
+        Library("mgcv")
         }
     initializeDialog(title=gettextRcmdr("3D Scatterplot"))
     variablesFrame <- tkframe(top)
@@ -994,7 +995,7 @@ saveRglGraph <- function(){
 ## with more modifications by Richard Heiberger.
 ## 2008-01-03 added conditions, layout, and multiple colors
 Xyplot <- function() {
-	require("lattice")
+	Library("lattice")
 	initializeDialog(title=gettextRcmdr("XY Conditioning Plot"))
 	predictorFrame <- tkframe(top)
 	predictorBox <- variableListBox(predictorFrame, Numeric(), title=gettextRcmdr("Explanatory variables (pick one or more)"), selectmode="multiple")

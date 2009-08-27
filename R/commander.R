@@ -1,17 +1,18 @@
 
 # The R Commander and command logger
 
-# last modified 26 April 2009 by J. Fox
+# last modified 27 August 2009 by J. Fox
 #   slight changes 12 Aug 04 by Ph. Grosjean
 #   changes 21 June 2007 by Erich Neuwirth for Excel support (marked EN)
 # last modified 17 December 2008 by Richard Heiberger  ##rmh
 
 Commander <- function(){
-	RcmdrVersion <- "1.4-10"
+	RcmdrVersion <- "1.5-1"
 	##    DESCRIPTION <- readLines(file.path(.find.package("Rcmdr"), "DESCRIPTION")[1])
 	##    RcmdrVersion <- trim.blanks(sub("^Version:", "",
 	##        grep("^Version:", D, value=TRUE)))
 	putRcmdr("quotes", options(useFancyQuotes=FALSE))
+	putRcmdr("messageNumber", 0)
 	# the following test suggested by Richard Heiberger
 	if ("RcmdrEnv" %in% search() &&
 		exists("commanderWindow", "RcmdrEnv") &&
@@ -26,6 +27,7 @@ Commander <- function(){
 		else opt
 	}
 	current <- options("Rcmdr")[[1]]
+	setOption("number.messages", TRUE)
 	etc <- setOption("etc", file.path(.path.package(package="Rcmdr")[1], "etc"))
 	etcMenus <- setOption("etcMenus", etc)
 	putRcmdr("etcMenus", etcMenus)
@@ -180,6 +182,7 @@ Commander <- function(){
 	setOption("length.output.stack", 10)
 	putRcmdr("outputStack", as.list(rep(NA, getRcmdr("length.output.stack"))))
 	setOption("variable.list.height", 4)
+	setOption("variable.list.width", c(20, Inf))
 	if (getRcmdr("suppress.X11.warnings")) {
 		putRcmdr("messages.connection", file(open = "w+"))
 		sink(getRcmdr("messages.connection"), type="message")
@@ -311,7 +314,7 @@ Commander <- function(){
 		tkfocus(CommanderWindow())
 	}
 	onView <- function(){
-		if (packageAvailable("relimp")) require("relimp")
+		if (packageAvailable("relimp")) Library("relimp")
 		if (activeDataSet() == FALSE) {
 			tkfocus(CommanderWindow())
 			return()
@@ -574,6 +577,7 @@ Commander <- function(){
 #	if (.Platform$OS.type != "windows"){
 #		tkbind(.commander, "<Control-v>", onPaste)
 #		tkbind(.commander, "<Control-V>", onPaste)
+#		tkbind(.commander, "<Alt-BackSpace>", onUndo)
 #	}
 	tkbind(.commander, "<Control-r>", onSubmit)
 	tkbind(.commander, "<Control-R>", onSubmit)
@@ -598,6 +602,9 @@ Commander <- function(){
 	}
 	##    if (!packageAvailable("rgl")) Message(gettextRcmdr("The rgl package is absent; 3D plots are unavailable."), type="warning")
 	Message(paste(gettextRcmdr("R Commander Version "), getRcmdr("RcmdrVersion"), ": ", date(), sep=""))
+	if (.Platform$GUI == "Rgui"  && ismdi()) Message(gettextRcmdr(
+		"The Windows version of the R Commander works best under RGui\nwith the single-document interface (SDI); see ?Commander."),
+		type="warning")
 }
 
 
@@ -775,9 +782,10 @@ Message <- function(message, type=c("note", "error", "warning")){
 	type <- match.arg(type)
 	if (type != "note") tkbell()
 	if (getRcmdr("retain.messages")) {
-		if (!missing(message)) tkinsert(.message, "end", "\n")
-		else if (!is.null(getRcmdr("last.message"))) {
-			tkinsert(.message, "end", "\n\n")
+#		if (!missing(message)) tkinsert(.message, "end", "\n")
+#		else if (!is.null(getRcmdr("last.message"))) {
+		if (missing(message) && !is.null(getRcmdr("last.message"))) {
+#			tkinsert(.message, "end", "\n\n")
 			putRcmdr("last.message", NULL)
 			tkyview.moveto(.message, 1.0)
 		}
@@ -797,6 +805,11 @@ Message <- function(message, type=c("note", "error", "warning")){
 	}
 	putRcmdr("last.message", type)
 	message <- paste(prefix, ": ", message, sep="")
+	if (getRcmdr("retain.messages") && getRcmdr("number.messages")) {
+		messageNumber <- getRcmdr("messageNumber") + 1
+		putRcmdr("messageNumber", messageNumber)
+		message <- paste("[", messageNumber, "] ", message, sep="")
+	}
 	######### added by EN #####################
 	if (RExcelSupported())
 		putRExcel(".rexcel.last.message",message)

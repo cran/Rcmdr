@@ -1,6 +1,6 @@
-"Project-Id-Version: Rcmdr 1.4-2\n"
+"Project-Id-Version: Rcmdr 1.5-0\n"
 "Report-Msgid-Bugs-To: jfox@mcmaster.ca\n"
-"POT-Creation-Date: 2008-09-17 10:00\n"
+"POT-Creation-Date: 2009-08-25 18:30\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3501,4 +3501,151 @@ msgstr ""
 # messages added to version 1.4-2
 
 msgid "Location not specified."
+msgstr ""
+
+# messages added to version 1.5-0
+
+#     "Models -> Stepwise model selection" dialog and menu item
+
+msgid "Stepwise model selection..."
+msgstr ""
+
+msgid "Stepwise Model Selection"
+msgstr ""
+
+msgid "Direction"
+msgstr ""
+
+msgid "backward/forward"
+msgstr ""
+
+msgid "forward/backward"
+msgstr ""
+
+msgid "backward"
+msgstr ""
+
+msgid "forward"
+msgstr ""
+
+msgid "Criterion"
+msgstr ""
+
+msgid "BIC"
+msgstr ""
+
+msgid "AIC"
+msgstr ""
+
+#      "Models -> Subset model selection" dialog and menu item
+
+msgid "Subset model selection..."
+msgstr ""
+
+msgid "Subset Model Selection"
+msgstr ""
+
+msgid "Criterion for Model Plot"
+msgstr ""
+
+msgid "Mallows Cp"
+msgstr ""
+
+msgid "Adjusted R-sq."
+msgstr ""
+
+msgid "R-squared"
+msgstr ""
+
+msgid "Number of best models\nof each size:"
+msgstr ""
+
+msgid "Maximum size:"
+msgstr ""
+
+#  	"Data -> Merge data sets" menu item and dialog
+
+msgid "Merge data sets..."
+msgstr ""
+
+msgid "Merge Data Sets"
+msgstr ""
+
+msgid "First Data Set (pick one)"
+msgstr ""
+
+msgid "Second Data Set (pick one)"
+msgstr ""
+
+msgid "Merge rows"
+msgstr ""
+
+msgid "Merge columns"
+msgstr ""
+
+msgid "Direction of Merge"
+msgstr ""
+
+msgid "You cannot merge a data set with itself."
+msgstr ""
+
+msgid "Name for merged data set:"
+msgstr ""
+
+msgid "Merge only common\nrows or columns"
+msgstr ""
+
+#  	"Data -> Active data set -> Aggregate variables in active data set" menu item and dialog
+
+msgid "Aggregate variables in active data set..."
+msgstr ""
+
+msgid "Aggregate Observations"
+msgstr ""
+
+msgid "Variables to aggregate\n(pick one or more)"
+msgstr ""
+
+msgid "Aggregate by\n(pick one or more)"
+msgstr ""
+
+msgid "Sum"
+msgstr ""
+
+msgid "You must select at least one variable to aggregate."
+msgstr ""
+
+msgid "You must select at least one variable to aggregate by."
+msgstr ""
+
+msgid "Variables to aggregate and those to aggregate by must be different."
+msgstr ""
+
+msgid "Name for aggregated data set:"
+msgstr ""
+
+#     miscellaneous 
+
+msgid "{\"R Data Files\" {\".rda\" \".Rda\" \".RDA\" \".RData\"}} {\"All Files\" {\"*\"}}"
+msgstr ""
+
+msgid "No data set selected."
+msgstr ""
+
+msgid "Help on selected data set"
+msgstr ""
+
+msgid "Population mean != mu0"
+msgstr ""
+
+msgid "Population proportion != p0"
+msgstr ""
+
+msgid "Models do not have the same family."
+msgstr ""
+
+msgid "Pairwise p-values\nfor Pearson or Spearman correlations"
+msgstr ""
+
+msgid "The Windows version of the R Commander works best under RGui\nwith the single-document interface (SDI); see ?Commander."
 msgstr ""

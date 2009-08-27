@@ -37,9 +37,9 @@ In addition, the active data set can be selected from among R data frames
 resident in memory. You can therefore switch among data sets during a session.
 
 By default, commands are logged to the script window (the
-initially empty text window immediately below the toolbar); 
+initially empty text window immediately below the toolbar), and 
 commands and output appear in the output window (the initially empty text window below the
-script window); and the active data set is attached to the search path. To alter these and
+script window). To alter these and
 other defaults, see the information below on configuration.
  
 Some \code{Rcmdr} dialogs (those in the \emph{Statistics -> Fit models} menu) 
@@ -102,10 +102,10 @@ The \code{Rcmdr} menus can be customized by editing the file \code{Rcmdr-menus.t
 
 You can add R code to the package, e.g., for creating additional dialogs, by placing files with
 file type \code{.R} in the \code{etc} directory, also editing \code{Rcmdr-menus.txt} to provide
-additional menus, sub-menus, or menu-items. A demo addition is provided in the file 
-\code{BoxCox.demo}. To activate the demo, rename this file to \code{BoxCox.R},
-and uncomment the corresponding menu line in \code{Rcmdr-menus.txt}. Alternatively, you can edit 
-the source package and recompile it.
+additional menus, sub-menus, or menu-items.  Alternatively, you can edit 
+the source package and recompile it. 
+
+To reiterate, however, the preferred procedure is to write an R Commander plug-in package.
 
 A number of functions are provided to assist in writing dialogs, and \code{Rcmdr} state information
 is stored in a separate environment. See \code{help("\link{Rcmdr.Utilities}")}
@@ -127,10 +127,7 @@ set none, one, several, or all options. The available options are as follows:
     recommended packages will be checked, and if any are absent, the \code{Rcmdr} will offer to install them.}
 
     \item{\code{command.text.color}}{Color for commands in the output window; the default is \code{"red"}.}
-    
-    \item{\code{console.messages}}{If \code{TRUE}, messages are directed to the \emph{R Console}, and
-    the \emph{R Commander} output window is not displayed. The default is \code{FALSE}.}
-    
+       
     \item{\code{console.output}}{If \code{TRUE}, output is directed to the \emph{R Console}, and the 
     \emph{R Commander} output window is not displayed. The default is \code{FALSE}.}
     
@@ -149,8 +146,8 @@ set none, one, several, or all options. The available options are as follows:
 
     \item{\code{default.font.size}}{The size, in points, of the default font. The default is 10 for Windows systems
     and 12 for other systems Unless otherwise
-    specified (see the previous item), the default font is \code{"*helvetica-medium-r-normal-*-xx*"}, where \code{xx}
-    is the default font size. This option is only for non-Windows systems.}
+    specified (see the previous item), the default font for non-Windows systems is 
+    \code{"*helvetica-medium-r-normal-*-xx*"}, where \code{xx} is the default font size.}
     
     \item{\code{double.click}}{Set to \code{TRUE} if you want a double-click of the left mouse
     button to press the default button in all dialogs. The default is \code{FALSE}.}
@@ -200,6 +197,8 @@ set none, one, several, or all options. The available options are as follows:
     to \code{"multiple"}, left-clicking toggles the selection of a variable and may be used to select more than one
     variable. This is the behaviour in the \code{Rcmdr} prior to version 1.9-10.}
     
+    \item{\code{number.messages}}{If \code{TRUE}, the default, messages in the messages window are numbered.}
+    
     \item{\code{output.height}}{The height of the output window, in lines. The default is twice the height
     of the script window, or 20 if the script window is suppressed. Setting \code{output.height}
     to 0 has the same effect as setting \code{console.output} to \code{TRUE}.}
@@ -227,7 +226,7 @@ set none, one, several, or all options. The available options are as follows:
     in the Commander Messages window after the next \code{Rcmdr}-generated command.
     Some X11 warnings may be printed when you exit from the Commander.}
     
-    \item{\code{retain.messages}}{If \code{TRUE} (the default is \code{FALSE}), the contents of the message window
+    \item{\code{retain.messages}}{If \code{TRUE} (the default), the contents of the message window
     are not erased between messages. In any event, a "NOTE" message will not erase a preceding "WARNING" or "ERROR".}
     
     \item{\code{RExcelSupport}}{If \code{TRUE} (the default is \code{FALSE}), menus and output are handled by Excel.}
@@ -236,8 +235,7 @@ set none, one, several, or all options. The available options are as follows:
     only in Windows. The default is \code{NULL}.}
 
     \item{\code{showData.threshold}}{If the number of variables in the active data set exceeds this value (default, 100),
-    then \code{edit()} rather than \code{showData()} is used to display the data set. A disadvantage is that control doesn't
-    return to the Commander until the edit window is closed. The reason for the option is that \code{showData()} is very slow
+    then \code{View()} rather than \code{showData()} is used to display the data set. The reason for the option is that \code{showData()} is very slow
     when the number of variables is large; setting the threshold to 0 suppresses the use of showData altogether.}
          
     \item{\code{show.edit.button}}{Set to \code{TRUE} (the default) if you want an \emph{Edit} button in the Commander
@@ -262,13 +260,17 @@ set none, one, several, or all options. The available options are as follows:
     accessible library; if \code{FALSE}, the \code{rgl} package will be ignored even if it is available. 
     The \code{rgl} package can sometimes cause problems when running R under X11.}
     
-    \item{\code{variable.list.height}}{the number of variables to display in variable-list boxes; longer lists may be viewed by scrolling. 
+    \item{\code{variable.list.height}}{the number of items (typically variables) to display in list boxes; longer lists may be viewed by scrolling. 
     The default is 4.} 
+    
+    \item{\code{variable.list.width}}{a two-item vector controlling the width of list boxes, in characters, giving the minimum and maximum
+    width to display; the default is \code{c(20, Inf)}. If the widest item name falls in this range, then its number of characters
+    determines the width of the box. \emph{Note:} This specification works only approximately.}
     
     \item{\code{warning.text.color}}{Color for warning messages; the default is \code{"darkgreen"}.}
     }
     
-Many options can also be set via the \emph{File -> Options} menu, which will restart the Commander after options are set.
+Some options can also be set via the \emph{File -> Options} menu, which will restart the Commander after options are set.
 
 If you want always to launch the R Commander when R starts up, you can include the following code in one of R's start-up 
 files (e.g., in the \code{Rprofile.site} file in R's \code{etc} subdirectory):
@@ -295,15 +297,19 @@ For more information about R initialization, see \code{?Startup}.
   Occasionally, under Windows, after typing some text into a dialog box (e.g., a subsetting expression in the Subset  Data Set dialog), 
   buttons in the dialog (e.g., the OK button) will have no effect when they are pressed. Clicking anywhere inside or outside of the dialog 
   box should restore the function of the buttons. As far as I have been able to ascertain, this is a problem with Tcl/Tk for Windows.
+  I have not seen this behavior in some time and the problem may have been solved.
 }
 
 
 \note{
-  This version may be compatible with SciViews, which currently runs only under Windows systems:
+  This version may be compatible with SciViews:
    \url{http://www.sciviews.org/SciViews-R}; see \code{\link{Rcmdr.sciviews-specific}}.
-  Under Windows, the \code{Rcmdr} package can also be run under the Rgui in SDI (single-document
-  interface) mode, or under \code{rterm.exe}; you might experience problems running the \code{Rcmdr} under
-  \code{ESS} withNTEmacs or XEmacs.
+  This version should be compatiable with the \pkg{RExcel} package, which can use the R Commander
+  menus.
+  
+  Under Windows, the \code{Rcmdr} package can be run under the \emph{Rgui} in the SDI (single-document
+  interface) mode, or under \code{rterm.exe}. You might experience problems running the \code{Rcmdr} under
+  \code{ESS} with NTEmacs or XEmacs; under other R consoles; or under the Rgui in the MDI (multiple-document interface) mode.
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}}

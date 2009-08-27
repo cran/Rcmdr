@@ -1,6 +1,6 @@
 # R Commander Menu Definitions
 
-# last modified 04 Februrary 2009 by J. Fox
+# last modified 21 August 2009 by J. Fox
 
 #   type    menu/item      operation/parent  label                                          command/menu                activation  install?
 
@@ -32,6 +32,7 @@
     menu    dataMenu        topMenu         ""                                              ""                          ""          ""
     item    dataMenu        command         "New data set..."                               newDataSet                  ""          "!MacOSXP()"
     item    dataMenu        command         "Load data set..."                              loadDataSet                 ""      ""
+    item	dataMenu		command			"Merge data sets..."							mergeDataSets				"dataSetsP(2)"	"packageAvailable('car')"
     menu    importMenu      dataMenu        ""                                              ""                          ""          ""
     item    importMenu      command         "from text file, clipboard, or URL..."          readDataSet                 ""          ""
     item    importMenu      command         "from SPSS data set..."                         importSPSS                  ""          "packageAvailable('foreign')"
@@ -50,6 +51,7 @@
     item    activeMenu      command         "Variables in active data set"                  variablesDataSet            "activeDataSetP()"          ""
     item    activeMenu      command         "Set case names..."                             setCaseNames                "activeDataSetP()"          ""
     item    activeMenu      command         "Subset active data set..."                     subsetDataSet               "activeDataSetP()"          ""
+    item	activeMenu		command			"Aggregate variables in active data set..."		Aggregate					"activeDataSetP() && factorsP()"  ""
     item	activeMenu		command			"Remove row(s) from active data set..."			RemoveRows					"activeDataSetP()"          ""
     item    activeMenu      command         "Stack variables in active data set..."         Stack                       "activeDataSetP() && numericP(2)"          ""
     item    activeMenu      command         "Remove cases with missing data..."             filterNA                    "activeDataSetP()"          ""
@@ -140,7 +142,7 @@
     item    graphsMenu      command         "Plot of means..."                              PlotMeans                   "numericP() && factorsP()"          ""
     item	graphsMenu		command			"Strip chart..."								stripChart					"numericP()"										""
     item    graphsMenu      command         "Bar graph..."                                  barGraph                    "factorsP()"          ""
-    item    graphsMenu      command         "Pie chart..."                                  pieChart                    "factorsP()"          ""
+    item    graphsMenu      command         "Pie chart..."                                  pieChart                    "factorsP()"  "packageAvailable('colorspace')"
     menu    ThreeDPlotMenu  graphsMenu      ""                                              ""                          ""            "packageAvailable('rgl')"
     item    ThreeDPlotMenu  command         "3D scatterplot..."                             Scatter3D                   "numericP(3)" "packageAvailable('rgl')"
     item    ThreeDPlotMenu  command         "Identify observations with mouse"              Identify3D                  "rglLoaded() && 0 != rgl.cur() && !is.null(getRcmdr('Identify3d'))"  "packageAvailable('rgl')"
@@ -159,6 +161,8 @@
     item    modelsMenu      command         "Confidence intervals..."                       confidenceIntervals         "activeModelP()" "packageAvailable('MASS')"
     item	modelsMenu		command			"Akaike Information Criterion (AIC)"			aic							"activeModelP()"		  ""
     item	modelsMenu		command			"Bayesian Information Criterion (BIC)"			bic							"activeModelP()"		  ""
+    item	modelsMenu		command			"Stepwise model selection..."						stepwiseRegression			"aicP()" 		 "packageAvailable('MASS')"
+    item	modelsMenu		command			"Subset model selection..."						subsetRegression			"lmP()"			 "packageAvailable('leaps')"
     menu    hypothesisMenu  modelsMenu      ""                                              ""                          ""          ""
     item    modelsMenu      cascade         "Hypothesis tests"                              hypothesisMenu              ""          ""
     item    hypothesisMenu  command         "ANOVA table..."                                anovaTable                  "activeModelP()" "packageAvailable('car')"

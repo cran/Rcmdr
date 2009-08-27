@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 26 March 2008 by J. Fox
+# last modified 18 August 2009 by J. Fox
 
     # Proportions menu
     
@@ -32,7 +32,7 @@ singleProportionTest <- function(){
         }
     OKCancelHelp(helpSubject="prop.test")
     radioButtons(top, name="alternative", buttons=c("twosided", "less", "greater"), values=c("two.sided", "less", "greater"),
-        labels=gettextRcmdr(c("Population proportion = p0", "Population proportion < p0", "Population proportion > p0")), title=gettextRcmdr("Alternative Hypothesis"))
+        labels=gettextRcmdr(c("Population proportion != p0", "Population proportion < p0", "Population proportion > p0")), title=gettextRcmdr("Alternative Hypothesis"))
     rightFrame <- tkframe(top)
     confidenceFrame <- tkframe(rightFrame)
     confidenceLevel <- tclVar(".95")
@@ -57,7 +57,7 @@ singleProportionTest <- function(){
     }
 
 twoSampleProportionsTest <- function(){
-    require("abind")
+    Library("abind")
     initializeDialog(title=gettextRcmdr("Two-Sample Proportions Test"))
     .twoLevelFactors <- TwoLevelFactors()
     groupsBox <- variableListBox(top, .twoLevelFactors, title=gettextRcmdr("Groups (pick one)"))
