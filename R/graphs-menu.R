@@ -1,6 +1,6 @@
 # Graphs menu dialogs
 
-# last modified 18 August 2009 by J. Fox
+# last modified 5 September 2009 by J. Fox
 
 indexPlot <- function(){
     initializeDialog(title=gettextRcmdr("Index Plot"))
@@ -424,7 +424,7 @@ barGraph <- function(){
     }
 
 pieChart <- function(){
-	Library(colorspace)
+	Library("colorspace")
     initializeDialog(title=gettextRcmdr("Pie Chart"))
     variableBox <- variableListBox(top, Factors(), title=gettextRcmdr("Variable (pick one)"))
     onOK <- function(){
@@ -483,7 +483,7 @@ linePlot <- function(){
             }
         .activeDataSet <- ActiveDataSet()
         .x <- na.omit(eval(parse(text=paste(.activeDataSet, "$", x, sep="")), envir=.GlobalEnv))
-        if (!identical(order(.x), seq(1:length(.x)))){
+        if (!identical(order(.x), seq(along.with=.x))){
             response <- tclvalue(RcmdrTkmessageBox(message=gettextRcmdr("x-values are not in order.\nContinue?"),
                 icon="warning", type="okcancel", default="cancel"))
             if (response == "cancel") {
