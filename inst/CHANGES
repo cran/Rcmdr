@@ -858,3 +858,15 @@ Version 1.5-3
    o  Updated Indonesian translation (coutersy of I Made Tirta).
    
    o  Small changes.
+   
+Version 1.5-4
+
+   o  rcorr.adjust() now returns an object of class "rcorr.adjust" (to satisfy a request by Liviu Andronic).
+   
+   o  Confint() modified to include coefficient estimates, and to include exponentiated coefficients for binomial logit models (suggested by  Ricardo Ocana-Riola). Small fix to method for multinom models.
+   
+   o  Added cld() display to pairwise comparisons in one-way ANOVA (suggested by Marcin Kozak).
+   
+   o  Added options to radioButtons() (based on code contributed by Liviu Andronic).
+   
+   o  Small fixes to code and docs.

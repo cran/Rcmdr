@@ -1,13 +1,14 @@
 Package: Rcmdr
-Version: 1.5-3
-Date: 2009/09/22
+Version: 1.5-4
+Date: 2009/12/13
 Title: R Commander
-Author: John Fox <jfox@mcmaster.ca>, with contributions from Michael
-        Ash, Theophilius Boye, Stefano Calza, Andy Chang, Philippe
-        Grosjean, Richard Heiberger, G. Jay Kerns, Renaud Lancelot,
-        Matthieu Lesnoff, Uwe Ligges, Samir Messad, Martin Maechler,
-        Robert Muenchen, Duncan Murdoch, Erich Neuwirth, Dan Putler,
-        Brian Ripley, Miroslav Ristic, and Peter Wolf.
+Author: John Fox <jfox@mcmaster.ca>, with contributions from Liviu
+        Andronic, Michael Ash, Theophilius Boye, Stefano Calza, Andy
+        Chang, Philippe Grosjean, Richard Heiberger, G. Jay Kerns,
+        Renaud Lancelot, Matthieu Lesnoff, Uwe Ligges, Samir Messad,
+        Martin Maechler, Robert Muenchen, Duncan Murdoch, Erich
+        Neuwirth, Dan Putler, Brian Ripley, Miroslav Ristic, and Peter
+        Wolf.
 Maintainer: John Fox <jfox@mcmaster.ca>
 Depends: R (>= 2.6.0), tcltk, grDevices, utils, car (>= 1.2-1),
 Suggests: abind, aplpack, colorspace, effects (>= 1.0-7), foreign,
@@ -21,6 +22,6 @@ URL: http://www.r-project.org,
         http://socserv.socsci.mcmaster.ca/jfox/Misc/Rcmdr/
 Repository: CRAN
 Repository/R-Forge/Project: rcmdr
-Repository/R-Forge/Revision: 73
-Date/Publication: 2009-10-05 16:59:01
-Packaged: 2009-09-22 20:10:48 UTC; rforge
+Repository/R-Forge/Revision: 81
+Date/Publication: 2009-12-23 08:18:19
+Packaged: 2009-12-13 21:07:13 UTC; rforge
