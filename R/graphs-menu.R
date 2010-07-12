@@ -1,6 +1,6 @@
 # Graphs menu dialogs
 
-# last modified 5 June 2010 by J. Fox
+# last modified 28 June 2010 by J. Fox
 
 indexPlot <- function(){
     initializeDialog(title=gettextRcmdr("Index Plot"))
@@ -20,7 +20,8 @@ indexPlot <- function(){
         if (par("usr")[3] <= 0) doItAndPrint('abline(h=0, col="gray")')
         if (identify) {
             RcmdrTkmessageBox(title="Identify Points",
-                message=gettextRcmdr("Use left mouse button to identify points,\nright button to exit."),
+                message=paste(gettextRcmdr("Use left mouse button to identify points,\n"),
+						gettextRcmdr(if (MacOSXP()) "esc key to exit." else "right button to exit."), sep=""),
                 icon="info", type="ok")
             command <- paste("identify(", .activeDataSet, "$", x,
                 ", labels=rownames(", .activeDataSet, "))", sep="")
@@ -168,7 +169,8 @@ boxPlot <- function(){
             justDoIt(command)
             if (identifyPoints) {
                 RcmdrTkmessageBox(title="Identify Points",
-                    message=gettextRcmdr("Use left mouse button to identify points,\nright button to exit."),
+						message=paste(gettextRcmdr("Use left mouse button to identify points,\n"),
+							gettextRcmdr(if (MacOSXP()) "esc key to exit." else "right button to exit."), sep=""),
                     icon="info", type="ok")
                 doItAndPrint(paste("identify(rep(1, length(", var,
                     ")), ", var, ", rownames(", .activeDataSet,"))", sep=""))
@@ -182,7 +184,8 @@ boxPlot <- function(){
             justDoIt(command)
             if (identifyPoints) {
                 RcmdrTkmessageBox(title="Identify Points",
-                    message=gettextRcmdr("Use left mouse button to identify points,\nright button to exit."),
+						message=paste(gettextRcmdr("Use left mouse button to identify points,\n"),
+							gettextRcmdr(if (MacOSXP()) "esc key to exit." else "right button to exit."), sep=""),
                     icon="info", type="ok")
                 doItAndPrint(paste("identify(", .activeDataSet, "$", .groups, ", ", var,
                     ", rownames(", .activeDataSet,"))", sep=""))
@@ -211,10 +214,10 @@ scatterPlot <- function(){
     yBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("y-variable (pick one)"))
     optionsParFrame <- tkframe(top)
     checkBoxes(window=optionsParFrame, frame="optionsFrame", 
-		boxes=c("identify", "jitterX", "jitterY", "logX", "logY", "boxplots", "lsLine", "smoothLine"),
-        initialValues=c(0, 0, 0, 0, 0, 1, 1, 1), 
+		boxes=c("identify", "jitterX", "jitterY", "logX", "logY", "boxplots", "lsLine", "smoothLine", "spread"),
+        initialValues=c(0, 0, 0, 0, 0, 1, 1, 1, 1), 
 		labels=gettextRcmdr(c("Identify points", "Jitter x-variable", "Jitter y-variable", "Log x-axis", "Log y-axis",
-        "Marginal boxplots", "Least-squares line", "Smooth Line")), title="Options")
+        "Marginal boxplots", "Least-squares line", "Smooth line", "Show spread")), title="Options")
     sliderValue <- tclVar("50")
     slider <- tkscale(optionsFrame, from=0, to=100, showvalue=TRUE, variable=sliderValue,
         resolution=5, orient="horizontal")
@@ -272,16 +275,18 @@ scatterPlot <- function(){
 		if ("1" == tclvalue(logXVariable)) logstring <- paste(logstring, "x", sep="")
 		if ("1" == tclvalue(logYVariable)) logstring <- paste(logstring, "y", sep="")
 		log <- if(logstring != "") paste(', log="', logstring, '"', sep="") else ""
-        if("1" == tclvalue(identifyVariable)){
-            RcmdrTkmessageBox(title="Identify Points",
-                message=gettextRcmdr("Use left mouse button to identify points,\nright button to exit."),
-                icon="info", type="ok")
-            labels <- paste("rownames(", .activeDataSet, ")", sep="")
-            }
-        else labels <- "FALSE"
+		if("1" == tclvalue(identifyVariable)){
+			RcmdrTkmessageBox(title="Identify Points",
+					message=paste(gettextRcmdr("Use left mouse button to identify points,\n"),
+						gettextRcmdr(if (MacOSXP()) "esc key to exit." else "right button to exit."), sep=""),
+					icon="info", type="ok")
+			idtext <- ', id.method="identify"'
+		}
+        else idtext <- ""
         box <- if ("1" == tclvalue(boxplotsVariable)) "'xy'" else "FALSE"
         line <- if("1" == tclvalue(lsLineVariable)) "lm" else "FALSE"
         smooth <- as.character("1" == tclvalue(smoothLineVariable))
+		spread <- as.character("1" == tclvalue(spreadVariable))
         span <- as.numeric(tclvalue(sliderValue))
         subset <- tclvalue(subsetVariable)
         subset <- if (trim.blanks(subset) == gettextRcmdr("<all valid cases>")) ""
@@ -304,14 +309,14 @@ scatterPlot <- function(){
         pch <- if(trim.blanks(pch) == gettextRcmdr("<auto>")) "" else paste(", pch=c(", pch, ")", sep="")
         if (.groups == FALSE) {
             doItAndPrint(paste("scatterplot(", y, "~", x, log,
-                ", reg.line=", line, ", smooth=", smooth, ", labels=", labels,
+                ", reg.line=", line, ", smooth=", smooth, ", spread=", spread, idtext,
                 ", boxplots=", box, ", span=", span/100, jitter, xlab, ylab,
                 cex, cex.axis, cex.lab, pch,
                 ", data=", .activeDataSet, subset, ")", sep=""))
             }
         else {
             doItAndPrint(paste("scatterplot(", y, "~", x," | ", .groups,
-                ", reg.line=", line, ", smooth=", smooth, ", labels=", labels,
+                ", reg.line=", line, ", smooth=", smooth, ", spread=", spread, idtext,
                 ", boxplots=", box, ", span=", span/100, jitter, xlab, ylab,
                 cex, cex.axis, cex.lab, pch,
                 ", by.groups=", .linesByGroup,
@@ -345,8 +350,8 @@ scatterPlotMatrix <- function(){
     initializeDialog(title=gettextRcmdr("Scatterplot Matrix"))
     variablesBox <- variableListBox(top, Numeric(), title=gettextRcmdr("Select variables (three or more)"),
         selectmode="multiple", initialSelection=NULL)
-    checkBoxes(frame="optionsFrame", boxes=c("lsLine", "smoothLine"), initialValues=rep(1,2),
-        labels=gettextRcmdr(c("Least-squares lines", "Smooth lines")))
+    checkBoxes(frame="optionsFrame", boxes=c("lsLine", "smoothLine", "spread"), initialValues=c(1,1,0),
+        labels=gettextRcmdr(c("Least-squares lines", "Smooth lines", "Show spread")))
     sliderValue <- tclVar("50")
     slider <- tkscale(optionsFrame, from=0, to=100, showvalue=TRUE, variable=sliderValue,
         resolution=5, orient="horizontal")
@@ -363,6 +368,7 @@ scatterPlotMatrix <- function(){
             }
         line <- if("1" == tclvalue(lsLineVariable)) "lm" else "FALSE"
         smooth <- as.character("1" == tclvalue(smoothLineVariable))
+		spread <- as.character("1" == tclvalue(spreadVariable))
         span <- as.numeric(tclvalue(sliderValue))
         diag <- as.character(tclvalue(diagonalVariable))
         subset <- tclvalue(subsetVariable)
@@ -370,16 +376,16 @@ scatterPlotMatrix <- function(){
             else paste(", subset=", subset, sep="")
         .activeDataSet <- ActiveDataSet()
         if (.groups == FALSE) {
-           command <- paste("scatterplot.matrix(~", paste(variables, collapse="+"),
-                ", reg.line=", line, ", smooth=", smooth,
+           command <- paste("scatterplotMatrix(~", paste(variables, collapse="+"),
+                ", reg.line=", line, ", smooth=", smooth, ", spread=", spread,
                 ", span=", span/100, ", diagonal = '", diag,
                 "', data=", .activeDataSet, subset, ")", sep="")
            logger(command)
            justDoIt(command)
             }
         else {
-            command <- paste("scatterplot.matrix(~", paste(variables, collapse="+")," | ", .groups,
-                ", reg.line=", line, ", smooth=", smooth,
+            command <- paste("scatterplotMatrix(~", paste(variables, collapse="+")," | ", .groups,
+                ", reg.line=", line, ", smooth=", smooth, ", spread=", spread,
                 ", span=", span/100, ", diagonal= '", diag,
                 "', by.groups=", .linesByGroup,
                 ", data=", .activeDataSet, subset, ")", sep="")
@@ -390,9 +396,10 @@ scatterPlotMatrix <- function(){
         tkfocus(CommanderWindow())
         }
     groupsBox(scatterPlot, plotLinesByGroup=TRUE)
-    OKCancelHelp(helpSubject="scatterplot.matrix")
+    OKCancelHelp(helpSubject="scatterplotMatrix")
     tkgrid(getFrame(variablesBox), sticky="nw")
-    tkgrid(optionsFrame, sticky="w")
+	tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Span for smooth")), slider, sticky="w")    
+	tkgrid(optionsFrame, sticky="w")
     tkgrid(diagonalFrame, sticky="w")
     tkgrid(subsetFrame, sticky="w")
     tkgrid(groupsFrame, sticky="w")
@@ -566,7 +573,7 @@ QQPlot <- function()
             QQPlot()
         }
         switch(dist,
-               "norm" = { args <- 'dist= "norm"' },
+               "norm" = { args <- 'dist="norm"' },
                "t" =  {
                    df <- tclvalue(tDfVariable)
                    df.num <- as.numeric(df)
@@ -606,18 +613,19 @@ QQPlot <- function()
         .activeDataSet <- ActiveDataSet()
         if ("1" == tclvalue(identifyVariable)){
             RcmdrTkmessageBox(title="Identify Points",
-                message=gettextRcmdr("Use left mouse button to identify points,\nright button to exit."),
+					message=paste(gettextRcmdr("Use left mouse button to identify points,\n"),
+						gettextRcmdr(if (MacOSXP()) "esc key to exit." else "right button to exit."), sep=""),
                 icon="info", type="ok")
-            labels <- paste("rownames(", .activeDataSet, ")", sep="")
+            idtext <- paste(", labels=rownames(", .activeDataSet, '), id.method="identify"', sep="")
             }
-        else labels <- "FALSE"
-        command <- paste("qq.plot", "(", .activeDataSet, "$", x, ", ", args,
-                          ", labels=", labels, ")", sep="")
+        else idtext <- ""
+        command <- paste("qqPlot", "(", .activeDataSet, "$", x, ", ", args,
+                          idtext, ")", sep="")
         doItAndPrint(command)
         activateMenus()
         tkfocus(CommanderWindow())
     }
-    OKCancelHelp(helpSubject="qq.plot")
+    OKCancelHelp(helpSubject="qqPlot")
     distFrame <- tkframe(top)
     distVariable <- tclVar("norm")
     normalButton <- ttkradiobutton(distFrame, variable=distVariable, value="norm")
@@ -729,6 +737,7 @@ PlotMeans <- function(){
 Scatter3D <- function(){
     use.rgl <- options("Rcmdr")[[1]]$use.rgl
     if (length(use.rgl) == 0 || use.rgl) {
+		Library("car")
         Library("rgl")
         Library("mgcv")
         }
@@ -822,7 +831,8 @@ Scatter3D <- function(){
         .Tcl("update")
         if (tclvalue(identifyPoints) == 1){
             RcmdrTkmessageBox(title="Identify Points",
-                message=gettextRcmdr("Drag right mouse button to identify points,\nclick right button to exit."),
+					message=paste(gettextRcmdr("Use left mouse button to identify points,\n"),
+						gettextRcmdr(if (MacOSXP()) "esc key to exit." else "right button to exit."), sep=""),
                 icon="info", type="ok")
             doItAndPrint(command)
             }

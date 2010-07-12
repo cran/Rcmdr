@@ -1,6 +1,6 @@
-"Project-Id-Version: Rcmdr 1.5-0\n"
+"Project-Id-Version: Rcmdr 1.6-0\n"
 "Report-Msgid-Bugs-To: jfox@mcmaster.ca\n"
-"POT-Creation-Date: 2009-08-25 18:30\n"
+"POT-Creation-Date: 2010-07-10 19:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3648,4 +3648,46 @@ msgid "Pairwise p-values\nfor Pearson or Spearman correlations"
 msgstr ""
 
 msgid "The Windows version of the R Commander works best under RGui\nwith the single-document interface (SDI); see ?Commander."
+msgstr ""
+
+# messages added to version 1.6-0
+
+	# for Levene test
+
+msgid "median"
+msgstr ""
+
+msgid "Center"
+msgstr ""
+
+	# for scatterplot
+
+msgid "Smooth line"
+msgstr ""
+
+msgid "Show spread"
+msgstr ""
+
+	# for AV plots
+	
+msgid "Identify points with mouse?\nRight-click to exit."
+msgstr ""
+
+	# for interactive point identification
+	
+msgid "Use left mouse button to identify points,\n"
+msgstr ""
+
+msgid "Identify points with mouse?
+msgstr""
+
+msgid "right button to exit."
+msgstr ""
+
+msgid "esc key to exit."
+msgstr ""
+
+	# menus
+	
+msgid "Start R help system"
 msgstr ""
