@@ -1,15 +1,13 @@
-msgid ""
-msgstr ""
-"Project-Id-Version: rcmdr112\n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: 2008-12-09 19:03-0200\n"
-"Last-Translator: adriano azevedo <azevedofilho@usp.br>\n"
-"Language-Team: \n"
+"Project-Id-Version: Rcmdr 1.6-1\n"
+"Report-Msgid-Bugs-To: jfox@mcmaster.ca\n"
+"POT-Creation-Date: 2010-10-13 09:00\n"
+"PO-Revision-Date: 2010-10-23 \n"
+"Last-Translator: Adriano Azevedo Filho <azevedofilho@usp.br>\n"
+"Language-Team: Brazilian Portuguese\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-# Sem tradução adequada
 msgid "KMeans Clustering"
 msgstr "Agrupamento/Clusterização K-Médias"
 
@@ -3439,4 +3437,327 @@ msgstr "tamanho do texto no eixo"
 
 msgid "Axis-labels text size"
 msgstr "tamanho do texto - rótulo do eixo"
+
+# message added to version 1.3-3 (because of inadvertent omission)
+msgid "Scale (inverse rate)"
+msgstr "Escala (razão inversa)"
+
+# messages added to version 1.3-5
+msgid " has been coerced to a data frame"
+msgstr " foi coagido a ser um data frame"
+
+msgid "the dataset %s is no longer available"
+msgstr "o conjunto de dados %s não está mais disponível"
+
+# message added to version 1.3-10
+msgid "The Commander GUI is launched only in interactive sessions"
+msgstr "A interface gráfica do Rcmdr só é lançada no modo interativo"
+
+
+msgid "Commander"
+msgstr "R Commander"
+
+# For the following you must supply a PDF document containing a translation
+# of "Getting-Started-with-the-Rcmdr.pdf". I suggest using a translation
+# including -xx, where xx is the code for your language.
+# Example: "Empezando-con-Rcmdr-es"
+msgid "Getting-Started-with-the-Rcmdr"
+msgstr "Iniciando-Com-o-Rcmdr"
+
+
+msgid "Type of Tests"
+msgstr "Tipo dos testes"
+
+msgid "Sequential (\"Type I\")"
+msgstr "Sequencial - Tipo I"
+
+msgid "Partial obeying marginality (\"Type II\")"
+msgstr "Obedecendo marginalidade parcial - Tipo II"
+
+msgid "Partial ignoring marginality (\"Type III\")"
+msgstr "Ignorando parcialmente marginalidade (\"Tipo III\")"
+
+msgid "Type III tests require careful attention to contrast coding."
+msgstr "Testes tipo III requerem muita atenção para codificação de contrastes"
+
+msgid "There is no appropriate anova method for a model of this class."
+msgstr "Não há método Anova apropriado para um modelo desta classe"
+
+msgid "Duplicate menu names:"
+msgstr "Nomes de menu duplicados"
+
+msgid "Strip chart..."
+msgstr "Gráfico Strip Chart"
+
+msgid "Strip Chart"
+msgstr "Gráfico Strip Chart"
+
+msgid "Factors (pick zero or more)"
+msgstr "Fatores (escolha zero ou mais)"
+
+msgid "Duplicate Values"
+msgstr "Valores Duplicados"
+
+msgid "Stack"
+msgstr "Stack"
+
+msgid "Jitter"
+msgstr "Jitter"
+
+msgid "Remove Rows from Active Data Set"
+msgstr "Remova linhas do conjunto de dados ativo"
+
+msgid "Remove row(s) from active data set..."
+msgstr "Remova linha(s) do conjunto de dados ativo"
+
+msgid "No rows to remove"
+msgstr "Nenhuma linha para remover"
+
+msgid "Indices or quoted names of row(s) to remove"
+msgstr "Indices ou nomes de linha(s) para remover"
+
+msgid "Akaike Information Criterion (AIC)"
+msgstr "Akaike Information Criterion (AIC)"
+
+
+msgid "Bayesian Information Criterion (BIC)"
+msgstr "Bayesian Information Criterion (BIC)"
+
+msgid "Change working directory..."
+msgstr "Altere o diretório de trabalho..."
+
+msgid "Log x-axis"
+msgstr "Log eixo-x"
+
+msgid "Log y-axis"
+msgstr "Log eixo-y"
+
+msgid "from text file, clipboard, or URL..."
+msgstr "de arquivo texto, clipboard ou URL..."
+
+msgid "Read Text Data From File, Clipboard, or URL"
+msgstr "Leia dados de arquivo texto, clipboard ou URL"
+
+msgid "Location of Data File"
+msgstr "Localização do Arquivo de Dados"
+
+msgid "Local file system"
+msgstr "Sistema de arquivos local"
+
+msgid "Clipboard"
+msgstr "Clipboard"
+
+msgid "Internet URL"
+msgstr "URL da internet"
+
+msgid "Friedman rank-sum test..."
+msgstr "Teste rank-sum de Friedman"
+
+msgid "Friedman Rank Sum Test"
+msgstr "Teste rank-sum de Friedman"
+
+msgid "Repeated-Measures Variables (pick two or more)"
+msgstr "Variáveis de medidas repetidas (escolha 2 ou mais)"
+
+msgid "Undo"
+msgstr "Desfazer"
+
+msgid "Redo"
+msgstr "Refazer"
+
+msgid "ANOVA table..."
+msgstr "Tabela de ANOVA"
+
+msgid "Location not specified."
+msgstr "Localização não especificada"
+
+# messages added to version 1.5-0
+#     "Models -> Stepwise model selection" dialog and menu item
+msgid "Stepwise model selection..."
+msgstr "Seleção de modelos stepwise"
+
+msgid "Stepwise Model Selection"
+msgstr "Seleção de modelos stepwise"
+
+msgid "Direction"
+msgstr "Direção de pesquisa"
+
+msgid "backward/forward"
+msgstr "para trás/para frente"
+
+msgid "forward/backward"
+msgstr "para frente/para trás"
+
+msgid "backward"
+msgstr "Para trás"
+
+msgid "forward"
+msgstr "Para frente"
+
+msgid "Criterion"
+msgstr "Critério"
+
+msgid "BIC"
+msgstr "BIC"
+
+msgid "AIC"
+msgstr "AIC"
+
+msgid "Subset model selection..."
+msgstr "Seleção do modelo subset..."
+
+
+msgid "Subset Model Selection"
+msgstr "Seleção do modelo subset..."
+
+msgid "Criterion for Model Plot"
+msgstr "Critério para Plotagem do Modelo"
+
+msgid "Mallows Cp"
+msgstr "Cp de Mallows"
+
+msgid "Adjusted R-sq."
+msgstr "R quadrado ajustado"
+
+msgid "R-squared"
+msgstr "R-quadrado"
+
+msgid ""
+"Number of best models\n"
+"of each size:"
+msgstr "Número modelos menores:"
+       "de cada tamanho"
+
+msgid "Maximum size:"
+msgstr "Máximo tamanho:"
+
+msgid "Merge data sets..."
+msgstr "Merge de conjunto de dados..."
+
+msgid "Merge Data Sets"
+msgstr "Merge de conjuntos de dados"
+
+msgid "First Data Set (pick one)"
+msgstr "Primeiro conjunto de dados (escolha um)"
+
+msgid "Second Data Set (pick one)"
+msgstr "Segundo conjuntos de dados (escolha um)"
+
+msgid "Merge rows"
+msgstr "Merge de linhas"
+
+msgid "Merge columns"
+msgstr "Merge de colunas"
+
+msgid "Direction of Merge"
+msgstr "Direção do Merge"
+
+msgid "You cannot merge a data set with itself."
+msgstr "Não é possível fazer o merge do conjunto de dados com ele mesmo"
+
+msgid "Name for merged data set:"
+msgstr "Nome para o conjunto de dados resultante do merge"
+
+msgid ""
+"Merge only common\n"
+"rows or columns"
+msgstr ""
+"Merge somente de\n"
+"linhas e colunas comuns"
+
+
+msgid "Aggregate variables in active data set..."
+msgstr "Variáveis agregadas (aggregate variables) no conjunto de dados ativo..."
+
+msgid "Aggregate Observations"
+msgstr "Observações Agregadas"
+
+msgid ""
+"Variables to aggregate\n"
+"(pick one or more)"
+msgstr "Variável(s) p/ agregar (selecione uma ou mais)"
+
+msgid ""
+"Aggregate by\n"
+"(pick one or more)"
+msgstr "Agregue por (selecione uma ou mais)"
+
+msgid "Sum"
+msgstr "Soma / Somar"
+
+msgid "You must select at least one variable to aggregate."
+msgstr "Selecione 2 ou mais variáveis para agregar"
+
+msgid "You must select at least one variable to aggregate by."
+msgstr "Selecione 2 ou mais variáveis para agregar"
+
+msgid "Variables to aggregate and those to aggregate by must be different."
+msgstr "Variáveis para agregar e agregadas devem ser diferentes."
+
+msgid "Name for aggregated data set:"
+msgstr "Nome do conjunto de dados com variáveis agregadas:"
+
+msgid "{\"R Data Files\" {\".rda\" \".Rda\" \".RDA\" \".RData\"}} {\"All Files\" {\"*\"}}"
+msgstr "{\"R Data Files\" {\".rda\" \".Rda\" \".RDA\" \".Rdata\"}} {\"All Files\" {\"*\"}}"
+
+
+msgid "No data set selected."
+msgstr "Nenhum conjunto de dados selecionado"
+
+
+msgid "Help on selected data set"
+msgstr "Ajuda no conjunto de dados selecionado"
+
+
+msgid "Population mean != mu0"
+msgstr "Média da População != mu0"
+
+msgid "Population proportion != p0"
+msgstr "Frequência na População != p0"
+
+msgid "Models do not have the same family."
+msgstr "Modelos não são da mesma familia."
+
+msgid ""
+"Pairwise p-values\n"
+"for Pearson or Spearman correlations"
+msgstr "Valores-P par a par\n"
+"para correlação de Pearson e Spearman"
+
+msgid "The Windows version of the R Commander works best under RGui\n"
+"with the single-document interface (SDI); see ?Commander."
+msgstr "A versão Windows do R Commander funciona melhor\n"
+"com a versão SDI da interface; veja ?Commander"
+
+msgid "median"
+msgstr "Mediana"
+
+msgid "Center"
+msgstr "Centro"
+
+
+msgid "Smooth line"
+msgstr "Smooth line"
+
+msgid "Show spread"
+msgstr "Mostre espalhamento (spread)"
+
+msgid ""
+"Identify points with mouse?\n"
+"Right-click to exit."
+msgstr "Identificar pontos com o mouse?\n"
+"Clique com o botão direito para sair"
+
+msgid "Use left mouse button to identify points,\n"
+msgstr "Use o botão esquerdo do mouse para identificar pontos,\n"
+
+msgid "right button to exit."
+msgstr "botão direito para sair"
+
+msgid "esc key to exit."
+msgstr "tecla esc para sair"
+
+# menus
+msgid "Start R help system"
+msgstr "Inicie o sistema de ajuda do R"
 
