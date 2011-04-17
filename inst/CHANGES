@@ -918,3 +918,13 @@ Version 1.6-3
    o  Added output of pairwise tests to one-way ANOVA (suggested by Bruce McCulllough).
    
    o  Fixed bug in model-formula scrollbar for models with no left-hand-side.
+   
+Version 1.6-4
+
+   o Improvements to probability distribution dialogs (contributed by Miroslav Ristic).
+   
+   o Control-left-mouse-button now brings up context edit menu, for use with one-button mice (after a question by Erich Neuwirth). 
+   
+   o Corrected order of file extensions in file dialogs.
+   
+   o The new BIC() function in R 2.13.0 is used in preference to AIC() to compute the BIC. nobs() is no longer needed, and is removed so as not to conflict with nobs() in R 2.13.0.
