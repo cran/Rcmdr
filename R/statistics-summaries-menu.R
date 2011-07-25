@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 8 July 2010 by J. Fox
+# last modified 27 June 2011 by J. Fox
 
     # Summaries menu
     
@@ -18,58 +18,146 @@ summarizeDataSet <- function(){
     doItAndPrint(paste("summary(", .activeDataSet, ")", sep=""))
     }
 
-numericalSummaries <- function(){
-    Library("abind")
-    initializeDialog(title=gettextRcmdr("Numerical Summaries"))
-    xBox <- variableListBox(top, Numeric(), selectmode="multiple", title=gettextRcmdr("Variables (pick one or more)"))
-    checkBoxes(frame="checkBoxFrame", boxes=c("mean", "sd"), initialValues=c("1", "1"), labels=gettextRcmdr(c("Mean", "Standard Deviation")))
-    quantilesVariable <- tclVar("1")
-    quantilesFrame <- tkframe(top)
-    quantilesCheckBox <- tkcheckbutton(quantilesFrame, variable=quantilesVariable)
-    quantiles <- tclVar("0, .25, .5, .75, 1")
-    quantilesEntry <- ttkentry(quantilesFrame, width="20", textvariable=quantiles)
-    groupsBox(recall=numericalSummaries, label=gettextRcmdr("Summarize by:"), initialLabel=gettextRcmdr("Summarize by groups"))
-    onOK <- function(){
-        x <- getSelection(xBox)
-        if (length(x) == 0){
-            errorCondition(recall=numericalSummaries, message=gettextRcmdr("You must select a variable."))
-            return()
-            }
-        closeDialog()
-        quants <- paste("c(", gsub(",+", ",", gsub(" ", ",", tclvalue(quantiles))), ")", sep="")
-        .activeDataSet <- ActiveDataSet()
-        vars <- if (length(x) == 1) paste('"', x, '"', sep="") 
-            else paste("c(", paste('"', x, '"', collapse=", ", sep=""), ")", sep="")
-        vars <- paste(.activeDataSet, "[,", vars, "]", sep="")
-        stats <- paste("c(",
-            paste(c('"mean"', '"sd"', '"quantiles"')
-                [c(tclvalue(meanVariable), tclvalue(sdVariable), tclvalue(quantilesVariable)) == 1], 
-                collapse=", "), ")", sep="")
-        if (stats == "c()"){
-             errorCondition(recall=numericalSummaries, message=gettextRcmdr("No statistics selected."))
-            return()
-            }               
-        command <- if (.groups != FALSE) {
-            grps <- paste(.activeDataSet, "$", .groups, sep="")
-            paste("numSummary(", vars, ", groups=", grps, ", statistics=", stats, 
-				", quantiles=", quants, ")", sep="")
-            }
-        else  paste("numSummary(", vars, ", statistics=", stats, 
-			", quantiles=", quants, ")", sep="")
-        doItAndPrint(command) 
-        tkfocus(CommanderWindow())
-        }
-    OKCancelHelp(helpSubject="numSummary")
-    tkgrid(getFrame(xBox), sticky="nw")    
-    tkgrid(checkBoxFrame, sticky="w")
-    tkgrid(labelRcmdr(quantilesFrame, text=gettextRcmdr("Quantiles")), quantilesCheckBox,
-        labelRcmdr(quantilesFrame, text=gettextRcmdr(" quantiles:")), quantilesEntry, sticky="w")
-    tkgrid(quantilesFrame, sticky="w")
-    tkgrid(groupsFrame, sticky="w")
-    tkgrid(buttonsFrame, sticky="w")
-    dialogSuffix(rows=6, columns=1)
-    }
+#numericalSummaries <- function(){
+#    Library("abind")
+#    initializeDialog(title=gettextRcmdr("Numerical Summaries"))
+#    xBox <- variableListBox(top, Numeric(), selectmode="multiple", title=gettextRcmdr("Variables (pick one or more)"))
+#    checkBoxes(frame="checkBoxFrame", boxes=c("mean", "sd"), initialValues=c("1", "1"), labels=gettextRcmdr(c("Mean", "Standard Deviation")))
+#    quantilesVariable <- tclVar("1")
+#    quantilesFrame <- tkframe(top)
+#    quantilesCheckBox <- tkcheckbutton(quantilesFrame, variable=quantilesVariable)
+#    quantiles <- tclVar("0, .25, .5, .75, 1")
+#    quantilesEntry <- ttkentry(quantilesFrame, width="20", textvariable=quantiles)
+#    groupsBox(recall=numericalSummaries, label=gettextRcmdr("Summarize by:"), initialLabel=gettextRcmdr("Summarize by groups"))
+#    onOK <- function(){
+#        x <- getSelection(xBox)
+#        if (length(x) == 0){
+#            errorCondition(recall=numericalSummaries, message=gettextRcmdr("You must select a variable."))
+#            return()
+#            }
+#        closeDialog()
+#        quants <- paste("c(", gsub(",+", ",", gsub(" ", ",", tclvalue(quantiles))), ")", sep="")
+#        .activeDataSet <- ActiveDataSet()
+#        vars <- if (length(x) == 1) paste('"', x, '"', sep="") 
+#            else paste("c(", paste('"', x, '"', collapse=", ", sep=""), ")", sep="")
+#        vars <- paste(.activeDataSet, "[,", vars, "]", sep="")
+#        stats <- paste("c(",
+#            paste(c('"mean"', '"sd"', '"quantiles"')
+#                [c(tclvalue(meanVariable), tclvalue(sdVariable), tclvalue(quantilesVariable)) == 1], 
+#                collapse=", "), ")", sep="")
+#        if (stats == "c()"){
+#             errorCondition(recall=numericalSummaries, message=gettextRcmdr("No statistics selected."))
+#            return()
+#            }               
+#        command <- if (.groups != FALSE) {
+#            grps <- paste(.activeDataSet, "$", .groups, sep="")
+#            paste("numSummary(", vars, ", groups=", grps, ", statistics=", stats, 
+#				", quantiles=", quants, ")", sep="")
+#            }
+#        else  paste("numSummary(", vars, ", statistics=", stats, 
+#			", quantiles=", quants, ")", sep="")
+#        doItAndPrint(command) 
+#        tkfocus(CommanderWindow())
+#        }
+#    OKCancelHelp(helpSubject="numSummary")
+#    tkgrid(getFrame(xBox), sticky="nw")    
+#    tkgrid(checkBoxFrame, sticky="w")
+#    tkgrid(labelRcmdr(quantilesFrame, text=gettextRcmdr("Quantiles")), quantilesCheckBox,
+#        labelRcmdr(quantilesFrame, text=gettextRcmdr(" quantiles:")), quantilesEntry, sticky="w")
+#    tkgrid(quantilesFrame, sticky="w")
+#    tkgrid(groupsFrame, sticky="w")
+#    tkgrid(buttonsFrame, sticky="w")
+#    dialogSuffix(rows=6, columns=1)
+#    }
 
+numericalSummaries <- function(){ # dialog memory 2011-06-27  J. Fox
+	Library("abind")
+	Library("e1071")
+	defaults <- list(initial.x=NULL, initial.mean="1", initial.sd="1", initial.cv="0",
+			initial.quantiles.variable="1", 
+			initial.quantiles="0, .25, .5, .75, 1", 
+			initial.skewness="0", initial.kurtosis="0", initial.type="2",
+			initial.group=NULL)
+	dialog.values <- getDialog("numericalSummaries", defaults)
+	initializeDialog(title=gettextRcmdr("Numerical Summaries"))
+	xBox <- variableListBox(top, Numeric(), selectmode="multiple", title=gettextRcmdr("Variables (pick one or more)"),
+			initialSelection=varPosn(dialog.values$initial.x, "numeric"))
+	selectFrame <- tkframe(top)
+	checkBoxes(frame="checkBoxFrame", boxes=c("mean", "sd", "cv"), 
+			initialValues=c(dialog.values$initial.mean, dialog.values$initial.sd, dialog.values$initial.cv), 
+			labels=gettextRcmdr(c("Mean", "Standard Deviation", "Coefficient of Variation")))
+	checkBoxes(window=selectFrame, frame="skCheckBoxFrame", boxes=c("skewness", "kurtosis"), 
+			initialValues=c(dialog.values$initial.skewness, dialog.values$initial.kurtosis), 
+			labels=gettextRcmdr(c("Skewness", "Kurtosis")))
+	radioButtons(window=selectFrame, name="typeButtons", buttons=c("b1", "b2", "b3"), values=c("1", "2", "3"), 
+			initialValue=dialog.values$initial.type,
+			labels=gettextRcmdr(c("Type 1", "Type 2", "Type 3")))
+	quantilesVariable <- tclVar(dialog.values$initial.quantiles.variable)
+	quantilesFrame <- tkframe(top)
+	quantilesCheckBox <- tkcheckbutton(quantilesFrame, variable=quantilesVariable)
+	quantiles <- tclVar(dialog.values$initial.quantiles)
+	quantilesEntry <- ttkentry(quantilesFrame, width="20", textvariable=quantiles)
+	groupsBox(recall=numericalSummaries, label=gettextRcmdr("Summarize by:"), 
+			initialLabel=gettextRcmdr("Summarize by groups"), 
+			initialGroup=dialog.values$initial.group)
+	onOK <- function(){
+		x <- getSelection(xBox)
+		quants <- tclvalue(quantiles)
+		meanVar <- tclvalue(meanVariable)
+		sdVar <- tclvalue(sdVariable)
+		cvVar <- tclvalue(cvVariable)
+		quantsVar <- tclvalue(quantilesVariable)
+		skewnessVar <- tclvalue(skewnessVariable)
+		kurtosisVar <- tclvalue(kurtosisVariable)
+		typeVar <- tclvalue(typeButtonsVariable)
+		putDialog("numericalSummaries", list(
+						initial.x=x, initial.mean=meanVar, initial.sd=sdVar, initial.cv=cvVar,
+						initial.quantiles.variable=quantsVar, initial.quantiles=quants,
+						initial.skewness=skewnessVar, initial.kurtosis=kurtosisVar, initial.type=typeVar,
+						initial.group=if (.groups != FALSE) .groups else NULL
+				))		
+		if (length(x) == 0){
+			errorCondition(recall=numericalSummaries, message=gettextRcmdr("You must select a variable."))
+			return()
+		}
+		closeDialog()
+		quants <- paste("c(", gsub(",+", ",", gsub(" ", ",", quants)), ")", sep="")
+		.activeDataSet <- ActiveDataSet()
+		vars <- if (length(x) == 1) paste('"', x, '"', sep="") 
+				else paste("c(", paste('"', x, '"', collapse=", ", sep=""), ")", sep="")
+		vars <- paste(.activeDataSet, "[,", vars, "]", sep="")
+		stats <- paste("c(",
+				paste(c('"mean"', '"sd"', '"quantiles"', '"cv"', '"skewness"', '"kurtosis"')
+								[c(meanVar, sdVar, quantsVar, cvVar, skewnessVar, kurtosisVar) == 1], 
+						collapse=", "), ")", sep="")
+		if (stats == "c()"){
+			errorCondition(recall=numericalSummaries, message=gettextRcmdr("No statistics selected."))
+			return()
+		}
+		type.text <- if (skewnessVar == 1 || kurtosisVar == 1) paste(', type="', typeVar, '"', sep="") else ""
+		command <- if (.groups != FALSE) {
+					grps <- paste(.activeDataSet, "$", .groups, sep="")
+					paste("numSummary(", vars, ", groups=", grps, ", statistics=", stats, 
+							", quantiles=", quants, type.text, ")", sep="")
+				}
+				else  paste("numSummary(", vars, ", statistics=", stats, 
+							", quantiles=", quants, type.text, ")", sep="")
+		doItAndPrint(command) 
+		tkfocus(CommanderWindow())
+	}
+	OKCancelHelp(helpSubject="numSummary", reset="numericalSummaries")
+	tkgrid(getFrame(xBox), sticky="nw")    
+	tkgrid(checkBoxFrame, sticky="w")
+	tkgrid(skCheckBoxFrame, typeButtonsFrame, sticky="nw")
+	tkgrid(selectFrame, sticky="w")
+	tkgrid(labelRcmdr(quantilesFrame, text=gettextRcmdr("Quantiles")), quantilesCheckBox,
+			labelRcmdr(quantilesFrame, text=gettextRcmdr(" quantiles:")), quantilesEntry, sticky="w")
+	tkgrid(quantilesFrame, sticky="w")
+	tkgrid(groupsFrame, sticky="w")
+	tkgrid(buttonsFrame, sticky="w")
+	dialogSuffix(rows=7, columns=1)
+}
+	
 frequencyDistribution <- function(){
     initializeDialog(title=gettextRcmdr("Frequency Distributions"))
     xBox <- variableListBox(top, Factors(), selectmode="multiple",
@@ -224,12 +312,15 @@ correlationMatrix <- function(){
 	initializeDialog(title=gettextRcmdr("Correlation Matrix"))
 	xBox <- variableListBox(top, Numeric(), selectmode="multiple", title=gettextRcmdr("Variables (pick two or more)"))
 	radioButtons(name="correlations", buttons=c("pearson", "spearman", "partial"), values=c("Pearson", "Spearman", "partial"),
-		labels=gettextRcmdr(c("Pearson product-moment", "Spearman rank-order", "Partial")), title=gettextRcmdr("Type of Correlations"))
+			labels=gettextRcmdr(c("Pearson product-moment", "Spearman rank-order", "Partial")), title=gettextRcmdr("Type of Correlations"))
+	radioButtons(name="missing", buttons=c("complete", "pairwise"),
+			labels=gettextRcmdr(c("Use complete cases", "Use pairwise-complete cases")), title=gettextRcmdr("Missing Data"))
 	pvaluesFrame <- tkframe(top)
 	pvaluesVar <- tclVar("0")
 	pvaluesCheckbox <- tkcheckbutton(pvaluesFrame, variable=pvaluesVar)
 	onOK <- function(){
 		correlations <- tclvalue(correlationsVariable)
+		missing <- tclvalue(missingVariable)
 		x <- getSelection(xBox)
 		if (2 > length(x)) {
 			errorCondition(recall=correlationMatrix, message=gettextRcmdr("Fewer than 2 variables selected."))
@@ -246,41 +337,41 @@ correlationMatrix <- function(){
 		if (correlations == "Pearson"){
 			if (pvalues == 0){
 				doItAndPrint(paste("cor(", .activeDataSet, "[,c(", paste(x, collapse=","),
-						')], use="complete.obs")', sep=""))
+								')], use="', missing, '")', sep=""))
 			}
 			else{
 				Library("Hmisc")
 				doItAndPrint(paste("rcorr.adjust(", .activeDataSet, "[,c(", paste(x, collapse=","),
-						')], type="pearson")', sep=""))
+								')], type="pearson", use="', missing, '")', sep=""))
 			}
 		}
 		else if (correlations == "Spearman"){
 			logger("# Spearman rank-order correlations")
 			if (pvalues == 0){
 				doItAndPrint(paste("cor(", .activeDataSet, "[,c(", paste(x, collapse=","),
-						')], use="complete.obs", method="spearman")', sep=""))
+								')], use="', missing,'", method="spearman")', sep=""))
 			}
 			else{
 				Library("Hmisc")
 				doItAndPrint(paste("rcorr.adjust(", .activeDataSet, "[,c(", paste(x, collapse=","),
-						')], type="spearman")', sep=""))				
+								')], type="spearman", use="', missing, '")', sep=""))				
 			}
 		}
 		else doItAndPrint(paste("partial.cor(", .activeDataSet, "[,c(", paste(x, collapse=","),
-					')], use="complete.obs")', sep=""))    
+							')], use="', missing, '")', sep=""))    
 		tkfocus(CommanderWindow())
 	}
 	OKCancelHelp(helpSubject="rcorr.adjust")
 	tkgrid(getFrame(xBox), sticky="nw")
 	tkgrid(correlationsFrame, sticky="w")
+	tkgrid(missingFrame, sticky="w")
 	tkgrid(labelRcmdr(pvaluesFrame, 
-			text=gettextRcmdr("Pairwise p-values\nfor Pearson or Spearman correlations")), 
-		pvaluesCheckbox, sticky="w")
+					text=gettextRcmdr("Pairwise p-values\nfor Pearson or Spearman correlations")), 
+			pvaluesCheckbox, sticky="w")
 	tkgrid(pvaluesFrame, sticky="w")
 	tkgrid(buttonsFrame, sticky="w")
-	dialogSuffix(rows=4, columns=1)
+	dialogSuffix(rows=5, columns=1)
 }
-
 	
 # the following dialog contributed by Stefano Calza, modified by J. Fox
     
