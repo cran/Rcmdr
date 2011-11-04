@@ -1,13 +1,14 @@
 
 # The R Commander and command logger
 
-# last modified 27 June 2011 by J. Fox
+# last modified 2011-11-03 by J. Fox
+#  applied patch to improve window behaviour supplied by Milan Bouchet-Valat 2011-09-22
 #   slight changes 12 Aug 04 by Ph. Grosjean
 #   changes 21 June 2007 by Erich Neuwirth for Excel support (marked EN)
 #   modified 17 December 2008 by Richard Heiberger  ##rmh
 
 Commander <- function(){
-	RcmdrVersion <- "1.7-0"
+	RcmdrVersion <- "1.7-2"
 	##    DESCRIPTION <- readLines(file.path(.find.package("Rcmdr"), "DESCRIPTION")[1])
 	##    RcmdrVersion <- trim.blanks(sub("^Version:", "",
 	##        grep("^Version:", D, value=TRUE)))
@@ -237,6 +238,7 @@ Commander <- function(){
 			names(MenusToAdd) <- nms
 			for (i in 1:nrow(MenusToAdd)){
 				line <- MenusToAdd[i,]
+				line[, "label"] <- gettext(line[,"label"], domain=paste("R=", plugin, sep=""))
 				if (line[1, "type"] == "remove"){
 					##					which <- line[1, "menuOrItem"] == Menus[,2] | line[1, "menuOrItem"] == Menus[,3] | line[1, "menuOrItem"] == Menus[,5]
 					##					Menus <- Menus[!which,]
@@ -444,7 +446,7 @@ Commander <- function(){
 		tkpopup(contextMenu, tkwinfo("pointerx", .messages), tkwinfo("pointery", .messages))
 	}
 	if (getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
-	putRcmdr("commanderWindow", tktoplevel())
+        putRcmdr("commanderWindow", tktoplevel(class="Rcommander"))
 	.commander <- CommanderWindow()
 #    tkwm.withdraw(.commander)
 	tkwm.geometry(.commander, placement)

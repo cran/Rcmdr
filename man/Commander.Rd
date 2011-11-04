@@ -181,10 +181,10 @@ set none, one, several, or all options. The available options are as follows:
     \item{\code{length.command.stack}}{The R Commander also maintains a list of commands that is managed similarly; the default length
     of this stack is also 10.}
     
-    \item{\code{load.at.startup}}{A character vector of names of packages to be loaded 
-    when the \code{Rcmdr} package is loaded; the default is to load only the \code{car} package. 
-    Other required packages will be loaded as needed. If it is available, the 
-    \code{car} package will be loaded at when the Commander starts in any event.}
+%%    \item{\code{load.at.startup}}{A character vector of names of packages to be loaded 
+%%    when the \code{Rcmdr} package is loaded; the default is to load only the \code{car} package. 
+%%    Other required packages will be loaded as needed. If it is available, the 
+%%    \code{car} package will be loaded at when the Commander starts in any event.}
       
     \item{\code{log.commands}}{If \code{TRUE} (the default), commands are echoed to the script window;
     if \code{FALSE}, the script window is not displayed.}
@@ -324,6 +324,16 @@ For more information about R initialization, see \code{?Startup}.
   Under Windows, the \code{Rcmdr} package can be run under the \emph{Rgui} in the SDI (single-document
   interface) mode, or under \code{rterm.exe}. You might experience problems running the \code{Rcmdr} under
   \code{ESS} with NTEmacs or XEmacs; under other R consoles; or under the Rgui in the MDI (multiple-document interface) mode.
+}
+
+\references{
+Fox, J. (2005) 
+The R Commander: A Basic Statistics Graphical User Interface to R. 
+\emph{Journal of Statistical Software}, \bold{14(9)}: 1--42.
+
+Fox, J. (2007)
+Extending the R Commander by "plug in" packages. 
+\emph{R News}, \bold{7(3)}: 46--52.
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}}

@@ -1,4 +1,6 @@
-# last modified 2011-07-25 by J. Fox + slight changes 12 Aug 04 by Ph. Grosjean
+# last modified 2011-11-02 by J. Fox
+#  applied patch to improve window behaviour supplied by Milan Bouchet-Valat 2011-09-22
+#  slight changes 12 Aug 04 by Ph. Grosjean
 
 # utility functions
 
@@ -370,11 +372,11 @@ numSummary <- function(data,
 		type=c("1", "2", "3"),
 		quantiles=c(0, .25, .5, .75, 1), groups){
 	sd <- function(x, type, ...){
-		stats::sd(x, ...)
+		apply(as.matrix(x), 2, stats::sd, na.rm=TRUE)
 	}
 	cv <- function(x, ...){
 		mean <- mean(x, na.rm=TRUE)
-		sd <- sd(x, na.rm=TRUE)
+		sd <- sd(x)
 		if (any(x <= 0, na.rm=TRUE)) warning("not all values are positive")
 		cv <- sd/mean
 		cv[mean <= 0] <- NA
@@ -434,15 +436,15 @@ numSummary <- function(data,
 		result$type <- 2
 	}
 	else if ((ngroups == 1) ){
+		X <- as.matrix(data[, variables])
 		table <- matrix(0, nvars, nstats)
 		rownames(table) <- if (length(variables) > 1) variables else ""
 		colnames(table) <- stats
-		if ("mean" %in% stats) table[,"mean"] <- mean(data[, variables],
-					na.rm=TRUE)
-		if ("sd" %in% stats) table[,"sd"] <- sd(data[, variables], na.rm=TRUE)
-		if ("cv" %in% stats) table[,"cv"] <- cv(data[, variables])
-		if ("skewness" %in% statistics) table[, "skewness"] <- skewness(data[, variables], type=type)
-		if ("kurtosis" %in% statistics) table[, "kurtosis"] <- kurtosis(data[, variables], type=type)
+		if ("mean" %in% stats) table[,"mean"] <- mean(X, na.rm=TRUE)
+		if ("sd" %in% stats) table[,"sd"] <- sd(X)
+		if ("cv" %in% stats) table[,"cv"] <- cv(X)
+		if ("skewness" %in% statistics) table[, "skewness"] <- skewness(X, type=type)
+		if ("kurtosis" %in% statistics) table[, "kurtosis"] <- kurtosis(X, type=type)
 		if ("quantiles" %in% statistics){
 			table[,quants] <- t(apply(data[, variables, drop=FALSE], 2, quantile,
 							probs=quantiles, na.rm=TRUE))
@@ -877,6 +879,7 @@ OKCancelHelp <- defmacro(window=top, helpSubject=NULL,  model=FALSE, reset=NULL,
 			}
 			if (!is.null(reset) && memory){
 				onReset <- function(){
+					if (model) putRcmdr("modelNumber", getRcmdr("modelNumber") - 1)
 					putDialog(reset, NULL)
 					closeDialog()
 					eval(parse(text=paste(reset, "()")))
@@ -992,6 +995,7 @@ initializeDialog <- defmacro(window=top, title="", offset=10, preventCrisp=FALSE
 		window <- tktoplevel(borderwidth=10)
 #        tkwm.withdraw(window)
 		tkwm.title(window, title)
+		tkwm.transient(window, CommanderWindow())
 		position <- if (is.SciViews()) -1 else commanderPosition() # +PhG
 		position <- if (any(position < 0)) "-50+50"
 			else paste("+", paste(offset + position, collapse="+"), sep="")
@@ -2245,14 +2249,15 @@ getDialog <- function(dialog, defaults=NULL){
 	else return (values)
 }
 
-varPosn <- function(variables, type=c("all", "factor", "numeric", "nonfactor")){
+varPosn <- function(variables, type=c("all", "factor", "numeric", "nonfactor", "twoLevelFactor")){
 	if (is.null(variables)) return(NULL)
 	type <- match.arg(type)
 	vars <- switch(type,
 			all = Variables(),
 			factor = Factors(),
 			numeric = Numeric(),
-			nonfactor = setdiff(Variables(), Factors())
+			nonfactor = setdiff(Variables(), Factors()),
+			twoLevelFactor = TwoLevelFactors()
 	)
 	if (any(!variables %in% vars)) NULL
 	else apply(outer(variables, vars, "=="), 1, which) - 1

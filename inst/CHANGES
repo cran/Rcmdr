@@ -947,3 +947,20 @@ Version 1.7-0
    
    o Small changes.
    
+Version 1.7-1
+
+   o Implemented dialog memory for many dialogs.
+
+   o Menus for plug-ins now subject to translation (as suggested by Milan Bouchet-Valat).
+   
+   o Improved window behaviour with patches supplied by Milan Bouchet-Valat.
+   
+   o New Korean translation (thanks to Chel Hee Lee).
+   
+   o Changes for R 2.14.0
+   
+   o Small changes.
+   
+Version 1.7-2
+
+   o For version synchronization with CRAN.
