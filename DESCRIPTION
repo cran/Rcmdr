@@ -1,6 +1,6 @@
 Package: Rcmdr
-Version: 1.7-2
-Date: 2011/11/04
+Version: 1.7-3
+Date: 2011/11/16
 Title: R Commander
 Author: John Fox <jfox@mcmaster.ca>, with contributions from Liviu Andronic, Michael Ash, Milan Bouchet-Valat, Theophilius Boye, Stefano Calza, Andy Chang, Philippe Grosjean, Richard Heiberger, Kosar Karimi Pour, G. Jay Kerns, Renaud Lancelot, Matthieu Lesnoff, Uwe Ligges, Samir Messad, Martin Maechler, Robert Muenchen, Duncan Murdoch, Erich Neuwirth, Dan Putler, Brian Ripley, Miroslav Ristic, and Peter Wolf.
 Maintainer: John Fox <jfox@mcmaster.ca>
@@ -15,6 +15,6 @@ URL: http://www.r-project.org,
         http://socserv.socsci.mcmaster.ca/jfox/Misc/Rcmdr/
 Repository: CRAN
 Repository/R-Forge/Project: rcmdr
-Repository/R-Forge/Revision: 141
-Date/Publication: 2011-11-06 15:51:51
-Packaged: 2011-11-05 21:55:34 UTC; rforge
+Repository/R-Forge/Revision: 142
+Date/Publication: 2011-11-20 10:03:28
+Packaged: 2011-11-17 21:51:05 UTC; rforge

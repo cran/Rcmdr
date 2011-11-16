@@ -1,8 +1,8 @@
-c8ebc1f4fca290f9c04115301f88e9ad *DESCRIPTION
+5ad6388997e1b5a5abe6f11ec5d7ef7b *DESCRIPTION
 dc5bae66dcebbd9079a0420f82d83704 *NAMESPACE
 1b99432b085110de5a4f302148aba245 *R/Rexcel-specific.R
 bc601b8cbbe8a373648a486f18f1a325 *R/cluster.R
-7e32d18c91233b614bca1efde5dc265c *R/commander.R
+e58d57831479b96711000633f66a3fd9 *R/commander.R
 5741eb8b1c7551cfbe0c6389cfd1d93a *R/data-menu.R
 1efee8755cd41833ab14203b277dc8d0 *R/distributions-menu.R
 9e3063a9686b254a979f62988dc066fc *R/distributions-plotDistributions-menu.R
@@ -21,8 +21,8 @@ b3be7e35d3d5a6bfb4d92b8082862145 *R/statistics-nonparametric-menu.R
 ff8bf879be43c444f459dd9cccf3e94e *R/statistics-summaries-menu.R
 d60a3fbf944c9dbee5f81e27dd7e14e9 *R/statistics-tables-menu.R
 612eac2e50a395b7f3990a5bbe18cd3c *R/statistics-variances-menu.R
-f9c3336bc634563446200ece3f01116c *R/utilities.R
-bff89a99e611f97229d6237242dfba1d *inst/CHANGES
+4bc942ecc59ede3135e5f6aaeb2b214c *R/utilities.R
+fe456e435f8c36678fcede8d2a85f171 *inst/CHANGES
 797e851b07b6a25c257a850550ff2e19 *inst/CITATION
 31de694855b1d3984d706109f0db3d13 *inst/doc/Commander-ru.pdf
 c3b2a0928a33fcab1102352582ee4c5e *inst/doc/Empezando-con-Rcmdr-es.pdf
@@ -55,7 +55,7 @@ a9d88ffccc151fd43945486d55d887b0 *man/Confint.Rd
 b379e5dcc521bce7d4f69fb6f156d09e *man/Hist.Rd
 751abef96e6a32d368beed566f3b23b5 *man/KMeans.Rd
 930440120f7b3b673e4f23253b807d8e *man/Plugins.Rd
-353bc6572376847f01eed5fdf01f7f52 *man/Rcmdr-package.Rd
+14df4a3900ec3d6b63df567747e844fc *man/Rcmdr-package.Rd
 ae6bd3841184173f97c2460cd6acffc5 *man/Rcmdr.Utilities.Rd
 bd32b051d088cbe60cfcdcb92009e893 *man/Rcmdr.sciviews-specific.Rd
 f748653782f882fa214526c297ad71e9 *man/RcmdrPager.Rd
