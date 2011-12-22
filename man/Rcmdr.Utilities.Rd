@@ -157,8 +157,8 @@ groupsBox(recall=NULL, label=gettextRcmdr("Plot by:"),
     initialLabel=gettextRcmdr("Plot by groups"),
     plotLinesByGroup=FALSE, positionLegend=FALSE, 
     plotLinesByGroupsText=gettextRcmdr("Plot lines by group"), 
-    initialGroup=NULL)  # macro
-groupsLabel(frame=top, groupsBox=groupsBox, columnspan=1)  # macro
+    initialGroup=NULL, initialLinesByGroup=1)  # macro
+groupsLabel(frame=top, groupsBox=groupsBox, columnspan=1, initialText=NULL)  # macro
 hclustSolutionsP()
 initializeDialog(window=top, title="", offset=10, preventCrisp=FALSE)  # macro
 is.valid.name(x)
@@ -251,6 +251,8 @@ commanderPosition()
   \item{generic}{quoted name of generic function.}
   \item{glm}{\code{TRUE} if the model is a \code{glm} object, \code{FALSE} otherwise.}
   \item{groupsBox}{listbox object for selecting groups variable.}
+  \item{initialText}{initial text to display in the groups label; if \code{NULL}, \code{"<No groups selected>"}
+    will be displayed.}
   \item{hasLhs}{does the model formula have a left-hand side?}
   \item{helpSubject}{the quoted name of a help subject, to be called as \code{help(helpSubject)}
     when the dialog \emph{Help} button is pressed.}
@@ -258,6 +260,7 @@ commanderPosition()
   \item{increment}{increment to model number; -1 to set back after error.}
   \item{initialGroup}{quoted name of variable to define groups, set as initial selection in Groups variable list; 
   	\code{NULL} (the default) for no initial selection.}
+  \item{initialLinesByGroup}{if 1, the lines-by-groups check box is initially checked; 0 to uncheck.}
   \item{initialLabel}{label for groups button before a selection is made.}
   \item{initialSelection}{index of item initially selected, 0-base indexing.}
   \item{initialValue}{for a set of related radio buttons.}

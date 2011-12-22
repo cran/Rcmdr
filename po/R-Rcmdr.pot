@@ -1,6 +1,6 @@
-"Project-Id-Version: Rcmdr 1.7-0\n"
+"Project-Id-Version: Rcmdr 1.8-1\n"
 "Report-Msgid-Bugs-To: jfox@mcmaster.ca\n"
-"POT-Creation-Date: 2011-07-25 16:00\n"
+"POT-Creation-Date: 2011-12-22 15:30:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3761,4 +3761,70 @@ msgid "Use complete cases"
 msgstr ""
 
 msgid "Use pairwise-complete cases"
+msgstr ""
+
+# messages added to version 1.7-4
+
+msgid "Component scores are not available when subset is specified."
+msgstr ""
+
+msgid "Factor scores are not available when subset is specified."
+msgstr ""
+
+# messages added to version 1.8-0
+
+msgid "Confirmatory Factor Analysis"
+msgstr ""
+
+msgid "Fewer than 2 variables selected to load on factor."
+msgstr ""
+
+msgid "Define factor"
+msgstr ""
+
+msgid "Select variables\nloading on factor"
+msgstr ""
+
+msgid "Covariance"
+msgstr ""
+
+msgid "Correlation"
+msgstr ""
+
+msgid "Matrix to Analyze"
+msgstr ""
+
+msgid "Correlated"
+msgstr ""
+
+msgid "Orthogonal"
+msgstr ""
+
+msgid "Factor Correlations"
+msgstr ""
+
+msgid "There are too many factors."
+msgstr ""
+
+msgid "Identifying Constraints"
+msgstr ""
+
+msgid "Factor variances set to 1"
+msgstr ""
+
+msgid "First loading on each factor set to 1"
+msgstr ""
+
+msgid "Confirmatory factor analysis..."
+msgstr ""
+
+# messages added to version 1.8-1
+
+	# the following message was omitted from version 1.8-0
+
+msgid "Robust standard errors"
+msgstr ""
+
+
+msgid "No factors defined."
 msgstr ""
