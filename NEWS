@@ -1,3 +1,31 @@
+Changes to Version 1.8-3
+
+   o Small fixes to pass CRAN checks (reported by Kurt Hornik).
+
+Changes to Version 1.8-2
+
+   o Fixes to font selection, especially for non-Windows systems.
+   
+   o Fix to groupsBox() utility function (to fix bug reported by Richard Heiberger).
+   
+   o PDF files for "Getting Started" manual in English, Japanese, and Spanish compacted (suggestion of Brian Ripley).
+   
+   o Retain dialog selections optionally non-resettable, used for probability dialogs.
+   
+   o Bartlett's test and Levene's test now allow more than one factor.
+   
+   o Updated Slovenian translation (thanks to Jaro Lajovic and Matjaz Jeran).
+   
+   o Updated Korean translation (courtesy of Shin Jong-Hwa and the Korean translation team).
+   
+   o Fixed bug in scatterplot dialog that prevented log axes from being used with groups defined (reported by Kent Johnson).
+
+
+Changes to Version 1.8-1
+
+   o Updated DESCRIPTION file; version synchronization for CRAN.
+   
+
 Changes to Version 1.8-0
 
     o See CHANGES file for changes to older versions.

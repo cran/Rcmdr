@@ -146,17 +146,19 @@ set none, one, several, or all options. The available options are as follows:
     \code{c("contr.Treatment", "contr.poly")}. When the Commander exits, the \code{contrasts}
     option is returned to its pre-existing value. Note that \code{contr.Treatment} is from the \code{car} package.}
     
-    \item{\code{default.font}}{The default font, as an X11 font specification, given in a character string. 
-    If specified, this value takes precedence
-    over the default font size (below). This option is only for non-Windows systems.}
+    \item{\code{default.font}}{The default font for GUI elements such as menus and text labels, in the form of a 
+    Tk font specification, given in a character string. 
+    For example,  \code{"-family Helvetica -size 12"} specifies a 12-point Helvetica font.
+    If specified, this value takes precedence over the default font size (below). Absent a compelling reason for
+    changing the font, it is generally more convenient simply to change the default font size.}
 
-    \item{\code{default.font.size}}{The size, in points, of the default font. The default is 10 for Windows systems
-    and 12 for other systems Unless otherwise
-    specified (see the previous item), the default font for non-Windows systems is 
-    \code{"*helvetica-medium-r-normal-*-xx*"}, where \code{xx} is the default font size.}
+    \item{\code{default.font.size}}{The size, in points, of the default font. The default is 10. 
+    To set the font size for R input and output, see the \code{log.font.size} option.
+    It is recommended that Windows users set the \code{Rcmdr} \code{scale factor} option to
+    control font size.}
     
     \item{\code{retain.selections}}{If \code{TRUE} (the default), dialogs remember their previous state, where appropriate,
-     as long as the data set isn't changed.}
+     as long as the data set isn't changed; some dialogs, e.g., for probabilities, retain selections even when the data set chanages.}
     
     \item{\code{double.click}}{Set to \code{TRUE} if you want a double-click of the left mouse
     button to press the default button in all dialogs. The default is \code{FALSE}.}
@@ -191,8 +193,9 @@ set none, one, several, or all options. The available options are as follows:
 
     \item{\code{log.font.size}}{The font size, in points, to be used in the script window,
     in the output window,
-    in recode dialogs, and in compute expressions --- that is, where a monospaced font is used. 
-    The default is 10 for Windows systems and 12 for other systems.}
+    in recode dialogs, and in compute expressions --- that is, where a monospaced font is used. The default is 10.
+    It is recommended that Windows users set the \code{Rcmdr} \code{scale factor} option to
+    control font size.}
     
     \item{\code{log.height}}{The height of the script window, in lines. The default is 10. Setting \code{log.height}
     to 0 has the same effect as setting \code{log.commands} to \code{FALSE}.}
