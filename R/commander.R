@@ -1,14 +1,14 @@
 
 # The R Commander and command logger
 
-# last modified 2012-01-27 by J. Fox
+# last modified 2012-03-31 by J. Fox
 #  applied patch to improve window behaviour supplied by Milan Bouchet-Valat 2011-09-22
 #   slight changes 12 Aug 04 by Ph. Grosjean
 #   changes 21 June 2007 by Erich Neuwirth for Excel support (marked EN)
 #   modified 17 December 2008 by Richard Heiberger  ##rmh
 
 Commander <- function(){
-	##	RcmdrVersion <- "1.8-2"
+	RStudioP <- function() exists("RStudio.version", where=1)
 	DESCRIPTION <- readLines(file.path(.find.package("Rcmdr"), "DESCRIPTION")[1])
 	RcmdrVersion <- trim.blanks(sub("^Version:", "",
 					grep("^Version:", DESCRIPTION, value=TRUE)))
@@ -154,7 +154,8 @@ Commander <- function(){
 	}
 	else setOption("default.contrasts", c("contr.treatment", "contr.poly"))
 	setOption("log.commands", TRUE)
-	setOption("console.output", FALSE)
+	setOption("RStudio", RStudioP())
+	setOption("console.output", getRcmdr("RStudio"))
 	setOption("retain.selections", TRUE)
 	putRcmdr("dialog.values", list())
 	putRcmdr("dialog.values.noreset", list())
@@ -312,24 +313,51 @@ Commander <- function(){
 		if (length(addModels) > 0) modelClasses <- c(modelClasses, addModels)
 	}
 	putRcmdr("modelClasses", modelClasses)
+#	onEdit <- function(){
+#		if (activeDataSet() == FALSE) {
+#			tkfocus(CommanderWindow())
+#			return()
+#		}
+#		dsnameValue <- ActiveDataSet()
+#		command <- paste("fix(", dsnameValue, ")", sep="")
+#		result <- justDoIt(command)
+#		result <- as.data.frame(lapply(result, function(x) if (is.character(x)) factor(x) else x))
+#		if (class(result)[1] !=  "try-error"){ 
+#			assign(dsnameValue, result, envir=.GlobalEnv)
+#			logger(command)
+#			if (nrow(get(dsnameValue)) == 0){
+#				errorCondition(message=gettextRcmdr("empty data set."))
+#				return()
+#			}
+#			activeDataSet(dsnameValue)
+#		}
+#		tkwm.deiconify(CommanderWindow())
+#		tkfocus(CommanderWindow())
+#	}
 	onEdit <- function(){
 		if (activeDataSet() == FALSE) {
 			tkfocus(CommanderWindow())
 			return()
 		}
 		dsnameValue <- ActiveDataSet()
+		save.dataset <- get(dsnameValue, envir=.GlobalEnv)
 		command <- paste("fix(", dsnameValue, ")", sep="")
 		result <- justDoIt(command)
-		result <- as.data.frame(lapply(result, function(x) if (is.character(x)) factor(x) else x))
-		if (class(result)[1] !=  "try-error"){ 
-			assign(dsnameValue, result, envir=.GlobalEnv)
-			logger(command)
+		if (class(result)[1] !=  "try-error"){ 			
 			if (nrow(get(dsnameValue)) == 0){
-				#        	if (eval(parse(text=paste("nrow(", dsnameValue, ")"))) == 0){
-				errorCondition(message=gettextRcmdr("empty data set."))
+				errorCondition(window=NULL, message=gettextRcmdr("empty data set."))
+				assign(dsnameValue, save.dataset, envir=.GlobalEnv)
 				return()
 			}
-			activeDataSet(dsnameValue)
+			else{
+				logger(command)
+				activeDataSet(dsnameValue)
+			}
+		}
+		else{
+			errorCondition(window=NULL, message=gettextRcmdr("data set edit error."))
+			assign(dsnameValue, save.dataset, envir=.GlobalEnv)
+			return()
 		}
 		tkwm.deiconify(CommanderWindow())
 		tkfocus(CommanderWindow())
@@ -687,6 +715,7 @@ justDoIt <- function(command) {
 		return(result)
 	}
 	checkWarnings(readLines(messages.connection))
+	if (getRcmdr("RStudio")) Sys.sleep(0)
 	result
 }
 
@@ -760,6 +789,7 @@ doItAndPrint <- function(command, log=TRUE) {
 		# errors already intercepted, display any warnings
 		checkWarnings(readLines(messages.connection))
 	}
+	if (getRcmdr("RStudio")) Sys.sleep(0)
 	result
 }
 

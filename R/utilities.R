@@ -1,4 +1,4 @@
-# last modified 2012-01-26 by J. Fox
+# last modified 2012-03-16 by J. Fox
 #  applied patch to improve window behaviour supplied by Milan Bouchet-Valat 2011-09-22
 #  slight changes 12 Aug 04 by Ph. Grosjean
 
@@ -391,8 +391,9 @@ numSummary <- function(data,
 	type <- as.numeric(type)
 	ngroups <- if(missing(groups)) 1 else length(grps <- levels(groups))
 	quantiles <- if ("quantiles" %in% statistics) quantiles else NULL
-	quants <- if (length(quantiles) > 1) paste(100*quantiles, "%", sep="")
-			else NULL
+#	quants <- if (length(quantiles) > 1) paste(100*quantiles, "%", sep="")
+#			else NULL
+	quants <- paste(100*quantiles, "%", sep="")
 	nquants <- length(quants)
 	stats <- c(c("mean", "sd", "cv", "skewness", "kurtosis")[c("mean", "sd", "cv", "skewness", "kurtosis") %in% statistics], quants)
 	nstats <- length(stats)
@@ -1100,7 +1101,7 @@ checkBoxes <- defmacro(window=top, frame, boxes, initialValues=NULL, labels, tit
 		expr={
 			..initialValues <- if (is.null(initialValues)) rep("1", length(boxes)) else initialValues
 			assign(frame, tkframe(window))
-			if (!is.null(title)) tkgrid(labelRcmdr(eval(parse(text=frame)), text=title, foreground="blue"))
+			if (!is.null(title)) tkgrid(labelRcmdr(eval(parse(text=frame)), text=title, foreground="blue"), sticky="w")
 			..variables <- paste(boxes, "Variable", sep="")
 			for (i in 1:length(boxes)) {
 				assign(..variables[i], tclVar(..initialValues[i]))
@@ -1120,8 +1121,10 @@ checkReplace <- function(name, type=gettextRcmdr("Variable")){
 errorCondition <- defmacro(window=top, recall=NULL, message, model=FALSE,
 		expr={
 			if (model) putRcmdr("modelNumber", getRcmdr("modelNumber") - 1)
-			if (GrabFocus()) tkgrab.release(window)
-			tkdestroy(window)
+			if (!is.null(window)){
+				if (GrabFocus()) tkgrab.release(window)
+				tkdestroy(window)
+			}
 			Message(message=message, type="error")
 			if (!is.null(recall)) recall()
 			else tkfocus(CommanderWindow())

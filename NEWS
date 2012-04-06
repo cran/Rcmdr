@@ -1,3 +1,23 @@
+Changes to Version 1.8-4
+
+  o Fixes to Italian translation (from Stefano Calza).
+  
+  o Updated Korean translation (courtesy of Shin Jong-Hwa).
+  
+  o Fixed bug in numSummary() that surfaced when only one quantile was specified (reported by Peter B. Mandeville).
+  
+  o Titles for sets of check boxes now left-aligned (suggestion of Milan Bouchet-Valat).
+  
+  o Fix to Spanish translation (courtesy of Manuel Munoz Marquez).
+  
+  o Fix to data set edit button, which was removing case names (reported by Gilles Le Pape).
+  
+  o Updated Slovenian translations (courtesy of Jaro Lajovic and Matjaz Jeran).
+  
+  o Updated Korean translation (courtesy of Shin Jong-Hwa).
+  
+  o Rcmdr now detects when it is running under RStudio and arranges to display graphs properly. There is still an open bug causing a freeze in the RStudio graphics device when points are identified in a graph.
+
 Changes to Version 1.8-3
 
    o Small fixes to pass CRAN checks (reported by Kurt Hornik).
