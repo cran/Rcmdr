@@ -1,10 +1,12 @@
-# last modified 2012-03-16 by J. Fox
+# last modified 2012-08-29 by J. Fox
 #  applied patch to improve window behaviour supplied by Milan Bouchet-Valat 2011-09-22
 #  slight changes 12 Aug 04 by Ph. Grosjean
 
 # utility functions
 
 # listing objects etc.
+
+
 
 listDataSets <- function(envir=.GlobalEnv, ...) {
 	Vars <- ls(envir = envir, all.names = TRUE) # + PhG
@@ -356,137 +358,144 @@ confint.multinom <- function (object, parm, level=0.95, ...){
 Confint.multinom <- function(object, parm, level = 0.95, ...) confint (object, parm=parm, level=0.95, ...)
 
 numSummary <- function(data, 
-		statistics=c("mean", "sd", "quantiles", "cv", "skewness", "kurtosis"),
-		type=c("1", "2", "3"),
-		quantiles=c(0, .25, .5, .75, 1), groups){
-	sd <- function(x, type, ...){
-		apply(as.matrix(x), 2, stats::sd, na.rm=TRUE)
-	}
-	cv <- function(x, ...){
-		x <- as.matrix(x)
-		mean <- colMeans(x, na.rm=TRUE)
-		sd <- sd(x)
-		if (any(x <= 0, na.rm=TRUE)) warning("not all values are positive")
-		cv <- sd/mean
-		cv[mean <= 0] <- NA
-		cv
-	}
-	skewness <- function(x, type, ...){
-		if (is.vector(x)) return(e1071::skewness(x, type=type, na.rm=TRUE))
-		apply(x, 2, skewness, type=type)
-	}
-	kurtosis <- function(x, type, ...){
-		if (is.vector(x)) return(e1071::kurtosis(x, type=type, na.rm=TRUE))
-		apply(x, 2, kurtosis, type=type)
-	}
-	if(!require(abind)) stop("abind package missing")
-	if(!require(e1071)) stop("e1071 package missing")
-	data <- as.data.frame(data)
-	if (!missing(groups)) groups <- as.factor(groups)
-	variables <- names(data)
-	if (missing(statistics)) statistics <- c("mean", "sd", "quantiles")
-	statistics <- match.arg(statistics, c("mean", "sd", "quantiles", "cv", "skewness", "kurtosis"),
-			several.ok=TRUE)
-	type <- match.arg(type)
-	type <- as.numeric(type)
-	ngroups <- if(missing(groups)) 1 else length(grps <- levels(groups))
-	quantiles <- if ("quantiles" %in% statistics) quantiles else NULL
-#	quants <- if (length(quantiles) > 1) paste(100*quantiles, "%", sep="")
-#			else NULL
-	quants <- paste(100*quantiles, "%", sep="")
-	nquants <- length(quants)
-	stats <- c(c("mean", "sd", "cv", "skewness", "kurtosis")[c("mean", "sd", "cv", "skewness", "kurtosis") %in% statistics], quants)
-	nstats <- length(stats)
-	nvars <- length(variables)
-	result <- list()
-	if ((ngroups == 1) && (nvars == 1) && (length(statistics) == 1)){
-		if (statistics == "quantiles")
-			table <- quantile(data[,variables], probs=quantiles, na.rm=TRUE)
-		else {
-			table <- do.call(statistics, list(x=data[,variables], na.rm=TRUE, type=type))
-			names(table) <- statistics
-		}
-		NAs <- sum(is.na(data[,variables]))
-		n <- nrow(data) - NAs
-		result$type <- 1
-	}
-	else if ((ngroups > 1)  && (nvars == 1) && (length(statistics) == 1)){
-		if (statistics == "quantiles"){
-			table <- matrix(unlist(tapply(data[, variables], groups,
-									quantile, probs=quantiles, na.rm=TRUE)), ngroups, nquants,
-					byrow=TRUE)
-			rownames(table) <- grps
-			colnames(table) <- quants
-		}
-		else table <- tapply(data[,variables], groups, statistics,
-					na.rm=TRUE, type=type)
-		NAs <- tapply(data[, variables], groups, function(x)
-					sum(is.na(x)))
-		n <- table(groups) - NAs
-		result$type <- 2
-	}
-	else if ((ngroups == 1) ){
-		X <- as.matrix(data[, variables])
-		table <- matrix(0, nvars, nstats)
-		rownames(table) <- if (length(variables) > 1) variables else ""
-		colnames(table) <- stats
-		if ("mean" %in% stats) table[,"mean"] <- colMeans(X, na.rm=TRUE)
-		if ("sd" %in% stats) table[,"sd"] <- sd(X)
-		if ("cv" %in% stats) table[,"cv"] <- cv(X)
-		if ("skewness" %in% statistics) table[, "skewness"] <- skewness(X, type=type)
-		if ("kurtosis" %in% statistics) table[, "kurtosis"] <- kurtosis(X, type=type)
-		if ("quantiles" %in% statistics){
-			table[,quants] <- t(apply(data[, variables, drop=FALSE], 2, quantile,
-							probs=quantiles, na.rm=TRUE))
-		}
-		NAs <- colSums(is.na(data[,variables, drop=FALSE]))
-		n <- nrow(data) - NAs
-		result$type <- 3
-	}
-	else {
-		table <- array(0, c(ngroups, nstats, nvars),
-				dimnames=list(Group=grps, Statistic=stats, Variable=variables))
-		NAs <- matrix(0, nvars, ngroups)
-		rownames(NAs) <- variables
-		colnames(NAs) <- grps
-		for (variable in variables){
-			if ("mean" %in% stats)
-				table[, "mean", variable] <- tapply(data[, variable],
-						groups, mean, na.rm=TRUE)
-			if ("sd" %in% stats)
-				table[, "sd", variable] <- tapply(data[, variable],
-						groups, sd, na.rm=TRUE)
-			if ("cv" %in% stats)
-				table[, "cv", variable] <- tapply(data[, variable],
-						groups, cv)
-			if ("skewness" %in% stats)
-				table[, "skewness", variable] <- tapply(data[, variable],
-						groups, skewness, type=type)
-			if ("kurtosis" %in% stats)
-				table[, "kurtosis", variable] <- tapply(data[, variable],
-						groups, kurtosis, type=type)
-			if ("quantiles" %in% statistics) {
-				res <- matrix(unlist(tapply(data[, variable], groups,
-										quantile, probs=quantiles, na.rm=TRUE)), ngroups, nquants,
-						byrow=TRUE)
-				table[, quants, variable] <- res
-			}
-			NAs[variable,] <- tapply(data[, variable], groups, function(x)
-						sum(is.na(x)))
-		}
-		if (nstats == 1) table <- table[,1,]
-		if (nvars == 1) table <- table[,,1]
-		n <- table(groups)
-		n <- matrix(n, nrow=nrow(NAs), ncol=ncol(NAs), byrow=TRUE)
-		n <- n - NAs
-		result$type <- 4
-	}
-	result$table <- table
-	result$statistics <- statistics
-	result$n <- n
-	if (any(NAs > 0)) result$NAs <- NAs
-	class(result) <- "numSummary"
-	result
+                       statistics=c("mean", "sd", "quantiles", "cv", "skewness", "kurtosis"),
+                       type=c("1", "2", "3"),
+                       quantiles=c(0, .25, .5, .75, 1), groups){
+    sd <- function(x, type, ...){
+        apply(as.matrix(x), 2, stats::sd, na.rm=TRUE)
+    }
+    IQR <- function(x, type, ...){
+        apply(as.matrix(x), 2, stats::IQR, na.rm=TRUE)
+    }
+    cv <- function(x, ...){
+        x <- as.matrix(x)
+        mean <- colMeans(x, na.rm=TRUE)
+        sd <- sd(x)
+        if (any(x <= 0, na.rm=TRUE)) warning("not all values are positive")
+        cv <- sd/mean
+        cv[mean <= 0] <- NA
+        cv
+    }
+    skewness <- function(x, type, ...){
+        if (is.vector(x)) return(e1071::skewness(x, type=type, na.rm=TRUE))
+        apply(x, 2, skewness, type=type)
+    }
+    kurtosis <- function(x, type, ...){
+        if (is.vector(x)) return(e1071::kurtosis(x, type=type, na.rm=TRUE))
+        apply(x, 2, kurtosis, type=type)
+    }
+    if(!require(abind)) stop("abind package missing")
+    if(!require(e1071)) stop("e1071 package missing")
+    data <- as.data.frame(data)
+    if (!missing(groups)) groups <- as.factor(groups)
+    variables <- names(data)
+    if (missing(statistics)) statistics <- c("mean", "sd", "quantiles", "IQR")
+    statistics <- match.arg(statistics, c("mean", "sd", "IQR", "quantiles", "cv", "skewness", "kurtosis"),
+                            several.ok=TRUE)
+    type <- match.arg(type)
+    type <- as.numeric(type)
+    ngroups <- if(missing(groups)) 1 else length(grps <- levels(groups))
+    quantiles <- if ("quantiles" %in% statistics) quantiles else NULL
+    #    quants <- if (length(quantiles) > 1) paste(100*quantiles, "%", sep="")
+    #			else NULL
+    quants <- paste(100*quantiles, "%", sep="")
+    nquants <- length(quants)
+    stats <- c(c("mean", "sd", "IQR", "cv", "skewness", "kurtosis")[c("mean", "sd", "IQR", "cv", "skewness", "kurtosis") %in% statistics], quants)
+    nstats <- length(stats)
+    nvars <- length(variables)
+    result <- list()
+    if ((ngroups == 1) && (nvars == 1) && (length(statistics) == 1)){
+        if (statistics == "quantiles")
+            table <- quantile(data[,variables], probs=quantiles, na.rm=TRUE)
+        else {
+            table <- do.call(statistics, list(x=data[,variables], na.rm=TRUE, type=type))
+            names(table) <- statistics
+        }
+        NAs <- sum(is.na(data[,variables]))
+        n <- nrow(data) - NAs
+        result$type <- 1
+    }
+    else if ((ngroups > 1)  && (nvars == 1) && (length(statistics) == 1)){
+        if (statistics == "quantiles"){
+            table <- matrix(unlist(tapply(data[, variables], groups,
+                                          quantile, probs=quantiles, na.rm=TRUE)), ngroups, nquants,
+                            byrow=TRUE)
+            rownames(table) <- grps
+            colnames(table) <- quants
+        }
+        else table <- tapply(data[,variables], groups, statistics,
+                             na.rm=TRUE, type=type)
+        NAs <- tapply(data[, variables], groups, function(x)
+            sum(is.na(x)))
+        n <- table(groups) - NAs
+        result$type <- 2
+    }
+    else if ((ngroups == 1) ){
+        X <- as.matrix(data[, variables])
+        table <- matrix(0, nvars, nstats)
+        rownames(table) <- if (length(variables) > 1) variables else ""
+        colnames(table) <- stats
+        if ("mean" %in% stats) table[,"mean"] <- colMeans(X, na.rm=TRUE)
+        if ("sd" %in% stats) table[,"sd"] <- sd(X)
+        if ("IQR" %in% stats) table[, "IQR"] <- IQR(X)
+        if ("cv" %in% stats) table[,"cv"] <- cv(X)
+        if ("skewness" %in% statistics) table[, "skewness"] <- skewness(X, type=type)
+        if ("kurtosis" %in% statistics) table[, "kurtosis"] <- kurtosis(X, type=type)
+        if ("quantiles" %in% statistics){
+            table[,quants] <- t(apply(data[, variables, drop=FALSE], 2, quantile,
+                                      probs=quantiles, na.rm=TRUE))
+        }
+        NAs <- colSums(is.na(data[, variables, drop=FALSE]))
+        n <- nrow(data) - NAs
+        result$type <- 3
+    }
+    else {
+        table <- array(0, c(ngroups, nstats, nvars),
+                       dimnames=list(Group=grps, Statistic=stats, Variable=variables))
+        NAs <- matrix(0, nvars, ngroups)
+        rownames(NAs) <- variables
+        colnames(NAs) <- grps
+        for (variable in variables){
+            if ("mean" %in% stats)
+                table[, "mean", variable] <- tapply(data[, variable],
+                                                    groups, mean, na.rm=TRUE)
+            if ("sd" %in% stats)
+                table[, "sd", variable] <- tapply(data[, variable],
+                                                  groups, sd, na.rm=TRUE)
+            if ("IQR" %in% stats)
+                table[, "IQR", variable] <- tapply(data[, variable],
+                                                   groups, IQR, na.rm=TRUE)
+            if ("cv" %in% stats)
+                table[, "cv", variable] <- tapply(data[, variable],
+                                                  groups, cv)
+            if ("skewness" %in% stats)
+                table[, "skewness", variable] <- tapply(data[, variable],
+                                                        groups, skewness, type=type)
+            if ("kurtosis" %in% stats)
+                table[, "kurtosis", variable] <- tapply(data[, variable],
+                                                        groups, kurtosis, type=type)
+            if ("quantiles" %in% statistics) {
+                res <- matrix(unlist(tapply(data[, variable], groups,
+                                            quantile, probs=quantiles, na.rm=TRUE)), ngroups, nquants,
+                              byrow=TRUE)
+                table[, quants, variable] <- res
+            }
+            NAs[variable,] <- tapply(data[, variable], groups, function(x)
+                sum(is.na(x)))
+        }
+        if (nstats == 1) table <- table[,1,]
+        if (nvars == 1) table <- table[,,1]
+        n <- table(groups)
+        n <- matrix(n, nrow=nrow(NAs), ncol=ncol(NAs), byrow=TRUE)
+        n <- n - NAs
+        result$type <- 4
+    }
+    result$table <- table
+    result$statistics <- statistics
+    result$n <- n
+    if (any(NAs > 0)) result$NAs <- NAs
+    class(result) <- "numSummary"
+    result
 }
 
 print.numSummary <- function(x, ...){
@@ -823,21 +832,23 @@ OKCancelHelp <- defmacro(window=top, helpSubject=NULL,  model=FALSE, reset=NULL,
 			memory <- getRcmdr("retain.selections")
 			buttonsFrame <- tkframe(window, borderwidth=5)
 			OKbutton <- buttonRcmdr(buttonsFrame, text=gettextRcmdr("OK"), foreground="darkgreen", width="12", command=onOK, default="active",
-					borderwidth=3)
+					borderwidth=3, image="::image::okIcon", compound="left")
 			onCancel <- function() {
 				if (model) putRcmdr("modelNumber", getRcmdr("modelNumber") - 1)
 				if (GrabFocus()) tkgrab.release(window)
 				tkdestroy(window)
 				tkfocus(CommanderWindow())
 			}
-			cancelButton <- buttonRcmdr(buttonsFrame, text=gettextRcmdr("Cancel"), foreground="red", width="12", command=onCancel, borderwidth=3)
+			cancelButton <- buttonRcmdr(buttonsFrame, text=gettextRcmdr("Cancel"), foreground="red", width="12", command=onCancel, borderwidth=3,
+					image="::image::cancelIcon", compound="left")
 			if (!is.null(helpSubject)){
 				onHelp <- function() {
 					if (GrabFocus() && .Platform$OS.type != "windows") tkgrab.release(window)
 					if (as.numeric(R.Version()$major) >= 2) print(help(helpSubject))
 					else help(helpSubject)
 				}
-				helpButton <- buttonRcmdr(buttonsFrame, text=gettextRcmdr("Help"), width="12", command=onHelp, borderwidth=3)
+				helpButton <- buttonRcmdr(buttonsFrame, text=gettextRcmdr("Help"), width="12", command=onHelp, borderwidth=3,
+						image="::image::helpIcon", compound="left")
 			}
 			if (!is.null(reset) && memory){
 				onReset <- function(){
@@ -847,7 +858,8 @@ OKCancelHelp <- defmacro(window=top, helpSubject=NULL,  model=FALSE, reset=NULL,
 					closeDialog()
 					eval(parse(text=paste(reset, "()")))
 				}
-				resetButton <- buttonRcmdr(buttonsFrame, text=gettextRcmdr("Reset"), width=12, command=onReset)
+				resetButton <- buttonRcmdr(buttonsFrame, text=gettextRcmdr("Reset"), width=12, command=onReset,
+						image="::image::resetIcon", compound="left")
 			}
 			tkgrid(OKbutton, labelRcmdr(buttonsFrame, text="  "), cancelButton, labelRcmdr(buttonsFrame, text="            "),
 					if(!is.null(reset) && memory) resetButton, if(!is.null(reset) && memory) labelRcmdr(buttonsFrame, text="  "), 
@@ -858,21 +870,22 @@ subOKCancelHelp <- defmacro(window=subdialog, helpSubject=NULL,
 		expr={
 			subButtonsFrame <- tkframe(window, borderwidth=5)
 			subOKbutton <- buttonRcmdr(subButtonsFrame, text=gettextRcmdr("OK"), foreground="darkgreen", width="12", command=onOKsub, default="active",
-					borderwidth=3)
+					borderwidth=3, image="::image::okIcon", compound="left")
 			onCancelSub <- function() {
 				if (GrabFocus()) tkgrab.release(window)
 				tkdestroy(window)
 				tkfocus(CommanderWindow())
 			}
 			subCancelButton <- buttonRcmdr(subButtonsFrame, text=gettextRcmdr("Cancel"), foreground="red", width="12", command=onCancelSub,
-					borderwidth=3)
+					borderwidth=3, image="::image::cancelIcon", compound="left")
 			if (!is.null(helpSubject)){
 				onHelpSub <- function(){
 					if (GrabFocus() && .Platform$OS.type != "windows") tkgrab.release(window)
 					if (as.numeric(R.Version()$major) >= 2) print(help(helpSubject))
 					else help(helpSubject)
 				}
-				subHelpButton <- buttonRcmdr(subButtonsFrame, text=gettextRcmdr("Help"), width="12", command=onHelpSub, borderwidth=3)
+				subHelpButton <- buttonRcmdr(subButtonsFrame, text=gettextRcmdr("Help"), width="12", command=onHelpSub, borderwidth=3,
+						image="::image::helpIcon", compound="left")
 			}
 			tkgrid(subOKbutton, labelRcmdr(subButtonsFrame, text="  "), subCancelButton,
 					labelRcmdr(subButtonsFrame, text="            "), if (!is.null(helpSubject)) subHelpButton, sticky="w")
@@ -1055,7 +1068,7 @@ variableListBox <- function(parentWindow, variableList=Variables(), bg="white",
 	tkgrid(labelRcmdr(frame, text=title, foreground="blue"), columnspan=2, sticky="w")
 	tkgrid(listbox, scrollbar, sticky="nw")
 	tkgrid.configure(scrollbar, sticky="wns")
-	tkgrid.configure(listbox, sticky="ew")
+	tkgrid.configure(listbox, sticky="ewns")
 	result <- list(frame=frame, listbox=listbox, scrollbar=scrollbar,
 			selectmode=selectmode, varlist=variableList)
 	class(result) <- "listbox"
@@ -1074,26 +1087,32 @@ getFrame.listbox <- function(object){
 	object$frame
 }
 
-# This function modified based on code by Liviu Andronic (13 Dec 09):
+# This function modified based on code by Liviu Andronic (13 Dec 09) and on code by Milan Bouchet-Valat (29 Jun 12):
 radioButtons <- defmacro(window=top, name, buttons, values=NULL, initialValue=..values[1], labels, 
-		title="", title.color="blue", right.buttons=TRUE,
-		expr={
-			..values <- if (is.null(values)) buttons else values
-			..frame <- paste(name, "Frame", sep="")
-			assign(..frame, tkframe(window))
-			..variable <- paste(name, "Variable", sep="")
-			assign(..variable, tclVar(initialValue))
-			if(title != ""){
-				tkgrid(labelRcmdr(eval(parse(text=..frame)), text=title, foreground=title.color), columnspan=2, sticky="w")
-			}
-			for (i in 1:length(buttons)) {
-				..button <- paste(buttons[i], "Button", sep="")
-				assign(..button,
-						ttkradiobutton(eval(parse(text=..frame)), variable=eval(parse(text=..variable)), value=..values[i]))
-				if (right.buttons) tkgrid(labelRcmdr(eval(parse(text=..frame)), text=labels[i], justify="left"), eval(parse(text=..button)), sticky="w")
-				else  tkgrid(eval(parse(text=..button)), labelRcmdr(eval(parse(text=..frame)), text=labels[i], justify="left"), sticky="w")
-			}
-		}
+                         title="", title.color="blue", right.buttons=TRUE, command=function(){},
+                         expr={
+                             ..values <- if (is.null(values)) buttons else values
+                             ..frame <- paste(name, "Frame", sep="")
+                             assign(..frame, tkframe(window))
+                             ..variable <- paste(name, "Variable", sep="")
+                             assign(..variable, tclVar(initialValue))
+                             if(title != ""){
+                                 tkgrid(labelRcmdr(eval(parse(text=..frame)), text=title, foreground=title.color), columnspan=2, sticky="w")
+                             }
+                             for (i in 1:length(buttons)) {
+                                 ..button <- paste(buttons[i], "Button", sep="")
+                                 if (right.buttons) {
+                                     assign(..button, ttkradiobutton(eval(parse(text=..frame)), variable=eval(parse(text=..variable)), 
+                                                                     value=..values[i], command=command))
+                                     tkgrid(labelRcmdr(eval(parse(text=..frame)), text=labels[i], justify="left"), eval(parse(text=..button)), sticky="w")
+                                 }
+                                 else{
+                                     assign(..button, ttkradiobutton(eval(parse(text=..frame)), variable=eval(parse(text=..variable)), 
+                                                                     value=..values[i], text=labels[i], command=command))
+                                     tkgrid(eval(parse(text=..button)), sticky="w")
+                                 }
+                             }
+                         }
 )
 
 
@@ -1107,8 +1126,10 @@ checkBoxes <- defmacro(window=top, frame, boxes, initialValues=NULL, labels, tit
 				assign(..variables[i], tclVar(..initialValues[i]))
 				..checkBox <- paste(boxes[i], "CheckBox", sep="")
 				assign(..checkBox,
-						tkcheckbutton(eval(parse(text=frame)), variable=eval(parse(text=..variables[i]))))
-				tkgrid(labelRcmdr(eval(parse(text=frame)), text=labels[i]), eval(parse(text=..checkBox)), sticky="w")
+				#		tkcheckbutton(eval(parse(text=frame)), variable=eval(parse(text=..variables[i]))))
+				# tkgrid(labelRcmdr(eval(parse(text=frame)), text=labels[i]), eval(parse(text=..checkBox)), sticky="w")
+						tkcheckbutton(eval(parse(text=frame)), variable=eval(parse(text=..variables[i])), text=labels[i]))
+				tkgrid(eval(parse(text=..checkBox)), sticky="w")
 			}
 		}
 )

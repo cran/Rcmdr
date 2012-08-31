@@ -1,6 +1,6 @@
-"Project-Id-Version: Rcmdr 1.8-4\n"
+"Project-Id-Version: Rcmdr 1.9-0\n"
 "Report-Msgid-Bugs-To: jfox@mcmaster.ca\n"
-"POT-Creation-Date: 2012-03-20 10:30:00\n"
+"POT-Creation-Date: 2012-09-29 15:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3837,3 +3837,88 @@ msgstr ""
 
 msgid "data set edit error."
 msgstr ""
+
+# messages added to version 1.9-0
+
+msgid "Identify Outliers"
+msgstr ""
+
+msgid "Automatically"
+msgstr ""
+
+msgid "With mouse"
+msgstr ""
+
+msgid "Width"
+msgstr ""
+
+msgid "Height"
+msgstr ""
+
+msgid "[disabled]"
+msgstr ""
+
+msgid "inches"
+msgstr ""
+
+msgid "inch"
+msgstr ""
+
+msgid "cm"
+msgstr ""
+
+msgid "pixels"
+msgstr ""
+
+msgid "Units"
+msgstr ""
+
+msgid "Fixed aspect ratio (height:width)"
+msgstr ""
+
+msgid "Resolution"
+msgstr ""
+
+msgid "from SAS xport file..."
+msgstr ""
+
+msgid "Data Set Name"
+msgstr ""
+
+msgid "Select Dataset"
+msgstr ""
+
+msgid "Datasets in file (pick one)"
+msgstr ""
+
+msgid "{\"All Files\" {\"*\"}} {\"SAS xport files\" {\".xpt\" \".XPT\" \".xport\" \".XPORT\"}}"
+msgstr ""
+
+msgid "Convert variable names\nto lower case"
+msgstr ""
+
+msgid "from Excel file..."
+msgstr ""
+
+msgid "Import Excel Data Set"
+msgstr ""
+
+msgid "{\"All Files\" {\"*\"}} {\"MS Excel 2007 file\" {\".xlsx\" \".XLSX\"}} {\"MS Excel file\" {\".xls\" \".XLS\"}}"
+msgstr ""
+
+msgid "Interquartile Range"
+msgstr ""
+
+msgid "Interquartile range"
+msgstr ""
+
+msgid "Lines"
+msgstr ""
+
+msgid "Choose at least one of points or lines."
+msgstr ""
+
+msgid "Plot Type (one or both)"
+msgstr ""
+
+
