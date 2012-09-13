@@ -1,3 +1,27 @@
+Changes to Version 1.9-1
+
+  o Updated version of Getting Started With the R Commander.
+
+  o Updated Italian translation (thanks to Stefano Calza).
+
+  o Updated Japanese translation (thanks to Takaharu Araki).
+
+  o Updated Korean translation and new Korean getting-started document (thanks to Shin Jong-Hwa).
+ 
+  o Updated Polish translation (Lukasz Daniel)
+
+  o Updated Romanian translation (thanks to Adrian Dusa).
+
+  o Updated Russian translation (thanks to Alexey Shipunov).
+
+  o Updated Slovenian translation (thanks to Jaro Lajovic and Matjaz Jeran).
+
+  o Updated Spanish translation (thanks to Manuel Munoz Marquez).
+
+  o Fixed omissions to R-Rcmdr.pot file (reported by Jaro Lajovic).
+
+  o Small fixes.
+
 Changes to Version 1.9-0
 
   o Improvements to boxplot dialog.

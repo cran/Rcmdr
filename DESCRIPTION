@@ -1,6 +1,6 @@
 Package: Rcmdr
-Version: 1.9-0
-Date: 2012/08/31
+Version: 1.9-1
+Date: 2012/09/13
 Title: R Commander
 Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email =
         "jfox@mcmaster.ca"), person("Liviu", "Andronic", role = "ctb"),
@@ -43,6 +43,7 @@ Author: John Fox [aut, cre], Liviu Andronic [ctb], Michael Ash [ctb],
 Maintainer: John Fox <jfox@mcmaster.ca>
 Repository: CRAN
 Repository/R-Forge/Project: rcmdr
-Repository/R-Forge/Revision: 222
-Packaged: 2012-08-31 18:19:37 UTC; rforge
-Date/Publication: 2012-09-01 12:56:31
+Repository/R-Forge/Revision: 235
+Repository/R-Forge/DateTimeStamp: 2012-09-13 22:32:13
+Date/Publication: 2012-09-18 06:24:01
+Packaged: 2012-09-14 02:19:42 UTC; rforge
