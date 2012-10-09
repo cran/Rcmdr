@@ -1,18 +1,14 @@
 
 # The R Commander and command logger
 
-# last modified 2012-07-20 by J. Fox
+# last modified 2012-10-06 by J. Fox
 #  applied patch to improve window behaviour supplied by Milan Bouchet-Valat 2011-09-22
 #   slight changes 12 Aug 04 by Ph. Grosjean
 #   changes 21 June 2007 by Erich Neuwirth for Excel support (marked EN)
 #   modified 17 December 2008 by Richard Heiberger  ##rmh
 
 Commander <- function(){
-	tkimage.create("photo", "::image::okIcon", file=system.file("etc", "ok.gif", package="Rcmdr"))
-	tkimage.create("photo", "::image::cancelIcon", file=system.file("etc", "cancel.gif", package="Rcmdr"))
-	tkimage.create("photo", "::image::helpIcon", file=system.file("etc", "help.gif", package="Rcmdr"))
-	tkimage.create("photo", "::image::resetIcon", file=system.file("etc", "reset.gif", package="Rcmdr"))
-	RStudioP <- function() exists("RStudio.version", where=1)
+	RStudioP <- function() nzchar(Sys.getenv("RSTUDIO_USER_IDENTITY"))
 	DESCRIPTION <- readLines(file.path(.find.package("Rcmdr"), "DESCRIPTION")[1])
 	RcmdrVersion <- trim.blanks(sub("^Version:", "",
 					grep("^Version:", DESCRIPTION, value=TRUE)))
@@ -32,6 +28,21 @@ Commander <- function(){
 		else opt
 	}
 	current <- options("Rcmdr")[[1]]
+    setOption("suppress.icon.images", FALSE)
+    icon.images <- !getRcmdr("suppress.icon.images")
+    tkimage.create("photo", "::image::okIcon", 
+                   file = if (icon.images) system.file("etc", "ok.gif", package="Rcmdr") else system.file("etc", "blank.gif", package="Rcmdr"))
+    tkimage.create("photo", "::image::cancelIcon", file = if (icon.images) system.file("etc", "cancel.gif", package="Rcmdr") 
+                   else system.file("etc", "blank.gif", package="Rcmdr"))
+	tkimage.create("photo", "::image::helpIcon", file = if (icon.images) system.file("etc", "help.gif", package="Rcmdr")
+                    else system.file("etc", "blank.gif", package="Rcmdr"))
+	tkimage.create("photo", "::image::resetIcon", file = if (icon.images) system.file("etc", "reset.gif", package="Rcmdr")
+                    else system.file("etc", "blank.gif", package="Rcmdr"))
+	tkimage.create("photo", "::image::submitIcon", file = system.file("etc", "submit.gif", package="Rcmdr"))
+	tkimage.create("photo", "::image::editIcon", file = system.file("etc", "edit.gif", package="Rcmdr"))
+	tkimage.create("photo", "::image::viewIcon", file = system.file("etc", "view.gif", package="Rcmdr"))
+	tkimage.create("photo", "::image::dataIcon", file = system.file("etc", "data.gif", package="Rcmdr"))
+	tkimage.create("photo", "::image::modelIcon", file = system.file("etc", "model.gif", package="Rcmdr"))
 	setOption("number.messages", TRUE)
 	etc <- setOption("etc", file.path(.path.package(package="Rcmdr")[1], "etc"))
 	etcMenus <- setOption("etcMenus", etc)
@@ -180,7 +191,7 @@ Commander <- function(){
 	setOption("grab.focus", TRUE)
 	setOption("attach.data.set", FALSE)
 	setOption("log.text.color", "black")
-	setOption("command.text.color", "red")
+	setOption("command.text.color", "darkred")
 	setOption("output.text.color", "darkblue")
 	setOption("error.text.color", "red")
 	setOption("warning.text.color", "darkgreen")
@@ -524,11 +535,13 @@ Commander <- function(){
 	putRcmdr("autoRestart", FALSE)
 	activateMenus()
 	controlsFrame <- tkframe(CommanderWindow())
-	editButton <- buttonRcmdr(controlsFrame, text=gettextRcmdr("Edit data set"), command=onEdit)
-	viewButton <- buttonRcmdr(controlsFrame, text=gettextRcmdr("View data set"), command=onView)
+	editButton <- buttonRcmdr(controlsFrame, text=gettextRcmdr("Edit data set"), command=onEdit, 
+                              image="::image::editIcon", compound="left")
+	viewButton <- buttonRcmdr(controlsFrame, text=gettextRcmdr("View data set"), command=onView,
+	                          image="::image::viewIcon", compound="left")
 	putRcmdr("dataSetName", tclVar(gettextRcmdr("<No active dataset>")))
 	putRcmdr("dataSetLabel", tkbutton(controlsFrame, textvariable=getRcmdr("dataSetName"), foreground="red",
-					relief="groove", command=selectActiveDataSet))
+					relief="groove", command=selectActiveDataSet, image="::image::dataIcon", compound="left"))
 	logFrame <- tkframe(CommanderWindow())
 	putRcmdr("logWindow", tktext(logFrame, bg="white", foreground=getRcmdr("log.text.color"),
 					font=getRcmdr("logFont"), height=log.height, width=log.width, wrap="none", undo=TRUE))
@@ -540,14 +553,12 @@ Commander <- function(){
 	tkconfigure(.log, xscrollcommand=function(...) tkset(logXscroll, ...))
 	tkconfigure(.log, yscrollcommand=function(...) tkset(logYscroll, ...))
 	outputFrame <- tkframe(.commander)
-	submitIm <- tcl("image", "create", "bitmap", file=file.path(etc, "submit.xbm"))
-	if (getRcmdr("console.output"))
-		submitButton <- if (English()) buttonRcmdr(logFrame, image=submitIm,
-							borderwidth="2", command=onSubmit)
-				else buttonRcmdr(logFrame, text=gettextRcmdr("Submit"), borderwidth="2", command=onSubmit)
-	else submitButton <- if (English()) buttonRcmdr(outputFrame, image=submitIm,
-							borderwidth="2", command=onSubmit)
-				else buttonRcmdr(outputFrame, text=gettextRcmdr("Submit"), borderwidth="2", command=onSubmit)
+#	submitIm <- tcl("image", "create", "bitmap", file=file.path(etc, "submit.xbm"))
+	submitButton <- if (getRcmdr("console.output"))
+		 buttonRcmdr(logFrame, text=gettextRcmdr("Submit"), borderwidth="2", command=onSubmit,
+                     image="::image::submitIcon", compound="left")
+	else buttonRcmdr(outputFrame, text=gettextRcmdr("Submit"), borderwidth="2", command=onSubmit, 
+	                 image="::image::submitIcon", compound="left")
 	putRcmdr("outputWindow", tktext(outputFrame, bg="white", foreground=getRcmdr("output.text.color"),
 					font=getRcmdr("logFont"), height=output.height, width=log.width, wrap="none", undo=TRUE))
 	.output <- OutputWindow()
@@ -569,12 +580,13 @@ Commander <- function(){
 	tkconfigure(.messages, yscrollcommand=function(...) tkset(messagesYscroll, ...))
 	putRcmdr("modelName", tclVar(gettextRcmdr("<No active model>")))
 	putRcmdr("modelLabel", tkbutton(controlsFrame, textvariable=getRcmdr("modelName"), foreground="red",
-					relief="groove", command=selectActiveModel))
+					relief="groove", command=selectActiveModel, image="::image::modelIcon", compound="left"))
 	show.edit.button <- options("Rcmdr")[[1]]$show.edit.button
 	show.edit.button <- if (is.null(show.edit.button)) TRUE else show.edit.button
 	if (!getRcmdr("suppress.menus")){
-		RcmdrIm <- tcl("image", "create", "bitmap", file=file.path(etc, "Rcmdr.xbm"), foreground="red")
-		tkgrid(labelRcmdr(controlsFrame, image=RcmdrIm),
+#		RcmdrIm <- tcl("image", "create", "bitmap", file=file.path(etc, "Rcmdr.xbm"), foreground="red")
+        tkimage.create("photo", "::image::RlogoIcon", file = system.file("etc", "R-logo.gif", package="Rcmdr"))
+		tkgrid(labelRcmdr(controlsFrame, image="::image::RlogoIcon", compound="left"),
 				labelRcmdr(controlsFrame, text=gettextRcmdr("Data set:")), getRcmdr("dataSetLabel"),
 				labelRcmdr(controlsFrame, text="  "), if(show.edit.button) editButton, viewButton,
 				labelRcmdr(controlsFrame, text=gettextRcmdr("    Model: ")), getRcmdr("modelLabel"), sticky="w")
@@ -588,7 +600,7 @@ Commander <- function(){
 	tkgrid(logXscroll)
 	if (.log.commands) tkgrid(logFrame, sticky="news", padx=10, pady=0, columnspan=2)
 	tkgrid(labelRcmdr(outputFrame, text=gettextRcmdr("Output Window"), foreground="blue"),
-			if (.log.commands && !.console.output) submitButton, sticky="w")
+			if (.log.commands && !.console.output) submitButton, sticky="sw")
 	tkgrid(.output, outputYscroll, sticky="news", columnspan=2)
 	tkgrid(outputXscroll, columnspan=1 + (.log.commands && !.console.output))
 	if (!.console.output) tkgrid(outputFrame, sticky="news", padx=10, pady=0, columnspan=2)

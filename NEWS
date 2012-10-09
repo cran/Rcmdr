@@ -1,3 +1,13 @@
+Changes to Version 1.9-2
+
+  o Updated Korean translation and getting-started document (thanks to Shin Jong-Hwa).
+
+  o Updated Japanese getting-started document (thanks to Takaharu Araki).
+
+  o Better icons for dialog buttons, new option to suppress these icons, other interface tweaks (after suggestions of Milan Bouchet-Valat).
+
+  o Small fixes.
+
 Changes to Version 1.9-1
 
   o Updated version of Getting Started With the R Commander.
@@ -8,7 +18,7 @@ Changes to Version 1.9-1
 
   o Updated Korean translation and new Korean getting-started document (thanks to Shin Jong-Hwa).
  
-  o Updated Polish translation (Lukasz Daniel)
+  o Updated Polish translation (thanks to Lukasz Daniel)
 
   o Updated Romanian translation (thanks to Adrian Dusa).
 

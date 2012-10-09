@@ -1,6 +1,6 @@
 Package: Rcmdr
-Version: 1.9-1
-Date: 2012/09/13
+Version: 1.9-2
+Date: 2012/10/09
 Title: R Commander
 Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email =
         "jfox@mcmaster.ca"), person("Liviu", "Andronic", role = "ctb"),
@@ -20,7 +20,7 @@ Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email =
         "ctb"), person("Brian", "Ripley", role = "ctb"),
         person("Miroslav", "Ristic", role = "ctb"), person("Peter",
         "Wolf", role = "ctb") )
-Depends: R (>= 2.14.0), tcltk, grDevices, utils, car (>= 2.0-0)
+Depends: R (>= 2.14.0), tcltk, grDevices, utils, car (>= 2.0-15)
 Suggests: abind, aplpack, colorspace, effects (>= 1.0-7), e1071,
         foreign, grid, Hmisc, lattice, leaps, lmtest, MASS, mgcv,
         multcomp (>= 0.991-2), nlme, nnet, relimp, rgl, RODBC, sem (>=
@@ -31,6 +31,7 @@ Description: A platform-independent basic-statistics GUI (graphical
 License: GPL (>= 2)
 URL: http://www.r-project.org,
         http://socserv.socsci.mcmaster.ca/jfox/Misc/Rcmdr/
+Packaged: 2012-10-14 00:01:07 UTC; User
 Author: John Fox [aut, cre], Liviu Andronic [ctb], Michael Ash [ctb],
         Milan Bouchet-Valat [ctb], Theophilius Boye [ctb], Stefano
         Calza [ctb], Andy Chang [ctb], Philippe Grosjean [ctb], Richard
@@ -42,8 +43,4 @@ Author: John Fox [aut, cre], Liviu Andronic [ctb], Michael Ash [ctb],
         Wolf [ctb]
 Maintainer: John Fox <jfox@mcmaster.ca>
 Repository: CRAN
-Repository/R-Forge/Project: rcmdr
-Repository/R-Forge/Revision: 235
-Repository/R-Forge/DateTimeStamp: 2012-09-13 22:32:13
-Date/Publication: 2012-09-18 06:24:01
-Packaged: 2012-09-14 02:19:42 UTC; rforge
+Date/Publication: 2012-10-14 06:14:03
