@@ -1,19 +1,21 @@
-# last modified 2012-08-25 by J. Fox
+# last modified 2012-12-19 by J. Fox
 #  applied patch to improve window behaviour supplied by Milan Bouchet-Valat 2011-09-22
 
 .onAttach <- function(...){
-	if(interactive()) Commander()
-	else {
-		packageStartupMessage("The Commander GUI is launched only in interactive sessions",
-				domain="R-Rcmdr")
-		return()
-	}
-	packageStartupMessage(gettext("\nRcmdr Version", domain="R-Rcmdr"), " ",
-			getRcmdr("RcmdrVersion"), "\n")
-#	if (.Platform$GUI == "Rgui"  && ismdi()) packageStartupMessage(paste(gettextRcmdr("NOTE"), ": ",
-#		gettextRcmdr(
-#		"The Windows version of the R Commander works best under RGui with the single-document interface (SDI)\nSee ?Commander"),
-#		sep=""))
+    if(interactive()){
+        if (!(exists(".RcmdrEnv") && is.environment(RcmdrEnv()) &&
+                 exists("commanderWindow", RcmdrEnv()) &&
+                 !is.null(get("commanderWindow", RcmdrEnv())))){
+            Commander()
+            packageStartupMessage(gettext("\nRcmdr Version", domain="R-Rcmdr"), " ",
+                                  getRcmdr("RcmdrVersion"), "\n")
+        }
+    }
+    else {
+        packageStartupMessage("The Commander GUI is launched only in interactive sessions",
+                              domain="R-Rcmdr")
+        return()
+    }
 }
 
 .onLoad <- function(...){
@@ -41,6 +43,7 @@
 				icon="error", type="yesno")
 		if (tclvalue(response) == "yes") {
 			top <- tktoplevel(borderwidth=10)
+			tkwm.iconbitmap(top, system.file("etc", "R-logo.ico", package="Rcmdr"))
 			tkwm.title(top, gettext("Install Missing Packages", domain="R-Rcmdr"))
 			locationFrame <- tkframe(top)
 			locationVariable <- tclVar("CRAN")
@@ -77,11 +80,11 @@
 				tkdestroy(top)
 				location <- tclvalue(locationVariable)
 				if (location == "CRAN") {
-					packages <- utils:::CRAN.packages()[,1]
+					packages <- available.packages()[,1]
 					present <- missing.packages %in% packages
 					if (!all(present)) errorMessage()
 					if (!any(present)) return()
-					utils:::install.packages(missing.packages[present], lib=.libPaths()[1])		
+					install.packages(missing.packages[present], lib=.libPaths()[1])		
 				}
 #                else if (location == "Bioconductor") {
 #                    packages <- CRAN.packages(CRAN=getOption("BIOC"))[,1]
@@ -92,11 +95,11 @@
 #                    }
 				else {
 					directory <- paste("file:", tclvalue(directoryVariable), sep="")
-					packages <- utils:::CRAN.packages(contriburl=directory)[,1]
+					packages <- available.packages(contriburl=directory)[,1]
 					present <- missing.packages %in% packages
 					if (!all(present)) errorMessage()
 					if (!any(present)) return()
-					utils:::install.packages(missing.packages[present], contriburl=directory,
+					install.packages(missing.packages[present], contriburl=directory,
 							lib=.libPaths()[1])
 				}
 			}
@@ -123,7 +126,7 @@
 			tkbind(top, "<Return>", onOK)
 			tkwm.deiconify(top)
 			tkgrab.set(top)
-			tkfocus(top)
+		#	tkfocus(top)
 			tkwait.window(top)
 		}
 	}

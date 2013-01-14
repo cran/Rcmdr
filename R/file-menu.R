@@ -1,4 +1,4 @@
-# last modified 2012-08-27 by J. Fox
+# last modified 2012-12-06 by J. Fox
 #  applied patch to improve window behaviour supplied by Milan Bouchet-Valat 2011-09-22
 
 # File menu dialogs
@@ -132,6 +132,7 @@ closeCommander <- function(ask=TRUE, ask.save=ask){
 		close(getRcmdr("messages.connection"))
 	}
 	options(getRcmdr("saveOptions"))
+    options(help_type = getRcmdr("restore.help_type"))
 	tkdestroy(CommanderWindow())
 	putRcmdr("commanderWindow", NULL)
 	putRcmdr("logWindow", NULL)
@@ -140,7 +141,8 @@ closeCommander <- function(ask=TRUE, ask.save=ask){
 	options(getRcmdr("quotes"))
 	tkwait <- options("Rcmdr")[[1]]$tkwait  # to address problem in Debian Linux
 #	if ((!is.null(tkwait)) && tkwait) tclvalue(.commander.done) <<- "1"
-	if ((!is.null(tkwait)) && tkwait) assign(".commander.done", tclVar("1"), envir = .GlobalEnv)
+#	if ((!is.null(tkwait)) && tkwait) assign(".commander.done", tclVar("1"), envir = .GlobalEnv)
+	if ((!is.null(tkwait)) && tkwait) putRcmdr(".commander.done", tclVar("1"))
 	return(invisible(response))
 }
 

@@ -1,4 +1,4 @@
-# last modified 2012-09-18 by J. Fox
+# last modified 2012-12-17 by J. Fox
 #  applied patch to improve window behaviour supplied by Milan Bouchet-Valat 2011-09-22
 #  slight changes 12 Aug 04 by Ph. Grosjean
 
@@ -113,10 +113,10 @@ activeDataSet <- function(dsname, flushModel=TRUE, flushDialogMemory=TRUE){
 	RcmdrTclSet("dataSetName", paste(" ", dsname, " "))
 	# -PhG tkconfigure(.dataSetLabel, foreground="blue")
 	if (!is.SciViews()) tkconfigure(getRcmdr("dataSetLabel"), foreground="blue") else refreshStatus() # +PhG
-	if (getRcmdr("attach.data.set")){
-		attach(get(dsname, envir=.GlobalEnv), name=dsname)
-		logger(paste("attach(", dsname, ")", sep=""))
-	}
+# 	if (getRcmdr("attach.data.set")){
+# 		attach(get(dsname, envir=.GlobalEnv), name=dsname)
+# 		logger(paste("attach(", dsname, ")", sep=""))
+# 	}
 	if (is.SciViews()) refreshStatus() else if (flushModel) tkconfigure(getRcmdr("modelLabel"), foreground="red") # +PhG (& J.Fox, 25Dec04)
 	activateMenus()
 	dsname
@@ -288,7 +288,7 @@ Confint.glm <- function (object, parm, level=0.95, type=c("LR", "Wald"), ...){
 	cf <- coef(object)
 	pnames <- names(cf)
 	if (type == "LR") 
-		ci <- (MASS:::confint.glm(object, parm, level, ...))
+		ci <- confint.glm(object, parm, level, ...)
 	else {
 		if (missing(parm))
 			parm <- seq(along = pnames)
@@ -738,6 +738,7 @@ RcmdrPager <- function (file, header, title, delete.file)
 	for (i in seq(along = file)) {
 		zfile <- file[[i]]
 		tt <- tktoplevel()
+		if (.Platform$OS.type == "windows") tkwm.iconbitmap(tt, system.file("etc", "R-logo.ico", package="Rcmdr"))
 		tkwm.title(tt, if (length(title))
 							title[(i - 1)%%length(title) + 1]
 						else "")
@@ -968,6 +969,7 @@ initializeDialog <- defmacro(window=top, title="", offset=10, preventCrisp=FALSE
 		expr={
 			if ((!preventCrisp) && getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
 			window <- tktoplevel(borderwidth=10)
+			if (.Platform$OS.type == "windows") tkwm.iconbitmap(window, system.file("etc", "R-logo.ico", package="Rcmdr"))
 			tkwm.title(window, title)
 			tkwm.transient(window, CommanderWindow())
 			position <- if (is.SciViews()) -1 else commanderPosition() # +PhG
@@ -1484,22 +1486,30 @@ isS4object <- function(object) {
 
 # the following three functions are slightly adapted with permission from Philippe Grosjean
 
-RcmdrEnv <- function() {
-	pos <-  match("RcmdrEnv", search())
-	if (is.na(pos)) { # Must create it
-		RcmdrEnv <- list()
-		attach(RcmdrEnv, pos = length(search()) - 1)
-		rm(RcmdrEnv)
-		pos <- match("RcmdrEnv", search())
-	}
-	return(pos.to.env(pos))
-}
+# RcmdrEnv <- function() {
+# 	pos <-  match("RcmdrEnv", search())
+# 	if (is.na(pos)) { # Must create it
+# 		RcmdrEnv <- list()
+# 		attach(RcmdrEnv, pos = length(search()) - 1)
+# 		rm(RcmdrEnv)
+# 		pos <- match("RcmdrEnv", search())
+# 	}
+# 	return(pos.to.env(pos))
+# }
+# 
+# putRcmdr <- function(x, value)
+# 	assign(x, value, envir = RcmdrEnv())
+# 
+# getRcmdr <- function(x, mode="any")
+# 	get(x, envir = RcmdrEnv(), mode = mode, inherits = FALSE)
 
-putRcmdr <- function(x, value)
-	assign(x, value, envir = RcmdrEnv())
+.RcmdrEnv <- new.env(parent=emptyenv())
 
-getRcmdr <- function(x, mode="any")
-	get(x, envir = RcmdrEnv(), mode = mode, inherits = FALSE)
+putRcmdr <- function(x, value) assign(x, value, envir=.RcmdrEnv)
+
+getRcmdr <- function(x, mode="any") get(x, envir=.RcmdrEnv, mode=mode, inherits=FALSE)
+
+RcmdrEnv <- function() .RcmdrEnv
 
 RcmdrTclSet <- function(name, value){
 	if (is.SciViews()) return()   # + PhG
@@ -1885,13 +1895,17 @@ splitCmd <- function(cmd, width=getOption("width") - 4, at="[ ,]"){
 	if (singleQuotes[1] > 0 && (singleQuotes[1] < doubleQuotes[1] || doubleQuotes[1] < 0 ) && (singleQuotes[1] < comment[1] || comment[1] < 0 )){
 		nquotes <- length(singleQuotes)
 		if (nquotes < 2) stop("unbalanced quotes")
-		where[(where > singleQuotes[1]) & (where < singleQuotes[2])] <- NA
+#		where[(where > singleQuotes[1]) & (where < singleQuotes[2])] <- NA
+		for(i in seq(nquotes/2))
+		    where[(where > singleQuotes[2 * i - 1]) & (where < singleQuotes[2 * i])] <- NA
 		where <- na.omit(where)
 	}  
 	else if (doubleQuotes[1] > 0 && (doubleQuotes[1] < singleQuotes[1] || singleQuotes[1] < 0) && (doubleQuotes[1] < comment[1] || comment[1] < 0 )){
 		nquotes <- length(doubleQuotes)
 		if (nquotes < 2) stop("unbalanced quotes")
-		where[(where > doubleQuotes[1]) & (where < doubleQuotes[2])] <- NA
+#		where[(where > doubleQuotes[1]) & (where < doubleQuotes[2])] <- NA
+		for(i in seq(nquotes/2))
+		    where[(where > doubleQuotes[2 * i - 1]) & (where < doubleQuotes[2 * i])] <- NA
 		where <- na.omit(where)
 	}
 	else if (comment > 0){
@@ -2033,3 +2047,64 @@ flushDialogMemory <- function(what){
 		putRcmdr("dialog.values.noreset", dialog.values.noreset)
 	}
 }
+
+# for assignments to the global environment
+
+gassign <- function(x, value){
+    if (!(is.valid.name(x))) stop("argument x not a valid R name")
+    G <- .GlobalEnv
+    assign(x, value, envir=G)
+}
+
+# because it's no longer possible to access these functions from their packages:
+
+# from car:
+
+coef.multinom <- function (object, ...) 
+{
+    # the following from nnet:
+    cf <- function (object, ...) 
+    {
+        r <- length(object$vcoefnames)
+        if (length(object$lev) == 2L) {
+            coef <- object$wts[1L + (1L:r)]
+            names(coef) <- object$vcoefnames
+        }
+        else {
+            coef <- matrix(object$wts, nrow = object$n[3L], byrow = TRUE)[, 
+                                                                          1L + (1L:r), drop = FALSE]
+            if (length(object$lev)) 
+                dimnames(coef) <- list(object$lev, object$vcoefnames)
+            if (length(object$lab)) 
+                dimnames(coef) <- list(object$lab, object$vcoefnames)
+            coef <- coef[-1L, , drop = FALSE]
+        }
+        coef
+    }
+    b <- cf(object, ...)
+    cn <- colnames(b)
+    rn <- rownames(b)
+    b <- as.vector(t(b))
+    names(b) <- as.vector(outer(cn, rn, function(c, r) paste(r, 
+                                                             c, sep = ":")))
+    b
+}
+
+# from MASS:
+
+confint.glm <- function (object, parm, level = 0.95, trace = FALSE, ...) 
+{
+    pnames <- names(coef(object))
+    if (missing(parm)) 
+        parm <- seq_along(pnames)
+    else if (is.character(parm)) 
+        parm <- match(parm, pnames, nomatch = 0L)
+    message("Waiting for profiling to be done...")
+    utils::flush.console()
+    object <- profile(object, which = parm, alpha = (1 - level)/4, 
+                      trace = trace)
+    confint(object, parm = parm, level = level, trace = trace, 
+            ...)
+}
+
+tkfocus <- function(...) tcl("focus", ...)

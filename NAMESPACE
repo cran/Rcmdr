@@ -1,10 +1,13 @@
-# last modified 25 July 2011 by J. Fox
+# last modified 2013-01-12 by J. Fox
 
 useDynLib(Rcmdr)
 
 import(tcltk)
 
-export(activateMenus, activeDataSet, ActiveDataSet, activeDataSetP, activeModel,
+importFrom(utils, available.packages, install.packages)
+
+export(tkfocus,
+activateMenus, activeDataSet, ActiveDataSet, activeDataSetP, activeModel,
 ActiveModel, activeModelP, aicP, assignCluster, bin.var, buttonRcmdr,
 checkActiveDataSet,
 checkActiveModel, checkBoxes, checkClass, checkFactors, checkMethod, 
@@ -14,7 +17,7 @@ closeDialog, colPercents, Commander,
 commanderPosition, CommanderWindow, Confint, dataSetsP, defmacro,
 dialogSuffix, doItAndPrint, errorCondition, exists.method,
 Factors, factorsP, formulaFields, flushDialogMemory, 
-getDialog, getFrame, getRcmdr, getSelection, gettextRcmdr,
+gassign, getDialog, getFrame, getRcmdr, getSelection, gettextRcmdr,
 glmP, GrabFocus, groupsBox, groupsLabel, hclustSolutionsP, Hist, initializeDialog, 
 is.valid.name, is.SciViews, justDoIt, KMeans, labelRcmdr, Library,
 listAllModels, listAOVModels, listDataSets, listFactors, listGeneralizedLinearModels, 
@@ -29,11 +32,27 @@ RcmdrTkmessageBox, rcorr.adjust,
 reliability, RExcelSupported, rowPercents, sortVarNames, stepwise, subOKCancelHelp,
 subsetBox, tclvalue, totPercents, trim.blanks, ttkentry, ttkframe, ttkradiobutton,
 ttkscrollbar, TwoLevelFactors, twoLevelFactorsP, 
-UpdateModelNumber, variableListBox, Variables, varPosn)
+UpdateModelNumber, variableListBox, Variables, varPosn,
+    
+.Tcl, tcl, tclRequire, tclServiceMode, "tclvalue<-",
+tclVar, tkbind, tkcget, tkcheckbutton, tkconfigure,
+tkchooseDirectory, tkcurselection, tkdelete, tkdestroy, tkentry,
+tkframe, tkgrab.release, tkgrab.set, tkgetOpenFile, tkgetSaveFile,
+tkgrid, tkgrid.columnconfigure, tkgrid.configure, tkgrid.rowconfigure,
+tkicursor, tkindex, tkinsert,
+tkinvoke, tkitemconfigure, tklabel, tklistbox, tkmark.set,
+tkmessageBox, tkpack, tkradiobutton, tkraise, tkscale,
+tkscrollbar, tk_select.list, tkselection.clear, tkselection.present,
+tkselection.set, tkset, tktag.configure, tktext, tktoplevel,
+tkwait.window, tkwm.deiconify, tkwm.iconbitmap, tkwm.geometry, tkwm.protocol,
+tkwm.resizable, tkwm.title, tkwm.transient,
+tkxview.moveto, tkxview, tkyview, tkyview.scroll)
 
+S3method(coef, multinom)
 S3method(Confint, glm)
 S3method(Confint, default)
 S3method(Confint, multinom)
+S3method(confint, glm)
 S3method(confint, multinom)
 S3method(confint, polr)
 S3method(mergeRows, data.frame)
