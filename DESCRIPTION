@@ -1,6 +1,6 @@
 Package: Rcmdr
-Version: 1.9-4
-Date: 2013/01/24
+Version: 1.9-5
+Date: 2013/02/06
 Title: R Commander
 Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email =
         "jfox@mcmaster.ca"), person("Liviu", "Andronic", role = "ctb"),
@@ -32,7 +32,6 @@ Description: A platform-independent basic-statistics GUI (graphical
 License: GPL (>= 2)
 URL: http://www.r-project.org,
         http://socserv.socsci.mcmaster.ca/jfox/Misc/Rcmdr/
-Packaged: 2013-01-24 19:47:38 UTC; User
 Author: John Fox [aut, cre], Liviu Andronic [ctb], Michael Ash [ctb],
         Milan Bouchet-Valat [ctb], Theophilius Boye [ctb], Stefano
         Calza [ctb], Andy Chang [ctb], Philippe Grosjean [ctb], Richard
@@ -44,4 +43,8 @@ Author: John Fox [aut, cre], Liviu Andronic [ctb], Michael Ash [ctb],
         Wolf [ctb]
 Maintainer: John Fox <jfox@mcmaster.ca>
 Repository: CRAN
-Date/Publication: 2013-01-25 17:39:32
+Repository/R-Forge/Project: rcmdr
+Repository/R-Forge/Revision: 276
+Repository/R-Forge/DateTimeStamp: 2013-02-06 20:32:28
+Date/Publication: 2013-02-07 15:54:10
+Packaged: 2013-02-07 01:51:09 UTC; rforge

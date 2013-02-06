@@ -1,9 +1,9 @@
-7760d0161f2c1e2b5b54dff78b706fe9 *DESCRIPTION
+e890f810fd998f98b18b0f6bbfac068a *DESCRIPTION
 58637e12a37b402e453017ba52da9849 *NAMESPACE
-02b455dd7a4e5b0e411c0a213dce71f5 *NEWS
+96991a22169612ccc3afc5afe921f405 *NEWS
 1b99432b085110de5a4f302148aba245 *R/Rexcel-specific.R
 f08849063107ab5e8828ab6c19b60679 *R/cluster.R
-5582fe37f6cfff0800586654d973dd73 *R/commander.R
+8c81c7c54c424394759985e7b30a6a55 *R/commander.R
 0d6cbea7e77bd7b6e1a1844a3f4e8d46 *R/data-menu.R
 814baebd245e14d8faed4937a7ce211d *R/distributions-menu.R
 bec4f136d461bb4fbc0f05de9e954dfc *R/distributions-plotDistributions-menu.R
@@ -14,7 +14,7 @@ bec4f136d461bb4fbc0f05de9e954dfc *R/distributions-plotDistributions-menu.R
 3799cb512d57072f3b99c9b1a53f506c *R/ismdi.R
 2d3e7ea53cebd2b9d0b0035b9522d4fc *R/model-menu.R
 d5265676dd1d7c1015aefd5fbe083e7a *R/sciviews-specific.R
-e21e13e7c213963e5107173d2b64b4a2 *R/startup.R
+f80e1ee4a2f6b019722eb8529d1d3e4f *R/startup.R
 7822a95f6c9fe861681e4e81ec246494 *R/statistics-dimensional-menu.R
 75ebc55a2b13d7fd1d30019364343596 *R/statistics-means-menu.R
 e4c138b27c83425d9ad7e7a1bb313d71 *R/statistics-models-menu.R
@@ -23,7 +23,7 @@ e4c138b27c83425d9ad7e7a1bb313d71 *R/statistics-models-menu.R
 19d321f2f929e6e11c48de31e4af770c *R/statistics-summaries-menu.R
 4e514be74de0bbe11aee25aa86b44471 *R/statistics-tables-menu.R
 759a909d433018290411cc7b0bd23f4d *R/statistics-variances-menu.R
-2598f4aafe6c81adc841beef16941f63 *R/utilities.R
+b147dec289e43959eaa6ed88ea5e40b6 *R/utilities.R
 6086daaa02857bc72d55c09f96d840ba *inst/CHANGES
 797e851b07b6a25c257a850550ff2e19 *inst/CITATION
 31de694855b1d3984d706109f0db3d13 *inst/doc/Commander-ru.pdf
@@ -71,7 +71,7 @@ b379e5dcc521bce7d4f69fb6f156d09e *man/Hist.Rd
 751abef96e6a32d368beed566f3b23b5 *man/KMeans.Rd
 8b58b3563bfcbf2138cc0132fa449ecd *man/Plugins.Rd
 b90a4275f76d91613f919e8633afeef9 *man/Rcmdr-internal.Rd
-ef976f6d4c2f39a459df735d88e3300d *man/Rcmdr-package.Rd
+f00378f8ad6e02a6a9924d4ccd12a4b0 *man/Rcmdr-package.Rd
 7995bf4f96ea575d868e50d01d2448d0 *man/Rcmdr.Utilities.Rd
 bd32b051d088cbe60cfcdcb92009e893 *man/Rcmdr.sciviews-specific.Rd
 f748653782f882fa214526c297ad71e9 *man/RcmdrPager.Rd

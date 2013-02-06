@@ -1,4 +1,4 @@
-# last modified 2013-01-22 by J. Fox
+# last modified 2013-01-27 by J. Fox
 #  applied patch to improve window behaviour supplied by Milan Bouchet-Valat 2011-09-22
 #  slight changes 12 Aug 04 by Ph. Grosjean
 
@@ -969,13 +969,17 @@ initializeDialog <- defmacro(window=top, title="", offset=10, preventCrisp=FALSE
 		expr={
 			if ((!preventCrisp) && getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
 			window <- tktoplevel(borderwidth=10)
-			if (.Platform$OS.type == "windows") tkwm.iconbitmap(window, system.file("etc", "R-logo.ico", package="Rcmdr"))
 			tkwm.title(window, title)
-			tkwm.transient(window, CommanderWindow())
 			position <- if (is.SciViews()) -1 else commanderPosition() # +PhG
 			position <- if (any(position < 0)) "-50+50"
 					else paste("+", paste(offset + position, collapse="+"), sep="")
 			tkwm.geometry(window, position)
+		    tcl("wm", "iconphoto", window, "::image::RlogoIcon")
+# 		    if (.Platform$OS.type == "windows") {
+# 		        tkwm.iconify(window)
+# 		        tkwm.iconbitmap(window, system.file("etc", "R-logo.ico", package="Rcmdr"))
+# 		    }
+		    tkwm.transient(window, CommanderWindow())
 		}
 )
 
