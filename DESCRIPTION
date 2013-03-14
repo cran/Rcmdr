@@ -1,6 +1,6 @@
 Package: Rcmdr
-Version: 1.9-5
-Date: 2013/02/06
+Version: 1.9-6
+Date: 2013/03/14
 Title: R Commander
 Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email =
         "jfox@mcmaster.ca"), person("Liviu", "Andronic", role = "ctb"),
@@ -20,7 +20,7 @@ Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email =
         "ctb"), person("Brian", "Ripley", role = "ctb"),
         person("Miroslav", "Ristic", role = "ctb"), person("Peter",
         "Wolf", role = "ctb") )
-Depends: R (>= 2.14.0), grDevices, utils, car (>= 2.0-15)
+Depends: R (>= 2.15.0), grDevices, utils, car (>= 2.0-15)
 Imports: tcltk
 Suggests: abind, aplpack, colorspace, effects (>= 1.0-7), e1071,
         foreign, grid, Hmisc, lattice, leaps, lmtest, MASS, mgcv,
@@ -44,7 +44,8 @@ Author: John Fox [aut, cre], Liviu Andronic [ctb], Michael Ash [ctb],
 Maintainer: John Fox <jfox@mcmaster.ca>
 Repository: CRAN
 Repository/R-Forge/Project: rcmdr
-Repository/R-Forge/Revision: 276
-Repository/R-Forge/DateTimeStamp: 2013-02-06 20:32:28
-Date/Publication: 2013-02-07 15:54:10
-Packaged: 2013-02-07 01:51:09 UTC; rforge
+Repository/R-Forge/Revision: 285
+Repository/R-Forge/DateTimeStamp: 2013-03-14 14:50:14
+Date/Publication: 2013-03-15 07:15:47
+Packaged: 2013-03-14 15:15:36 UTC; rforge
+NeedsCompilation: yes

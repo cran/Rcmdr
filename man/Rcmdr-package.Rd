@@ -12,9 +12,9 @@ user interface) for R, based on the tcltk package.
 \details{
 \tabular{ll}{
 Package: \tab Rcmdr\cr
-Version: \tab 1.9-5\cr
-Date: \tab 2013/02/06\cr
-Depends: \tab R (>= 2.14.0), grDevices, utils, car (>= 2.0-15)\cr
+Version: \tab 1.9-6\cr
+Date: \tab 2013/03/14\cr
+Depends: \tab R (>= 2.15.0), grDevices, utils, car (>= 2.0-15)\cr
 Imports: \tab tcltk\cr
 Suggests: \tab abind, aplpack, colorspace, effects (>= 1.0-7), e1071, foreign, grid, 
    Hmisc, lattice, leaps, lmtest, MASS, mgcv, multcomp (>= 0.991-2), nlme, nnet, 

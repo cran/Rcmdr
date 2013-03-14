@@ -1,4 +1,4 @@
-# last modified 2013-01-27 by J. Fox
+# last modified 2013-03-14 by J. Fox
 #  applied patch to improve window behaviour supplied by Milan Bouchet-Valat 2011-09-22
 #  slight changes 12 Aug 04 by Ph. Grosjean
 
@@ -683,7 +683,7 @@ plotMeans <- function(response, factor1, factor2, error.bars = c("se", "sd", "co
 
 bin.var <- function (x, bins=4, method=c("intervals", "proportions", "natural"), labels=FALSE){
 	method <- match.arg(method)
-# Author: Dan Putler (revision by J. Fox, 5 Dec 04)
+# Author: Dan Putler (revision by J. Fox, 5 Dec 04 & 5 Mar 13)
 	if(length(x) < bins) {
 		stop(gettextRcmdr("The number of bins exceeds the number of data values"))
 	}
@@ -692,8 +692,8 @@ bin.var <- function (x, bins=4, method=c("intervals", "proportions", "natural"),
 						include.lowest = TRUE, labels=labels)
 			else {
 				xx <- na.omit(x)
-				breaks <- c(min(xx), tapply(xx, KMeans(xx, bins)$cluster, max))
-				cut(x, breaks, include.lowest=TRUE, labels=labels)
+				breaks <- c(-Inf, tapply(xx, KMeans(xx, bins)$cluster, max))
+				cut(x, breaks, labels=labels)
 			}
 	as.factor(x)
 }
@@ -764,10 +764,10 @@ RcmdrPager <- function (file, header, title, delete.file)
 # help functions
 
 helpCommander <- function() {
-	PDF <- file.access(paste(file.path(.path.package(package="Rcmdr")[1], "doc"), 
+	PDF <- file.access(paste(file.path(path.package(package="Rcmdr")[1], "doc"), 
 					"/", gettextRcmdr("Commander"), ".pdf", sep=""), mode=4)
 	if (PDF == 0){
-		browseURL(paste(file.path(.path.package(package="Rcmdr")[1], "doc"),
+		browseURL(paste(file.path(path.package(package="Rcmdr")[1], "doc"),
 						"/", gettextRcmdr("Commander"), ".pdf", sep=""))
 	} 
 	else if (as.numeric(R.Version()$major) >= 2) print(help(gettextRcmdr("Commander")))
@@ -780,7 +780,7 @@ helpAboutCommander <- function() {
 }
 
 browseManual <- function() {
-	browseURL(paste(file.path(.path.package(package="Rcmdr")[1], "doc"),
+	browseURL(paste(file.path(path.package(package="Rcmdr")[1], "doc"),
 					"/", gettextRcmdr("Getting-Started-with-the-Rcmdr"), ".pdf", sep=""))
 }
 
@@ -1634,7 +1634,7 @@ MacOSXP <- function() {
 	!is.null(sys) && length(grep("[Dd]arwin", sys["sysname"]) > 0)
 }
 
-packageAvailable <- function(name) 0 != length(.find.package(name, quiet=TRUE))
+packageAvailable <- function(name) 0 != length(find.package(name, quiet=TRUE))
 
 rglLoaded <- function() 0 != length(grep("^rgl", loadedNamespaces()))
 
@@ -1782,7 +1782,7 @@ trim.col.na <- function(dat){
 # check whether packages are available
 
 packagesAvailable <- function(packages){
-	sapply(sapply(packages, .find.package, quiet=TRUE),
+	sapply(sapply(packages, find.package, quiet=TRUE),
 			function(x) length(x) != 0)
 }
 
