@@ -1,4 +1,4 @@
-# last modified 2013-03-14 by J. Fox
+# last modified 2013-08-09 by J. Fox
 #  applied patch to improve window behaviour supplied by Milan Bouchet-Valat 2011-09-22
 #  slight changes 12 Aug 04 by Ph. Grosjean
 
@@ -95,10 +95,9 @@ activeDataSet <- function(dsname, flushModel=TRUE, flushDialogMemory=TRUE){
 	if (flushModel) {
 		putRcmdr(".activeModel", NULL)
 		RcmdrTclSet("modelName", gettextRcmdr("<No active model>"))
-		if (!is.SciViews()) tkconfigure(getRcmdr("modelLabel"), foreground="red") else refreshStatus()
+	    tkconfigure(getRcmdr("modelLabel"), foreground="red")
 	}
 	if (flushDialogMemory) putRcmdr("dialog.values", list())
-	# -PhG tkconfigure(.modelLabel, foreground="red")
 	ActiveDataSet(dsname)
 	Message(sprintf(gettextRcmdr("The dataset %s has %d rows and %d columns."), dsname,
 					nrow(get(dsname, envir=.GlobalEnv)), ncol(get(dsname, envir=.GlobalEnv))), type="note")
@@ -111,13 +110,7 @@ activeDataSet <- function(dsname, flushModel=TRUE, flushDialogMemory=TRUE){
 	Factors(listFactors())
 	TwoLevelFactors(listTwoLevelFactors())
 	RcmdrTclSet("dataSetName", paste(" ", dsname, " "))
-	# -PhG tkconfigure(.dataSetLabel, foreground="blue")
-	if (!is.SciViews()) tkconfigure(getRcmdr("dataSetLabel"), foreground="blue") else refreshStatus() # +PhG
-# 	if (getRcmdr("attach.data.set")){
-# 		attach(get(dsname, envir=.GlobalEnv), name=dsname)
-# 		logger(paste("attach(", dsname, ")", sep=""))
-# 	}
-	if (is.SciViews()) refreshStatus() else if (flushModel) tkconfigure(getRcmdr("modelLabel"), foreground="red") # +PhG (& J.Fox, 25Dec04)
+    tkconfigure(getRcmdr("dataSetLabel"), foreground="blue")
 	activateMenus()
 	dsname
 }
@@ -134,8 +127,7 @@ activeModel <- function(model){
 	}
 	ActiveModel(model)
 	RcmdrTclSet("modelName", paste(" ", model, " "))
-	# -PhG tkconfigure(.modelLabel, foreground="blue")
-	if (!is.SciViews()) tkconfigure(getRcmdr("modelLabel"), foreground="blue") else refreshStatus() # +PhG
+    tkconfigure(getRcmdr("modelLabel"), foreground="blue")
 	activateMenus()
 	model
 }
@@ -263,14 +255,67 @@ print.reliability <- function(x, digits=4, ...){
 	invisible(x)
 }
 
-partial.cor <- function(X, ...){
-	R <- cor(X, ...)
-	RI <- solve(R)
-	D <- 1/sqrt(diag(RI))
-	R <- - RI * (D %o% D)
-	diag(R) <- 0
-	rownames(R) <- colnames(R) <- colnames(X)
-	R
+partial.cor <- function(X, tests=FALSE, use=c("complete.obs", "pairwise.complete.obs")){
+    countValid <- function(X){
+        X <- !is.na(X)
+        t(X) %*% X
+    }
+    use <- match.arg(use)
+    if (use == "complete.obs"){
+        X <- na.omit(X)
+        n <- nrow(X)
+    }
+    else n <- countValid(X) 
+    R <- cor(X, use=use)
+    RI <- solve(R)
+    D <- 1/sqrt(diag(RI))
+    R <- - RI * (D %o% D)
+    diag(R) <- 0
+    rownames(R) <- colnames(R) <- colnames(X)
+    result <- list(R=R, n=n, P=NULL, P.unadj=NULL)
+    if (tests){
+        opt <- options(scipen=5)
+        on.exit(options(opt))
+        df <- n - ncol(X)
+        f <- (R^2)*df/(1 - R^2)
+        P <- P.unadj <- pf(f, 1, df, lower.tail=FALSE)
+        p <- P[lower.tri(P)]
+        adj.p <- p.adjust(p, method="holm")
+        P[lower.tri(P)] <- adj.p
+        P[upper.tri(P)] <- 0
+        P <- P + t(P)
+        P <- ifelse(P < 1e-04, 0, P)
+        P <- format(round(P, 4))
+        diag(P) <- ""
+        P[grep("0.0000", P)] <- "<.0001"
+        P.unadj <- ifelse(P.unadj < 1e-04, 0, P.unadj)
+        P.unadj <- format(round(P.unadj, 4))
+        diag(P.unadj) <- ""
+        P.unadj[grep("0.0000", P.unadj)] <- "<.0001"
+        result$P <- P
+        result$P.unadj <- P.unadj
+    }
+    class(result) <- "partial.cor"
+    result
+}
+
+print.partial.cor <- function(x, digits=max(3, getOption("digits") - 2), ...){
+    cat("\n Partial correlations:\n")
+    print(round(x$R, digits, ...))
+    cat("\n Number of observations: ")
+    n <- x$n
+    if (all(n[1] == n)) cat(n[1], "\n")
+    else{
+        cat("\n")
+        print(n)
+    }
+    if (!is.null(x$P)){
+        cat("\n Pairwise two-sided p-values:\n")
+        print(x$P.unadj, quote=FALSE)
+        cat("\n Adjusted p-values (Holm's method)\n")
+        print(x$P, quote=FALSE)
+    }
+    x
 }
 
 Confint <- function(object, parm, level=0.95, ...) UseMethod("Confint")
@@ -681,50 +726,100 @@ plotMeans <- function(response, factor1, factor2, error.bars = c("se", "sd", "co
 	invisible(NULL)
 }
 
+lineplot <- function(x, ..., legend){
+    xlab <- deparse(substitute(x))
+    y <- cbind(...)
+    m <- ncol(y)
+    legend <- if (missing(legend)) m > 1
+    if (legend && m > 1) {
+        mar <- par("mar")
+        top <- 3.5 + m
+        old.mar <- par(mar=c(mar[1:2], top, mar[4]))
+        on.exit(par(old.mar))
+    }
+    if (m > 1) matplot(x, y, type="b", lty=1, xlab=xlab, ylab="")
+    else plot(x, y, type="b", pch=16, xlab=xlab, ylab=colnames(y))
+    if (legend && ncol(y) > 1){
+        xpd <- par(xpd=TRUE)
+        on.exit(par(xpd), add=TRUE)
+        ncols <- length(palette())
+        cols <- rep(1:ncols, 1 + m %/% ncols)[1:m]
+        usr <- par("usr")
+        legend(usr[1], usr[4] + 1.2*top*strheight("x"), 
+            legend=colnames(y), col=cols, lty=1, pch=as.character(1:m))
+    }
+    return(invisible(NULL))
+}
+
+indexplot <- function(x, labels=seq_along(x), id.method="y", type="h", id.n=0, ylab, ...){
+    if (missing(ylab)) ylab <- deparse(substitute(x))
+    plot(x, type=type, ylab=ylab, xlab="Observation Index", ...)
+    if (par("usr")[3] <= 0) abline(h=0, col='gray')
+    ids <- showLabels(seq_along(x), x, labels=labels, id.method=id.method, id.n=id.n)
+    if (is.null(ids)) return(invisible(NULL)) else return(ids)
+}
+
 bin.var <- function (x, bins=4, method=c("intervals", "proportions", "natural"), labels=FALSE){
-	method <- match.arg(method)
-# Author: Dan Putler (revision by J. Fox, 5 Dec 04 & 5 Mar 13)
-	if(length(x) < bins) {
-		stop(gettextRcmdr("The number of bins exceeds the number of data values"))
-	}
-	x <- if(method == "intervals") cut(x, bins, labels=labels)
-			else if (method == "proportions") cut(x, quantile(x, probs=seq(0,1,1/bins), na.rm=TRUE),
-						include.lowest = TRUE, labels=labels)
-			else {
-				xx <- na.omit(x)
-				breaks <- c(-Inf, tapply(xx, KMeans(xx, bins)$cluster, max))
-				cut(x, breaks, labels=labels)
-			}
-	as.factor(x)
+    method <- match.arg(method)
+    # Author: Dan Putler (revision by J. Fox, 5 Dec 04 & 5 Mar 13)
+    if(length(x) < bins) {
+        stop(gettextRcmdr("The number of bins exceeds the number of data values"))
+    }
+    x <- if(method == "intervals") cut(x, bins, labels=labels)
+    else if (method == "proportions") cut(x, quantile(x, probs=seq(0,1,1/bins), na.rm=TRUE),
+        include.lowest = TRUE, labels=labels)
+    else {
+        xx <- na.omit(x)
+        breaks <- c(-Inf, tapply(xx, KMeans(xx, bins)$cluster, max))
+        cut(x, breaks, labels=labels)
+    }
+    as.factor(x)
 }
 
 # the following function is adapted from a suggestion by Robert Muenchen
 
 rcorr.adjust <- function(x, type=c("pearson", "spearman"), 
-		use=c("complete.obs", "pairwise.complete.obs")){
-	require("Hmisc")
-	type <- match.arg(type)
-	use <- match.arg(use)
-	x <- if (use == "complete.obs") as.matrix(na.omit(x)) else as.matrix(x)
-	R <- rcorr(x, type=type)
-	P <- R$P
-	p <- P[lower.tri(P)]
-	adj.p <- p.adjust(p, method="holm")
-	P[lower.tri(P)] <- adj.p
-	P[upper.tri(P)] <- 0
-	P <- P + t(P)
-	P <- ifelse(P < 1e-04, 0, P)
-	P <- format(round(P, 4))
-	P[grep("NA", P)] <- ""
-	res <- list(R=R, P=P)
-	class(res) <- "rcorr.adjust"
-	res
+    use=c("complete.obs", "pairwise.complete.obs")){
+    require("Hmisc")
+    opt <- options(scipen=5)
+    on.exit(options(opt))
+    type <- match.arg(type)
+    use <- match.arg(use)
+    x <- if (use == "complete.obs") as.matrix(na.omit(x)) else as.matrix(x)
+    R <- rcorr(x, type=type)
+    P <- P.unadj <- R$P
+    p <- P[lower.tri(P)]
+    adj.p <- p.adjust(p, method="holm")
+    P[lower.tri(P)] <- adj.p
+    P[upper.tri(P)] <- 0
+    P <- P + t(P)
+    P <- ifelse(P < 1e-04, 0, P)
+    P <- format(round(P, 4))
+    diag(P) <- ""
+    P[grep("0.0000", P)] <- "<.0001"
+    P.unadj <- ifelse(P.unadj < 1e-04, 0, P.unadj)
+    P.unadj <- format(round(P.unadj, 4))
+    diag(P.unadj) <- ""
+    P.unadj[grep("0.0000", P.unadj)] <- "<.0001"
+    result <- list(R=R, P=P, P.unadj=P.unadj, type=type)
+    class(result) <- "rcorr.adjust"
+    result
 }
 
 print.rcorr.adjust <- function(x, ...){
-	print(x$R)
-	cat("\n Adjusted p-values (Holm's method)\n")
-	print(x$P, quote = FALSE)
+    cat("\n", if (x$type == "pearson") "Pearson" else "Spearman", "correlations:\n")
+    print(round(x$R$r, 4))
+    cat("\n Number of observations: ")
+    n <- x$R$n
+    if (all(n[1] == n)) cat(n[1], "\n")
+    else{
+        cat("\n")
+        print(n)
+    }
+    cat("\n Pairwise two-sided p-values:\n")
+    print(x$P.unadj, quote=FALSE)
+    cat("\n Adjusted p-values (Holm's method)\n")
+    print(x$P, quote=FALSE)
 }
 
 # Pager
@@ -738,7 +833,7 @@ RcmdrPager <- function (file, header, title, delete.file)
 	for (i in seq(along = file)) {
 		zfile <- file[[i]]
 		tt <- tktoplevel()
-		if (.Platform$OS.type == "windows") tkwm.iconbitmap(tt, system.file("etc", "R-logo.ico", package="Rcmdr"))
+		if (WindowsP()) tkwm.iconbitmap(tt, system.file("etc", "R-logo.ico", package="Rcmdr"))
 		tkwm.title(tt, if (length(title))
 							title[(i - 1)%%length(title) + 1]
 						else "")
@@ -784,6 +879,21 @@ browseManual <- function() {
 					"/", gettextRcmdr("Getting-Started-with-the-Rcmdr"), ".pdf", sep=""))
 }
 
+browseEnglishManual <- function() {
+    browseURL(paste(file.path(path.package(package="Rcmdr")[1], "doc"),
+                    "/Getting-Started-with-the-Rcmdr.pdf", sep=""))
+}
+
+manualTranslationP <- function(){
+    gettextRcmdr("Getting-Started-with-the-Rcmdr") != "Getting-Started-with-the-Rcmdr"
+}
+
+browseRcmdrWebsite <- function() browseURL("http://socserv.socsci.mcmaster.ca/jfox/Misc/Rcmdr/")
+
+browseRWebsite <- function() browseURL("http://www.r-project.org/")
+
+browseRMarkdown <- function() browseURL("http://www.rstudio.com/ide/docs/authoring/using_markdown")
+
 
 
 # functions for building dialog boxes
@@ -827,68 +937,212 @@ defmacro <- function(..., expr){
 	ff
 }
 
-OKCancelHelp <- defmacro(window=top, helpSubject=NULL,  model=FALSE, reset=NULL,
-		expr={
-			memory <- getRcmdr("retain.selections")
-			buttonsFrame <- tkframe(window, borderwidth=5)
-			OKbutton <- buttonRcmdr(buttonsFrame, text=gettextRcmdr("OK"), foreground="darkgreen", width="12", command=onOK, default="active",
-					borderwidth=3, image="::image::okIcon", compound="left")
-			onCancel <- function() {
-				if (model) putRcmdr("modelNumber", getRcmdr("modelNumber") - 1)
-				if (GrabFocus()) tkgrab.release(window)
-				tkdestroy(window)
-				tkfocus(CommanderWindow())
-			}
-			cancelButton <- buttonRcmdr(buttonsFrame, text=gettextRcmdr("Cancel"), foreground="red", width="12", command=onCancel, borderwidth=3,
-					image="::image::cancelIcon", compound="left")
-			if (!is.null(helpSubject)){
-				onHelp <- function() {
-					if (GrabFocus() && .Platform$OS.type != "windows") tkgrab.release(window)
-					if (as.numeric(R.Version()$major) >= 2) print(help(helpSubject))
-					else help(helpSubject)
-				}
-				helpButton <- buttonRcmdr(buttonsFrame, text=gettextRcmdr("Help"), width="12", command=onHelp, borderwidth=3,
-						image="::image::helpIcon", compound="left")
-			}
-			if (!is.null(reset) && memory){
-				onReset <- function(){
-					if (model) putRcmdr("modelNumber", getRcmdr("modelNumber") - 1)
-					putDialog(reset, NULL)
-					putDialog(reset, NULL, resettable=FALSE)
-					closeDialog()
-					eval(parse(text=paste(reset, "()")))
-				}
-				resetButton <- buttonRcmdr(buttonsFrame, text=gettextRcmdr("Reset"), width=12, command=onReset,
-						image="::image::resetIcon", compound="left")
-			}
-			tkgrid(OKbutton, labelRcmdr(buttonsFrame, text="  "), cancelButton, labelRcmdr(buttonsFrame, text="            "),
-					if(!is.null(reset) && memory) resetButton, if(!is.null(reset) && memory) labelRcmdr(buttonsFrame, text="  "), 
-					if (!is.null(helpSubject)) helpButton, sticky="w")
-		})
+OKCancelHelp <- defmacro(window=top, helpSubject=NULL,  model=FALSE, reset=NULL, apply=NULL,
+                         expr={
+                             memory <- getRcmdr("retain.selections")
+                             buttonsFrame <- tkframe(window)
+                             leftButtonsBox <- tkframe(buttonsFrame)
+                             rightButtonsBox <- tkframe(buttonsFrame)
+                             
+                             OnOK <- function(){
+                                 putRcmdr("restoreTab", FALSE)
+                                 if (getRcmdr("use.markdown")) {
+                                     putRcmdr("startNewCommandBlock", FALSE)
+                                     beginRmdBlock()
+                                 }
+                                 if (getRcmdr("use.knitr")) {
+                                     putRcmdr("startNewKnitrCommandBlock", FALSE)
+                                     beginRnwBlock()
+                                 }
+                                 .setBusyCursor()
+                                 onOK()
+                                 .setIdleCursor()
+                                 if (getRcmdr("use.markdown")){
+                                     removeNullRmdBlocks()
+                                     putRcmdr("startNewCommandBlock", TRUE)
+                                     if (getRcmdr("rmd.generated")) {
+                                         endRmdBlock()
+                                         putRcmdr("rmd.generated", FALSE)
+                                     }
+                                     removeNullRmdBlocks()
+                                 }
+                                 if (getRcmdr("use.knitr")){
+                                     removeNullRnwBlocks()
+                                     putRcmdr("startNewKnitrCommandBlock", TRUE)
+                                     if (getRcmdr("rnw.generated")) {
+                                         endRnwBlock()
+                                         putRcmdr("rnw.generated", FALSE)
+                                     }
+                                     removeNullRnwBlocks()
+                                 }
+                             }
+                             
+                             OKbutton <- buttonRcmdr(rightButtonsBox, text=gettextRcmdr("OK"), foreground="darkgreen", width="12", command=OnOK, default="active",
+                                                     image="::image::okIcon", compound="left")
+                             
+                             onCancel <- function() {
+                                 putRcmdr("restoreTab", FALSE)
+                                 if (model) putRcmdr("modelNumber", getRcmdr("modelNumber") - 1)
+                                 if (GrabFocus()) tkgrab.release(window)
+                                 tkdestroy(window)
+                                 tkfocus(CommanderWindow())
+                             }
+                             
+                             cancelButton <- buttonRcmdr(rightButtonsBox, text=gettextRcmdr("Cancel"), foreground="red", width="12", command=onCancel, # borderwidth=3,
+                                                         image="::image::cancelIcon", compound="left")
+                             
+                             if (!is.null(helpSubject)){
+                                 onHelp <- function() {
+                                     if (GrabFocus() && (!WindowsP())) tkgrab.release(window)
+                                     if (as.numeric(R.Version()$major) >= 2) print(help(helpSubject))
+                                     else help(helpSubject)
+                                 }
+                                 helpButton <- buttonRcmdr(leftButtonsBox, text=gettextRcmdr("Help"), width="12", command=onHelp, # borderwidth=3,
+                                                           image="::image::helpIcon", compound="left")
+                             }
+                             
+                             if (!is.null(reset) && memory){
+                                 onReset <- function(){
+                                     ID <- window$ID
+                                     putRcmdr("cancelDialogReopen", TRUE)
+                                     putRcmdr("open.dialog.here", as.character(.Tcl(paste("winfo geometry", ID))))
+                                     if (model) putRcmdr("modelNumber", getRcmdr("modelNumber") - 1)
+                                     putDialog(reset, NULL)
+                                     putDialog(reset, NULL, resettable=FALSE)
+                                    closeDialog()
+                                     eval(parse(text=paste(reset, "()")))
+                                     putRcmdr("open.dialog.here", NULL)
+                                     putRcmdr("restoreTab", FALSE)
+                                 }
+                                 resetButton <- buttonRcmdr(leftButtonsBox, text=gettextRcmdr("Reset"), width=12, command=onReset,
+                                                            image="::image::resetIcon", compound="left")
+                             }
+                             
+                             if (!is.null(apply)){
+                                 onApply <- function(){
+                                     putRcmdr("restoreTab", TRUE)
+                                     putRcmdr("cancelDialogReopen", FALSE)
+                                     ID <- window$ID
+                                     putRcmdr("open.dialog.here", as.character(.Tcl(paste("winfo geometry", ID))))
+                                     if (getRcmdr("use.markdown")) {
+                                         putRcmdr("startNewCommandBlock", FALSE)
+                                         beginRmdBlock()
+                                     }
+                                     if (getRcmdr("use.knitr")) {
+                                         putRcmdr("startNewKnitrCommandBlock", FALSE)
+                                         beginRnwBlock()
+                                     }
+                                     .setBusyCursor()
+                                     onOK()
+                                     .setIdleCursor()
+                                     if (getRcmdr("use.markdown")){
+                                         removeNullRmdBlocks()
+                                         putRcmdr("startNewCommandBlock", TRUE)
+                                         if (getRcmdr("rmd.generated")) {
+                                             endRmdBlock()
+                                             putRcmdr("rmd.generated", FALSE)
+                                         }
+                                         removeNullRmdBlocks()
+                                     }
+                                     if (getRcmdr("use.knitr")){
+                                         removeNullRnwBlocks()
+                                         putRcmdr("startNewKnitrCommandBlock", TRUE)
+                                         if (getRcmdr("rnw.generated")) {
+                                             endRnwBlock()
+                                             putRcmdr("rnw.generated", FALSE)
+                                         }
+                                         removeNullRnwBlocks()
+                                     }
+                                     if (getRcmdr("cancelDialogReopen")){
+                                         putRcmdr("cancelDialogReopen", FALSE)
+                                     }
+                                     else{
+                                         eval(parse(text=paste(apply, "()")))
+                                         putRcmdr("open.dialog.here", NULL)
+                                     }
+                                 }
+                                 applyButton <- buttonRcmdr(rightButtonsBox, text=gettextRcmdr("Apply"), foreground="yellow", width="12", command=onApply,
+                                                            image="::image::applyIcon", compound="left")
+                             }
+                             
+                             if(!WindowsP()) {
+                                 if (!is.null(apply)){
+                                     tkgrid(cancelButton, OKbutton, applyButton, sticky="w")
+                                     tkgrid.configure(applyButton, padx=c(6, 0))
+                                 }
+                                 else{
+                                     tkgrid(cancelButton, OKbutton, sticky="w")
+                                 }
+                                 tkgrid.configure(OKbutton, padx=c(6, 0))
+                             }
+                             else {
+                                 if (!is.null(apply)){
+                                     tkgrid(OKbutton, cancelButton, applyButton, sticky="w")
+                                     tkgrid.configure(applyButton, padx=c(6, 0))
+                                 }
+                                 else{
+                                     tkgrid(OKbutton, cancelButton, sticky="w")
+                                 }
+                                 tkgrid.configure(OKbutton, padx=c(6, 6))
+                             }
+                             if (!is.null(reset) && memory) {
+                                 if (! is.null(helpSubject)){
+                                     tkgrid (helpButton, resetButton, pady=6)
+                                 }
+                                 else tkgrid (resetButton, pady=6)
+                                 if (!WindowsP()) tkgrid.configure(resetButton, padx=c(0, 6))
+                             }
+                             else if (! is.null(helpSubject)){
+                                 tkgrid(helpButton, pady=6)
+                             }
+                             tkgrid(leftButtonsBox, rightButtonsBox, pady=6, sticky="ew")
+                             if (!is.null(helpSubject)) tkgrid.configure(helpButton, padx=c(0, 18))
+                             else if (!is.null(reset) && memory) tkgrid.configure(resetButton, padx=c(0, 18))
+                             tkgrid.columnconfigure(buttonsFrame, 0, weight=1)
+                             tkgrid.columnconfigure(buttonsFrame, 1, weight=1)
+                             tkgrid.configure(leftButtonsBox, sticky="w")
+                             tkgrid.configure(rightButtonsBox, sticky="e")
+                         })
 
 subOKCancelHelp <- defmacro(window=subdialog, helpSubject=NULL,
 		expr={
-			subButtonsFrame <- tkframe(window, borderwidth=5)
-			subOKbutton <- buttonRcmdr(subButtonsFrame, text=gettextRcmdr("OK"), foreground="darkgreen", width="12", command=onOKsub, default="active",
-					borderwidth=3, image="::image::okIcon", compound="left")
+		    subButtonsFrame <- tkframe(window)
+		    subLeftButtonsBox <- tkframe(subButtonsFrame)
+		    subRightButtonsBox <- tkframe(subButtonsFrame)
+			subOKbutton <- buttonRcmdr(subRightButtonsBox, text=gettextRcmdr("OK"), foreground="darkgreen", width="12", command=onOKsub, default="active",
+					image="::image::okIcon", compound="left")
 			onCancelSub <- function() {
 				if (GrabFocus()) tkgrab.release(window)
 				tkdestroy(window)
 				tkfocus(CommanderWindow())
 			}
-			subCancelButton <- buttonRcmdr(subButtonsFrame, text=gettextRcmdr("Cancel"), foreground="red", width="12", command=onCancelSub,
-					borderwidth=3, image="::image::cancelIcon", compound="left")
+			subCancelButton <- buttonRcmdr(subRightButtonsBox, text=gettextRcmdr("Cancel"), foreground="red", width="12", command=onCancelSub,
+					image="::image::cancelIcon", compound="left") # borderwidth=3, 
 			if (!is.null(helpSubject)){
 				onHelpSub <- function(){
-					if (GrabFocus() && .Platform$OS.type != "windows") tkgrab.release(window)
+					if (GrabFocus() && (!WindowsP())) tkgrab.release(window)
 					if (as.numeric(R.Version()$major) >= 2) print(help(helpSubject))
 					else help(helpSubject)
 				}
-				subHelpButton <- buttonRcmdr(subButtonsFrame, text=gettextRcmdr("Help"), width="12", command=onHelpSub, borderwidth=3,
+				subHelpButton <- buttonRcmdr(subLeftButtonsBox, text=gettextRcmdr("Help"), width="12", command=onHelpSub, 
 						image="::image::helpIcon", compound="left")
 			}
-			tkgrid(subOKbutton, labelRcmdr(subButtonsFrame, text="  "), subCancelButton,
-					labelRcmdr(subButtonsFrame, text="            "), if (!is.null(helpSubject)) subHelpButton, sticky="w")
+		    if(!WindowsP()) {
+		        tkgrid(subCancelButton, subOKbutton, sticky="w")
+		        tkgrid.configure(subOKbutton, padx=c(6, 0))
+		    }
+		    else {
+		        tkgrid(subOKbutton, subCancelButton, sticky="w")
+		        tkgrid.configure(subOKbutton, padx=c(0, 6))
+		    }
+		    if (! is.null(helpSubject)){
+		        tkgrid(subHelpButton, pady=6, padx=c(0, 18))
+		    }
+		    tkgrid(subLeftButtonsBox, subRightButtonsBox, pady=6, sticky="ew")
+		    tkgrid.columnconfigure(subButtonsFrame, 0, weight=1)
+		    tkgrid.columnconfigure(subButtonsFrame, 1, weight=1)
+		    tkgrid.configure(subLeftButtonsBox, sticky="w")
+		    tkgrid.configure(subRightButtonsBox, sticky="e")
 		})
 
 checkActiveDataSet <- function(){
@@ -965,22 +1219,44 @@ commanderPosition <- function (){
 					tclvalue(.Tcl(paste("winfo rooty", ID)))))
 }
 
-initializeDialog <- defmacro(window=top, title="", offset=10, preventCrisp=FALSE,
-		expr={
-			if ((!preventCrisp) && getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
-			window <- tktoplevel(borderwidth=10)
-			tkwm.title(window, title)
-			position <- if (is.SciViews()) -1 else commanderPosition() # +PhG
-			position <- if (any(position < 0)) "-50+50"
-					else paste("+", paste(offset + position, collapse="+"), sep="")
-			tkwm.geometry(window, position)
-		    tcl("wm", "iconphoto", window, "::image::RlogoIcon")
-# 		    if (.Platform$OS.type == "windows") {
-# 		        tkwm.iconify(window)
-# 		        tkwm.iconbitmap(window, system.file("etc", "R-logo.ico", package="Rcmdr"))
-# 		    }
-		    tkwm.transient(window, CommanderWindow())
-		}
+# initializeDialog <- defmacro(window=top, title="", offset=10, preventCrisp=FALSE,
+#     expr={
+#         if ((!preventCrisp) && getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
+#         window <- tktoplevel(borderwidth=10)
+#         tkwm.title(window, title)
+#         location <- getRcmdr("open.dialog.here")
+#         position <- if (!is.null(location)) location
+#                     else {
+#                         pos <- offset + commanderPosition() 
+#                         if (any(pos < 0)) "-50+50"
+#                         else paste("+", paste(pos, collapse="+"), sep="")
+#                     }
+#         tkwm.geometry(window, position)
+#         tkwm.transient(window, CommanderWindow())
+#     }
+# )
+
+initializeDialog <- defmacro(window=top, title="", offset=10, preventCrisp, 
+    use.tabs=FALSE, notebook=notebook, tabs=c("dataTab", "optionsTab"),
+    expr={
+#        if ((!preventCrisp) && getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
+        if (getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
+        window <- tktoplevel(borderwidth=10)
+        if (use.tabs){
+            notebook <- ttknotebook(window)
+            for (tab in tabs) assign(tab, tkframe(window))
+        }
+        tkwm.title(window, title)
+        location <- getRcmdr("open.dialog.here")
+        position <- if (!is.null(location)) location
+        else {
+            pos <- offset + commanderPosition() 
+            if (any(pos < 0)) "-50+50"
+            else paste("+", paste(pos, collapse="+"), sep="")
+        }
+        tkwm.geometry(window, position)
+        tkwm.transient(window, CommanderWindow())
+    }
 )
 
 closeDialog <- defmacro(window=top, release=TRUE,
@@ -990,94 +1266,125 @@ closeDialog <- defmacro(window=top, release=TRUE,
 		}
 )
 
-dialogSuffix <- defmacro(window=top, onOK=onOK, onCancel=onCancel, rows=1, columns=1, focus=top,
-		bindReturn=TRUE, preventGrabFocus=FALSE, preventDoubleClick=FALSE,
-		preventCrisp=FALSE,
-		expr={
-			for (row in 0:(rows-1)) tkgrid.rowconfigure(window, row, weight=0)
-			for (col in 0:(columns-1)) tkgrid.columnconfigure(window, col, weight=0)
-			.Tcl("update idletasks")
-			tkwm.resizable(window, 0, 0)
-			if (bindReturn) tkbind(window, "<Return>", onOK)
-			tkbind(window, "<Escape>", onCancel)
-			if (getRcmdr("double.click") && (!preventDoubleClick)) tkbind(window, "<Double-ButtonPress-1>", onOK)
-			tkwm.deiconify(window)
-			# focus grabs appear to cause problems for some dialogs
-			if (GrabFocus() && (!preventGrabFocus)) tkgrab.set(window)
-			tkfocus(focus)
-			tkwait.window(window)
-			if ((!preventCrisp) && getRcmdr("crisp.dialogs")) tclServiceMode(on=TRUE)
-		}
+# dialogSuffix <- defmacro(window=top, onOK=onOK, onCancel=onCancel, rows=1, columns=1, focus=top,
+#     bindReturn=TRUE, preventGrabFocus=FALSE, preventDoubleClick=FALSE,
+#     preventCrisp=FALSE,
+#     expr={
+#         #         for (row in 0:(rows-1)) tkgrid.rowconfigure(window, row, weight=0)
+#         #         for (col in 0:(columns-1)) tkgrid.columnconfigure(window, col, weight=0)
+#         .Tcl("update idletasks")
+#         tkwm.resizable(window, 0, 0)
+#         if (bindReturn) tkbind(window, "<Return>", onOK)
+#         tkbind(window, "<Escape>", onCancel)
+#         if (getRcmdr("double.click") && (!preventDoubleClick)) tkbind(window, "<Double-ButtonPress-1>", onOK)
+#         tkwm.deiconify(window)
+#         # focus grabs appear to cause problems for some dialogs
+#         if (GrabFocus() && (!preventGrabFocus)) tkgrab.set(window)
+#         tkfocus(focus)
+#         tkwait.window(window)
+#         if ((!preventCrisp) && getRcmdr("crisp.dialogs")) tclServiceMode(on=TRUE)
+#     }
+# )
+
+dialogSuffix <- defmacro(window=top, onOK=onOK, onCancel=onCancel, rows, columns, focus=top,
+    bindReturn=TRUE, preventGrabFocus=FALSE, preventDoubleClick=FALSE,
+    preventCrisp, 
+    use.tabs=FALSE, notebook=notebook, tabs=c("dataTab", "optionsTab"), tab.names=c("Data", "Options"),
+    grid.buttons=FALSE,
+    expr={
+        if (use.tabs){
+            for (i in 1:length(tabs)){
+                tkadd(notebook, get(tabs[i]), text=gettextRcmdr(tab.names[i]), padding=6, sticky="nsew")
+            }
+            tkgrid(notebook, sticky="nsew")
+        }
+        if (grid.buttons) tkgrid(buttonsFrame, sticky = "ew")
+        if (use.tabs && exists("dialog.values") && !is.null(dialog.values$initial.tab) && getRcmdr("restoreTab")) 
+            tkselect(notebook, dialog.values$initial.tab)
+        .Tcl("update idletasks")
+        tkwm.resizable(window, 0, 0)
+        if (bindReturn) tkbind(window, "<Return>", onOK)
+        tkbind(window, "<Escape>", onCancel)
+        if (getRcmdr("double.click") && (!preventDoubleClick)) tkbind(window, "<Double-ButtonPress-1>", onOK)
+        tkwm.deiconify(window)
+        # focus grabs appear to cause problems for some dialogs
+        if (GrabFocus() && (!preventGrabFocus)) tkgrab.set(window)
+        tkfocus(focus)
+        tkwait.window(window)
+#        if ((!preventCrisp) && getRcmdr("crisp.dialogs")) tclServiceMode(on=TRUE)
+        if (getRcmdr("crisp.dialogs")) tclServiceMode(on=TRUE)
+    }
 )
 
+
 variableListBox <- function(parentWindow, variableList=Variables(), bg="white",
-		selectmode="single", export="FALSE", initialSelection=NULL, listHeight=getRcmdr("variable.list.height"), title){
-	if (selectmode == "multiple") selectmode <- getRcmdr("multiple.select.mode")
-	if (length(variableList) == 1 && is.null(initialSelection)) initialSelection <- 0
-	frame <- tkframe(parentWindow)
-	minmax <- getRcmdr("variable.list.width")
-	listbox <- tklistbox(frame, height=min(listHeight, length(variableList)),
-			selectmode=selectmode, background=bg, exportselection=export, 
-			width=min(max(minmax[1], nchar(variableList)), minmax[2]))
-	scrollbar <- ttkscrollbar(frame, command=function(...) tkyview(listbox, ...))
-	tkconfigure(listbox, yscrollcommand=function(...) tkset(scrollbar, ...))
-	for (var in variableList) tkinsert(listbox, "end", var)
-	if (is.numeric(initialSelection)) for (sel in initialSelection) tkselection.set(listbox, sel)
-	firstChar <- tolower(substr(variableList, 1, 1))
-	len <- length(variableList)
-	onLetter <- function(letter){
-		letter <- tolower(letter)
-		current <- 1 + round(as.numeric(unlist(strsplit(tclvalue(tkyview(listbox) ), " "))[1])*len)
-		mat <- match(letter, firstChar[-(1:current)])
-		if (is.na(mat)) return()
-		tkyview.scroll(listbox, mat, "units")
-	}
-	onA <- function() onLetter("a")
-	onB <- function() onLetter("b")
-	onC <- function() onLetter("c")
-	onD <- function() onLetter("d")
-	onE <- function() onLetter("e")
-	onF <- function() onLetter("f")
-	onG <- function() onLetter("g")
-	onH <- function() onLetter("h")
-	onI <- function() onLetter("i")
-	onJ <- function() onLetter("j")
-	onK <- function() onLetter("k")
-	onL <- function() onLetter("l")
-	onM <- function() onLetter("m")
-	onN <- function() onLetter("n")
-	onO <- function() onLetter("o")
-	onP <- function() onLetter("p")
-	onQ <- function() onLetter("q")
-	onR <- function() onLetter("r")
-	onS <- function() onLetter("s")
-	onT <- function() onLetter("t")
-	onU <- function() onLetter("u")
-	onV <- function() onLetter("v")
-	onW <- function() onLetter("w")
-	onX <- function() onLetter("x")
-	onY <- function() onLetter("y")
-	onZ <- function() onLetter("z")
-	for (letter in c(letters, LETTERS)){
-		tkbind(listbox, paste("<", letter, ">", sep=""),
-				get(paste("on", toupper(letter), sep="")))
-	}
-	onClick <- function() tkfocus(listbox)
-	toggleSelection <- function(){
-		active <- tclvalue(tkindex(listbox, "active"))
-		selected <- tclvalue(tkcurselection(listbox))
-		if (selected == active) tkselection.clear(listbox, "active") else tkselection.set(listbox, "active")
-	}
-	tkbind(listbox, "<ButtonPress-1>", onClick)
-	if (selectmode == "single") tkbind(listbox, "<Control-ButtonPress-1>", toggleSelection)
-	tkgrid(labelRcmdr(frame, text=title, foreground="blue"), columnspan=2, sticky="w")
-	tkgrid(listbox, scrollbar, sticky="nw")
-	tkgrid.configure(scrollbar, sticky="wns")
-	tkgrid.configure(listbox, sticky="ewns")
-	result <- list(frame=frame, listbox=listbox, scrollbar=scrollbar,
-			selectmode=selectmode, varlist=variableList)
-	class(result) <- "listbox"
-	result
+    selectmode="single", export="FALSE", initialSelection=NULL, listHeight=getRcmdr("variable.list.height"), title){
+    if (selectmode == "multiple") selectmode <- getRcmdr("multiple.select.mode")
+    if (length(variableList) == 1 && is.null(initialSelection)) initialSelection <- 0
+    frame <- tkframe(parentWindow)
+    minmax <- getRcmdr("variable.list.width")
+    listbox <- tklistbox(frame, height=min(listHeight, length(variableList)),
+        selectmode=selectmode, background=bg, exportselection=export, 
+        width=min(max(minmax[1], nchar(variableList)), minmax[2]))
+    scrollbar <- ttkscrollbar(frame, command=function(...) tkyview(listbox, ...))
+    tkconfigure(listbox, yscrollcommand=function(...) tkset(scrollbar, ...))
+    for (var in variableList) tkinsert(listbox, "end", var)
+    if (is.numeric(initialSelection)) for (sel in initialSelection) tkselection.set(listbox, sel)
+    firstChar <- tolower(substr(variableList, 1, 1))
+    len <- length(variableList)
+    onLetter <- function(letter){
+        letter <- tolower(letter)
+        current <- 1 + round(as.numeric(unlist(strsplit(tclvalue(tkyview(listbox) ), " "))[1])*len)
+        mat <- match(letter, firstChar[-(1:current)])
+        if (is.na(mat)) return()
+        tkyview.scroll(listbox, mat, "units")
+    }
+    onA <- function() onLetter("a")
+    onB <- function() onLetter("b")
+    onC <- function() onLetter("c")
+    onD <- function() onLetter("d")
+    onE <- function() onLetter("e")
+    onF <- function() onLetter("f")
+    onG <- function() onLetter("g")
+    onH <- function() onLetter("h")
+    onI <- function() onLetter("i")
+    onJ <- function() onLetter("j")
+    onK <- function() onLetter("k")
+    onL <- function() onLetter("l")
+    onM <- function() onLetter("m")
+    onN <- function() onLetter("n")
+    onO <- function() onLetter("o")
+    onP <- function() onLetter("p")
+    onQ <- function() onLetter("q")
+    onR <- function() onLetter("r")
+    onS <- function() onLetter("s")
+    onT <- function() onLetter("t")
+    onU <- function() onLetter("u")
+    onV <- function() onLetter("v")
+    onW <- function() onLetter("w")
+    onX <- function() onLetter("x")
+    onY <- function() onLetter("y")
+    onZ <- function() onLetter("z")
+    for (letter in c(letters, LETTERS)){
+        tkbind(listbox, paste("<", letter, ">", sep=""),
+            get(paste("on", toupper(letter), sep="")))
+    }
+    onClick <- function() tkfocus(listbox)
+    toggleSelection <- function(){
+        active <- tclvalue(tkindex(listbox, "active"))
+        selected <- tclvalue(tkcurselection(listbox))
+        if (selected == active) tkselection.clear(listbox, "active") else tkselection.set(listbox, "active")
+    }
+    tkbind(listbox, "<ButtonPress-1>", onClick)
+    if (selectmode == "single") tkbind(listbox, "<Control-ButtonPress-1>", toggleSelection)
+    tkgrid(labelRcmdr(frame, text=title, fg=getRcmdr("title.color"), font="RcmdrTitleFont"), columnspan=2, sticky="w")
+    tkgrid(listbox, scrollbar, sticky="nw")
+    tkgrid.configure(scrollbar, sticky="wns")
+    tkgrid.configure(listbox, sticky="ewns")
+    result <- list(frame=frame, listbox=listbox, scrollbar=scrollbar,
+        selectmode=selectmode, varlist=variableList)
+    class(result) <- "listbox"
+    result
 }
 
 getSelection <- function(object) UseMethod("getSelection")
@@ -1094,7 +1401,7 @@ getFrame.listbox <- function(object){
 
 # This function modified based on code by Liviu Andronic (13 Dec 09) and on code by Milan Bouchet-Valat (29 Jun 12):
 radioButtons <- defmacro(window=top, name, buttons, values=NULL, initialValue=..values[1], labels, 
-                         title="", title.color="blue", right.buttons=TRUE, command=function(){},
+                         title="", title.color=getRcmdr("title.color"), right.buttons=FALSE, command=function(){},
                          expr={
                              ..values <- if (is.null(values)) buttons else values
                              ..frame <- paste(name, "Frame", sep="")
@@ -1102,7 +1409,7 @@ radioButtons <- defmacro(window=top, name, buttons, values=NULL, initialValue=..
                              ..variable <- paste(name, "Variable", sep="")
                              assign(..variable, tclVar(initialValue))
                              if(title != ""){
-                                 tkgrid(labelRcmdr(eval(parse(text=..frame)), text=title, foreground=title.color), columnspan=2, sticky="w")
+                                 tkgrid(labelRcmdr(eval(parse(text=..frame)), text=title, foreground=title.color, font="RcmdrTitleFont"), columnspan=2, sticky="w")
                              }
                              for (i in 1:length(buttons)) {
                                  ..button <- paste(buttons[i], "Button", sep="")
@@ -1121,22 +1428,22 @@ radioButtons <- defmacro(window=top, name, buttons, values=NULL, initialValue=..
 )
 
 
-checkBoxes <- defmacro(window=top, frame, boxes, initialValues=NULL, labels, title=NULL,
-		expr={
-			..initialValues <- if (is.null(initialValues)) rep("1", length(boxes)) else initialValues
-			assign(frame, tkframe(window))
-			if (!is.null(title)) tkgrid(labelRcmdr(eval(parse(text=frame)), text=title, foreground="blue"), sticky="w")
-			..variables <- paste(boxes, "Variable", sep="")
-			for (i in 1:length(boxes)) {
-				assign(..variables[i], tclVar(..initialValues[i]))
-				..checkBox <- paste(boxes[i], "CheckBox", sep="")
-				assign(..checkBox,
-				#		tkcheckbutton(eval(parse(text=frame)), variable=eval(parse(text=..variables[i]))))
-				# tkgrid(labelRcmdr(eval(parse(text=frame)), text=labels[i]), eval(parse(text=..checkBox)), sticky="w")
-						tkcheckbutton(eval(parse(text=frame)), variable=eval(parse(text=..variables[i])), text=labels[i]))
-				tkgrid(eval(parse(text=..checkBox)), sticky="w")
-			}
-		}
+checkBoxes <- defmacro(window=top, frame, boxes, initialValues=NULL, labels, title=NULL, ttk=FALSE,
+    expr={
+        ..initialValues <- if (is.null(initialValues)) rep("1", length(boxes)) else initialValues
+        assign(frame, if (ttk) ttklabelframe(window, text=title) else tkframe(window))
+        if (!is.null(title) && !ttk) tkgrid(labelRcmdr(eval(parse(text=frame)), text=title, fg=getRcmdr("title.color"), font="RcmdrTitleFont"), sticky="w")
+        ..variables <- paste(boxes, "Variable", sep="")
+        for (i in 1:length(boxes)) {
+            assign(..variables[i], tclVar(..initialValues[i]))
+            ..checkBox <- paste(boxes[i], "CheckBox", sep="")
+            assign(..checkBox,
+                #    	tkcheckbutton(eval(parse(text=frame)), variable=eval(parse(text=..variables[i]))))
+                # tkgrid(labelRcmdr(eval(parse(text=frame)), text=labels[i]), eval(parse(text=..checkBox)), sticky="w")
+                ttkcheckbutton(eval(parse(text=frame)), variable=eval(parse(text=..variables[i])), text=labels[i]))
+            tkgrid(eval(parse(text=..checkBox)), sticky="w")
+        }
+    }
 )
 
 checkReplace <- function(name, type=gettextRcmdr("Variable")){
@@ -1146,6 +1453,7 @@ checkReplace <- function(name, type=gettextRcmdr("Variable")){
 
 errorCondition <- defmacro(window=top, recall=NULL, message, model=FALSE,
 		expr={
+		    putRcmdr("cancelDialogReopen", TRUE)
 			if (model) putRcmdr("modelNumber", getRcmdr("modelNumber") - 1)
 			if (!is.null(window)){
 				if (GrabFocus()) tkgrab.release(window)
@@ -1157,296 +1465,416 @@ errorCondition <- defmacro(window=top, recall=NULL, message, model=FALSE,
 		})
 
 subsetBox <- defmacro(window=top, subset.expression=NULL, model=FALSE,
-		expr={
-			subsetVariable <- if (!is.null(subset.expression)) tclVar(gettextRcmdr(subset.expression))
-					else if (model){
-						if (currentModel && currentFields$subset != "")
-							tclVar(currentFields$subset) else tclVar(gettextRcmdr("<all valid cases>"))
-					}
-					else tclVar(gettextRcmdr("<all valid cases>"))
-			subsetFrame <- tkframe(window)
-			subsetEntry <- ttkentry(subsetFrame, width="20", textvariable=subsetVariable)
-			subsetScroll <- ttkscrollbar(subsetFrame, orient="horizontal",
-					command=function(...) tkxview(subsetEntry, ...))
-			tkconfigure(subsetEntry, xscrollcommand=function(...) tkset(subsetScroll, ...))
-			tkgrid(labelRcmdr(subsetFrame, text=gettextRcmdr("Subset expression"), foreground="blue"), sticky="w")
-			tkgrid(subsetEntry, sticky="w")
-			tkgrid(subsetScroll, sticky="ew")
-		})
+    expr={
+        subsetVariable <- if (!is.null(subset.expression)) tclVar(gettextRcmdr(subset.expression))
+        else if (model){
+            if (currentModel && currentFields$subset != "")
+                tclVar(currentFields$subset) else tclVar(gettextRcmdr("<all valid cases>"))
+        }
+        else tclVar(gettextRcmdr("<all valid cases>"))
+        subsetFrame <- tkframe(window)
+        subsetEntry <- ttkentry(subsetFrame, width="20", textvariable=subsetVariable)
+        subsetScroll <- ttkscrollbar(subsetFrame, orient="horizontal",
+            command=function(...) tkxview(subsetEntry, ...))
+        tkconfigure(subsetEntry, xscrollcommand=function(...) tkset(subsetScroll, ...))
+        tkgrid(labelRcmdr(subsetFrame, text=gettextRcmdr("Subset expression"), fg=getRcmdr("title.color"), font="RcmdrTitleFont"), sticky="w")
+        tkgrid(subsetEntry, sticky="ew")
+        tkgrid(subsetScroll, sticky="ew")
+        tkgrid.columnconfigure(subsetFrame, 0, weight=1)
+    })
 
 
 groupsBox <- defmacro(recall=NULL, label=gettextRcmdr("Plot by:"), initialLabel=gettextRcmdr("Plot by groups"),
-		plotLinesByGroup=FALSE, positionLegend=FALSE, plotLinesByGroupsText=gettextRcmdr("Plot lines by group"),
-		initialGroup=NULL, initialLinesByGroup=1,
-		expr={
-			env <- environment()
-			.groups <- if (is.null(initialGroup)) FALSE else initialGroup
-			.linesByGroup <- FALSE
-			.groupsLabel <- tclVar(if (!is.null(initialGroup)) initialLabel else paste(initialLabel, "...", sep=""))
-			.factors <- Factors()
-			onGroups <- function(){
-				if (length(.factors) == 0){
-					errorCondition(recall=recall, message=gettextRcmdr("There are no factors in the active data set."))
-					return()
-				}
-				initializeDialog(subdialog, title=gettextRcmdr("Groups"))
-				groupsBox <- variableListBox(subdialog, .factors, title=gettextRcmdr("Groups variable (pick one)"),
-						initialSelection=varPosn(initialGroup, "factor"))
-				if (plotLinesByGroup){
-					linesByGroupFrame <- tkframe(subdialog)
-					linesByGroup <- tclVar(if(initialLinesByGroup == 1) "1" else "0")
-					linesCheckBox <- tkcheckbutton(linesByGroupFrame, variable=linesByGroup)
-					tkgrid(labelRcmdr(linesByGroupFrame, text=plotLinesByGroupsText), linesCheckBox, sticky="w")
-				}
-				onOKsub <- function() {
-					groups <- getSelection(groupsBox)
-					if (length(groups) == 0){
-						assign(".groups", FALSE, envir=env)
-						tclvalue(.groupsLabel) <- paste(gettextRcmdr("Plot by groups"), "...", sep="")
-						tkconfigure(groupsButton, foreground="black")
-						if (GrabFocus()) tkgrab.release(subdialog)
-						tkdestroy(subdialog)
-						tkwm.deiconify(top)
-						if (GrabFocus()) tkgrab.set(top)
-						tkfocus(top)
-						tkwait.window(top)
-						return()
-					}
-					assign(".groups", groups, envir=env)
-					tclvalue(.groupsLabel) <- paste(label, groups)
-					tkconfigure(groupsButton, foreground="blue")
-					if (plotLinesByGroup) {
-						lines <- as.character("1" == tclvalue(linesByGroup))
-						assign(".linesByGroup", lines, envir=env)
-					}
-					if (GrabFocus()) tkgrab.release(subdialog)
-					tkdestroy(subdialog)
-					tkwm.deiconify(top)
-					if (GrabFocus()) tkgrab.set(top)
-					tkfocus(top)
-					tkwait.window(top)
-				}
-				subOKCancelHelp()
-				tkgrid(getFrame(groupsBox), sticky="nw")
-				if (plotLinesByGroup) tkgrid(linesByGroupFrame, sticky="w")
-				tkgrid(subButtonsFrame, sticky="w")
-				if (positionLegend) tkgrid(labelRcmdr(subdialog, text=gettextRcmdr("Position legend with mouse click"), fg="blue"))
-				dialogSuffix(subdialog, onOK=onOKsub, rows=3+plotLinesByGroup+positionLegend, columns=2, focus=subdialog)
-			}
-			groupsFrame <- tkframe(top)
-			groupsButton <- tkbutton(groupsFrame, textvariable=.groupsLabel, command=onGroups, borderwidth=3)
-			if (!is.null(initialGroup)) tkconfigure(groupsButton, foreground="blue")
-			tkgrid(labelRcmdr(groupsFrame, text="    "), groupsButton, sticky="w")
-		})
+    plotLinesByGroup=FALSE, positionLegend=FALSE, plotLinesByGroupsText=gettextRcmdr("Plot lines by group"),
+    initialGroup=NULL, initialLinesByGroup=1, window=top,
+    expr={
+        env <- environment()
+        .groups <- if (is.null(initialGroup)) FALSE else initialGroup
+        .linesByGroup <- initialLinesByGroup == 1
+        .groupsLabel <- tclVar(if (!is.null(initialGroup)) initialLabel else paste(initialLabel, "...", sep=""))
+        .factors <- Factors()
+        onGroups <- function(){
+            if (length(.factors) == 0){
+                errorCondition(recall=recall, message=gettextRcmdr("There are no factors in the active data set."))
+                return()
+            }
+            initializeDialog(subdialog, title=gettextRcmdr("Groups"))
+            groupsBox <- variableListBox(subdialog, .factors, title=gettextRcmdr("Groups variable (pick one)"),
+                initialSelection=varPosn(initialGroup, "factor"))
+            if (plotLinesByGroup){
+                linesByGroupFrame <- tkframe(subdialog)
+                linesByGroup <- tclVar(if(initialLinesByGroup == 1) "1" else "0")
+                linesCheckBox <- ttkcheckbutton(linesByGroupFrame, variable=linesByGroup)
+                tkgrid(labelRcmdr(linesByGroupFrame, text=plotLinesByGroupsText), linesCheckBox, sticky="w")
+            }
+            onOKsub <- function() {
+                groups <- getSelection(groupsBox)
+                if (length(groups) == 0){
+                    assign(".groups", FALSE, envir=env)
+                    tclvalue(.groupsLabel) <- paste(gettextRcmdr("Plot by groups"), "...", sep="")
+                    tkconfigure(groupsButton, foreground="black")
+                    if (GrabFocus()) tkgrab.release(subdialog)
+                    tkdestroy(subdialog)
+                    tkwm.deiconify(top)
+                    if (GrabFocus()) tkgrab.set(top)
+                    tkfocus(top)
+                    tkwait.window(top)
+                    return()
+                }
+                assign(".groups", groups, envir=env)
+                tclvalue(.groupsLabel) <- paste(label, groups)
+                tkconfigure(groupsButton, foreground=getRcmdr("title.color"))
+                tkconfigure(groupsButton, font="RcmdrTitleFont")
+                if (plotLinesByGroup) {
+                    lines <- as.character("1" == tclvalue(linesByGroup))
+                    assign(".linesByGroup", lines, envir=env)
+                }
+                if (GrabFocus()) tkgrab.release(subdialog)
+                tkdestroy(subdialog)
+                tkwm.deiconify(top)
+                if (GrabFocus()) tkgrab.set(top)
+                tkfocus(top)
+                tkwait.window(top)
+            }
+            subOKCancelHelp()
+            tkgrid(getFrame(groupsBox), sticky="nw")
+            if (plotLinesByGroup) tkgrid(linesByGroupFrame, sticky="w")
+            tkgrid(subButtonsFrame, sticky="ew")
+            if (positionLegend) tkgrid(labelRcmdr(subdialog, text=gettextRcmdr("Position legend with mouse click"), fg=getRcmdr("title.color"), font="RcmdrTitleFont"))
+            dialogSuffix(subdialog, onOK=onOKsub, focus=subdialog)
+        }
+        groupsFrame <- tkframe(window)
+        groupsButton <- tkbutton(groupsFrame, textvariable=.groupsLabel, command=onGroups)
+        if (!is.null(initialGroup)) tkconfigure(groupsButton, foreground=getRcmdr("title.color"), font="RcmdrTitleFont")
+        tkgrid(groupsButton, sticky="we")
+        tkgrid.columnconfigure(groupsFrame, 0, weight=1)
+    })
 
 groupsLabel <- defmacro(frame=top, groupsBox=groupsBox, columnspan=1, initialText=NULL,
-		expr={
-			groupsFrame <- tkframe(frame)
-			.groupsLabel <- if (is.null(initialText)) gettextRcmdr("<No groups selected>") else initialText
-			groupsLabel <- labelRcmdr(groupsFrame, text=.groupsLabel)
-			tkgrid(labelRcmdr(groupsFrame, text=gettextRcmdr("Difference: "), fg="blue"), groupsLabel, sticky="w")
-			tkgrid(groupsFrame, sticky="w", columnspan=columnspan)
-			onSelect <- function(){
-				group <- getSelection(groupsBox)
-				levels <- eval(parse(text=paste("levels(", ActiveDataSet(), "$", group, ")", sep="")))
-				.groupsLabel <<- paste(levels[1], "-", levels[2])
-				tkconfigure(groupsLabel, text=.groupsLabel)
-			}
-			tkbind(groupsBox$listbox, "<ButtonRelease-1>", onSelect)
-		})
+    expr={
+        initial.label <- if (exists("dialog.values")) dialog.values$initial.label else NULL
+        if  (is.null(initial.label)) {
+            group <- getSelection(groupsBox)
+            initial.label <- if (length(group) == 0) NULL 
+            else {
+                levels <- eval(parse(text = paste("levels(", ActiveDataSet(), 
+                    "$", group, ")", sep = "")))
+                paste(levels[1], "-", levels[2])
+            }
+        }
+        groupsFrame <- tkframe(frame)
+        .groupsLabel <- if (!is.null(initialText)) initialText 
+        else if (is.null(initial.label)) gettextRcmdr("<No groups selected>") 
+        else initial.label
+        groupsLabel <- labelRcmdr(groupsFrame, text=.groupsLabel)
+        tkgrid(labelRcmdr(groupsFrame, text=gettextRcmdr("Difference: "), fg=getRcmdr("title.color"), font="RcmdrTitleFont"), groupsLabel, sticky="w")
+        tkgrid(groupsFrame, sticky="w", columnspan=columnspan)
+        onSelect <- function(){
+            group <- getSelection(groupsBox)
+            if (length(group) == 0) {
+                .groupsLabel <<- gettextRcmdr("<No groups selected>") 
+            }
+            else {
+                levels <- eval(parse(text=paste("levels(", ActiveDataSet(), "$", group, ")", sep="")))
+                .groupsLabel <<- paste(levels[1], "-", levels[2])
+            }
+            tkconfigure(groupsLabel, text=.groupsLabel)
+        }
+        tkbind(groupsBox$listbox, "<ButtonRelease-1>", onSelect)
+    })
 
 modelFormula <- defmacro(frame=top, hasLhs=TRUE, expr={
-			checkAddOperator <- function(rhs){
-				rhs.chars <- rev(strsplit(rhs, "")[[1]])
-				if (length(rhs.chars) < 1) return(FALSE)
-				check.char <- if ((rhs.chars[1] != " ") || (length(rhs.chars) == 1))
-							rhs.chars[1] else rhs.chars[2]
-				!is.element(check.char, c("+", "*", ":", "/", "-", "^", "(", "%"))
-			}
-			.variables <- Variables()
-			word <- paste("\\[", gettextRcmdr("factor"), "\\]", sep="")
-			variables <- paste(.variables,
-					ifelse(is.element(.variables, Factors()), paste("[", gettextRcmdr("factor"), "]", sep=""), ""))
-			xBox <- variableListBox(frame, variables, selectmode="multiple", title=gettextRcmdr("Variables (double-click to formula)"))
-			onDoubleClick <- if (!hasLhs){
-						function(){
-							var <- getSelection(xBox)
-							tkselection.clear(xBox$listbox, "0", "end")					
-							if (length(grep(word, var)) == 1) var <- sub(word, "",  var)
-							tkfocus(rhsEntry)
-							rhs <- tclvalue(rhsVariable)
-							rhs.chars <- rev(strsplit(rhs, "")[[1]])
-							check.char <- if (length(rhs.chars) > 0){
-										if ((rhs.chars[1] != " ") || (length(rhs.chars) == 1))
-											rhs.chars[1] else rhs.chars[2]
-									}
-									else ""
-							tclvalue(rhsVariable) <- if (rhs == "" ||
-											is.element(check.char, c("+", "*", ":", "/", "-", "^", "(", "%")))
-										paste(rhs, var, sep="")
-									else paste(rhs, "+", var)
-							tkicursor(rhsEntry, "end")
-							tkxview.moveto(rhsEntry, "1")
-						}
-					}
-					else{
-						function(){
-							var <- getSelection(xBox)
-							which <- tkcurselection(xBox$listbox)
-							tkselection.clear(xBox$listbox, "0", "end")
-							if (length(grep(word, var)) == 1) var <- sub(word, "",  var)
-							lhs <- tclvalue(lhsVariable)
-							if (lhs == "" || tclvalue(tkselection.present(lhsEntry)) == "1"){
-								tclvalue(lhsVariable) <- var
-								tkselection.clear(lhsEntry)
-								tkfocus(rhsEntry)
-							}
-							else {
-								tkfocus(rhsEntry)
-								rhs <- tclvalue(rhsVariable)
-								rhs.chars <- rev(strsplit(rhs, "")[[1]])
-								check.char <- if (length(rhs.chars) > 0){
-											if ((rhs.chars[1] != " ") || (length(rhs.chars) == 1))
-												rhs.chars[1] else rhs.chars[2]
-										}
-										else ""
-								tclvalue(rhsVariable) <- if (rhs == "" ||
-												is.element(check.char, c("+", "*", ":", "/", "-", "^", "(", "%")))
-											paste(rhs, var, sep="")
-										else paste(rhs, "+", var)
-							}
-							tkicursor(rhsEntry, "end")
-							tkxview.moveto(rhsEntry, "1")
-						}
-					}
-			tkbind(xBox$listbox, "<Double-ButtonPress-1>", onDoubleClick)
-			onPlus <- function(){
-				rhs <- tclvalue(rhsVariable)
-				var <- getSelection(xBox)
-				tkselection.clear(xBox$listbox, "0", "end")										
-				if ((check <- !checkAddOperator(rhs)) && length(var) == 0) return()
-				if (length(var) > 1){
-					if (length(grep(word, var)) > 0) var <- sub(word, "",  var)
-					if (length(var) > 1) var <- paste(var, collapse=" + ")
-				}
-				tclvalue(rhsVariable) <- paste(rhs, if (!check) " + ", var, sep="")
-				tkicursor(rhsEntry, "end")
-				tkxview.moveto(rhsEntry, "1")
-			}
-			onTimes <- function(){
-				rhs <- tclvalue(rhsVariable)
-				var <- getSelection(xBox)
-				tkselection.clear(xBox$listbox, "0", "end")						
-				if ((check <- !checkAddOperator(rhs)) && length(var) == 0) return()
-				if (length(var) > 1){
-					if (length(grep(word, var)) > 0) var <- sub(word, "",  var)
-					var <- trim.blanks(var)
-					if (length(var) > 1) var <- paste(var, collapse="*")
-					tclvalue(rhsVariable) <- paste(rhs, if (!check) " + ", var, sep="")
-				}
-				else tclvalue(rhsVariable) <- paste(rhs, if (!check) "*", sep="")
-				tkicursor(rhsEntry, "end")
-				tkxview.moveto(rhsEntry, "1")
-			}
-			onColon <- function(){
-				rhs <- tclvalue(rhsVariable)
-				var <- getSelection(xBox)
-				tkselection.clear(xBox$listbox, "0", "end")						
-				if ((check <- !checkAddOperator(rhs)) && length(var) == 0) return()
-				if (length(var) > 1){
-					if (length(grep(word, var)) > 0) var <- sub(word, "",  var)
-					var <- trim.blanks(var)
-					if (length(var) > 1) var <- paste(var, collapse=":")
-					tclvalue(rhsVariable) <- paste(rhs, if (!check) " + ", var, sep="")
-				}
-				else tclvalue(rhsVariable) <- paste(rhs, if (!check) ":", sep="")
-				tkicursor(rhsEntry, "end")
-				tkxview.moveto(rhsEntry, "1")
-			}
-			onSlash <- function(){
-				rhs <- tclvalue(rhsVariable)
-				if (!checkAddOperator(rhs)) return()
-				tclvalue(rhsVariable) <- paste(rhs, "/",  sep="")
-				tkicursor(rhsEntry, "end")
-				tkxview.moveto(rhsEntry, "1")
-			}
-			onIn <- function(){
-				rhs <- tclvalue(rhsVariable)
-				if (!checkAddOperator(rhs)) return()
-				tclvalue(rhsVariable) <- paste(rhs, "%in% ")
-				tkicursor(rhsEntry, "end")
-				tkxview.moveto(rhsEntry, "1")
-			}
-			onMinus <- function(){
-				rhs <- tclvalue(rhsVariable)
-				if (!checkAddOperator(rhs)) return()
-				tclvalue(rhsVariable) <- paste(rhs, "- ")
-				tkicursor(rhsEntry, "end")
-				tkxview.moveto(rhsEntry, "1")
-			}
-			onPower <- function(){
-				rhs <- tclvalue(rhsVariable)
-				if (!checkAddOperator(rhs)) return()
-				tclvalue(rhsVariable) <- paste(rhs, "^", sep="")
-				tkicursor(rhsEntry, "end")
-				tkxview.moveto(rhsEntry, "1")
-			}
-			onLeftParen <- function(){
-				tkfocus(rhsEntry)
-				rhs <- tclvalue(rhsVariable)
-				tclvalue(rhsVariable) <- paste(rhs, "(", sep="")
-				tkicursor(rhsEntry, "end")
-				tkxview.moveto(rhsEntry, "1")
-			}
-			onRightParen <- function(){
-				rhs <- tclvalue(rhsVariable)
-				if (!checkAddOperator(rhs)) return()
-				tclvalue(rhsVariable) <- paste(rhs, ")", sep="")
-				tkicursor(rhsEntry, "end")
-				tkxview.moveto(rhsEntry, "1")
-			}
-			outerOperatorsFrame <- tkframe(frame)
-			operatorsFrame <- tkframe(outerOperatorsFrame)
-			plusButton <- buttonRcmdr(operatorsFrame, text="+", width="3", command=onPlus)
-			timesButton <- buttonRcmdr(operatorsFrame, text="*", width="3", command=onTimes)
-			colonButton <- buttonRcmdr(operatorsFrame, text=":", width="3", command=onColon)
-			slashButton <- buttonRcmdr(operatorsFrame, text="/", width="3", command=onSlash)
-			inButton <- buttonRcmdr(operatorsFrame, text="%in%", width="5", command=onIn)
-			minusButton <- buttonRcmdr(operatorsFrame, text="-", width="3", command=onMinus)
-			powerButton <- buttonRcmdr(operatorsFrame, text="^", width="3", command=onPower)
-			leftParenButton <- buttonRcmdr(operatorsFrame, text="(", width="3", command=onLeftParen)
-			rightParenButton <- buttonRcmdr(operatorsFrame, text=")", width="3", command=onRightParen)
-			
-			tkgrid(plusButton, timesButton, colonButton, slashButton, inButton, minusButton,
-					powerButton, leftParenButton, rightParenButton, sticky="w")
-			formulaFrame <- tkframe(frame)
-			if (hasLhs){
-				tkgrid(labelRcmdr(outerOperatorsFrame, text=gettextRcmdr("Model Formula:     "), fg="blue"), operatorsFrame)
-				lhsVariable <- if (currentModel) tclVar(currentFields$lhs) else tclVar("")
-				rhsVariable <- if (currentModel) tclVar(currentFields$rhs) else tclVar("")
-				rhsEntry <- ttkentry(formulaFrame, width="50", textvariable=rhsVariable)
-				rhsXscroll <- ttkscrollbar(formulaFrame,
-						orient="horizontal", command=function(...) tkxview(rhsEntry, ...))
-				tkconfigure(rhsEntry, xscrollcommand=function(...) tkset(rhsXscroll, ...))
-				lhsEntry <- ttkentry(formulaFrame, width="10", textvariable=lhsVariable)
-				lhsScroll <- ttkscrollbar(formulaFrame,
-						orient="horizontal", command=function(...) tkxview(lhsEntry, ...))
-				tkconfigure(lhsEntry, xscrollcommand=function(...) tkset(lhsScroll, ...))
-				tkgrid(lhsEntry, labelRcmdr(formulaFrame, text=" ~    "), rhsEntry, sticky="w")
-				tkgrid(lhsScroll, labelRcmdr(formulaFrame, text=""), rhsXscroll, sticky="w")
-				tkgrid.configure(lhsScroll, sticky="ew")
-			}
-			else{
-				rhsVariable <- if (currentModel) tclVar(currentFields$rhs) else tclVar("")
-				rhsEntry <- ttkentry(formulaFrame, width="50", textvariable=rhsVariable)
-				rhsXscroll <- ttkscrollbar(formulaFrame,
-						orient="horizontal", command=function(...) tkxview(rhsEntry, ...))
-				tkconfigure(rhsEntry, xscrollcommand=function(...) tkset(rhsXscroll, ...))
-				tkgrid(labelRcmdr(formulaFrame, text="   ~ "), rhsEntry, sticky="w")
-				tkgrid(labelRcmdr(formulaFrame, text=""), rhsXscroll, sticky="w")
-			}
-			tkgrid.configure(rhsXscroll, sticky="ew")
-		})
+    checkAddOperator <- function(rhs){
+        rhs.chars <- rev(strsplit(rhs, "")[[1]])
+        if (length(rhs.chars) < 1) return(FALSE)
+        check.char <- if ((rhs.chars[1] != " ") || (length(rhs.chars) == 1))
+            rhs.chars[1] else rhs.chars[2]
+        !is.element(check.char, c("+", "*", ":", "/", "-", "^", "(", "%"))
+    }
+    .variables <- Variables()
+    word <- paste("\\[", gettextRcmdr("factor"), "\\]", sep="")
+    variables <- paste(.variables,
+        ifelse(is.element(.variables, Factors()), paste("[", gettextRcmdr("factor"), "]", sep=""), ""))
+    xBox <- variableListBox(frame, variables, selectmode="multiple", title=gettextRcmdr("Variables (double-click to formula)"))
+    onDoubleClick <- if (!hasLhs){
+        function(){
+            var <- getSelection(xBox)
+            tkselection.clear(xBox$listbox, "0", "end")            		
+            if (length(grep(word, var)) == 1) var <- sub(word, "",  var)
+            tkfocus(rhsEntry)
+            rhs <- tclvalue(rhsVariable)
+            rhs.chars <- rev(strsplit(rhs, "")[[1]])
+            check.char <- if (length(rhs.chars) > 0){
+                if ((rhs.chars[1] != " ") || (length(rhs.chars) == 1))
+                    rhs.chars[1] else rhs.chars[2]
+            }
+            else ""
+            tclvalue(rhsVariable) <- if (rhs == "" ||
+                    is.element(check.char, c("+", "*", ":", "/", "-", "^", "(", "%")))
+                paste(rhs, var, sep="")
+            else paste(rhs, "+", var)
+            tkicursor(rhsEntry, "end")
+            tkxview.moveto(rhsEntry, "1")
+        }
+    }
+    else{
+        function(){
+            var <- getSelection(xBox)
+            which <- tkcurselection(xBox$listbox)
+            tkselection.clear(xBox$listbox, "0", "end")
+            if (length(grep(word, var)) == 1) var <- sub(word, "",  var)
+            lhs <- tclvalue(lhsVariable)
+            if (lhs == "" || tclvalue(tkselection.present(lhsEntry)) == "1"){
+                tclvalue(lhsVariable) <- var
+                tkselection.clear(lhsEntry)
+                tkfocus(rhsEntry)
+            }
+            else {
+                tkfocus(rhsEntry)
+                rhs <- tclvalue(rhsVariable)
+                rhs.chars <- rev(strsplit(rhs, "")[[1]])
+                check.char <- if (length(rhs.chars) > 0){
+                    if ((rhs.chars[1] != " ") || (length(rhs.chars) == 1))
+                        rhs.chars[1] else rhs.chars[2]
+                }
+                else ""
+                tclvalue(rhsVariable) <- if (rhs == "" ||
+                        is.element(check.char, c("+", "*", ":", "/", "-", "^", "(", "%")))
+                    paste(rhs, var, sep="")
+                else paste(rhs, "+", var)
+            }
+            tkicursor(rhsEntry, "end")
+            tkxview.moveto(rhsEntry, "1")
+        }
+    }
+    tkbind(xBox$listbox, "<Double-ButtonPress-1>", onDoubleClick)
+    onPlus <- function(){
+        rhs <- tclvalue(rhsVariable)
+        var <- getSelection(xBox)
+        tkselection.clear(xBox$listbox, "0", "end")										
+        if ((check <- !checkAddOperator(rhs)) && length(var) == 0) return()
+        if (length(var) > 1){
+            if (length(grep(word, var)) > 0) var <- sub(word, "",  var)
+            if (length(var) > 1) var <- paste(var, collapse=" + ")
+        }
+        tclvalue(rhsVariable) <- paste(rhs, if (!check) " + ", var, sep="")
+        tkicursor(rhsEntry, "end")
+        tkxview.moveto(rhsEntry, "1")
+    }
+    onTimes <- function(){
+        rhs <- tclvalue(rhsVariable)
+        var <- getSelection(xBox)
+        tkselection.clear(xBox$listbox, "0", "end")						
+        if ((check <- !checkAddOperator(rhs)) && length(var) == 0) return()
+        if (length(var) > 1){
+            if (length(grep(word, var)) > 0) var <- sub(word, "",  var)
+            var <- trim.blanks(var)
+            if (length(var) > 1) var <- paste(var, collapse="*")
+            tclvalue(rhsVariable) <- paste(rhs, if (!check) " + ", var, sep="")
+        }
+        else tclvalue(rhsVariable) <- paste(rhs, if (!check) "*", sep="")
+        tkicursor(rhsEntry, "end")
+        tkxview.moveto(rhsEntry, "1")
+    }
+    onColon <- function(){
+        rhs <- tclvalue(rhsVariable)
+        var <- getSelection(xBox)
+        tkselection.clear(xBox$listbox, "0", "end")						
+        if ((check <- !checkAddOperator(rhs)) && length(var) == 0) return()
+        if (length(var) > 1){
+            if (length(grep(word, var)) > 0) var <- sub(word, "",  var)
+            var <- trim.blanks(var)
+            if (length(var) > 1) var <- paste(var, collapse=":")
+            tclvalue(rhsVariable) <- paste(rhs, if (!check) " + ", var, sep="")
+        }
+        else tclvalue(rhsVariable) <- paste(rhs, if (!check) ":", sep="")
+        tkicursor(rhsEntry, "end")
+        tkxview.moveto(rhsEntry, "1")
+    }
+    onSlash <- function(){
+        rhs <- tclvalue(rhsVariable)
+        if (!checkAddOperator(rhs)) return()
+        tclvalue(rhsVariable) <- paste(rhs, "/",  sep="")
+        tkicursor(rhsEntry, "end")
+        tkxview.moveto(rhsEntry, "1")
+    }
+    onIn <- function(){
+        rhs <- tclvalue(rhsVariable)
+        if (!checkAddOperator(rhs)) return()
+        tclvalue(rhsVariable) <- paste(rhs, "%in% ")
+        tkicursor(rhsEntry, "end")
+        tkxview.moveto(rhsEntry, "1")
+    }
+    onMinus <- function(){
+        rhs <- tclvalue(rhsVariable)
+        if (!checkAddOperator(rhs)) return()
+        tclvalue(rhsVariable) <- paste(rhs, "- ")
+        tkicursor(rhsEntry, "end")
+        tkxview.moveto(rhsEntry, "1")
+    }
+    onPower <- function(){
+        rhs <- tclvalue(rhsVariable)
+        if (!checkAddOperator(rhs)) return()
+        tclvalue(rhsVariable) <- paste(rhs, "^", sep="")
+        tkicursor(rhsEntry, "end")
+        tkxview.moveto(rhsEntry, "1")
+    }
+    onLeftParen <- function(){
+        tkfocus(rhsEntry)
+        rhs <- tclvalue(rhsVariable)
+        tclvalue(rhsVariable) <- paste(rhs, "(", sep="")
+        tkicursor(rhsEntry, "end")
+        tkxview.moveto(rhsEntry, "1")
+    }
+    onRightParen <- function(){
+        rhs <- tclvalue(rhsVariable)
+        if (!checkAddOperator(rhs)) return()
+        tclvalue(rhsVariable) <- paste(rhs, ")", sep="")
+        tkicursor(rhsEntry, "end")
+        tkxview.moveto(rhsEntry, "1")
+    }
+    outerOperatorsFrame <- tkframe(frame)
+    operatorsFrame <- tkframe(outerOperatorsFrame)
+    splinePolyFrame <- tkframe(outerOperatorsFrame)
+    plusButton <- buttonRcmdr(operatorsFrame, text="+", width="3", command=onPlus)
+    timesButton <- buttonRcmdr(operatorsFrame, text="*", width="3", command=onTimes)
+    colonButton <- buttonRcmdr(operatorsFrame, text=":", width="3", command=onColon)
+    slashButton <- buttonRcmdr(operatorsFrame, text="/", width="3", command=onSlash)
+    inButton <- buttonRcmdr(operatorsFrame, text="%in%", width="5", command=onIn)
+    minusButton <- buttonRcmdr(operatorsFrame, text="-", width="3", command=onMinus)
+    powerButton <- buttonRcmdr(operatorsFrame, text="^", width="3", command=onPower)
+    leftParenButton <- buttonRcmdr(operatorsFrame, text="(", width="3", command=onLeftParen)
+    rightParenButton <- buttonRcmdr(operatorsFrame, text=")", width="3", command=onRightParen)
+    onBSpline <- function(){
+        rhs <- tclvalue(rhsVariable)
+        var <- getSelection(xBox)
+        tkselection.clear(xBox$listbox, "0", "end")
+        if (length(var) == 0) var <- " "
+        if (grepl("\\[factor\\]", var)){
+            Message("spline requires a numeric variable", type="error")
+            return()
+        }
+        if (length(var) > 1){
+            Message("cannot select more than one variable", type="error")
+            return()
+        }
+        check <- !checkAddOperator(rhs)
+        tclvalue(rhsVariable) <- paste(rhs, 
+            if (!check) paste(" + bs(", var, ", df=", tclvalue(dfSplineVar), ")", sep="") 
+            else paste(" bs(", var, ", df=", tclvalue(dfSplineVar), ")", sep=""),
+            sep="")
+        tkicursor(rhsEntry, "end")
+        tkxview.moveto(rhsEntry, "1")
+    }
+    onNatSline <- function(){
+        rhs <- tclvalue(rhsVariable)
+        var <- getSelection(xBox)
+        tkselection.clear(xBox$listbox, "0", "end")
+        if (length(var) == 0) var <- " "
+        if (grepl("\\[factor\\]", var)){
+            Message("spline requires a numeric variable", type="error")
+            return()
+        }
+        if (length(var) > 1){
+            Message("cannot select more than one variable", type="error")
+            return()
+        }
+        check <- !checkAddOperator(rhs)
+        tclvalue(rhsVariable) <- paste(rhs, 
+            if (!check) paste(" + ns(", var, ", df=", tclvalue(dfSplineVar), ")", sep="") 
+            else paste(" ns(", var, ", df=", tclvalue(dfSplineVar), ")", sep=""),
+            sep="")
+        tkicursor(rhsEntry, "end")
+        tkxview.moveto(rhsEntry, "1")
+    }
+    onPoly <- function(){
+        rhs <- tclvalue(rhsVariable)
+        var <- getSelection(xBox)
+        tkselection.clear(xBox$listbox, "0", "end")
+        if (length(var) == 0) var <- " "
+        if (grepl("\\[factor\\]", var)){
+            Message("polynomial requires a numeric variable", type="error")
+            return()
+        }
+        if (length(var) > 1){
+            Message("cannot select more than one variable", type="error")
+            return()
+        }
+        check <- !checkAddOperator(rhs)
+        tclvalue(rhsVariable) <- paste(rhs, 
+            if (!check) paste(" + poly(", var, ", degree=", tclvalue(degPolyVar), ")", sep="") 
+            else paste(" poly(", var, ", degree=", tclvalue(degPolyVar), ")", sep=""),
+            sep="")
+        tkicursor(rhsEntry, "end")
+        tkxview.moveto(rhsEntry, "1")
+    }
+    onRawPoly <- function(){
+        rhs <- tclvalue(rhsVariable)
+        var <- getSelection(xBox)
+        tkselection.clear(xBox$listbox, "0", "end")
+        if (length(var) == 0) var <- " "
+        if (grepl("\\[factor\\]", var)){
+            Message("polynomial requires a numeric variable", type="error")
+            return()
+        }
+        if (length(var) > 1){
+            Message("cannot select more than one variable", type="error")
+            return()
+        }
+        check <- !checkAddOperator(rhs)
+        tclvalue(rhsVariable) <- paste(rhs, 
+            if (!check) paste(" + poly(", var, ", degree=", tclvalue(degPolyVar), ", raw=TRUE)", sep="") 
+            else paste(" poly(", var, ", degree=", tclvalue(degPolyVar), ", raw=TRUE)", sep=""),
+            sep="")
+        tkicursor(rhsEntry, "end")
+        tkxview.moveto(rhsEntry, "1")
+    }
+    bsplineButton <- buttonRcmdr(splinePolyFrame, text=gettextRcmdr("B-spline\n"), width="10", command=onBSpline)
+    nsplineButton <- buttonRcmdr(splinePolyFrame, text=gettextRcmdr("natural\nspline"), width="10", command=onNatSline)
+    polyButton <- buttonRcmdr(splinePolyFrame, text=gettextRcmdr("orthogonal\npolynomial"), width="10", command=onPoly)
+    RawPolyButton <- buttonRcmdr(splinePolyFrame, text=gettextRcmdr("raw\npolynomial"), width="10", command=onRawPoly)
+    dfSplineVar <- tclVar("5")
+    degPolyVar <- tclVar("2")
+    dfDegFrame <- tkframe(outerOperatorsFrame)
+    dfSplineSpin <- tkspinbox(dfDegFrame, textvariable=dfSplineVar, state="readonly", from=2, to=10, width=2)
+    degPolySpin <- tkspinbox(dfDegFrame, textvariable=degPolyVar, state="readonly", from=2, to=5, width=2)
+    tkgrid(plusButton, timesButton, colonButton, slashButton, inButton, minusButton,
+        powerButton, leftParenButton, rightParenButton, sticky="w")
+    tkgrid(labelRcmdr(dfDegFrame, text=gettextRcmdr("df for splines: ")), dfSplineSpin,  sticky="se")
+    tkgrid(labelRcmdr(dfDegFrame, text=gettextRcmdr("deg. for polynomials: ")), degPolySpin, sticky="se")
+    formulaFrame <- tkframe(frame)
+    if (hasLhs){
+        tkgrid(labelRcmdr(outerOperatorsFrame, text=gettextRcmdr("Model Formula"), 
+            fg=getRcmdr("title.color"), font="RcmdrTitleFont"), sticky="w")
+        tkgrid(labelRcmdr(outerOperatorsFrame, text="Operators (click to formula):  "), operatorsFrame, sticky="nw")
+        tkgrid(bsplineButton, nsplineButton, polyButton, RawPolyButton, sticky="nw")
+        tkgrid(labelRcmdr(outerOperatorsFrame, text=gettextRcmdr("Splines/Polynomials:\n(select variable and click)")), 
+            splinePolyFrame, dfDegFrame, sticky="nw")
+        lhsVariable <- if (currentModel) tclVar(currentFields$lhs) else tclVar("")
+        rhsVariable <- if (currentModel) tclVar(currentFields$rhs) else tclVar("")
+        rhsEntry <- ttkentry(formulaFrame, width="75", textvariable=rhsVariable)
+        rhsXscroll <- ttkscrollbar(formulaFrame,
+            orient="horizontal", command=function(...) tkxview(rhsEntry, ...))
+        tkconfigure(rhsEntry, xscrollcommand=function(...) tkset(rhsXscroll, ...))
+        lhsEntry <- ttkentry(formulaFrame, width="10", textvariable=lhsVariable)
+        lhsScroll <- ttkscrollbar(formulaFrame,
+            orient="horizontal", command=function(...) tkxview(lhsEntry, ...))
+        tkconfigure(lhsEntry, xscrollcommand=function(...) tkset(lhsScroll, ...))
+        tkgrid(lhsEntry, labelRcmdr(formulaFrame, text=" ~    "), rhsEntry, sticky="w")
+        tkgrid(lhsScroll, labelRcmdr(formulaFrame, text=""), rhsXscroll, sticky="w")
+        tkgrid.configure(lhsScroll, sticky="ew")
+    }
+    else{
+        rhsVariable <- if (currentModel) tclVar(currentFields$rhs) else tclVar("")
+        rhsEntry <- ttkentry(formulaFrame, width="75", textvariable=rhsVariable)
+        rhsXscroll <- ttkscrollbar(formulaFrame,
+            orient="horizontal", command=function(...) tkxview(rhsEntry, ...))
+        tkconfigure(rhsEntry, xscrollcommand=function(...) tkset(rhsXscroll, ...))
+        tkgrid(labelRcmdr(formulaFrame, text="   ~ "), rhsEntry, sticky="w")
+        tkgrid(labelRcmdr(formulaFrame, text=""), rhsXscroll, sticky="w")
+    }
+    tkgrid.configure(rhsXscroll, sticky="ew")
+})
 
 exists.method <- function(generic, object, default=TRUE, strict=FALSE){
 	classes <- class(object)
@@ -1498,11 +1926,15 @@ RcmdrEnv <- function() .RcmdrEnv
 
 putRcmdr <- function(x, value) assign(x, value, envir=RcmdrEnv())
 
-getRcmdr <- function(x, mode="any") get(x, envir=RcmdrEnv(), mode=mode, inherits=FALSE)
+# getRcmdr <- function(x, mode="any") get(x, envir=RcmdrEnv(), mode=mode, inherits=FALSE)
+
+getRcmdr <- function(x, mode="any", fail=TRUE){
+    if ((!fail) && (!exists(x, mode=mode, envir=RcmdrEnv(), inherits=FALSE))) return(NULL)
+    get(x, envir=RcmdrEnv(), mode=mode, inherits=FALSE)
+}
 
 
 RcmdrTclSet <- function(name, value){
-	if (is.SciViews()) return()   # + PhG
 	name <- ls(unclass(getRcmdr(name))$env)
 	tcl("set", name, value)
 }
@@ -1533,49 +1965,46 @@ TwoLevelFactors <- function(names){
 #  and subsequently by John Fox (23 July 07)
 
 ActiveDataSet <- function(name){
-	if (missing(name)) {
-		temp <- getRcmdr(".activeDataSet")
-		if (is.null(temp))
-			return(NULL)
-		else
-		if (!exists(temp) || !is.data.frame(get(temp,envir=.GlobalEnv))) {
-			Message(sprintf(gettextRcmdr("the dataset %s is no longer available"),
-							temp), type="error")
-			putRcmdr(".activeDataSet", NULL)
-			RcmdrTclSet("dataSetName", gettextRcmdr("<No active dataset>"))
-			putRcmdr(".activeModel", NULL)
-			RcmdrTclSet("modelName", gettextRcmdr("<No active model>"))
-			if (!is.SciViews()) {
-				tkconfigure(getRcmdr("dataSetLabel"), foreground="red") 
-				tkconfigure(getRcmdr("modelLabel"), foreground="red") 
-			} 
-			else refreshStatus()
-			activateMenus()
-			if (getRcmdr("suppress.menus") && RExcelSupported()) return(NULL)
-		}
-		return(temp)
-	}
-	else putRcmdr(".activeDataSet", name)
+    if (missing(name)) {
+        temp <- getRcmdr(".activeDataSet")
+        if (is.null(temp))
+            return(NULL)
+        else
+            if (!exists(temp) || !is.data.frame(get(temp,envir=.GlobalEnv))) {
+                Message(sprintf(gettextRcmdr("the dataset %s is no longer available"),
+                    temp), type="error")
+                putRcmdr(".activeDataSet", NULL)
+                RcmdrTclSet("dataSetName", gettextRcmdr("<No active dataset>"))
+                putRcmdr(".activeModel", NULL)
+                RcmdrTclSet("modelName", gettextRcmdr("<No active model>"))
+                tkconfigure(getRcmdr("dataSetLabel"), foreground="red") 
+                tkconfigure(getRcmdr("modelLabel"), foreground="red") 
+                activateMenus()
+                if (getRcmdr("suppress.menus") && RExcelSupported()) return(NULL)
+            }
+        return(temp)
+    }
+    else putRcmdr(".activeDataSet", name)
 }
 
 ActiveModel <- function(name){
-	if (missing(name)) {
-		temp <- getRcmdr(".activeModel")
-		if (is.null(temp))
-			return(NULL)
-		else
-		if (!exists(temp) || !is.model(get(temp,envir=.GlobalEnv))) {
-			Message(sprintf(gettextRcmdr("the model %s is no longer available"),
-							temp), type="error")
-			putRcmdr(".activeModel", NULL)
-			RcmdrTclSet("modelName", gettextRcmdr("<No active model>"))
-			if (!is.SciViews()) tkconfigure(getRcmdr("modelLabel"), foreground="red") else refreshStatus()
-			activateMenus()
-			return(NULL)
-		}
-		else return(temp)
-	}
-	else putRcmdr(".activeModel", name)
+    if (missing(name)) {
+        temp <- getRcmdr(".activeModel")
+        if (is.null(temp))
+            return(NULL)
+        else
+            if (!exists(temp) || !is.model(get(temp,envir=.GlobalEnv))) {
+                Message(sprintf(gettextRcmdr("the model %s is no longer available"),
+                    temp), type="error")
+                putRcmdr(".activeModel", NULL)
+                RcmdrTclSet("modelName", gettextRcmdr("<No active model>"))
+                tkconfigure(getRcmdr("modelLabel"), foreground="red")
+                activateMenus()
+                return(NULL)
+            }
+        else return(temp)
+    }
+    else putRcmdr(".activeModel", name)
 }
 
 GrabFocus <- function(value){
@@ -1593,6 +2022,10 @@ UpdateModelNumber <- function(increment=1){
 CommanderWindow <- function() getRcmdr("commanderWindow")
 
 LogWindow <- function() getRcmdr("logWindow")
+
+RmdWindow <- function() getRcmdr("RmdWindow")
+
+RnwWindow <- function() getRcmdr("RnwWindow")
 
 OutputWindow <- function() getRcmdr("outputWindow")
 
@@ -1677,7 +2110,7 @@ English <- function() {
 
 RcmdrTkmessageBox <- function(message, icon=c("info", "question", "warning",
 				"error"), type=c("okcancel", "yesno", "ok"), default, title="") {
-	if ( (English()) || (.Platform$OS.type != "windows") ){
+	if ( (English()) || (!WindowsP()) ){
 		if (missing(default)){
 			default <- switch(type,
 					okcancel="ok",
@@ -1693,7 +2126,7 @@ RcmdrTkmessageBox <- function(message, icon=c("info", "question", "warning",
 	buttonFrame <- tkframe(messageBox,  borderwidth=5)
 	if (icon != "question") tkbell()
 	result <- tclVar()
-	iconColor <- switch(icon, info="blue", question="blue", warning="black",
+	iconColor <- switch(icon, info=getRcmdr("title.color"), question=getRcmdr("title.color"), warning="black",
 			error="red")
 	onOK <- function() {
 		if (GrabFocus()) tkgrab.release(messageBox)
@@ -1760,7 +2193,7 @@ RcmdrTkmessageBox <- function(message, icon=c("info", "question", "warning",
 			}
 	)
 	tkgrid(buttonFrame)
-	dialogSuffix(messageBox, rows=2, focus=messageBox, bindReturn=FALSE)
+	dialogSuffix(messageBox, focus=messageBox, bindReturn=FALSE)
 	result
 }
 
@@ -1844,7 +2277,7 @@ loadPlugins <- function(){
 	OKCancelHelp(helpSubject="Plugins")
 	tkgrid(getFrame(packagesBox), sticky="nw")
 	tkgrid(buttonsFrame, sticky="w")
-	dialogSuffix(rows=1, columns=1)
+	dialogSuffix()
 }
 
 # the following two functions contributed by Erich Neuwirth (added 22 July 07)
@@ -1931,7 +2364,7 @@ sortVarNames <- function(x){
 
 # to load packages
 
-Library <- function(package, pos=4){
+Library <- function(package, pos=4, rmd=TRUE){
 	loaded <- search()
 	loaded <- loaded[grep("^package:", loaded)]
 	loaded <- sub("^package:", "", loaded)
@@ -1945,7 +2378,7 @@ Library <- function(package, pos=4){
 	}
 	if (!(package %in% loaded)){
 		command <- paste("library(", package, ", pos=", pos, ")", sep="")
-		logger(command)
+		logger(command, rmd=rmd)
 		result <- try(eval(parse(text=command), envir=.GlobalEnv), silent=TRUE)
 		if (class(result)[1] ==  "try-error"){
 			Message(message=paste(strsplit(result, ":")[[1]][2]), type="error")
@@ -2098,3 +2531,150 @@ confint.glm <- function (object, parm, level = 0.95, trace = FALSE, ...)
 }
 
 tkfocus <- function(...) tcl("focus", ...)
+
+tkspinbox <- function(parent, ...) tkwidget(parent, "spinbox", ...)
+
+# the following two functions adapted from Milan Bouchet-Valat
+
+WindowsP <- function() {
+    .Platform$OS.type == "windows"
+}
+
+X11P <- function(){
+    .Platform$GUI == "X11"
+}
+
+# the following functions to support R Markdown
+
+suppressMarkdown <- function(command){
+    attr(command, "suppressRmd") <- TRUE
+    command
+}
+
+beginRmdBlock <- function(){
+    .rmd <- RmdWindow()
+    last2 <- tclvalue(tkget(.rmd, "end -2 chars", "end"))
+    if (last2 != "\n\n") tkinsert(.rmd, "end", "\n")
+    tkinsert(.rmd, "end", "\n")
+    tkinsert(.rmd, "end", "```{r}\n")
+}
+
+endRmdBlock <- function(){
+    tkinsert(RmdWindow(), "end", "```\n")
+}
+
+removeNullRmdBlocks <- function(){
+    .rmd <- RmdWindow()
+    rmd <- tclvalue(tkget(.rmd, "1.0", "end"))
+    rmd <- gsub("\n+$", "\n", rmd)
+    rmd <- gsub("```\\{r\\}\n$", "", rmd)
+    rmd <- gsub("```\\{r\\}\n```\n$", "", rmd)
+    tkdelete(.rmd, "1.0", "end")
+    tkinsert(.rmd, "end", rmd)
+    tkyview.moveto(.rmd, 1)
+}
+
+enterMarkdown <- function(command){
+    .rmd <- RmdWindow()
+    if (!getRcmdr("use.markdown")) return()
+    command <- splitCmd(command)
+    beginRmdBlock()
+    tkinsert(.rmd, "end", paste(command, "\n", sep=""))
+    tkyview.moveto(.rmd, 1)
+    putRcmdr("markdown.output", TRUE)
+    endRmdBlock()
+    command
+}
+
+# the following functions to support knitr
+
+beginRnwBlock <- function(){
+    .rnw <- RnwWindow()
+    last2 <- tclvalue(tkget(.rnw, "end -2 chars", "end"))
+    if (last2 != "\n\n") tkinsert(.rnw, "end", "\n")
+    tkinsert(.rnw, "end", "\n")
+    tkinsert(.rnw, "end", "\\newpage\n")
+    tkinsert(.rnw, "end", "<<>>=\n")
+}
+
+endRnwBlock <- function(){
+    tkinsert(RnwWindow(), "end", "@\n")
+}
+
+removeNullRnwBlocks <- function(){
+    .rnw <- RnwWindow()
+    rnw <- tclvalue(tkget(.rnw, "1.0", "end"))
+    rnw <- gsub("\n+$", "\n", rnw)
+    rnw <- gsub("<<>>=\n$", "", rnw)
+    rnw <- gsub("<<>>=\n@\n$", "", rnw)
+    rnw <- gsub("\\\\newpage\n*$", "", rnw)
+    tkdelete(.rnw, "1.0", "end")
+    tkinsert(.rnw, "end", rnw)
+    tkyview.moveto(.rnw, 1)
+}
+
+enterKnitr <- function(command){
+    .rnw <- RnwWindow()
+    if (!getRcmdr("use.knitr")) return()
+    command <- splitCmd(command)
+    beginRnwBlock()
+    tkinsert(.rnw, "end", paste(command, "\n", sep=""))
+    tkyview.moveto(.rnw, 1)
+    putRcmdr("knitr.output", TRUE)
+    endRnwBlock()
+    command
+}
+
+
+# the rgb2col function translates #RRGGBB colors to names if a named color exists or otherwise a "close" color (not exported)
+#  uses code from r-help adapted from Kevin Wright
+
+rgb2col <- local({
+    all.names <- colors(distinct=TRUE)
+    all.lab <- t(convertColor(t(col2rgb(all.names)), from = "sRGB", 
+        to = "Lab", scale.in = 255))
+    findNear <- function(x.lab) {
+        sq.dist <- colSums((all.lab - x.lab)^2)
+        rbind(all.names[which.min(sq.dist)], min(sq.dist))
+    }
+    function(cols.hex, near = 15) { # near = 2.3 is nominally the JND
+        cols.lab <- t(convertColor(t(col2rgb(cols.hex)), from = "sRGB", 
+            to = "Lab", scale.in = 255))
+        cols.near <- apply(cols.lab, 2, findNear)
+        ifelse(as.numeric(cols.near[2, ]) < near^2, cols.near[1, ], toupper(cols.hex))
+    }
+})
+
+# the following function is for plug-ins that test for SciViews (which is no longer supported)
+
+is.SciViews <- function() FALSE
+
+# the following two functions from Milan Bouchet-Valat
+
+.setBusyCursor <- function() {
+    .commander <- CommanderWindow()
+    .menu <- tkcget(.commander, menu=NULL)
+    .log <- LogWindow()
+    .output <- OutputWindow()
+    .messages <- MessagesWindow()
+    
+    tkconfigure(.commander, cursor="watch")
+    tkconfigure(.menu, cursor="watch")
+    tkconfigure(.log, cursor="watch")
+    tkconfigure(.output, cursor="watch")
+    tkconfigure(.messages, cursor="watch")
+}
+
+.setIdleCursor <- function() {
+    .commander <- CommanderWindow()
+    .menu <- tkcget(.commander, menu=NULL)
+    .log <- LogWindow()
+    .output <- OutputWindow()
+    .messages <- MessagesWindow()
+    
+    tkconfigure(.commander, cursor="")
+    tkconfigure(.menu, cursor="")
+    tkconfigure(.log, cursor="xterm")
+    tkconfigure(.output, cursor="xterm")
+    tkconfigure(.messages, cursor="xterm")
+}

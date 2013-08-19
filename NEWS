@@ -1,8 +1,34 @@
-Changes to Version 1.9-6
+Changes to Version 2.0-0
+
+  o New package co-author: Milan Bouchet-Valet. 
+
+  o Many changes to style of dialogs: tabs, Reset button, Apply button, small interface improvements.
+
+  o Support for R Markdown, with script and Rmd tabs.
+
+  o Expanded Options dialog and new Save Options dialog.
+
+  o Better handling of default fonts.
+
+  o Improved probability plots. 
+
+  o Introduced plotDistr(), lineplot(), indexplot() convenience functions.
+
+  o New nonparametric density estimate dialog.
+
+  o Use automatic point identification as default in plot dialogs.
 
   o Calls to deprecated functions .find.package() and .path.package() replaced by find.package() and path.package() (suggestion of Brian Ripley).
 
+  o Partial correlations now optionally report pairwise p-values (suggestion of Aaron Swink).
+
+  o Removed Sciviews support code.
+
   o Small fixes.
+
+  o Updated translations (with thanks to the translators): Italian (Stefano Calza), Korean (Jong-Hwa Shin), Romanian (Adrian Dusa), Russian (Alexey Shipunov), Spanish (Manuel Munoz-Marquez).
+
+  o Show menu item for English introductory manual even if a "translation" is available (suggestion of Manuel Munoz-Marquez).
 
 Changes to Version 1.9-5
 
@@ -159,4 +185,4 @@ Changes to Version 1.8-0
    
     o Added confirmatory factor analysis.
    
-    o Updated Italiian, Japanese, Romanian, Russian, and Spanish translations (thanks respectively to Stefano Calza, Takaharu Araki, Adrian Dusa, Alexey Shipunov, and Manuel Munoz Marquez).    
+    o Updated Italian, Japanese, Romanian, Russian, and Spanish translations (thanks respectively to Stefano Calza, Takaharu Araki, Adrian Dusa, Alexey Shipunov, and Manuel Munoz Marquez).    
