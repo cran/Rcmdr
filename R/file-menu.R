@@ -1,6 +1,6 @@
-# last modified 2013-08-05 by M. Bouchet-Valat
+# last modified 2013-10-29 by J. Fox
 
-# File menu dialogs
+# File (and Edit) menu dialogs
 
 loadLog <- function(){
 	logFile <- tclvalue(tkgetOpenFile(filetypes=gettextRcmdr('{"All Files" {"*"}} {"Script Files" {".R"}}'),
@@ -660,7 +660,7 @@ saveOptions <- function(){
         if (tclvalue(focused) != optionsWindow$ID) focused <- optionsWindow
         initializeDialog(title=gettextRcmdr("Find"))
         textFrame <- tkframe(top)
-        textVar <- tclVar("")
+        textVar <- tclVar(getRcmdr("last.search"))
         textEntry <- ttkentry(textFrame, width="20", textvariable=textVar)
         checkBoxes(frame="optionsFrame", boxes=c("regexpr", "case"), initialValues=c("0", "1"),
                    labels=gettextRcmdr(c("Regular-expression search", "Case sensitive")))
@@ -668,6 +668,7 @@ saveOptions <- function(){
                      values=c("-forward", "-backward"), title=gettextRcmdr("Search Direction"))
         onOK <- function(){
             text <- tclvalue(textVar)
+            putRcmdr("last.search", text)
             if (text == ""){
                 errorCondition(recall=onFind, message=gettextRcmdr("No search text specified."))
                 return()
@@ -692,6 +693,11 @@ saveOptions <- function(){
             tkmark.set(focused, "insert", where)
             tksee(focused, where)
             tkdestroy(top)
+        }
+        .exit <- function(){
+            text <- tclvalue(textVar)
+            putRcmdr("last.search", text)
+            return("")
         }
         OKCancelHelp()
         tkgrid(labelRcmdr(textFrame, text=gettextRcmdr("Search for:")), textEntry, sticky="w")
@@ -764,6 +770,7 @@ saveOptions <- function(){
     tkbind(top, "<Control-C>", onCopy)
     tkbind(top, "<Control-f>", onFind)
     tkbind(top, "<Control-F>", onFind)
+    tkbind(top, "<F3>", onFind)
     tkbind(top, "<Control-a>", onSelectAll)
     tkbind(top, "<Control-A>", onSelectAll)
     tkbind(top, "<Control-w>", onRedo)
@@ -861,3 +868,101 @@ Setwd <- function(){
 	if (wd != "") doItAndPrint(paste('setwd("', wd, '")', sep=""))
 }
 
+
+editMarkdown <- function(){
+    .rmd <- RmdWindow()
+    buffer <- tclvalue(tkget(.rmd, "1.0", "end"))
+#     RcmdrEditor(buffer, title=gettextRcmdr("Edit R Markdown document"),
+#         help=list(label="Using R Markdown", command=browseRMarkdown),
+#         process=list(label="Generate HTML report", 
+#             command=function(){
+#                 editor.text <- getRcmdr("editor.text", fail=FALSE)
+#                 if (is.null(editor.text)) return()
+#                 edited <- tclvalue(tkget(editor.text, "1.0", "end"))
+#                 if (edited == "") return()
+#                 tkdelete(.rmd, "1.0", "end")
+#                 tkinsert(.rmd, "end", edited)
+#                 compileRmd()
+#             })
+#    )
+    compile <- function() {
+        .rmd <- RmdWindow()
+        editor <- getRcmdr("editor.text")
+        buffer <- tclvalue(tkget(editor, "1.0", "end"))
+        tkdelete(.rmd, "1.0", "end")
+        tkinsert(.rmd, "end", buffer)
+        compileRmd()
+    }
+    removeLastBlock <- function(){
+        .rmd <- RmdWindow()
+        editor <- getRcmdr("editor.text")
+        buffer <- tclvalue(tkget(editor, "1.0", "end"))
+        tkdelete(.rmd, "1.0", "end")
+        tkinsert(.rmd, "end", buffer)
+        removeLastRmdBlock()
+        buffer <- tclvalue(tkget(.rmd, "1.0", "end"))
+        tkdelete(editor, "1.0", "end")
+        tkinsert(editor, "end", buffer)
+    }
+    RcmdrEditor(buffer,  title="Edit R Markdown document",
+        help=list(label="Using R Markdown", command=browseRMarkdown),
+        file.menu=list(list(label="Generate HTML report", command=compile)), 
+#        edit.menu=list(list(label="Remove last command block", command=removeLastBlock)), 
+#        context.menu=list(list(label="Remove last command block", command=removeLastBlock)), 
+        toolbar.buttons=list(list(label="Generate HTML report", command=compile, image="::image::submitIcon")))
+#            list(label="Remove last command block", command=removeLastBlock, image="::image::removeIcon")))
+    edited <- getRcmdr("buffer")
+    if (!is.null(edited)){
+        tkdelete(.rmd, "1.0", "end")
+        tkinsert(.rmd, "end", edited)
+        tkyview.moveto(.rmd, 1)
+    }
+}
+
+editKnitr <- function(){
+    .rnw <- RnwWindow()
+    buffer <- tclvalue(tkget(.rnw, "1.0", "end"))
+#     RcmdrEditor(buffer, title=gettextRcmdr("Edit knitr document"),
+#         process=list(label="Generate PDF report", 
+#             command=function(){
+#                 editor.text <- getRcmdr("editor.text", fail=FALSE)
+#                 if (is.null(editor.text)) return()
+#                 edited <- tclvalue(tkget(editor.text, "1.0", "end"))
+#                 if (edited == "") return()
+#                 tkdelete(.rnw, "1.0", "end")
+#                 tkinsert(.rnw, "end", edited)
+#                 compileRnw()
+#             })
+#     )
+    compile <- function() {
+        .rnw <- RnwWindow()
+        editor <- getRcmdr("editor.text")
+        buffer <- tclvalue(tkget(editor, "1.0", "end"))
+        tkdelete(.rnw, "1.0", "end")
+        tkinsert(.rnw, "end", buffer)
+        compileRnw()
+    }
+    removeLastBlock <- function(){
+        .rnw <- RnwWindow()
+        editor <- getRcmdr("editor.text")
+        buffer <- tclvalue(tkget(editor, "1.0", "end"))
+        tkdelete(.rnw, "1.0", "end")
+        tkinsert(.rnw, "end", buffer)
+        removeLastRnwBlock()
+        buffer <- tclvalue(tkget(.rnw, "1.0", "end"))
+        tkdelete(editor, "1.0", "end")
+        tkinsert(editor, "end", buffer)
+    }
+    RcmdrEditor(buffer,  title="Edit knitr document",
+        file.menu=list(list(label="Generate PDF report", command=compile)), 
+#       edit.menu=list(list(label="Remove last command block", command=removeLastBlock)), 
+#        context.menu=list(list(label="Remove last command block", command=removeLastBlock)), 
+        toolbar.buttons=list(list(label="Generate PDF report", command=compile, image="::image::submitIcon")))
+#            list(label="Remove last command block", command=removeLastBlock, image="::image::removeIcon")))
+    edited <- getRcmdr("buffer")
+    if (!is.null(edited)){
+        tkdelete(.rnw, "1.0", "end")
+        tkinsert(.rnw, "end", edited)
+        tkyview.moveto(.rnw, 1)
+    }
+}

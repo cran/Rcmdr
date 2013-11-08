@@ -1,6 +1,6 @@
-msgid "Project-Id-Version: Rcmdr 2.0-0\n"
+msgid "Project-Id-Version: Rcmdr 2.0-1\n"
 "Report-Msgid-Bugs-To: jfox@mcmaster.ca\n"
-"POT-Creation-Date: 2013-08-15 18:30:00\n"
+"POT-Creation-Date: 2013-11-08 15:57:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4267,4 +4267,46 @@ msgid "df for splines:"
 msgstr ""
 
 msgid "deg. for polynomials:"
+msgstr ""
+
+# messages added to version 2.0-1
+
+   # messages related to editing/processing R Markdown and knitr documents
+
+msgid "R Commander Editor"
+msgstr ""
+
+msgid "Edit R Markdown document"
+msgstr ""
+
+msgid "Edit knitr document"
+msgstr ""
+
+msgid "Remove last Markdown command block"
+msgstr ""
+
+msgid "Remove last knitr command block"
+msgstr ""
+
+msgid "Remove last command block"
+msgstr ""
+
+msgid "Exit editor"
+msgstr ""
+
+msgid "Editor help"
+msgstr ""
+
+msgid "Delete previously created R Markdown\ngraphics files (recommended)?"
+msgstr ""
+
+msgid "Discard edits?"
+msgstr ""
+
+   # support for back-to-back stem-and-leaf displays
+
+msgid "Plot back-to-back by:"
+msgstr ""
+
+msgid "Plot back-to-back by"
 msgstr ""

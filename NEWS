@@ -1,6 +1,22 @@
+Changes to Version 2.0-1
+
+  o Caching of variable names, factor names, etc., to improve menu refreshes in large data sets (in response to observation of Yoshinobu Kanda).
+
+  o Updated translations (with thanks to the translators): French (Milan Bouchet-Valat), Japanese (Araki Takaharu).
+
+  o Most errors now removed from R Markdown and knitr documents.
+
+  o New editor for R Markdown and knitr documents; small addition to Getting Started manual to describe the editor.
+
+  o Stem-and-leaf dialog now supports back-to-back stem-and-leaf displays.
+
+  o Small corrections to the R-Rcmdr.pot file.
+
+  o Small bug fixes.
+
 Changes to Version 2.0-0
 
-  o New package co-author: Milan Bouchet-Valet. 
+  o New package co-author: Milan Bouchet-Valat. 
 
   o Many changes to style of dialogs: tabs, Reset button, Apply button, small interface improvements.
 
@@ -32,7 +48,7 @@ Changes to Version 2.0-0
 
 Changes to Version 1.9-5
 
-  o R logo now replaces Tk logo on non-Windows as well as Windows platforms (with help of Milan Bouchet-Valet).
+  o R logo now replaces Tk logo on non-Windows as well as Windows platforms (with help of Milan Bouchet-Valat).
 
   o Faster opening of dialog windows under Windows (consequence of above).
 

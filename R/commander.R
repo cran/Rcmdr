@@ -1,15 +1,13 @@
 
 # The R Commander and command logger
 
-# last modified 2013-08-18 by J. Fox
+# last modified 2013-11-09 by John Fox
 
-# contributions by Milan Bouchet-Valet, Richard Heiberger, Duncan Murdoch, Erich Neuwirth, Brian Ripley
+# contributions by Milan Bouchet-Valat, Richard Heiberger, Duncan Murdoch, Erich Neuwirth, Brian Ripley
 
 Commander <- function(){
     library(Rcmdr, quietly=TRUE)
     require("car")
-    require("knitr")
-    require("markdown")
     # set up RcmdrEnv
     RcmdrEnv.on.path <- getOption("Rcmdr")[["RcmdrEnv.on.path"]]
     if (is.null(RcmdrEnv.on.path)) RcmdrEnv.on.path <- (getRversion() < "3.0.0")
@@ -70,6 +68,7 @@ Commander <- function(){
     tkimage.create("photo", "::image::viewIcon", file = system.file("etc", "view.gif", package="Rcmdr"))
     tkimage.create("photo", "::image::dataIcon", file = system.file("etc", "data.gif", package="Rcmdr"))
     tkimage.create("photo", "::image::modelIcon", file = system.file("etc", "model.gif", package="Rcmdr"))
+    tkimage.create("photo", "::image::removeIcon", file = system.file("etc", "remove.gif", package="Rcmdr"))
     # locate Rcmdr etc directory and directory for menus (usually the same)
     etc <- setOption("etc", system.file("etc", package="Rcmdr"))
     etcMenus <- setOption("etcMenus", etc)
@@ -116,7 +115,7 @@ Commander <- function(){
             focused <- LogWindow()
         initializeDialog(title=gettextRcmdr("Find"))
         textFrame <- tkframe(top)
-        textVar <- tclVar("")
+        textVar <- tclVar(getRcmdr("last.search"))
         textEntry <- ttkentry(textFrame, width="20", textvariable=textVar)
         checkBoxes(frame="optionsFrame", boxes=c("regexpr", "case"), initialValues=c("0", "1"),
             labels=gettextRcmdr(c("Regular-expression search", "Case sensitive")))
@@ -124,6 +123,7 @@ Commander <- function(){
             values=c("-forward", "-backward"), title=gettextRcmdr("Search Direction"))
         onOK <- function(){
             text <- tclvalue(textVar)
+            putRcmdr("last.search", text)
             if (text == ""){
                 errorCondition(recall=onFind, message=gettextRcmdr("No search text specified."))
                 return()
@@ -148,6 +148,11 @@ Commander <- function(){
             tkmark.set(focused, "insert", where.txt)
             tksee(focused, where.txt)
             tkdestroy(top)
+        }
+        .exit <- function(){
+            text <- tclvalue(textVar)
+            putRcmdr("last.search", text)
+            return("")
         }
         OKCancelHelp()
         tkgrid(labelRcmdr(textFrame, text=gettextRcmdr("Search for:")), textEntry, sticky="w")
@@ -200,6 +205,7 @@ Commander <- function(){
     putRcmdr("open.dialog.here", NULL)
     putRcmdr("restoreTab", FALSE)
     putRcmdr("cancelDialogReopen", FALSE)
+    putRcmdr("last.search", "")
     # set up Rcmdr default and text (log) fonts, Tk scaling factor
     default.font.size.val <- abs(as.numeric(.Tcl("font actual TkDefaultFont -size")))
     if (is.na(default.font.size.val)) default.font.size.val <- 10
@@ -312,6 +318,10 @@ Commander <- function(){
     putRcmdr("restore.help_type", getOption("help_type"))
     if (RStudioP()) {
         options(help_type = "html")
+    }
+    # HTML help window is not responsive when opened from dialogs on Mac OS X
+    else if (MacOSXP()) {
+        options(help_type = "text")
     }
     putRcmdr("restore.device", getOption("device"))
     if (RStudioP()){
@@ -529,32 +539,10 @@ Commander <- function(){
             tktag.remove(.log, "sel", "1.0", "end")
         }
         else if (as.character(tkselect(notebook)) == RmdFrame$ID) {
-            lines <- tclvalue(tkget(.rmd, "1.0", "end"))
-            .RmdFile <- getRcmdr("RmdFileName")
-            .filename <- sub("\\.Rmd$", "", trim.blanks(.RmdFile))
-            writeLines(lines, .RmdFile)
-            knit(.RmdFile, paste(.filename, ".md", sep=""), quiet=TRUE)
-            .html.file <- paste(.filename, ".html", sep="")
-            markdownToHTML(paste(.filename, ".md", sep=""), .html.file)
-            .html.file.location <- paste("file:///", normalizePath(.html.file), sep="")
-            browseURL(.html.file.location)
+            compileRmd()
         }
         else{ 
-            fig.files <- list.files("./figure")
-            fig.files <- fig.files[grep("^unnamed-chunk-[0-9]*\\..*$", fig.files)]
-            if (length(fig.files) == 0) return()
-            response <- tkmessageBox(message = gettextRcmdr("Delete previously created knitr\ngraphics files (recommended)?"),
-                                     icon = "question", type = "okcancel", default = "ok")
-            if (tclvalue(response) == "ok") unlink(paste("./figure/", fig.files, sep=""))
-            lines <- tclvalue(tkget(.rnw, "1.0", "end"))
-            lines <- paste(lines, "\n\\end{document}\n")
-            .RnwFile <- getRcmdr("RnwFileName")
-            .filename <- sub("\\.Rnw$", "", trim.blanks(.RnwFile))
-            writeLines(lines, .RnwFile)
-            knit2pdf(.RnwFile)
-            .pdf.file <- paste(.filename, ".pdf", sep="")
-            .pdf.file.location <- paste("file:///", normalizePath(.pdf.file), sep="")
-            browseURL(.pdf.file.location)
+            compileRnw()
         }
     }
     # right-click context menus
@@ -581,13 +569,15 @@ Commander <- function(){
         .rmd <- RmdWindow()
         contextMenu <- tkmenu(tkmenu(.rmd), tearoff=FALSE)
         tkadd(contextMenu, "command", label=gettextRcmdr("Generate HTML report"), command=onSubmit)
+        tkadd(contextMenu, "command", label=gettextRcmdr("Edit R Markdown document"), command=editMarkdown)
+        tkadd(contextMenu, "command", label=gettextRcmdr("Remove last Markdown command block"), command=removeLastRmdBlock)
         tkadd(contextMenu, "separator")
         tkadd(contextMenu, "command", label=gettextRcmdr("Cut"), command=onCut)
         tkadd(contextMenu, "command", label=gettextRcmdr("Copy"), command=onCopy)
         tkadd(contextMenu, "command", label=gettextRcmdr("Paste"), command=onPaste)
         tkadd(contextMenu, "command", label=gettextRcmdr("Delete"), command=onDelete)
         tkadd(contextMenu, "separator")
-        tkadd(contextMenu, "command", label=gettextRcmdr("Find..."), command=onFind)
+#        tkadd(contextMenu, "command", label=gettextRcmdr("Find..."), command=onFind)  # doesn't work FIXME
         tkadd(contextMenu, "command", label=gettextRcmdr("Select all"), command=onSelectAll)
         tkadd(contextMenu, "separator")
         tkadd(contextMenu, "command", label=gettextRcmdr("Undo"), command=onUndo)
@@ -600,13 +590,15 @@ Commander <- function(){
         .rnw <- RnwWindow()
         contextMenu <- tkmenu(tkmenu(.rnw), tearoff=FALSE)
         tkadd(contextMenu, "command", label=gettextRcmdr("Generate PDF report"), command=onSubmit)
+        tkadd(contextMenu, "command", label=gettextRcmdr("Edit knitr document"), command=editKnitr)
+        tkadd(contextMenu, "command", label=gettextRcmdr("Remove last knitr command block"), command=removeLastRnwBlock)
         tkadd(contextMenu, "separator")
         tkadd(contextMenu, "command", label=gettextRcmdr("Cut"), command=onCut)
         tkadd(contextMenu, "command", label=gettextRcmdr("Copy"), command=onCopy)
         tkadd(contextMenu, "command", label=gettextRcmdr("Paste"), command=onPaste)
         tkadd(contextMenu, "command", label=gettextRcmdr("Delete"), command=onDelete)
         tkadd(contextMenu, "separator")
-        tkadd(contextMenu, "command", label=gettextRcmdr("Find..."), command=onFind)
+#        tkadd(contextMenu, "command", label=gettextRcmdr("Find..."), command=onFind) # doesn't work FIXME
         tkadd(contextMenu, "command", label=gettextRcmdr("Select all"), command=onSelectAll)
         tkadd(contextMenu, "separator")
         tkadd(contextMenu, "command", label=gettextRcmdr("Undo"), command=onUndo)
@@ -828,7 +820,7 @@ Commander <- function(){
     tkgrid(.output, outputYscroll, sticky="news", columnspan=2)
     tkgrid(outputXscroll, columnspan=1 + (.log.commands && !.console.output))
     if (!.console.output) tkgrid(outputFrame, sticky="news", padx=10, pady=0, columnspan=2)
-    tkgrid(labelRcmdr(messagesFrame, text=gettextRcmdr("Messages"), foreground=getRcmdr("error.text.color")), sticky="w", pady=c(6, 6))
+    tkgrid(labelRcmdr(messagesFrame, text=gettextRcmdr("Messages"), foreground="black"), sticky="w", pady=c(6, 6))
     tkgrid(.messages, messagesYscroll, sticky="news", columnspan=2)
     tkgrid(messagesXscroll)
     if (!.console.output) tkgrid(messagesFrame, sticky="news", padx=10, pady=0, columnspan=2) ##rmh & J. Fox
@@ -888,6 +880,7 @@ Commander <- function(){
     tkbind(.commander, "<Control-Tab>", onSubmit)
     tkbind(.commander, "<Control-f>", onFind)
     tkbind(.commander, "<Control-F>", onFind)
+    tkbind(.commander, "<F3>", onFind)
     tkbind(.commander, "<Control-s>", saveLog)
     tkbind(.commander, "<Control-S>", saveLog)
     tkbind(.commander, "<Control-a>", onSelectAll)
@@ -905,6 +898,10 @@ Commander <- function(){
     tkbind(.rnw, "<Control-ButtonPress-1>", contextMenuRnw)
     tkbind(.output, "<Control-ButtonPress-1>", contextMenuOutput)
     tkbind(.messages, "<Control-ButtonPress-1>", contextMenuMessages)
+    tkbind(.rmd, "<Control-e>", editMarkdown)
+    tkbind(.rmd, "<Control-E>", editMarkdown)
+    tkbind(.rnw, "<Control-e>", editKnitr)
+    tkbind(.rnw, "<Control-E>", editKnitr)
     tkwm.deiconify(.commander)
     tkfocus(.commander)
     if (getRcmdr("crisp.dialogs")) tclServiceMode(on=TRUE)
@@ -919,7 +916,7 @@ Commander <- function(){
         type="warning")
 }
 
-# put commands in script and markdown tabs
+# put commands in script, markdown, and knitr tabs
 logger <- function(command, rmd=TRUE){
     pushCommand(command)
     .log <- LogWindow()
@@ -927,29 +924,12 @@ logger <- function(command, rmd=TRUE){
     .rnw <- RnwWindow()
     .output <- OutputWindow()
     Rmd <- rmd && is.null(attr(command, "suppressRmd")) && (getRcmdr("use.markdown") || getRcmdr("use.knitr"))
-#     if (!is.null(attr(command, "suppressRmd"))) {
-#         endRmdBlock()
-#         removeNullRmdBlocks()
-#     }
     command <- splitCmd(command)
     if (getRcmdr("log.commands")) {
         last2 <- tclvalue(tkget(.log, "end -2 chars", "end"))
         if (last2 != "\n\n") tkinsert(.log, "end", "\n")
         tkinsert(.log, "end", paste(command,"\n", sep=""))
         tkyview.moveto(.log, 1)
-#         if (Rmd){
-#             if (is.null(attr(command, "noRmdBlock"))){
-#                 last2 <- tclvalue(tkget(.rmd, "end -2 chars", "end"))
-#                 if (last2 != "\n\n") tkinsert(.rmd, "end", "\n")
-#                 tkinsert(.rmd, "end", "\n")
-#                 tkinsert(.rmd, "end", paste("```{r}\n", command,"\n```\n", sep=""))
-#             }
-#             else {
-#                 tkinsert(.rmd, "end", paste(command, "\n", sep=""))
-#             }
-#             tkyview.moveto(.rmd, 1)
-#             putRcmdr("markdown.output", TRUE)
-#         }
         if (Rmd){
             if (getRcmdr("use.markdown")){
                 if (getRcmdr("startNewCommandBlock")){
@@ -1057,10 +1037,23 @@ doItAndPrint <- function(command, log=TRUE, rmd=log) {
     if (log) logger(command, rmd=rmd) 
     else {
         pushCommand(command)
-        if (rmd) enterMarkdown(command)
+        if (rmd) {
+            if (getRcmdr("use.markdown")) enterMarkdown(command)
+            if (getRcmdr("use.knitr")) enterKnitr(command)
+        }
     }
     result <- try(parse(text=paste(command)), silent=TRUE)
     if (class(result)[1] == "try-error"){
+        if (rmd) {
+            if (getRcmdr("use.markdown")) {
+                removeLastRmdBlock()
+                putRcmdr("startNewCommandBlock", TRUE)
+            }
+            if (getRcmdr("use.knitr")) {
+                removeLastRnwBlock()
+                putRcmdr("startNewKnitrCommandBlock", TRUE)
+            }
+        }
         Message(message=paste(strsplit(result, ":")[[1]][2]), type="error")
         if (.console.output) sink(type="output")
         tkfocus(CommanderWindow())
@@ -1074,6 +1067,16 @@ doItAndPrint <- function(command, log=TRUE, rmd=log) {
         tcl("update")
         result <-  try(withVisible(eval(ei, envir=.GlobalEnv)), silent=TRUE)
         if (class(result)[1] ==  "try-error"){
+            if (rmd) {
+                if (getRcmdr("use.markdown")) {
+                    removeLastRmdBlock()
+                    putRcmdr("startNewCommandBlock", TRUE)
+                }
+                if (getRcmdr("use.knitr")) {
+                    removeLastRnwBlock()
+                    putRcmdr("startNewKnitrCommandBlock", TRUE)
+                }
+            }
             Message(message=paste(strsplit(result, ":")[[1]][2]), type="error")
             if (.console.output) sink(type="output")
             tkfocus(CommanderWindow())

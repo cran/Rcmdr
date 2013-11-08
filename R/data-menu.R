@@ -1,5 +1,4 @@
-# last modified 2013-08-18 by J. Fox
-#  applied patch to improve window behaviour supplied by Milan Bouchet-Valat 2011-09-22
+# last modified 2013-09-13 by J. Fox
 
 # Data menu dialogs
 
@@ -80,8 +79,11 @@ selectActiveDataSet <- function(){
 	dataSetsBox <- variableListBox(top, dataSets, title=gettextRcmdr("Data Sets (pick one)"),
 			initialSelection=if (is.null(.activeDataSet)) NULL else which(.activeDataSet == dataSets) - 1)
 	onOK <- function(){
-		activeDataSet(getSelection(dataSetsBox))
+		selection <- getSelection(dataSetsBox)
 		closeDialog()
+		setBusyCursor()
+		on.exit(setIdleCursor())
+		activeDataSet(selection)
 		tkfocus(CommanderWindow())
 	}
 	OKCancelHelp()
@@ -179,6 +181,10 @@ RecodeDialog <- function () {
                                      cmd, sep = ""))
             if (class(result)[1] != "try-error") 
                 activeDataSet(dataSet, flushModel = FALSE, flushDialogMemory = FALSE)
+            else{
+                if (getRcmdr("use.markdown")) removeLastRmdBlock()
+                if (getRcmdr("use.knitr")) removeLastRnwBlock()
+            }
             tkfocus(CommanderWindow())
         }
     }
@@ -260,6 +266,10 @@ Compute <- function(){
         logger(command)
         result <- justDoIt(command)
         if (class(result)[1] !=  "try-error") activeDataSet(dataSet, flushModel=FALSE, flushDialogMemory=FALSE)
+        else{
+            if (getRcmdr("use.markdown")) removeLastRmdBlock()
+            if (getRcmdr("use.knitr")) removeLastRnwBlock()
+        }
         tkfocus(CommanderWindow())
     }
     OKCancelHelp(helpSubject="Compute", reset = "Compute", apply = "Compute")
@@ -337,6 +347,8 @@ readDataSet <- function() {
     missingEntry <- ttkentry(optionsFrame, width="8", textvariable=missingVariable)
     onOK <- function(){
         closeDialog()
+        setBusyCursor()
+        on.exit(setIdleCursor())
         dsnameValue <- trim.blanks(tclvalue(dsname))
         if (dsnameValue == ""){
             errorCondition(recall=readDataSet,
@@ -644,6 +656,8 @@ importSAS <- function() {
                 entryDsname <- ttkentry(top, width="20", textvariable=dsname)
                 onOK <- function(){
                     closeDialog()
+                    setBusyCursor()
+                    on.exit(setIdleCursor())
                     dsnameValue <- trim.blanks(tclvalue(dsname))
                     if (dsnameValue == ""){
                         errorCondition(recall=getdsname,
@@ -744,6 +758,8 @@ importSPSS <- function() {
     entryMaxLevels <- ttkentry(maxLevelsFrame, width="5", textvariable=maxLevels)
     onOK <- function(){
         closeDialog()
+        setBusyCursor()
+        on.exit(setIdleCursor())
         dsnameValue <- trim.blanks(tclvalue(dsname))
         if (dsnameValue == ""){
             errorCondition(recall=importSPSS,
@@ -805,6 +821,8 @@ importMinitab <- function() {
 	entryDsname <- ttkentry(top, width="20", textvariable=dsname)
 	onOK <- function(){
 		closeDialog()
+		setBusyCursor()
+		on.exit(setIdleCursor())
 		dsnameValue <- trim.blanks(tclvalue(dsname))
 		if (dsnameValue == ""){
 			errorCondition(recall=importMinitab,
@@ -873,6 +891,8 @@ importSTATA <- function() {
     asWarnMissingLabelsCheckBox <- ttkcheckbutton(optionsFrame, variable=asWarnMissingLabels)
     onOK <- function(){
         closeDialog()
+        setBusyCursor()
+        on.exit(setIdleCursor())
         dsnameValue <- trim.blanks(tclvalue(dsname))
         if (dsnameValue == ""){
             errorCondition(recall=importSTATA,
@@ -945,6 +965,8 @@ importRODBCtable <- function(){
 	entryDsname <- ttkentry(top, width = "35", textvariable = dsname)
 	onOK <- function(){
 		closeDialog()
+		setBusyCursor()
+		on.exit(setIdleCursor())
 		dsnameValue <- trim.blanks(tclvalue(dsname))
 		if(dsnameValue == ""){
 			errorCondition(recall = importRODBCtable,
@@ -1040,6 +1062,8 @@ importExcel <- function(){
     entryDsname <- ttkentry(top, width = "35", textvariable = dsname)
     onOK <- function(){
         closeDialog()
+	setBusyCursor()
+	on.exit(setIdleCursor())
         dsnameValue <- trim.blanks(tclvalue(dsname))
         if(dsnameValue == ""){
             errorCondition(recall = importExcel,
@@ -1967,6 +1991,8 @@ loadDataSet <- function() {
 	file <- tclvalue(tkgetOpenFile(filetypes=
 							gettextRcmdr('{"All Files" {"*"}} {"R Data Files" {".RData" ".rda" ".Rda" ".RDA"}}')))
 	if (file == "") return()
+	setBusyCursor()
+	on.exit(setIdleCursor())
 	command <- paste('load("', file,'")', sep="")
 	dsname <- justDoIt(command)
 	logger(command)
@@ -1979,6 +2005,8 @@ saveDataSet <- function() {
 							gettextRcmdr('{"All Files" {"*"}} {"R Data Files" {".RData" ".rda" ".Rda" ".RDA"}}'),
 					defaultextension=".RData", initialfile=paste(activeDataSet(), ".RData", sep="")))
 	if (file == "") return()
+	setBusyCursor()
+	on.exit(setIdleCursor())
 	command <- paste('save("', activeDataSet(), '", file="', file, '")', sep="")
 	justDoIt(command)
 	logger(command)
