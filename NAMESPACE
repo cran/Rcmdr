@@ -1,4 +1,4 @@
-# last modified 2013-10-24 by J. Fox
+# last modified 2013-12-04 by J. Fox
 
 useDynLib(Rcmdr)
 
@@ -6,8 +6,7 @@ import(tcltk)
 
 importFrom(utils, available.packages, install.packages)
 
-importFrom(knitr, knit, knit2pdf, opts_chunk)
-importFrom(markdown, markdownToHTML)
+importFrom(tcltk2, tk2tip, tk2theme)
 
 export(tkfocus, tkspinbox,
 activateMenus, activeDataSet, ActiveDataSet, activeDataSetP, activeModel,
