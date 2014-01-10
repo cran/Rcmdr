@@ -1,10 +1,8 @@
-# last modified 2013-11-29 by J. Fox
+# last modified 2014-01-10 by J. Fox
 
 # utility functions
 
 # listing objects etc.
-
-
 
 listDataSets <- function(envir=.GlobalEnv, ...) {
     Vars <- ls(envir = envir, all.names = TRUE) # + PhG
@@ -650,16 +648,48 @@ stepwise <- function(mod,
 
 # wrapper function for histograms
 
-Hist <- function(x, scale=c("frequency", "percent", "density"), xlab=deparse(substitute(x)), 
-    ylab=scale, main="", ...){
+Hist <- function(x, groups, scale=c("frequency", "percent", "density"), xlab=deparse(substitute(x)), 
+                 ylab=scale, main="", breaks="Sturges", ...){
     xlab # evaluate
-    x <- na.omit(x)
     scale <- match.arg(scale)
-    if (scale == "frequency") hist(x, xlab=xlab, ylab=ylab, main=main, ...)
-    else if (scale == "density") hist(x, freq=FALSE, xlab=xlab, ylab=ylab, main=main, ...)
+    ylab
+    if (!missing(groups)){
+        levels <- levels(groups)
+        hists <- lapply(levels, function(level) hist(x[groups == level], plot=FALSE, breaks=breaks))
+        range.x <- range(unlist(lapply(hists, function(hist) hist$breaks)))
+        n.breaks <- max(sapply(hists, function(hist) length(hist$breaks)))
+        breaks. <- seq(range.x[1], range.x[2], length=n.breaks)
+        hists <- lapply(levels, function(level) hist(x[groups == level], plot=FALSE, breaks=breaks.))
+        ylim <- if (scale == "frequency"){
+            max(sapply(hists, function(hist) max(hist$counts)))
+        }
+        else if (scale == "density"){
+            max(sapply(hists, function(hist) max(hist$density)))
+        }
+        else {
+            max.counts <- sapply(hists, function(hist) max(hist$counts))
+            tot.counts <- sapply(hists, function(hist) sum(hist$counts))
+            ylims <- tot.counts*(max(max.counts/tot.counts))
+            names(ylims) <- levels
+            ylims
+        }
+        save.par <- par(mfrow=n2mfrow(length(levels)), oma = c(0, 0, if (main != "") 1.5 else 0, 0))
+        on.exit(par(save.par))
+        for (level in levels){
+            if (scale != "percent") Hist(x[groups == level], scale=scale, xlab=xlab, ylab=ylab, 
+                                         main=paste(deparse(substitute(groups)), "=", level), breaks=breaks., ylim=c(0, ylim), ...)
+            else Hist(x[groups == level], scale=scale, xlab=xlab, ylab=ylab, 
+                      main=paste(deparse(substitute(groups)), "=", level), breaks=breaks., ylim=c(0, ylim[level]), ...)
+        }
+        if (main != "") mtext(side = 3, outer = TRUE, main, cex = 1.2)
+        return(invisible(NULL))
+    }
+    x <- na.omit(x)
+    if (scale == "frequency") hist(x, xlab=xlab, ylab=ylab, main=main, breaks=breaks, ...)
+    else if (scale == "density") hist(x, freq=FALSE, xlab=xlab, ylab=ylab, main=main, breaks=breaks, ...)
     else {
         n <- length(x)
-        hist(x, axes=FALSE, xlab=xlab, ylab=ylab, main=main, ...)
+        hist(x, axes=FALSE, xlab=xlab, ylab=ylab, main=main, breaks=breaks, ...)
         axis(1)
         max <- ceiling(10*par("usr")[4]/n)
         at <- if (max <= 3) (0:(2*max))/20
@@ -912,7 +942,7 @@ browseRMarkdown <- function() browseURL("http://www.rstudio.com/ide/docs/authori
 
 # functions for building dialog boxes
 
-# the following function is slightly modified from Thomas Lumley,
+# the following function is slightly modified, with permission, from Thomas Lumley, 
 #   "Programmer's Niche: Macros in R," R-News, Sept. 2001, Vol. 1, No. 3, pp.11-13.
 defmacro <- function(..., expr){
     expr <- substitute(expr)
@@ -954,6 +984,12 @@ defmacro <- function(..., expr){
 OKCancelHelp <- defmacro(window=top, helpSubject=NULL,  model=FALSE, reset=NULL, apply=NULL,
     expr={
         memory <- getRcmdr("retain.selections")
+        button.strings <- c("OK", "Cancel", 
+                            if (!is.null(helpSubject)) "Help", 
+                            if (!is.null(reset) && memory) "Reset", 
+                            if (!is.null(apply)) "Apply")
+        width <- max(nchar(gettextRcmdr(button.strings)))
+        if (WindowsP()) width <- width + 2
         buttonsFrame <- tkframe(window)
         leftButtonsBox <- tkframe(buttonsFrame)
         rightButtonsBox <- tkframe(buttonsFrame)
@@ -991,7 +1027,7 @@ OKCancelHelp <- defmacro(window=top, helpSubject=NULL,  model=FALSE, reset=NULL,
             }
         }
         
-        OKbutton <- buttonRcmdr(rightButtonsBox, text=gettextRcmdr("OK"), foreground="darkgreen", width="12", command=OnOK, default="active",
+        OKbutton <- buttonRcmdr(rightButtonsBox, text=gettextRcmdr("OK"), foreground="darkgreen", width=width, command=OnOK, default="active",
             image="::image::okIcon", compound="left")
         
         onCancel <- function() {
@@ -1006,7 +1042,7 @@ OKCancelHelp <- defmacro(window=top, helpSubject=NULL,  model=FALSE, reset=NULL,
             tkfocus(CommanderWindow())
         }
         
-        cancelButton <- buttonRcmdr(rightButtonsBox, text=gettextRcmdr("Cancel"), foreground="red", width="12", command=onCancel, # borderwidth=3,
+        cancelButton <- buttonRcmdr(rightButtonsBox, text=gettextRcmdr("Cancel"), foreground="red", width=width, command=onCancel, # borderwidth=3,
             image="::image::cancelIcon", compound="left")
         
         if (!is.null(helpSubject)){
@@ -1015,7 +1051,7 @@ OKCancelHelp <- defmacro(window=top, helpSubject=NULL,  model=FALSE, reset=NULL,
                 if (as.numeric(R.Version()$major) >= 2) print(help(helpSubject))
                 else help(helpSubject)
             }
-            helpButton <- buttonRcmdr(leftButtonsBox, text=gettextRcmdr("Help"), width="12", command=onHelp, # borderwidth=3,
+            helpButton <- buttonRcmdr(leftButtonsBox, text=gettextRcmdr("Help"), width=width, command=onHelp, # borderwidth=3,
                 image="::image::helpIcon", compound="left")
         }
         
@@ -1032,7 +1068,7 @@ OKCancelHelp <- defmacro(window=top, helpSubject=NULL,  model=FALSE, reset=NULL,
                 putRcmdr("open.dialog.here", NULL)
                 putRcmdr("restoreTab", FALSE)
             }
-            resetButton <- buttonRcmdr(leftButtonsBox, text=gettextRcmdr("Reset"), width=12, command=onReset,
+            resetButton <- buttonRcmdr(leftButtonsBox, text=gettextRcmdr("Reset"), width=width, command=onReset,
                 image="::image::resetIcon", compound="left")
         }
         
@@ -1079,19 +1115,19 @@ OKCancelHelp <- defmacro(window=top, helpSubject=NULL,  model=FALSE, reset=NULL,
                     putRcmdr("open.dialog.here", NULL)
                 }
             }
-            applyButton <- buttonRcmdr(rightButtonsBox, text=gettextRcmdr("Apply"), foreground="yellow", width="12", command=onApply,
+            applyButton <- buttonRcmdr(rightButtonsBox, text=gettextRcmdr("Apply"), foreground="yellow", width=width, command=onApply,
                 image="::image::applyIcon", compound="left")
         }
         
         if(!WindowsP()) {
             if (!is.null(apply)){
-                tkgrid(cancelButton, OKbutton, applyButton, sticky="w")
-                tkgrid.configure(applyButton, padx=c(6, 0))
+                tkgrid(applyButton, cancelButton, OKbutton, sticky="w")
+                tkgrid.configure(OKbutton, padx=c(6, 0))
             }
             else{
                 tkgrid(cancelButton, OKbutton, sticky="w")
             }
-            tkgrid.configure(OKbutton, padx=c(6, 0))
+            tkgrid.configure(cancelButton, padx=c(6, 6))
         }
         else {
             if (!is.null(apply)){
@@ -1124,17 +1160,22 @@ OKCancelHelp <- defmacro(window=top, helpSubject=NULL,  model=FALSE, reset=NULL,
 
 subOKCancelHelp <- defmacro(window=subdialog, helpSubject=NULL,
     expr={
+        
+        button.strings <- c("OK", "Cancel", 
+                            if (!is.null(helpSubject)) "Help")
+        width <- max(nchar(gettextRcmdr(button.strings)))
+        if (WindowsP()) width <- width + 2
         subButtonsFrame <- tkframe(window)
         subLeftButtonsBox <- tkframe(subButtonsFrame)
         subRightButtonsBox <- tkframe(subButtonsFrame)
-        subOKbutton <- buttonRcmdr(subRightButtonsBox, text=gettextRcmdr("OK"), foreground="darkgreen", width="12", command=onOKsub, default="active",
+        subOKbutton <- buttonRcmdr(subRightButtonsBox, text=gettextRcmdr("OK"), foreground="darkgreen", width=width, command=onOKsub, default="active",
             image="::image::okIcon", compound="left")
         onCancelSub <- function() {
             if (GrabFocus()) tkgrab.release(window)
             tkdestroy(window)
             tkfocus(CommanderWindow())
         }
-        subCancelButton <- buttonRcmdr(subRightButtonsBox, text=gettextRcmdr("Cancel"), foreground="red", width="12", command=onCancelSub,
+        subCancelButton <- buttonRcmdr(subRightButtonsBox, text=gettextRcmdr("Cancel"), foreground="red", width=width, command=onCancelSub,
             image="::image::cancelIcon", compound="left") # borderwidth=3, 
         if (!is.null(helpSubject)){
             onHelpSub <- function(){
@@ -1142,7 +1183,7 @@ subOKCancelHelp <- defmacro(window=subdialog, helpSubject=NULL,
                 if (as.numeric(R.Version()$major) >= 2) print(help(helpSubject))
                 else help(helpSubject)
             }
-            subHelpButton <- buttonRcmdr(subLeftButtonsBox, text=gettextRcmdr("Help"), width="12", command=onHelpSub, 
+            subHelpButton <- buttonRcmdr(subLeftButtonsBox, text=gettextRcmdr("Help"), width=width, command=onHelpSub, 
                 image="::image::helpIcon", compound="left")
         }
         if(!WindowsP()) {
@@ -1237,27 +1278,9 @@ commanderPosition <- function (){
         tclvalue(.Tcl(paste("winfo rooty", ID)))))
 }
 
-# initializeDialog <- defmacro(window=top, title="", offset=10, preventCrisp=FALSE,
-#     expr={
-#         if ((!preventCrisp) && getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
-#         window <- tktoplevel(borderwidth=10)
-#         tkwm.title(window, title)
-#         location <- getRcmdr("open.dialog.here")
-#         position <- if (!is.null(location)) location
-#                     else {
-#                         pos <- offset + commanderPosition() 
-#                         if (any(pos < 0)) "-50+50"
-#                         else paste("+", paste(pos, collapse="+"), sep="")
-#                     }
-#         tkwm.geometry(window, position)
-#         tkwm.transient(window, CommanderWindow())
-#     }
-# )
-
 initializeDialog <- defmacro(window=top, title="", offset=10, preventCrisp, 
     use.tabs=FALSE, notebook=notebook, tabs=c("dataTab", "optionsTab"),
     expr={
-        #        if ((!preventCrisp) && getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
         if (getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
         window <- tktoplevel(borderwidth=10)
         if (use.tabs){
@@ -1284,26 +1307,6 @@ closeDialog <- defmacro(window=top, release=TRUE,
     }
 )
 
-# dialogSuffix <- defmacro(window=top, onOK=onOK, onCancel=onCancel, rows=1, columns=1, focus=top,
-#     bindReturn=TRUE, preventGrabFocus=FALSE, preventDoubleClick=FALSE,
-#     preventCrisp=FALSE,
-#     expr={
-#         #         for (row in 0:(rows-1)) tkgrid.rowconfigure(window, row, weight=0)
-#         #         for (col in 0:(columns-1)) tkgrid.columnconfigure(window, col, weight=0)
-#         .Tcl("update idletasks")
-#         tkwm.resizable(window, 0, 0)
-#         if (bindReturn) tkbind(window, "<Return>", onOK)
-#         tkbind(window, "<Escape>", onCancel)
-#         if (getRcmdr("double.click") && (!preventDoubleClick)) tkbind(window, "<Double-ButtonPress-1>", onOK)
-#         tkwm.deiconify(window)
-#         # focus grabs appear to cause problems for some dialogs
-#         if (GrabFocus() && (!preventGrabFocus)) tkgrab.set(window)
-#         tkfocus(focus)
-#         tkwait.window(window)
-#         if ((!preventCrisp) && getRcmdr("crisp.dialogs")) tclServiceMode(on=TRUE)
-#     }
-# )
-
 dialogSuffix <- defmacro(window=top, onOK=onOK, onCancel=onCancel, rows, columns, focus=top,
     bindReturn=TRUE, preventGrabFocus=FALSE, preventDoubleClick=FALSE,
     preventCrisp, 
@@ -1329,7 +1332,6 @@ dialogSuffix <- defmacro(window=top, onOK=onOK, onCancel=onCancel, rows, columns
         if (GrabFocus() && (!preventGrabFocus)) tkgrab.set(window)
         tkfocus(focus)
         tkwait.window(window)
-        #        if ((!preventCrisp) && getRcmdr("crisp.dialogs")) tclServiceMode(on=TRUE)
         if (getRcmdr("crisp.dialogs")) tclServiceMode(on=TRUE)
     }
 )
@@ -1456,8 +1458,6 @@ checkBoxes <- defmacro(window=top, frame, boxes, initialValues=NULL, labels, tit
             assign(..variables[i], tclVar(..initialValues[i]))
             ..checkBox <- paste(boxes[i], "CheckBox", sep="")
             assign(..checkBox,
-                #    	tkcheckbutton(eval(parse(text=frame)), variable=eval(parse(text=..variables[i]))))
-                # tkgrid(labelRcmdr(eval(parse(text=frame)), text=labels[i]), eval(parse(text=..checkBox)), sticky="w")
                 ttkcheckbutton(eval(parse(text=frame)), variable=eval(parse(text=..variables[i])), text=labels[i]))
             tkgrid(eval(parse(text=..checkBox)), sticky="w")
         }
@@ -1924,7 +1924,6 @@ checkClass <- defmacro(object, class, message=NULL,
     }
 )
 
-
 # the following function is from John Chambers (plus new test for R 2.4.0)
 
 isS4object <- function(object) {
@@ -2111,7 +2110,6 @@ activateMenus <- function(){
     }
 }
 
-
 # for internationalization
 
 gettextRcmdr <- function(...) gettext(..., domain="R-Rcmdr")
@@ -2135,7 +2133,6 @@ English <- function() {
     if (!is.na(LANG)) length(grep("^en", LANG, ignore.case=TRUE)) > 0
     else LC_CTYPE == "C" || length(grep("^en", LC_CTYPE, ignore.case=TRUE)) > 0
 }
-
 
 # to replace tkmessageBox on non-English Windows systems,
 #  to allow for translation of button text
@@ -2334,6 +2331,9 @@ if (!(as.character(tcl("info", "tclversion")) >= "8.5" && getRversion() >= "2.7.
         if(missing(fg)) ttklabel(...) else ttklabel(..., foreground=fg)
 }
 
+# Label looking like that of a TtkLabelFrame
+titleLabel <- function(...) labelRcmdr(..., font="RcmdrTitleFont", fg=getRcmdr("title.color"))
+
 # the following function alters the default behaviour of tclvalue() by trimming leading and trailing blanks
 
 tclvalue <- function(x) trim.blanks(tcltk::tclvalue(x))
@@ -2350,7 +2350,6 @@ splitCmd <- function(cmd, width=getOption("width") - 4, at="[ ,]"){
     if (singleQuotes[1] > 0 && (singleQuotes[1] < doubleQuotes[1] || doubleQuotes[1] < 0 ) && (singleQuotes[1] < comment[1] || comment[1] < 0 )){
         nquotes <- length(singleQuotes)
         if (nquotes < 2) stop("unbalanced quotes")
-        #		where[(where > singleQuotes[1]) & (where < singleQuotes[2])] <- NA
         for(i in seq(nquotes/2))
             where[(where > singleQuotes[2 * i - 1]) & (where < singleQuotes[2 * i])] <- NA
         where <- na.omit(where)
@@ -2358,7 +2357,6 @@ splitCmd <- function(cmd, width=getOption("width") - 4, at="[ ,]"){
     else if (doubleQuotes[1] > 0 && (doubleQuotes[1] < singleQuotes[1] || singleQuotes[1] < 0) && (doubleQuotes[1] < comment[1] || comment[1] < 0 )){
         nquotes <- length(doubleQuotes)
         if (nquotes < 2) stop("unbalanced quotes")
-        #		where[(where > doubleQuotes[1]) & (where < doubleQuotes[2])] <- NA
         for(i in seq(nquotes/2))
             where[(where > doubleQuotes[2 * i - 1]) & (where < doubleQuotes[2 * i])] <- NA
         where <- na.omit(where)
@@ -2842,20 +2840,6 @@ knitrP <- function(){
 
 RcmdrEditor <- function(buffer, title="R Commander Editor", 
     help=NULL, file.menu=NULL, edit.menu=NULL, context.menu=NULL, toolbar.buttons=NULL){
-#     tk2tip <- tcltk2::tk2tip
-#     # fixup theme/fonts for ttk widgets (necessary because of use of tcltk2 package)
-#     if (!getRcmdr("editor.accessed")){
-#         if (WindowsP()) {
-#             .Tcl(paste("font configure TkDefaultFont -size ", 
-#                        getRcmdr("default.font.size")))
-#             .Tcl(paste("font configure TkDefaultFont -family {",  
-#                        getRcmdr("default.font.family"), "}", sep=""))
-#         }
-#         else {
-#       .Tcl("ttk::style theme use default")
-#         }
-#       putRcmdr("editor.accessed", TRUE)
-#     }
     contextMenu <- function(){
         contextMenu <- tkmenu(tkmenu(editor), tearoff=FALSE)
         if (!is.null(context.menu)){
