@@ -1,6 +1,6 @@
-fce169eb4f488685f30a5c2b9dfd5004 *DESCRIPTION
+cb9d31875f672d2570c506316a7b5849 *DESCRIPTION
 6f874c70a549b75a58915cf708cc10d7 *NAMESPACE
-66ce58033eba99ac15ba94457cd23d7a *NEWS
+37c646e03ada970492f48179363e6fe9 *NEWS
 7634ae5993a7ae10717455c6bfe9c301 *R/Rexcel-specific.R
 860da864d24e4718e68dece46b49af5b *R/cluster.R
 92b54d979dcac7b1dfdc2a4a0c9b2bd6 *R/commander.R
@@ -22,7 +22,7 @@ f0d66e0709892d257a9ebed518086b9a *R/statistics-models-menu.R
 897d7453d861d613aa231e87e7da0914 *R/statistics-summaries-menu.R
 ca4e6192c8d6362fa6b9ad541a000030 *R/statistics-tables-menu.R
 f38b56ba2f4b61a079f116e6f18b3abb *R/statistics-variances-menu.R
-c1edbe1b2425fc07946c001170667264 *R/utilities.R
+e27de5bdf238e30e3159877f07b4fe25 *R/utilities.R
 6086daaa02857bc72d55c09f96d840ba *inst/CHANGES
 797e851b07b6a25c257a850550ff2e19 *inst/CITATION
 31de694855b1d3984d706109f0db3d13 *inst/doc/Commander-ru.pdf
@@ -71,7 +71,7 @@ abcfe2fec9a22dc9c514742e9b172ff5 *inst/po/it/LC_MESSAGES/R-Rcmdr.mo
 d8b7e46322e77625d9ad6e53c9f54ccb *inst/po/pt_BR/LC_MESSAGES/R-Rcmdr.mo
 88dc9ed952cfe14eac5a40ecab418ebb *inst/po/ro/LC_MESSAGES/R-Rcmdr.mo
 5fb8b6b848ad69b3c7b98f98dc1cb225 *inst/po/ru/LC_MESSAGES/R-Rcmdr.mo
-1ba3ff5c4c487bd47689bae720bd44c3 *inst/po/sl/LC_MESSAGES/R-Rcmdr.mo
+ccd95a47940e61d4556832ce7cafe867 *inst/po/sl/LC_MESSAGES/R-Rcmdr.mo
 540125876ddc22de3714fb500a1d7f0a *inst/po/zh/LC_MESSAGES/R-Rcmdr.mo
 82a11478016ab2a4ebc1480c3ad1b84d *man/CFA.Rd
 160bd4ab3c6da9d55289ae4861c8ea3c *man/Commander-es.Rd
@@ -82,7 +82,7 @@ dbe4a059d0893e56540c826b50424f5b *man/Hist.Rd
 751abef96e6a32d368beed566f3b23b5 *man/KMeans.Rd
 8b58b3563bfcbf2138cc0132fa449ecd *man/Plugins.Rd
 d64f0760308a70c60ec22ee83069750e *man/Rcmdr-internal.Rd
-b0d88cae6c653c686e4f943b5f48b4a5 *man/Rcmdr-package.Rd
+0309091f288189cdd267d47924b7ae39 *man/Rcmdr-package.Rd
 b9883cec3a98354847f5fb739a688160 *man/Rcmdr.Utilities.Rd
 60c10d6a234daa9aa4fb42e73ed0b74c *man/RcmdrEditor.Rd
 f748653782f882fa214526c297ad71e9 *man/RcmdrPager.Rd
@@ -118,7 +118,7 @@ e2102eb64843019b50ac66271703a9f0 *po/R-ja.po
 6a5b53469a11d10c9e2820b4aacbdfc3 *po/R-pt_BR.po
 85b4e78689bffa775cd86f8ff27bc2b7 *po/R-ro.po
 f205b8c2862deba37659bd750db57a82 *po/R-ru.po
-34b87c4cfdec4e21958a39e9f71608de *po/R-sl_utf-8.po
+dfc9a40394361fe7bcbb52549cae6c81 *po/R-sl.po
 0c6cacfdb8b96598742a75bd25e7bda1 *po/R-zh.po
 e8bda234ff58b3630b809e4a62453713 *src/Makevars.win
 4ba53482c2230797854929b8757e7d2f *src/ismdi.c
