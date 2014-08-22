@@ -1,16 +1,17 @@
 
 # The R Commander and command logger
 
-# last modified 2014-01-10 by John Fox
+# last modified 2014-08-22 by John Fox
 
 # contributions by Milan Bouchet-Valat, Richard Heiberger, Duncan Murdoch, Erich Neuwirth, Brian Ripley
 
 Commander <- function(){
     library(Rcmdr, quietly=TRUE)
-    require("car")
+#    if (!require("RcmdrMisc")) warning(gettextRcmdr("the RcmdrMisc package is missing and should be installed\n  many features will not work"))
+#    if (!require("car")) warning(gettextRcmdr("the car package is missing and should be installed\n  many features will not work"))
     # set up RcmdrEnv
     RcmdrEnv.on.path <- getOption("Rcmdr")[["RcmdrEnv.on.path"]]
-    if (is.null(RcmdrEnv.on.path)) RcmdrEnv.on.path <- (getRversion() < "3.0.0")
+    if (is.null(RcmdrEnv.on.path)) RcmdrEnv.on.path <- FALSE
     if (RcmdrEnv.on.path){
         RcmdrEnv <- function() {
             pos <-  match("RcmdrEnv", search())
@@ -200,6 +201,7 @@ Commander <- function(){
     
     # various initializations
     messageTag(reset=TRUE)
+    putRcmdr("installed.packages", installed.packages())
     putRcmdr("RcmdrVersion", RcmdrVersion)
     putRcmdr(".activeDataSet", NULL)
     putRcmdr(".activeModel", NULL)
@@ -284,8 +286,8 @@ Commander <- function(){
     setOption("log.commands", TRUE)
     setOption("use.knitr", FALSE)
     setOption("use.markdown", !getRcmdr("use.knitr"))
-    if ((!packageAvailable("markdown")) || (!packageAvailable("knitr"))) putRcmdr("use.markdown", FALSE)
-    if (!packageAvailable("knitr")) putRcmdr("use.knitr", FALSE)
+#    if ((!packageAvailable("markdown")) || (!packageAvailable("knitr"))) putRcmdr("use.markdown", FALSE)
+#    if (!packageAvailable("knitr")) putRcmdr("use.knitr", FALSE)
     putRcmdr("startNewCommandBlock", TRUE)
     putRcmdr("startNewKnitrCommandBlock", TRUE)
     putRcmdr("rmd.generated", FALSE)
@@ -330,8 +332,19 @@ Commander <- function(){
     putRcmdr("commandStack", as.list(rep(NA, getRcmdr("length.command.stack"))))
     setOption("variable.list.height", 6)
     setOption("variable.list.width", c(20, Inf))
+    all.themes <- tk2theme.list()
+    current.theme <- tk2theme()
+    all.themes <- union(all.themes, current.theme)
+    setOption("theme", current.theme)
+    theme <- (getRcmdr("theme"))
+    if (!(theme %in% all.themes)){
+        warning(gettextRcmdr("non-existent theme"), ', "', theme,  '"\n  ', 
+            gettextRcmdr("theme set to"), ' "', current.theme, '"')
+        theme <- current.theme
+    }
+    putRcmdr("theme", theme)
+    tk2theme(theme)
     placement <- setOption("placement", "", global=FALSE)
-    
     # platform-specific issues
     if (getRcmdr("suppress.X11.warnings")) {
         putRcmdr("messages.connection", file(open = "w+"))
@@ -341,20 +354,16 @@ Commander <- function(){
         putRcmdr("oldPager", options(pager=RcmdrPager))
     }
     putRcmdr("restore.help_type", getOption("help_type"))
-    if (RStudioP()) {
-        options(help_type = "html")
-    }
-    
-    # HTML help window is not responsive when opened from dialogs on Mac OS X
-    else if (MacOSXP()) {
-        options(help_type = "text")
-    }
+    setOption("help_type", "html")
+    options(help_type=getRcmdr("help_type"))
+#    putRcmdr("restore.use.external.help", FALSE)
     putRcmdr("restore.device", getOption("device"))
     if (RStudioP()){
         if (WindowsP()) options(device="windows")
         else if (MacOSXP()) options(device="quartz")
         else options(device="x11")
     }
+    setOption("tkwait.dialog", FALSE)
     
     # source additional .R files, plug-ins preferred
     source.files <- list.files(etc, pattern="\\.[Rr]$")
@@ -973,8 +982,8 @@ Commander <- function(){
     tkwm.deiconify(.commander)
     tkfocus(.commander)
     if (getRcmdr("crisp.dialogs")) tclServiceMode(on=TRUE)
-    tkwait <- options("Rcmdr")[[1]]$tkwait  # to address problem in Debian Linux
-    if ((!is.null(tkwait)) && tkwait) {
+    tkwait.commander <- options("Rcmdr")[[1]]$tkwait.commander  # to address problem in Debian Linux
+    if ((!is.null(tkwait.commander)) && tkwait.commander) {
         putRcmdr(".commander.done", tclVar("0"))
         tkwait.variable(getRcmdr(".commander.done"))
     }

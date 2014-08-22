@@ -12,13 +12,14 @@ user interface) for R, based on the tcltk package.
 \details{
 \tabular{ll}{
 Package: \tab Rcmdr\cr
-Version: \tab 2.0-4\cr
-Date: \tab 2014/03/27\cr
-Depends: \tab  R (>= 3.0.0), grDevices, utils, splines\cr
-Imports: \tab tcltk\cr
-Suggests: \tab abind, aplpack, car (>= 2.0-18), colorspace, effects (>= 1.0-7),
-    e1071, foreign, grid, Hmisc, knitr, lattice, leaps, lmtest, MASS, markdown, mgcv, 
-    multcomp (>= 0.991-2), nlme, nnet, relimp, rgl, RODBC, sem (>= 2.1-1)\cr
+Version: \tab 2.1-0\cr
+Date: \tab 2014/08/22\cr
+Depends: \tab R (>= 3.0.0), grDevices, utils, splines, RcmdrMisc (>= 1.0-1), 
+  car (>= 2.0-21)\cr
+Imports: \tab tcltk, tcltk2 (>= 1.2-6), markdown, knitr, abind\cr
+Suggests: \tab aplpack, colorspace, effects (>= 3.0-1), e1071, foreign, grid, 
+  Hmisc, lattice, leaps, lmtest, MASS, mgcv, multcomp (>= 0.991-2), nlme, nnet, 
+  relimp,  rgl, rJava, RODBC, sem (>= 2.1-1) \cr
 ByteCompile: \tab yes\cr
 License: \tab GPL (>= 2)\cr
 URL: \tab http://www.r-project.org,
@@ -38,6 +39,7 @@ Extending the R Commander by "plug in" packages.
 
 \section{Translations}{
 The R Commander comes with translations from English into several other languages. I am grateful to the following individuals and groups for preparing these translations:
+Basque, Jose Ramon Rueda;
 Brazilian Portuguese, Adriano Azevedo-Filho and Marilia Sa Carvalho;
 Catalan, Manel Salamero;
 Chinese, Frank C. S. Liu and Cheng-shun Lee;

@@ -43,9 +43,11 @@
 \alias{gassign}
 \alias{getDialog}
 \alias{getFrame}
+\alias{getFrame.combobox}
 \alias{getFrame.listbox}
 \alias{getRcmdr}
 \alias{getSelection}
+\alias{getSelection.combobox}
 \alias{getSelection.listbox}
 \alias{gettextRcmdr}
 \alias{glmP}
@@ -119,6 +121,7 @@
 \alias{TwoLevelFactors}
 \alias{twoLevelFactorsP}
 \alias{UpdateModelNumber}
+\alias{variableComboBox}
 \alias{variableListBox}
 \alias{Variables}
 \alias{varPosn}
@@ -176,7 +179,8 @@ dialogSuffix(window=top, onOK=onOK, onCancel=onCancel, rows, columns,
 	focus=top, bindReturn=TRUE, 
     preventGrabFocus=FALSE, preventDoubleClick=FALSE, preventCrisp,
     use.tabs=FALSE, notebook=notebook, tabs=c("dataTab", "optionsTab"), 
-    tab.names=c("Data", "Options"), grid.buttons=FALSE, resizable=FALSE)  # macro
+    tab.names=c("Data", "Options"), grid.buttons=FALSE, resizable=FALSE,
+    force.wait=FALSE)  # macro
 doItAndPrint(command, log=TRUE, rmd=log)
 endRmdBlock()
 endRnwBlock()
@@ -190,7 +194,9 @@ formulaFields(model, hasLhs=TRUE, glm=FALSE)
 flushDialogMemory(what)
 gassign(x, value)
 getDialog(dialog, defaults=NULL)
+\method{getFrame}{combobox}(object)
 \method{getFrame}{listbox}(object)
+\method{getSelection}{combobox}(object)
 \method{getSelection}{listbox}(object)
 getRcmdr(x, mode="any", fail=TRUE)
 gettextRcmdr(...)
@@ -213,7 +219,7 @@ is.valid.name(x)
 is.SciViews()
 justDoIt(command)
 knitrP()
-Library(package, pos=4, rmd=TRUE)
+Library(package, pos=length(search()), rmd=TRUE)
 listAllModels(envir=.GlobalEnv, ...)
 listAOVModels(envir=.GlobalEnv, ...)
 listDataSets(envir=.GlobalEnv, ...)
@@ -284,12 +290,17 @@ trim.blanks(text)
 TwoLevelFactors(names)
 twoLevelFactorsP(n=1)
 UpdateModelNumber(increment=1)
+variableComboBox(parentWindow, variableList=Variables(),
+    export="FALSE", state="readonly",
+    initialSelection=gettextRcmdr("<no variable selected>"),
+    title="")
 variableListBox(parentWindow, variableList=Variables(), bg="white",
     selectmode="single", export="FALSE", initialSelection=NULL, 
     listHeight=getRcmdr("variable.list.height"), title)
 Variables(names)
-varPosn(variables, 
-    type=c("all", "factor", "numeric", "nonfactor", "twoLevelFactor"))
+varPosn(variables,
+    type=c("all", "factor", "numeric", "nonfactor", "twoLevelFactor"), 
+    vars=NULL)
 WindowsP()
 X11P()
 
@@ -345,6 +356,10 @@ commanderPosition()
     data set is changed; an exception is when variables are simply added to, deleted from, or modified in 
     the data set set.}
   \item{focus}{Tk window to get the focus.}
+  \item{force.wait}{call \code{tkwait.window} so that processing is suspended until the dialog
+    is closed; overrides the \pkg{Rcmdr} \code{tkwait.dialog} option (see \code{\link{Commander}})
+    if the latter is set to \code{FALSE} (its default). The \code{force.wait} argument should be set to \code{TRUE} for
+    subdialogs.}
   \item{frame}{frame or quoted name for frame depending upon the function.}
   \item{generic}{quoted name of generic function.}
   \item{glm}{\code{TRUE} if the model is a \code{glm} object, \code{FALSE} otherwise.}
@@ -390,7 +405,7 @@ commanderPosition()
   \item{parent}{parent Tk window.}
   \item{plotLinesByGroup}{include a check box for plotting lines by group?}
   \item{plotLinesByGroupsText}{the label for the plot-lines-by-group check box.}
-  \item{pos}{position on search path at which to load package; default is \code{4}.}
+  \item{pos}{position on search path at which to load package; default is just before the end of the path.}
   \item{positionLegend}{include a check box for a legend?}
   \item{preventGrabFocus}{prevent the dialog box from grabbing the focus.}
   \item{preventDoubleClick}{prevent double-clicking from pressing the OK button, even when the
@@ -409,6 +424,8 @@ commanderPosition()
   \item{rows, columns}{numbers of rows and columns of widgets in the dialog box; this is actually no longer used, but
     is still present for backwards compatibility.}
   \item{selectmode}{\code{"single"} or \code{"multiple"}.}
+  \item{state}{state of the combobox widget; default \code{"readonly"} means
+    user can't type in the box; set to \code{"normal"} to permit typing.}
   \item{strict}{if \code{TRUE}, only use first element of class vector.}
   \item{subset.expression}{a quoted expression to subset the data set.}
   \item{tab.names}{text to print as tab labels (default \code{c("Data", "Options")}).}
@@ -430,6 +447,7 @@ commanderPosition()
   	a list of current selections to be stored in support of dialog memory.}
   \item{variableList}{a vector of variable names.}
   \item{variables}{a vector of one or more variable names.}
+  \item{vars}{a vector of one or more variable names; if given \code{type} argument is ignored.}
   \item{what}{optional character vector of one or more dialog names for which the memory is to be flushed; if not 
     specified, all dialog memory will be flushed.}
   \item{window, parentWindow}{a Tk window.}
@@ -508,7 +526,10 @@ commanderPosition()
   a set of check boxes, \code{checkBoxes};
   a set of radio buttons, \code{radioButtons};
   a list box with associated scrollbars and state variable, \code{variableListBox}
-  (and the associated functions \code{getFrame} and \code{getSelection});
+  (and associated methods for the generic functions 
+  \code{getFrame} and \code{getSelection});
+  a drop-down "combo" box, \code{variablecomboBox} 
+  (with \code{getFrame} and \code{getSelection} methods);
   a button and subdialog for selecting a "grouping" variable, \code{groupsBox}; 
   displaying the currently defined groups in a dialog, \code{groupsLabel};
   a dialog-box structure for entering a model formula, \code{modelFormula};

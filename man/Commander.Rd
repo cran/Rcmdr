@@ -187,6 +187,9 @@ set none, one, several, or all options. The available options are as follows:
     On some systems, grabbing the focus in this manner apparently causes problems. The default is \code{TRUE}. 
     If you experience focus problems, try setting this option to \code{FALSE}.}
     
+    \item{\code{"help_type"}}{This Rcmdr option takes precedence over the global R \code{help_type}
+    option (see \code{\link{options}} and \code{\link{help}}), and by default is set to \code{"html"}.}
+    
     \item{\code{iconify.commander}}{If \code{TRUE}, the \emph{Commander} window is minimized on startup;
     the default is \code{FALSE}.}
     
@@ -252,10 +255,10 @@ set none, one, several, or all options. The available options are as follows:
     \item{\code{prefixes}}{A four-item character vector to specify the prefixes used when output is directed
     to the R console; the default is \code{c("Rcmdr> ", "Rcmdr+ ", "RcmdrMsg: ", "RcmdrMsg+ ")}.}
     
-    \item{\code{RcmdrEnv.on.path}}{If \code{TRUE} (the default for versions of R
-    prior to version 3.0.0, the environment in which R Commander state information
+    \item{\code{RcmdrEnv.on.path}}{If \code{TRUE} (the default is \code{FALSE}), 
+    the environment in which R Commander state information
     is stored is placed on the search path. Some plug-ins may, at least until
-    they are updated, require this setting.)}
+    they are updated, may require this setting.}
     
     \item{\code{quit.R.on.close}}{if \code{TRUE}, both the Commander and R are exited when the Commander
     window is closed. The default is \code{FALSE}, in which case only the Commander is exited (and can be restarted
@@ -301,19 +304,28 @@ set none, one, several, or all options. The available options are as follows:
     \item{\code{suppress.icon.images}}{Set to \code{TRUE} to suppress the icon images in dialog OK, Cancel, Reset, and Help buttons;
     the default is \code{FALSE}.}
     
+    \item{\code{theme}}{A ttk theme to control the overall style of the Commander GUI; should be one of the themes returned by \code{tcltk2::tk2theme.list()}.
+    The default theme varies by operating system, and can be discovered by entering the command \code{tcltk2::tk2theme()} in a fresh R session.}
+    
     \item{\code{title.color}}{Color for the titles of some widgets, such as variable-list boxes; can be given as a color name, such as
     \code{"blue"} or as an RGB value, such as \code{"#0000FF"}.
     The default is the standard color for ttk label frames, unless that is \code{"#000000"} or \code{"black"}, in which case \code{"blue"}" is used instead.}
         
-    \item{\code{tkwait}}{This option addresses a problem that, to my knowledge, is rare, 
+    \item{\code{tkwait.commander}}{This option addresses a problem that, to my knowledge, is rare, 
     and may occur on some non-Windows systems. If the Commander causes R to hang, 
     then set the \code{tkwait} option to
     \code{TRUE}; otherwise set the option to \code{FALSE} or ignore it. 
     An undesirable side effect of setting
-    the \code{tkwait} option to \code{TRUE} is that the R session command prompt is suppressed until the Commander exits.
+    the \code{tkwait.commander} option to \code{TRUE} is that the R session command prompt is suppressed until the Commander exits.
     One can still enter commands via the script window, however. In particular, there is no reason to use this option
     under Windows, and it should not be used with the Windows R GUI with buffered output when output is directed to the
     R console.}
+    
+    \item{\code{tkwait.dialog}}{If \code{TRUE} (the default is \code{FALSE}), R will
+    wait until an R Commander dialog is closed. This has the disadvantage of preventing
+    help pages from being displayed until a dialog is closed in the Mac OS X R.app 
+    and in RStudio. This was also the standard behavior of the R Commander in earlier
+    versions and is provided for compatibility with previous behavior.}
     
     \item{\code{use.knitr}}{If \code{TRUE} (the default is \code{FALSE}), a knitr \code{.Rnw} LaTeX document is created in a tab of the main Commander window;
     this document can be compiled into \code{.tex} and \code{.pdf} reports via the \code{\link[knitr]{knit2pdf}}
