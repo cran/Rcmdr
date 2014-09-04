@@ -1,7 +1,7 @@
 
 # The R Commander and command logger
 
-# last modified 2014-08-22 by John Fox
+# last modified 2014-09-01 by John Fox
 
 # contributions by Milan Bouchet-Valat, Richard Heiberger, Duncan Murdoch, Erich Neuwirth, Brian Ripley
 
@@ -323,6 +323,7 @@ Commander <- function(){
     setOption("suppress.X11.warnings",
         interactive() && .Platform$GUI == "X11") # to address problem in X11 (Linux or Mac OS X)
     setOption("showData.threshold", 100)
+    setOption("editDataset.threshold", 10000)
     setOption("retain.messages", TRUE)
     setOption("crisp.dialogs",  TRUE)
     setOption("length.output.stack", 10)
@@ -480,23 +481,36 @@ Commander <- function(){
         }
         dsnameValue <- ActiveDataSet()
         save.dataset <- get(dsnameValue, envir=.GlobalEnv)
-        command <- paste("fix(", dsnameValue, ")", sep="")
-        result <- justDoIt(command)
-        if (class(result)[1] !=  "try-error"){ 			
-            if (nrow(get(dsnameValue)) == 0){
-                errorCondition(window=NULL, message=gettextRcmdr("empty data set."))
-                justDoIt(paste(dsnameValue, "<- save.dataset"))
-                return()
+        size <- prod(dim(save.dataset))
+        if (size < 1 || size > getRcmdr("editDataset.threshold")){
+            command <- paste("fix(", dsnameValue, ")", sep="")
+            result <- justDoIt(command)
+            if (class(result)[1] !=  "try-error"){ 			
+                if (nrow(get(dsnameValue)) == 0){
+                    errorCondition(window=NULL, message=gettextRcmdr("empty data set."))
+                    justDoIt(paste(dsnameValue, "<- save.dataset"))
+                    return()
+                }
+                else{
+                    logger(command, rmd=FALSE)
+                    activeDataSet(dsnameValue)
+                }
             }
             else{
-                logger(command, rmd=FALSE)
-                activeDataSet(dsnameValue)
+                errorCondition(window=NULL, message=gettextRcmdr("data set edit error."))
+                return()
             }
         }
-        else{
-            errorCondition(window=NULL, message=gettextRcmdr("data set edit error."))
-            justDoIt(paste(dsnameValue, "<- save.dataset"))
-            return()
+        else {
+            command <- paste("editDataset(", dsnameValue, ")", sep="")
+            result <- justDoIt(command)
+            if (class(result)[1] !=  "try-error"){
+                logger(command, rmd=FALSE)
+            }
+            else{
+                errorCondition(window=NULL, message=gettextRcmdr("data set edit error."))
+                return()
+            }
         }
         tkwm.deiconify(CommanderWindow())
         tkfocus(CommanderWindow())

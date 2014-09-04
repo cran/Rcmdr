@@ -1,4 +1,4 @@
-# last modified 2014-08-17 by J. Fox
+# last modified 2014-09-02 by J. Fox
 
 # Data menu dialogs
 
@@ -25,17 +25,19 @@ newDataSet <- function() {
             }
         }
         closeDialog()
-        command <- "edit(as.data.frame(NULL))"
+        command <- paste("editDataset(dsname='", dsnameValue, "')", sep="")
         result <- justDoIt(command)
-        result <- as.data.frame(lapply(result, function(x) if (is.character(x)) factor(x) else x))
-        if (class(result)[1] !=  "try-error"){ 
-            putRcmdr(".newDataSet", result)
-            logger(paste(dsnameValue, "<-", command), rmd=FALSE)
-            justDoIt(paste(dsnameValue, "<- getRcmdr('.newDataSet')"))
+        if (class(result)[1] !=  "try-error"){
+            if (!getRcmdr("dataset.modified")) return()
+            .data <- try(get(dsnameValue, envir=.GlobalEnv), silent=TRUE)
+            if (nrow(.data) == 0){
+                errorCondition(recall=newDataSet, message=gettextRcmdr("empty data set."))
+                return()
+            }
             tempdir <- tempdir()
             tempdir <- gsub("\\\\", "/", tempdir)
             savefile <- paste(tempdir, "/", dsnameValue, sep="")
-            save(result, file=savefile)
+            save(".data", file=savefile)
             if (getRcmdr("use.markdown")) {
                 removeNullRmdBlocks()
                 enterMarkdown(paste('load("', savefile, '")', sep=""))
@@ -44,16 +46,10 @@ newDataSet <- function() {
                 removeNullRnwBlocks()
                 enterKnitr(paste('load("', savefile, '")', sep=""))
             }
-            remove(".newDataSet", envir=RcmdrEnv())
-            if (nrow(get(dsnameValue)) == 0){
-                errorCondition(recall=newDataSet, message=gettextRcmdr("empty data set."))
-                return()
-            }
-            activeDataSet(dsnameValue)
-        }
+       }
         tkfocus(CommanderWindow())
     }
-    OKCancelHelp(helpSubject="edit.data.frame")
+    OKCancelHelp(helpSubject="editDataset")
     tkgrid(labelRcmdr(top, text=gettextRcmdr("Enter name for data set:")), entryDsname, sticky="e")
     tkgrid(buttonsFrame, columnspan="2", sticky="w")
     tkgrid.configure(entryDsname, sticky="w")
