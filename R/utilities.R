@@ -1,4 +1,4 @@
-# last modified 2014-09-03 by J. Fox
+# last modified 2014-09-16 by J. Fox
 
 # utility functions
 
@@ -187,7 +187,7 @@ Confint <- function(object, parm, level=0.95, ...) UseMethod("Confint")
 
 Confint.default <- function(object, parm, level = 0.95, ...) {
     ci <- confint(object, parm, level, ...)
-    ci <- cbind(coef(object), ci)
+    ci <- cbind(coef(object)[parm], ci)
     colnames(ci)[1] <- "Estimate"
     ci
 }
@@ -213,7 +213,7 @@ Confint.glm <- function (object, parm, level=0.95, type=c("LR", "Wald"), ...){
         fac <- qnorm(a)
         ci[] <- cf[parm] + ses %o% fac
     }
-    ci <- cbind(cf, ci)
+    ci <- cbind(cf[parm], ci)
     colnames(ci)[1] <- "Estimate"
     fam <- family(object)
     if (fam$family == "binomial" && fam$link == "logit"){
@@ -261,7 +261,7 @@ confint.multinom <- function (object, parm, level=0.95, ...){
     fac <- qnorm(a)
     ci <- abind::abind(cf + fac[1]*ses, cf + fac[2]*ses, along=3)
     dimnames(ci)[[3]] <- paste(round(100 * a, 1), "%")
-    aperm(ci, c(2,3,1))
+    aperm(ci, c(2,3,1))[,,1]
 }
 
 Confint.multinom <- function(object, parm, level = 0.95, ...) confint (object, parm=parm, level=0.95, ...)
@@ -572,9 +572,12 @@ subOKCancelHelp <- defmacro(window=subdialog, helpSubject=NULL,
         subOKbutton <- buttonRcmdr(subRightButtonsBox, text=gettextRcmdr("OK"), foreground="darkgreen", width=width, command=onOKsub, default="active",
             image="::image::okIcon", compound="left")
         onCancelSub <- function() {
-            if (GrabFocus()) tkgrab.release(window)
-            tkdestroy(window)
-            tkfocus(CommanderWindow())
+          if (exists(".subexit")){
+            .subexit()
+          }
+          if (GrabFocus()) tkgrab.release(window)
+          tkdestroy(window)
+          tkfocus(CommanderWindow())
         }
         subCancelButton <- buttonRcmdr(subRightButtonsBox, text=gettextRcmdr("Cancel"), foreground="red", width=width, command=onCancelSub,
             image="::image::cancelIcon", compound="left") # borderwidth=3, 
@@ -681,6 +684,7 @@ commanderPosition <- function (){
 
 initializeDialog <- defmacro(window=top, title="", offset=10, preventCrisp, 
     use.tabs=FALSE, notebook=notebook, tabs=c("dataTab", "optionsTab"),
+    suppress.window.resize.buttons=TRUE,
     expr={
         if (getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
         window <- tktoplevel(borderwidth=10)
@@ -697,7 +701,7 @@ initializeDialog <- defmacro(window=top, title="", offset=10, preventCrisp,
             else paste("+", paste(pos, collapse="+"), sep="")
         }
         tkwm.geometry(window, position)
-        tkwm.transient(window, CommanderWindow())
+        if (suppress.window.resize.buttons) tkwm.transient(window, CommanderWindow())
     }
 )
 
@@ -915,7 +919,8 @@ radioButtons <- defmacro(window=top, name, buttons, values=NULL, initialValue=..
 checkBoxes <- defmacro(window=top, frame, boxes, initialValues=NULL, labels, title=NULL, ttk=FALSE,
     expr={
         ..initialValues <- if (is.null(initialValues)) rep("1", length(boxes)) else initialValues
-        assign(frame, if (ttk) ttklabelframe(window, text=title) else tkframe(window))
+        assign(frame, if (ttk) ttklabelframe(window, labelwidget=tklabel(window, text=title, 
+                                          font="RcmdrTitleFont", foreground=getRcmdr("title.color"))) else tkframe(window))
         if (!is.null(title) && !ttk) tkgrid(labelRcmdr(eval(parse(text=frame)), text=title, fg=getRcmdr("title.color"), font="RcmdrTitleFont"), sticky="w")
         ..variables <- paste(boxes, "Variable", sep="")
         for (i in 1:length(boxes)) {
@@ -1707,7 +1712,7 @@ RcmdrTkmessageBox <- function(message, icon=c("info", "question", "warning",
         }
     )
     tkgrid(buttonFrame)
-    dialogSuffix(messageBox, focus=messageBox, bindReturn=FALSE)
+    dialogSuffix(messageBox, focus=messageBox, bindReturn=FALSE, force.wait=TRUE)
     result
 }
 
@@ -2188,8 +2193,10 @@ MarkdownP <- function(){
 }
 
 compileRmd <- function() {
-#     if (!(require(knitr))) return()
-#     if (!(require(markdown))) return()
+    .RmdFile <- getRcmdr("RmdFileName")
+    rmdDir <- dirname(.RmdFile)
+    saveDir <- setwd(rmdDir)
+    on.exit(setwd(saveDir))
     fig.files <- list.files("./figure")
     fig.files <- fig.files[grep("^unnamed-chunk-[0-9]*\\..*$", fig.files)]
     if (length(fig.files) != 0) {
@@ -2199,7 +2206,6 @@ compileRmd <- function() {
     }
     removeStrayRmdBlocks()
     lines <- tclvalue(tkget(RmdWindow(), "1.0", "end"))
-    .RmdFile <- getRcmdr("RmdFileName")
     .filename <- sub("\\.Rmd$", "", trim.blanks(.RmdFile))
     writeLines(lines, .RmdFile)
     knitr::knit(.RmdFile, paste(.filename, ".md", sep=""), quiet=TRUE)
@@ -2311,7 +2317,10 @@ removeLastRnwBlock <- function(){
 }
 
 compileRnw <- function(){
-#    if (!require(knitr)) return()
+    .RnwFile <- getRcmdr("RnwFileName")
+    rnwDir <- dirname(.RnwFile)
+    saveDir <- setwd(rnwDir)
+    on.exit(setwd(saveDir))
     fig.files <- list.files("./figure")
     fig.files <- fig.files[grep("^unnamed-chunk-[0-9]*\\..*$", fig.files)]
     if (length(fig.files) != 0) {
@@ -2322,7 +2331,6 @@ compileRnw <- function(){
     removeStrayRnwBlocks()
     lines <- tclvalue(tkget(RnwWindow(), "1.0", "end"))
     lines <- paste(lines, "\n\\end{document}\n")
-    .RnwFile <- getRcmdr("RnwFileName")
     .filename <- sub("\\.Rnw$", "", trim.blanks(.RnwFile))
     writeLines(lines, .RnwFile)
     knitr::knit2pdf(.RnwFile)
@@ -2448,7 +2456,7 @@ RcmdrEditor <- function(buffer, title="R Commander Editor",
     onRedo <- function(){
         tcl(editor, "edit", "redo")
     }
-    initializeDialog(title = gettextRcmdr(title))
+    initializeDialog(title = gettextRcmdr(title), suppress.window.resize.buttons=FALSE)
     toolbarFrame <- tkframe(top) 
     cutButton <- buttonRcmdr(toolbarFrame, image="::image::cutIcon", command=onCut)
     copyButton <- buttonRcmdr(toolbarFrame, image="::image::copyIcon", command=onCopy)
@@ -2589,14 +2597,15 @@ RcmdrEditor <- function(buffer, title="R Commander Editor",
         tkbind(top, "<Meta-W>", onRedo)
     }
     tkwm.protocol(top, "WM_DELETE_WINDOW", onCancel)
-    tkgrid.rowconfigure(top, 1, weight=0)
-    tkgrid.rowconfigure(top, 0, weight=1)
+    dialogSuffix(bindReturn = FALSE, resizable=TRUE, focus=editor)
+    tkgrid.rowconfigure(top, 0, weight = 0)
+    tkgrid.rowconfigure(top, 1, weight = 1)
+    tkgrid.rowconfigure(top, 2, weight = 0)
     tkgrid.columnconfigure(top, 0, weight=1)
     tkgrid.rowconfigure(editorFrame, 1, weight=0)
     tkgrid.rowconfigure(editorFrame, 0, weight=1)
     tkgrid.columnconfigure(editorFrame, 0, weight=1)
     tkgrid.columnconfigure(editorFrame, 1, weight=0)
-    dialogSuffix(bindReturn = FALSE, resizable=TRUE, focus=editor)
 }
 
 # the rgb2col function translates #RRGGBB colors to names if a named color exists or otherwise a "close" color (not exported)
@@ -2684,7 +2693,7 @@ editDataset <- function(data, dsname){
     }
     if (getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
     top <- tktoplevel(borderwidth = 10)
-    tkwm.title(top, gettextRcmdr("Data Editor"))
+    tkwm.title(top, paste(gettextRcmdr("Data Editor"), ": ", dsname, sep=""))
 #     location <- getRcmdr("open.dialog.here")  # FIXME!
 #     pos <- 10 + commanderPosition()           # Don't do this because window doesn't stay on top
 #     position <- if (any(pos < 0)) "-50+50" 
@@ -2844,6 +2853,10 @@ editDataset <- function(data, dsname){
         activeDataSet(dsname)
         putRcmdr("dataset.modified", TRUE)
     }
+    .exit <- function(){
+        answer <- RcmdrTkmessageBox("Discard edits?", icon="question", type="yesno")
+        if (as.character(answer) == "no") "abort" else ""
+    }
     OKCancelHelp(helpSubject="editDataset")
     editorMenu <- tkmenu(top)
     tkconfigure(top, menu = editorMenu)
@@ -2910,6 +2923,7 @@ editDataset <- function(data, dsname){
     tktag.configure(data.table, "colnames", bg="darkgray")  
     tkgrid(tableFrame, sticky="news")
     tkgrid(buttonsFrame, sticky="w")
+    tkwm.protocol(top, "WM_DELETE_WINDOW", onCancel)
     dialogSuffix(resizable=TRUE)
     tkgrid.rowconfigure(top, 0, weight = 0)
     tkgrid.rowconfigure(top, 1, weight = 1)

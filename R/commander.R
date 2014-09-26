@@ -1,14 +1,13 @@
 
 # The R Commander and command logger
 
-# last modified 2014-09-01 by John Fox
+# last modified 2014-09-18 by John Fox
 
 # contributions by Milan Bouchet-Valat, Richard Heiberger, Duncan Murdoch, Erich Neuwirth, Brian Ripley
 
 Commander <- function(){
     library(Rcmdr, quietly=TRUE)
-#    if (!require("RcmdrMisc")) warning(gettextRcmdr("the RcmdrMisc package is missing and should be installed\n  many features will not work"))
-#    if (!require("car")) warning(gettextRcmdr("the car package is missing and should be installed\n  many features will not work"))
+
     # set up RcmdrEnv
     RcmdrEnv.on.path <- getOption("Rcmdr")[["RcmdrEnv.on.path"]]
     if (is.null(RcmdrEnv.on.path)) RcmdrEnv.on.path <- FALSE
@@ -227,9 +226,8 @@ Commander <- function(){
         .Tcl(paste("font create RcmdrDefaultFont", tclvalue(tkfont.actual("TkDefaultFont"))))
         .Tcl("option add *font RcmdrDefaultFont")
     }
+    
     .Tcl(paste("font configure RcmdrDefaultFont -family {", default.font.family, "}", sep=""))
-    .Tcl("ttk::style configure TButton -font RcmdrDefaultFont")
-    .Tcl("ttk::style configure TLabel -font RcmdrDefaultFont")
     
     if (!("RcmdrTitleFont" %in% as.character(.Tcl("font names")))){
         .Tcl(paste("font create RcmdrTitleFont", tclvalue(tkfont.actual("TkDefaultFont"))))
@@ -252,12 +250,12 @@ Commander <- function(){
     .Tcl(paste("font configure TkFixedFont -family {",  log.font.family, "}", sep=""))
     putRcmdr("logFont", "RcmdrLogFont")    
     scale.factor <- current$scale.factor
+
     if (!is.null(scale.factor)) .Tcl(paste("tk scaling ", scale.factor, sep=""))
-    
     # set various font sizes 
     if (WindowsP()){
-        default.font.size.val <- abs(as.numeric(.Tcl("font actual TkDefaultFont -size")))
-        if (is.na(default.font.size.val)) default.font.size.val <- 10
+      default.font.size.val <- abs(as.numeric(.Tcl("font actual TkDefaultFont -size")))
+      if (is.na(default.font.size.val)) default.font.size.val <- 10
     }
     else default.font.size.val <- 10
     default.font.size <- setOption("default.font.size", default.font.size.val)
@@ -269,7 +267,12 @@ Commander <- function(){
     tkfont.configure("TkCaptionFont", size=default.font.size)
     log.font.size <- setOption("log.font.size", 10)
     tkfont.configure("RcmdrLogFont", size=log.font.size)
-    tkfont.configure("TkFixedFont", size=log.font.size)
+    tkfont.configure("TkFixedFont", size=log.font.size)    
+    
+    .Tcl("ttk::style configure TButton -font RcmdrDefaultFont")
+    .Tcl("ttk::style configure TLabel -font RcmdrDefaultFont")
+    .Tcl("ttk::style configure TCheckbutton -font RcmdrDefaultFont")
+    .Tcl("ttk::style configure TRadiobutton -font RcmdrDefaultFont")
     
     # set various options
     setOption("default.contrasts", c("contr.Treatment", "contr.poly"))
@@ -279,7 +282,8 @@ Commander <- function(){
         tkfont.configure("RcmdrTitleFont", weight="bold")
     }
     else tkfont.configure("RcmdrTitleFont", weight="normal")
-    .Tcl(paste("ttk::style configure TLabelframe.Label -foreground", title.color))
+#     .Tcl("ttk::style configure TLabelFrame -font RcmdrTitleFont")
+#     .Tcl(paste("ttk::style configure TLabelframe -foreground", title.color))
     .Tcl("ttk::style configure TNotebook.Tab -font RcmdrDefaultFont")
     .Tcl(paste("ttk::style configure TNotebook.Tab -foreground", title.color))
     setOption("number.messages", TRUE)
@@ -365,6 +369,7 @@ Commander <- function(){
         else options(device="x11")
     }
     setOption("tkwait.dialog", FALSE)
+    if (getRcmdr("tkwait.dialog")) putRcmdr("editDataset.threshold", 0)
     
     # source additional .R files, plug-ins preferred
     source.files <- list.files(etc, pattern="\\.[Rr]$")
@@ -480,9 +485,9 @@ Commander <- function(){
             return()
         }
         dsnameValue <- ActiveDataSet()
-        save.dataset <- get(dsnameValue, envir=.GlobalEnv)
-        size <- prod(dim(save.dataset))
+        size <- eval(parse(text=paste("prod(dim(", dsnameValue, "))", sep=""))) #  prod(dim(save.dataset))
         if (size < 1 || size > getRcmdr("editDataset.threshold")){
+            save.dataset <- get(dsnameValue, envir=.GlobalEnv)
             command <- paste("fix(", dsnameValue, ")", sep="")
             result <- justDoIt(command)
             if (class(result)[1] !=  "try-error"){ 			
