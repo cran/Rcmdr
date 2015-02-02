@@ -1,6 +1,6 @@
-f1043dc744a4973a7b7ca8c84774c5d3 *DESCRIPTION
-996eff78de966fea7587f3fc59cdb8fc *NAMESPACE
-3fc6a2263197605ee839725ae9a73234 *NEWS
+db9bf9b7886bddc0c06b1ac0340e1cb1 *DESCRIPTION
+95a6d0de8a515523cfac3a1032fcf0a2 *NAMESPACE
+ecbaea54041d4090113536fc63137720 *NEWS
 7634ae5993a7ae10717455c6bfe9c301 *R/Rexcel-specific.R
 423ac320130eb22c22cb46d91e396eeb *R/cluster.R
 d71d88b68f2778afee67e43d18c16aad *R/commander.R
@@ -12,7 +12,7 @@ d1904e875db85204165512a3b90ddb53 *R/file-menu.R
 f8fd2509722ecf7b69111cc4e86a63e1 *R/globals.R
 4e612d74cac3e37833dec469e4b02f34 *R/graphs-menu.R
 431bded4d637b9b9aced330505a270c9 *R/ismdi.R
-2c559cfd905bfa3b200d2aca1bdba043 *R/model-menu.R
+c393c63ac872a07eb7b0ee391506aa70 *R/model-menu.R
 9ad5bd160fa127fbd7c2d1a2c63c1fd3 *R/startup.R
 9bcedfb867be96df7523cb33277147aa *R/statistics-dimensional-menu.R
 25060a713302cd263fe3ce606e6934dd *R/statistics-means-menu.R
@@ -22,7 +22,7 @@ f461a41641c00f67315f6f20988595fc *R/statistics-proportions-menu.R
 d912a09b39e532696901621ec39e6d5f *R/statistics-summaries-menu.R
 1296a8e43365097261b803995628ca17 *R/statistics-tables-menu.R
 8b6cddcfcb0a78848ee369e67045b2d9 *R/statistics-variances-menu.R
-4ed3b960970fe3effb86e73156e56caf *R/utilities.R
+c0d7b0c639505a304e3a3838011a3f5a *R/utilities.R
 6086daaa02857bc72d55c09f96d840ba *inst/CHANGES
 797e851b07b6a25c257a850550ff2e19 *inst/CITATION
 31de694855b1d3984d706109f0db3d13 *inst/doc/Commander-ru.pdf
@@ -80,10 +80,10 @@ b1723f5ff9904ef14648e8cc242be997 *inst/po/zh/LC_MESSAGES/R-Rcmdr.mo
 160bd4ab3c6da9d55289ae4861c8ea3c *man/Commander-es.Rd
 444940155c79d3d8eb2d3ce87b039628 *man/Commander.Rd
 23b8bf96d4bd4b5ce59d104b6410305f *man/Compute.Rd
-a9d88ffccc151fd43945486d55d887b0 *man/Confint.Rd
+d2816f1f668d6283101f0e03b4bdbd62 *man/Confint.Rd
 8b58b3563bfcbf2138cc0132fa449ecd *man/Plugins.Rd
 d64f0760308a70c60ec22ee83069750e *man/Rcmdr-internal.Rd
-06275cb9fc9c5be3e21c0a64df3d4396 *man/Rcmdr-package.Rd
+4295250af007a894238621d5cc6ed4ac *man/Rcmdr-package.Rd
 ebec5e1571aaa8ffe2204d9bc172fb2d *man/Rcmdr.Utilities.Rd
 60c10d6a234daa9aa4fb42e73ed0b74c *man/RcmdrEditor.Rd
 f748653782f882fa214526c297ad71e9 *man/RcmdrPager.Rd
