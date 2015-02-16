@@ -1,6 +1,6 @@
 Package: Rcmdr
-Version: 2.1-6
-Date: 2015/02/02
+Version: 2.1-7
+Date: 2015/02/16
 Title: R Commander
 Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaster.ca"),
     person("Milan", "Bouchet-Valat", role = "aut"),
@@ -40,7 +40,7 @@ Description:
 License: GPL (>= 2)
 URL: http://www.r-project.org,
         http://socserv.socsci.mcmaster.ca/jfox/Misc/Rcmdr/
-Packaged: 2015-02-03 16:15:51 UTC; John Fox
+Packaged: 2015-02-22 19:27:51 UTC; John Fox
 Author: John Fox [aut, cre],
   Milan Bouchet-Valat [aut],
   Liviu Andronic [ctb],
@@ -68,4 +68,4 @@ Author: John Fox [aut, cre],
 Maintainer: John Fox <jfox@mcmaster.ca>
 NeedsCompilation: yes
 Repository: CRAN
-Date/Publication: 2015-02-03 18:13:14
+Date/Publication: 2015-02-22 21:17:12
