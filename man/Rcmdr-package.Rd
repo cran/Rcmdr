@@ -12,14 +12,15 @@ user interface) for R, based on the tcltk package.
 \details{
 \tabular{ll}{
 Package: \tab Rcmdr\cr
-Version: \tab 2.1-7\cr
-Date: \tab 2015/02/16\cr
-Depends: \tab R (>= 3.0.0), grDevices, utils, splines, RcmdrMisc (>= 1.0-2), 
-  car (>= 2.0-21)\cr
-Imports: \tab tcltk, tcltk2 (>= 1.2-6), markdown, knitr, abind\cr
-Suggests: \tab aplpack, colorspace, effects (>= 3.0-1), e1071, foreign, grid, 
-  Hmisc, lattice, leaps, lmtest, MASS, mgcv, multcomp (>= 0.991-2), nlme, nnet, 
-  relimp,  rgl, rJava, RODBC, sem (>= 2.1-1) \cr
+Version: \tab 2.2-0\cr
+Date: \tab 2015-08-14\cr
+Depends: \tab R (>= 3.0.0), grDevices, utils, splines, RcmdrMisc (>= 1.0-3), 
+  car (>= 2.0-26)\cr
+Imports: \tab tcltk, tcltk2 (>= 1.2-6), abind, graphics, methods, stats\cr
+Suggests: \tab aplpack, colorspace, effects (>= 3.0-1), e1071, foreign, 
+  grid, Hmisc, knitr, lattice, leaps, lmtest, markdown, MASS, mgcv, 
+  multcomp (>= 0.991-2), nlme, nnet, readxl, relimp,  rgl, rmarkdown, 
+  sem (>= 2.1-1) \cr
 ByteCompile: \tab yes\cr
 License: \tab GPL (>= 2)\cr
 URL: \tab http://www.r-project.org,
@@ -46,7 +47,7 @@ Chinese, Tsungwu Ho, Frank C. S. Liu, and Cheng-shun Lee;
 Chinese (Simplified), Shulin Yang;
 French, Philippe Grosjean and Milan Bouchet-Valat;
 Galician, Anton Meixome;
-German: Gerhard Schoen;
+German: Friedrich Leisch and Gerhard Schoen;
 Indonesian, I Made Tirta;
 Italian, Stefano Calza;
 Japanese, Takaharu Araki;

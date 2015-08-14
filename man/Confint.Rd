@@ -39,4 +39,3 @@ Confint(object, parm, level = 0.95, ...)
 
 \keyword{htest}
 \keyword{models}
-

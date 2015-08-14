@@ -287,6 +287,9 @@ set none, one, several, or all options. The available options are as follows:
     
     \item{\code{RExcelSupport}}{If \code{TRUE} (the default is \code{FALSE}), menus and output are handled by Excel.}
     
+    \item{\code{rmd.output.format}}{The output file type for R Markdown documents if pandoc is installed; one of \code{"html"}
+    (the default), \code{"pdf"} (requires LaTeX), or \code{"docx"} (Word).}
+    
     \item{\code{rmd.template}}{The quoted path to a \code{.Rmd} file to serve as a template for
     R code and output. The default is to use a template included with the package.}
     
@@ -391,8 +394,6 @@ For more information about R initialization, see \code{?Startup}.
   when there are missing values. The
   option is reset to its pre-existing value when the Commander exits. Some functions may not
   work properly when the default \code{na.action} is set to \code{na.exclude}.
-  
-  On platforms other than 32-bit Windows, Java must be installed for the R Commander to read data sets directly from Excel spreadsheets. To install Java, see \url{http://www.java.com}.
 
   This version should be compatiable with the \pkg{RExcel} package, which can use the R Commander
   menus.

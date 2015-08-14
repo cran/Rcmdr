@@ -1,7 +1,7 @@
 
 # The R Commander and command logger
 
-# last modified 2014-10-10 by John Fox
+# last modified 2015-03-17 by John Fox
 
 # contributions by Milan Bouchet-Valat, Richard Heiberger, Duncan Murdoch, Erich Neuwirth, Brian Ripley
 
@@ -40,6 +40,10 @@ Commander <- function(){
             !is.null(get("commanderWindow", RcmdrEnv()))) {
         return(invisible(NULL))
     }
+    
+    # check for auxiliary software
+    putRcmdr("capabilities", RcmdrCapabilities())
+    
     # the following function used to apply Rcmdr options with specified defaults
     #   if global == TRUE, store option
     setOption <- function(option, default, global=TRUE) {
@@ -282,16 +286,16 @@ Commander <- function(){
         tkfont.configure("RcmdrTitleFont", weight="bold")
     }
     else tkfont.configure("RcmdrTitleFont", weight="normal")
-#     .Tcl("ttk::style configure TLabelFrame -font RcmdrTitleFont")
-#     .Tcl(paste("ttk::style configure TLabelframe -foreground", title.color))
     .Tcl("ttk::style configure TNotebook.Tab -font RcmdrDefaultFont")
     .Tcl(paste("ttk::style configure TNotebook.Tab -foreground", title.color))
     setOption("number.messages", TRUE)
     setOption("log.commands", TRUE)
     setOption("use.knitr", FALSE)
     setOption("use.markdown", !getRcmdr("use.knitr"))
-    if ((!packageAvailable("markdown")) || (!packageAvailable("knitr"))) putRcmdr("use.markdown", FALSE)
-    if (!packageAvailable("knitr")) putRcmdr("use.knitr", FALSE)
+    if ((!packageAvailable("markdown") && !packageAvailable("rmarkdown")) || (!packageAvailable("knitr"))) 
+        putRcmdr("use.markdown", FALSE)
+    if (!packageAvailable("knitr") || !getRcmdr("capabilities")$pdflatex) putRcmdr("use.knitr", FALSE)
+    setOption("rmd.output.format", "html")
     putRcmdr("startNewCommandBlock", TRUE)
     putRcmdr("startNewKnitrCommandBlock", TRUE)
     putRcmdr("rmd.generated", FALSE)
@@ -370,6 +374,17 @@ Commander <- function(){
     }
     setOption("tkwait.dialog", FALSE)
     if (getRcmdr("tkwait.dialog")) putRcmdr("editDataset.threshold", 0)
+    if (MacOSXP()){
+#       PATH <- system2("/usr/libexec/path_helper", "-s", stdout=TRUE)
+#       PATH <- sub("\"; export PATH;$", "", sub("^PATH=\\\"", "", PATH))
+#       Sys.setenv(PATH=PATH)
+      PATH <- Sys.getenv("PATH")
+      PATH <- unlist(strsplit(PATH, .Platform$path.sep, fixed=TRUE))
+      if (length(grep("^/usr/texbin$", PATH)) == 0) {
+        PATH[length(PATH) + 1] <- "/usr/texbin"
+        Sys.setenv(PATH=paste(PATH, collapse=.Platform$path.sep))
+      }
+   }
     
     # source additional .R files, plug-ins preferred
     source.files <- list.files(etc, pattern="\\.[Rr]$")
@@ -630,7 +645,7 @@ Commander <- function(){
     contextMenuRmd <- function(){
         .rmd <- RmdWindow()
         contextMenu <- tkmenu(tkmenu(.rmd), tearoff=FALSE)
-        tkadd(contextMenu, "command", label=gettextRcmdr("Generate HTML report"), command=onSubmit)
+        tkadd(contextMenu, "command", label=gettextRcmdr("Generate report"), command=onSubmit)
         tkadd(contextMenu, "command", label=gettextRcmdr("Edit R Markdown document"), command=editMarkdown)
         tkadd(contextMenu, "command", label=gettextRcmdr("Remove last Markdown command block"), command=removeLastRmdBlock)
         tkadd(contextMenu, "separator")
@@ -785,7 +800,8 @@ Commander <- function(){
         font=getRcmdr("logFont"), height=log.height, width=log.width, wrap="none", undo=TRUE))
     .rmd <- RmdWindow()
     rmd.template <- setOption("rmd.template", 
-        system.file("etc", "Rcmdr-Markdown-Template.Rmd", package="Rcmdr"))
+        system.file("etc", if (getRcmdr("capabilities")$pandoc) "Rcmdr-RMarkdown-Template.Rmd"
+            else "Rcmdr-Markdown-Template.Rmd", package="Rcmdr"))
     template <- paste(readLines(rmd.template), collapse="\n")
     tkinsert(.rmd, "end", template)
     putRcmdr("markdown.output", FALSE)
@@ -822,7 +838,7 @@ Commander <- function(){
     
     tkbind(CommanderWindow(), "<Button-1>", function() {
         if (as.character(tkselect(notebook)) == logFrame$ID) tclvalue(submitButtonLabel) <- gettextRcmdr("Submit")
-        if (as.character(tkselect(notebook)) == RmdFrame$ID) tclvalue(submitButtonLabel) <- gettextRcmdr("Generate HTML report")
+        if (as.character(tkselect(notebook)) == RmdFrame$ID) tclvalue(submitButtonLabel) <- gettextRcmdr("Generate report")
         if (as.character(tkselect(notebook)) == RnwFrame$ID) tclvalue(submitButtonLabel) <- gettextRcmdr("Generate PDF report")
     })
     putRcmdr("outputWindow", tktext(outputFrame, bg="white", foreground=getRcmdr("output.text.color"),

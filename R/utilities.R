@@ -1,4 +1,4 @@
-# last modified 2015-02-02 by J. Fox
+# last modified 2015-08-07 by J. Fox
 
 # utility functions
 
@@ -187,6 +187,34 @@ Coef <- function(object, ...) UseMethod("Coef")
 
 Coef.default <- function(object, ...) coef(object, ...)
 
+Coef.multinom <- function (object, ...) {
+    # the following adapted from nnet:
+    cf <- function (object, ...) 
+    {
+        r <- length(object$vcoefnames)
+        if (length(object$lev) == 2L) {
+            coef <- object$wts[1L + (1L:r)]
+            names(coef) <- object$vcoefnames
+        }
+        else {
+            coef <- matrix(object$wts, nrow = object$n[3L], byrow = TRUE)[, 
+                                                                          1L + (1L:r), drop = FALSE]
+            if (length(object$lev)) 
+                dimnames(coef) <- list(object$lev, object$vcoefnames)
+            if (length(object$lab)) 
+                dimnames(coef) <- list(object$lab, object$vcoefnames)
+            coef <- coef[-1L, , drop = FALSE]
+        }
+        coef
+    }
+    b <- cf(object, ...)
+    cn <- colnames(b)
+    rn <- rownames(b)
+    b <- as.vector(t(b))
+    names(b) <- as.vector(outer(cn, rn, function(c, r) paste(r, c, sep = ":")))
+    b
+}
+
 
 Confint <- function(object, parm, level=0.95, ...) UseMethod("Confint")
 
@@ -213,7 +241,7 @@ Confint.glm <- function (object, parm, level=0.95, type=c("LR", "Wald"), ...){
         a <- c(a, 1 - a)
         pct <- paste(round(100 * a, 1), "%")
         ci <- array(NA, dim = c(length(parm), 2), dimnames = list(pnames[parm],
-            pct))
+                                                                  pct))
         ses <- sqrt(diag(vcov(object)))[parm]
         fac <- qnorm(a)
         ci[] <- cf[parm] + ses %o% fac
@@ -241,7 +269,7 @@ Confint.polr <- function (object, parm, level=0.95, ...){
     a <- c(a, 1 - a)
     pct <- paste(round(100 * a, 1), "%")
     ci <- array(NA, dim = c(length(parm), 2), dimnames = list(pnames[parm],
-        pct))
+                                                              pct))
     ses <- sqrt(diag(vcov(object)))[parm]
     fac <- qnorm(a)
     ci[] <- cf[parm] + ses %o% fac
@@ -365,7 +393,7 @@ browseRcmdrWebsite <- function() browseURL("http://socserv.socsci.mcmaster.ca/jf
 
 browseRWebsite <- function() browseURL("http://www.r-project.org/")
 
-browseRMarkdown <- function() browseURL("http://www.rstudio.com/ide/docs/authoring/using_markdown")
+browseRMarkdown <- function() browseURL("http://rmarkdown.rstudio.com/")
 
 
 
@@ -410,7 +438,7 @@ defmacro <- function(..., expr){
     ff
 }
 
-OKCancelHelp <- defmacro(window=top, helpSubject=NULL,  model=FALSE, reset=NULL, apply=NULL,
+OKCancelHelp <- defmacro(window=top, helpSubject=NULL,  model=FALSE, reset=NULL, apply=NULL, helpPackage=NULL,
     expr={
         memory <- getRcmdr("retain.selections")
         button.strings <- c("OK", "Cancel", 
@@ -478,8 +506,8 @@ OKCancelHelp <- defmacro(window=top, helpSubject=NULL,  model=FALSE, reset=NULL,
         if (!is.null(helpSubject)){
             onHelp <- function() {
                 if (GrabFocus() && (!WindowsP())) tkgrab.release(window)
-                if (as.numeric(R.Version()$major) >= 2) print(help(helpSubject))
-                else help(helpSubject)
+                if (as.numeric(R.Version()$major) >= 2) print(help(helpSubject, package=helpPackage))
+                else help(helpSubject, package=helpPackage)
             }
             helpButton <- buttonRcmdr(leftButtonsBox, text=gettextRcmdr("Help"), width=width, command=onHelp, # borderwidth=3,
                 image="::image::helpIcon", compound="left")
@@ -2044,53 +2072,6 @@ gassign <- function(x, value){
 }
 
 
-Coef.multinom <- function (object, ...) 
-{
-    # the following from nnet:
-    cf <- function (object, ...) 
-    {
-        r <- length(object$vcoefnames)
-        if (length(object$lev) == 2L) {
-            coef <- object$wts[1L + (1L:r)]
-            names(coef) <- object$vcoefnames
-        }
-        else {
-            coef <- matrix(object$wts, nrow = object$n[3L], byrow = TRUE)[, 
-                1L + (1L:r), drop = FALSE]
-            if (length(object$lev)) 
-                dimnames(coef) <- list(object$lev, object$vcoefnames)
-            if (length(object$lab)) 
-                dimnames(coef) <- list(object$lab, object$vcoefnames)
-            coef <- coef[-1L, , drop = FALSE]
-        }
-        coef
-    }
-    b <- cf(object, ...)
-    cn <- colnames(b)
-    rn <- rownames(b)
-    b <- as.vector(t(b))
-    names(b) <- as.vector(outer(cn, rn, function(c, r) paste(r, 
-        c, sep = ":")))
-    b
-}
-
-# from MASS:
-
-# confint.glm <- function (object, parm, level = 0.95, trace = FALSE, ...) 
-# {
-#     pnames <- names(coef(object))
-#     if (missing(parm)) 
-#         parm <- seq_along(pnames)
-#     else if (is.character(parm)) 
-#         parm <- match(parm, pnames, nomatch = 0L)
-#     message("Waiting for profiling to be done...")
-#     utils::flush.console()
-#     object <- profile(object, which = parm, alpha = (1 - level)/4, 
-#         trace = trace)
-#     confint(object, parm = parm, level = level, trace = trace, 
-#         ...)
-# }
-
 tkfocus <- function(...) tcl("focus", ...)
 
 tkspinbox <- function(parent, ...) tkwidget(parent, "spinbox", ...)
@@ -2219,6 +2200,26 @@ MarkdownP <- function(){
 }
 
 compileRmd <- function() {
+    ChooseOutputFormat <- function(){
+        initializeDialog(title=gettextRcmdr("Select Output Format"))
+        format <- getRcmdr("rmd.output.format")
+        putRcmdr("abort.compile.rmd", TRUE)
+        hasLatex <- getRcmdr("capabilities")$pdflatex
+        radioButtons(name="formatButtons", 
+            buttons=c("html", if (hasLatex) "pdf", "docx"), 
+            initialValue=format,
+            labels=c(gettextRcmdr(".html (web page)"), 
+                if (hasLatex) gettextRcmdr(".pdf (PDF file)"), gettextRcmdr(".docx (Word file)")))
+        onOK <- function(){
+            putRcmdr("abort.compile.rmd", FALSE)
+            format <- tclvalue(formatButtonsVariable)
+            putRcmdr("rmd.output.format", format)
+            closeDialog()
+        }
+        OKCancelHelp()
+        tkgrid(formatButtonsFrame, sticky="w")
+        dialogSuffix(force.wait=TRUE, grid.buttons=TRUE)
+    }
     .RmdFile <- getRcmdr("RmdFileName")
     rmdDir <- dirname(.RmdFile)
     saveDir <- setwd(rmdDir)
@@ -2232,13 +2233,47 @@ compileRmd <- function() {
     }
     removeStrayRmdBlocks()
     lines <- tclvalue(tkget(RmdWindow(), "1.0", "end"))
+    lines <- sub("date: \"AUTOMATIC\"", paste("date: \"", as.character(Sys.time()), "\"", sep=""), lines)
     .filename <- sub("\\.Rmd$", "", trim.blanks(.RmdFile))
     writeLines(lines, .RmdFile)
-    knitr::knit(.RmdFile, paste(.filename, ".md", sep=""), quiet=TRUE)
-    .html.file <- paste(.filename, ".html", sep="")
-    markdown::markdownToHTML(paste(.filename, ".md", sep=""), .html.file)
-    .html.file.location <- paste("file:///", normalizePath(.html.file), sep="")
-    browseURL(.html.file.location)
+    if (getRcmdr("capabilities")$pandoc){
+        ChooseOutputFormat()
+        if (getRcmdr("abort.compile.rmd")){
+            putRcmdr("abort.compile.rmd", NULL)
+            return()
+        }
+        else putRcmdr("abort.compile.rmd", NULL)
+        format <- getRcmdr("rmd.output.format")
+        switch(format,
+            html = {
+                rmarkdown::render(.RmdFile, rmarkdown::html_document())
+                .html.file <- paste(.filename, ".html", sep="")
+                .html.file.location <- paste("file:///", normalizePath(.html.file), sep="")
+                Message(paste(gettextRcmdr("HTML file written to:"), normalizePath(.html.file)), type="note")
+                browseURL(.html.file.location)
+            },
+            pdf = {
+                rmarkdown::render(.RmdFile, rmarkdown::pdf_document())
+                .pdf.file <- paste(.filename, ".pdf", sep="")
+                .pdf.file.location <- paste("file:///", normalizePath(.pdf.file), sep="")
+                Message(paste(gettextRcmdr("PDF file written to:"), normalizePath(.pdf.file)), type="note")
+                browseURL(.pdf.file.location)
+            },
+            docx = {
+                rmarkdown::render(.RmdFile, rmarkdown::word_document())
+                .docx.file <- paste(.filename, ".docx", sep="")
+                Message(paste(gettextRcmdr("Word file written to:"), normalizePath(.docx.file)), type="note")
+            }
+        )
+    }
+    else{
+        knitr::knit(.RmdFile, paste(.filename, ".md", sep=""), quiet=TRUE)
+        .html.file <- paste(.filename, ".html", sep="")
+        markdown::markdownToHTML(paste(.filename, ".md", sep=""), .html.file)
+        .html.file.location <- paste("file:///", normalizePath(.html.file), sep="")
+        Message(paste(gettextRcmdr("HTML file written to:"), normalizePath(.html.file)), type="note")
+        browseURL(.html.file.location)
+    }
 }
 
 # the following functions to support knitr
@@ -2372,266 +2407,267 @@ knitrP <- function(){
 
 # editor for R Markdown and knitr documents
 
-RcmdrEditor <- function(buffer, title="R Commander Editor", 
-    help=NULL, file.menu=NULL, edit.menu=NULL, context.menu=NULL, toolbar.buttons=NULL){
-    contextMenu <- function(){
-        contextMenu <- tkmenu(tkmenu(editor), tearoff=FALSE)
-        if (!is.null(context.menu)){
-            for (item in context.menu){
-                tkadd(contextMenu, "command", label=gettextRcmdr(item$label), command=item$command)
-            }
-            tkadd(contextMenu, "separator")
-        }
-        tkadd(contextMenu, "command", label=gettextRcmdr("Cut"), command=onCut)
-        tkadd(contextMenu, "command", label=gettextRcmdr("Copy"), command=onCopy)
-        tkadd(contextMenu, "command", label=gettextRcmdr("Paste"), command=onPaste)
-        tkadd(contextMenu, "command", label=gettextRcmdr("Delete"), command=onDelete)
-        tkadd(contextMenu, "separator")
-        tkadd(contextMenu, "command", label=gettextRcmdr("Find..."), command=onFind)
-        tkadd(contextMenu, "command", label=gettextRcmdr("Select all"), command=onSelectAll)
-        tkadd(contextMenu, "separator")
-        tkadd(contextMenu, "command", label=gettextRcmdr("Undo"), command=onUndo)
-        tkadd(contextMenu, "command", label=gettextRcmdr("Redo"), command=onRedo)
-        tkadd(contextMenu, "separator")
-        tkadd(contextMenu, "command", label=gettextRcmdr("Clear window"), command=onClear)
-        tkpopup(contextMenu, tkwinfo("pointerx", editor), tkwinfo("pointery", editor))
+RcmdrEditor <- function(buffer, title="R Commander Editor", ok,
+                        help=NULL, file.menu=NULL, edit.menu=NULL, context.menu=NULL, toolbar.buttons=NULL){
+  contextMenu <- function(){
+    contextMenu <- tkmenu(tkmenu(editor), tearoff=FALSE)
+    if (!is.null(context.menu)){
+      for (item in context.menu){
+        tkadd(contextMenu, "command", label=gettextRcmdr(item$label), command=item$command)
+      }
+      tkadd(contextMenu, "separator")
     }
-    onCopy <- function(){
-        selection <- strsplit(tclvalue(tktag.ranges(editor, "sel")), " ")[[1]]
-        if (is.na(selection[1])) return()
-        text <- tclvalue(tkget(editor, selection[1], selection[2]))
-        tkclipboard.clear()
-        tkclipboard.append(text)
-    }
-    onDelete <- function(){
-        selection <- strsplit(tclvalue(tktag.ranges(editor, "sel")), " ")[[1]]
-        if (is.na(selection[1])) return()
-        tkdelete(editor, selection[1], selection[2])
-    }
-    onCut <- function(){
-        onCopy()
-        onDelete()
-    }
-    onPaste <- function(){
-        onDelete()
-        text <- tclvalue(.Tcl("selection get -selection CLIPBOARD"))
-        if (length(text) == 0) return()
-        tkinsert(editor, "insert", text)
-    }
-    onFind <- function(){
-        initializeDialog(title=gettextRcmdr("Find"))
-        textFrame <- tkframe(top)
-        textVar <- tclVar(getRcmdr("last.search"))
-        textEntry <- ttkentry(textFrame, width="20", textvariable=textVar)
-        checkBoxes(frame="optionsFrame", boxes=c("regexpr", "case"), initialValues=c("0", "1"),
-            labels=gettextRcmdr(c("Regular-expression search", "Case sensitive")))
-        radioButtons(name="direction", buttons=c("foward", "backward"), labels=gettextRcmdr(c("Forward", "Backward")),
-            values=c("-forward", "-backward"), title=gettextRcmdr("Search Direction"))
-        onOK <- function(){
-            text <- tclvalue(textVar)
-            putRcmdr("last.search", text)
-            if (text == ""){
-                errorCondition(recall=onFind, message=gettextRcmdr("No search text specified."))
-                return()
-            }
-            type <- if (tclvalue(regexprVariable) == 1) "-regexp" else "-exact"
-            case <- tclvalue(caseVariable) == 1
-            direction <- tclvalue(directionVariable)
-            stop <- if (direction == "-forward") "end" else "1.0"
-            where.txt <- if (case) tksearch(editor, type, direction, "--", text, "insert", stop)
-            else tksearch(editor, type, direction, "-nocase", "--", text, "insert", stop)
-            where.txt <- tclvalue(where.txt)
-            if (where.txt == "") {
-                Message(message=gettextRcmdr("Text not found."),
-                    type="note")
-                if (GrabFocus()) tkgrab.release(top)
-                tkdestroy(top)
-                tkfocus(CommanderWindow())
-                return()
-            }
-            if (GrabFocus()) tkgrab.release(top)
-            tkfocus(editor)
-            tkmark.set(editor, "insert", where.txt)
-            tksee(editor, where.txt)
-            tkdestroy(top)
-        }
-        .exit <- function(){
-            text <- tclvalue(textVar)
-            putRcmdr("last.search", text)
-            return("")
-        }
-        OKCancelHelp()
-        tkgrid(labelRcmdr(textFrame, text=gettextRcmdr("Search for:")), textEntry, sticky="w")
-        tkgrid(textFrame, sticky="w")
-        tkgrid(optionsFrame, sticky="w")
-        tkgrid(directionFrame, sticky="w")
-        tkgrid(buttonsFrame, sticky="w")
-        dialogSuffix(focus=textEntry)
-    }
-    onSelectAll <- function() {
-        tktag.add(editor, "sel", "1.0", "end")
-        tkfocus(editor)
-    }
-    onClear <- function(){
-        onSelectAll()
-        onDelete()
-    }
-    onUndo <- function(){
-        tcl(editor, "edit", "undo")
-    }
-    onRedo <- function(){
-        tcl(editor, "edit", "redo")
-    }
-    initializeDialog(title = gettextRcmdr(title), suppress.window.resize.buttons=FALSE)
-    toolbarFrame <- tkframe(top) 
-    cutButton <- buttonRcmdr(toolbarFrame, image="::image::cutIcon", command=onCut)
-    copyButton <- buttonRcmdr(toolbarFrame, image="::image::copyIcon", command=onCopy)
-    pasteButton <- buttonRcmdr(toolbarFrame, image="::image::pasteIcon", command=onPaste)
-    deleteButton <- buttonRcmdr(toolbarFrame, image="::image::deleteIcon", command=onDelete)
-    undoButton <- buttonRcmdr(toolbarFrame, image="::image::undoIcon", command=onUndo)
-    redoButton <- buttonRcmdr(toolbarFrame, image="::image::redoIcon", command=onRedo)
-    findButton <- buttonRcmdr(toolbarFrame, image="::image::findIcon", command=onFind)
-    if (!is.null(toolbar.buttons)){
-        for (i in 1:length(toolbar.buttons)){
-            tool <- toolbar.buttons[[i]]
-            assign(paste("var", i, sep=""), tclVar(gettextRcmdr(tool$label)))
-            assign(paste("button", i, sep=""), buttonRcmdr(toolbarFrame, textvariable=eval(parse(text=paste("var", i, sep=""))), 
-                borderwidth="2", command=tool$command, image=tool$image, compound="left"))
-        }
-    }
-    editorFrame <- tkframe(top)
-    screenheight <- as.numeric(.Tcl(paste("winfo screenheight", top$ID)))
-    char.size <- as.numeric(.Tcl(paste("font metrics", getRcmdr('logFont'))))[6]
-    width <- as.numeric(tkcget(LogWindow(), "-width")) + 5
-    height <- max(floor(screenheight/(2.5*char.size)), 25)   
-    editor <- tktext(editorFrame, bg = "white", font = getRcmdr("logFont"), 
-        height = height, width = width, wrap = "none", undo=TRUE)
-    putRcmdr("editor.text", editor)
-    editorXscroll <- ttkscrollbar(editorFrame, orient = "horizontal", 
-        command = function(...) tkxview(editor, ...))
-    editorYscroll <- ttkscrollbar(editorFrame, command = function(...) tkyview(editor, 
-        ...))
-    tkconfigure(editor, xscrollcommand = function(...) tkset(editorXscroll, 
-        ...))
-    tkconfigure(editor, yscrollcommand = function(...) tkset(editorYscroll, 
-        ...))
-    tkinsert(editor, "1.0", buffer)
-    putRcmdr("buffer", NULL)
+    tkadd(contextMenu, "command", label=gettextRcmdr("Cut"), command=onCut)
+    tkadd(contextMenu, "command", label=gettextRcmdr("Copy"), command=onCopy)
+    tkadd(contextMenu, "command", label=gettextRcmdr("Paste"), command=onPaste)
+    tkadd(contextMenu, "command", label=gettextRcmdr("Delete"), command=onDelete)
+    tkadd(contextMenu, "separator")
+    tkadd(contextMenu, "command", label=gettextRcmdr("Find..."), command=onFind)
+    tkadd(contextMenu, "command", label=gettextRcmdr("Select all"), command=onSelectAll)
+    tkadd(contextMenu, "separator")
+    tkadd(contextMenu, "command", label=gettextRcmdr("Undo"), command=onUndo)
+    tkadd(contextMenu, "command", label=gettextRcmdr("Redo"), command=onRedo)
+    tkadd(contextMenu, "separator")
+    tkadd(contextMenu, "command", label=gettextRcmdr("Clear window"), command=onClear)
+    tkpopup(contextMenu, tkwinfo("pointerx", editor), tkwinfo("pointery", editor))
+  }
+  onCopy <- function(){
+    selection <- strsplit(tclvalue(tktag.ranges(editor, "sel")), " ")[[1]]
+    if (is.na(selection[1])) return()
+    text <- tclvalue(tkget(editor, selection[1], selection[2]))
+    tkclipboard.clear()
+    tkclipboard.append(text)
+  }
+  onDelete <- function(){
+    selection <- strsplit(tclvalue(tktag.ranges(editor, "sel")), " ")[[1]]
+    if (is.na(selection[1])) return()
+    tkdelete(editor, selection[1], selection[2])
+  }
+  onCut <- function(){
+    onCopy()
+    onDelete()
+  }
+  onPaste <- function(){
+    onDelete()
+    text <- tclvalue(.Tcl("selection get -selection CLIPBOARD"))
+    if (length(text) == 0) return()
+    tkinsert(editor, "insert", text)
+  }
+  onFind <- function(){
+    initializeDialog(title=gettextRcmdr("Find"))
+    textFrame <- tkframe(top)
+    textVar <- tclVar(getRcmdr("last.search"))
+    textEntry <- ttkentry(textFrame, width="20", textvariable=textVar)
+    checkBoxes(frame="optionsFrame", boxes=c("regexpr", "case"), initialValues=c("0", "1"),
+               labels=gettextRcmdr(c("Regular-expression search", "Case sensitive")))
+    radioButtons(name="direction", buttons=c("foward", "backward"), labels=gettextRcmdr(c("Forward", "Backward")),
+                 values=c("-forward", "-backward"), title=gettextRcmdr("Search Direction"))
     onOK <- function(){
-        putRcmdr("buffer", tclvalue(tkget(editor, "1.0", "end")))
-        closeDialog()
+      text <- tclvalue(textVar)
+      putRcmdr("last.search", text)
+      if (text == ""){
+        errorCondition(recall=onFind, message=gettextRcmdr("No search text specified."))
+        return()
+      }
+      type <- if (tclvalue(regexprVariable) == 1) "-regexp" else "-exact"
+      case <- tclvalue(caseVariable) == 1
+      direction <- tclvalue(directionVariable)
+      stop <- if (direction == "-forward") "end" else "1.0"
+      where.txt <- if (case) tksearch(editor, type, direction, "--", text, "insert", stop)
+      else tksearch(editor, type, direction, "-nocase", "--", text, "insert", stop)
+      where.txt <- tclvalue(where.txt)
+      if (where.txt == "") {
+        Message(message=gettextRcmdr("Text not found."),
+                type="note")
+        if (GrabFocus()) tkgrab.release(top)
+        tkdestroy(top)
+        tkfocus(CommanderWindow())
+        return()
+      }
+      if (GrabFocus()) tkgrab.release(top)
+      tkfocus(editor)
+      tkmark.set(editor, "insert", where.txt)
+      tksee(editor, where.txt)
+      tkdestroy(top)
     }
     .exit <- function(){
-        answer <- RcmdrTkmessageBox("Discard edits?", icon="question", type="yesno")
-        if (as.character(answer) == "no") "abort" else ""
+      text <- tclvalue(textVar)
+      putRcmdr("last.search", text)
+      return("")
     }
-    OKCancelHelp(helpSubject = "ScriptEditor")
-    editorMenu <- tkmenu(top)
-    tkconfigure(top, menu = editorMenu)
-    fileMenu <- tkmenu(editorMenu, tearoff=FALSE)
-    if (!is.null(file.menu)){
-        for (item in file.menu){
-            tkadd(fileMenu, "command", label=gettextRcmdr(item$label), command=item$command)
-        }
-        tkadd(fileMenu, "separator")
+    OKCancelHelp()
+    tkgrid(labelRcmdr(textFrame, text=gettextRcmdr("Search for:")), textEntry, sticky="w")
+    tkgrid(textFrame, sticky="w")
+    tkgrid(optionsFrame, sticky="w")
+    tkgrid(directionFrame, sticky="w")
+    tkgrid(buttonsFrame, sticky="w")
+    dialogSuffix(focus=textEntry)
+  }
+  onSelectAll <- function() {
+    tktag.add(editor, "sel", "1.0", "end")
+    tkfocus(editor)
+  }
+  onClear <- function(){
+    onSelectAll()
+    onDelete()
+  }
+  onUndo <- function(){
+    tcl(editor, "edit", "undo")
+  }
+  onRedo <- function(){
+    tcl(editor, "edit", "redo")
+  }
+  initializeDialog(title = gettextRcmdr(title), suppress.window.resize.buttons=FALSE)
+  toolbarFrame <- tkframe(top) 
+  cutButton <- buttonRcmdr(toolbarFrame, image="::image::cutIcon", command=onCut)
+  copyButton <- buttonRcmdr(toolbarFrame, image="::image::copyIcon", command=onCopy)
+  pasteButton <- buttonRcmdr(toolbarFrame, image="::image::pasteIcon", command=onPaste)
+  deleteButton <- buttonRcmdr(toolbarFrame, image="::image::deleteIcon", command=onDelete)
+  undoButton <- buttonRcmdr(toolbarFrame, image="::image::undoIcon", command=onUndo)
+  redoButton <- buttonRcmdr(toolbarFrame, image="::image::redoIcon", command=onRedo)
+  findButton <- buttonRcmdr(toolbarFrame, image="::image::findIcon", command=onFind)
+  if (!is.null(toolbar.buttons)){
+    for (i in 1:length(toolbar.buttons)){
+      tool <- toolbar.buttons[[i]]
+      assign(paste("var", i, sep=""), tclVar(gettextRcmdr(tool$label)))
+      assign(paste("button", i, sep=""), buttonRcmdr(toolbarFrame, textvariable=eval(parse(text=paste("var", i, sep=""))), 
+                                                     borderwidth="2", command=tool$command, image=tool$image, compound="left"))
     }
-    tkadd(fileMenu, "command", label=gettextRcmdr("Exit editor"), command=onOK)
-    tkadd(fileMenu, "command", label=gettextRcmdr("Cancel"), command=onCancel)
-    tkadd(editorMenu, "cascade", label=gettextRcmdr("File"), menu=fileMenu)
-    editMenu <- tkmenu(editorMenu, tearoff=FALSE)
-    if (!is.null(edit.menu)){
-        for (item in edit.menu){
-            tkadd(editMenu, "command", label=gettextRcmdr(item$label), command=item$command)
-        }
-        tkadd(editMenu, "separator")
+  }
+  editorFrame <- tkframe(top)
+  screenheight <- as.numeric(.Tcl(paste("winfo screenheight", top$ID)))
+  char.size <- as.numeric(.Tcl(paste("font metrics", getRcmdr('logFont'))))[6]
+  width <- as.numeric(tkcget(LogWindow(), "-width")) + 5
+  height <- max(floor(screenheight/(2.5*char.size)), 25)   
+  editor <- tktext(editorFrame, bg = "white", font = getRcmdr("logFont"), 
+                   height = height, width = width, wrap = "none", undo=TRUE)
+  putRcmdr("editor.text", editor)
+  editorXscroll <- ttkscrollbar(editorFrame, orient = "horizontal", 
+                                command = function(...) tkxview(editor, ...))
+  editorYscroll <- ttkscrollbar(editorFrame, command = function(...) tkyview(editor, 
+                                                                             ...))
+  tkconfigure(editor, xscrollcommand = function(...) tkset(editorXscroll, 
+                                                           ...))
+  tkconfigure(editor, yscrollcommand = function(...) tkset(editorYscroll, 
+                                                           ...))
+  tkinsert(editor, "1.0", buffer)
+#  putRcmdr("buffer", NULL)
+  onOK <- function(){
+#    putRcmdr("buffer", tclvalue(tkget(editor, "1.0", "end")))
+    ok()
+    closeDialog()
+  }
+  .exit <- function(){
+    answer <- RcmdrTkmessageBox("Discard edits?", icon="question", type="yesno")
+    if (as.character(answer) == "no") "abort" else ""
+  }
+  OKCancelHelp(helpSubject = "ScriptEditor")
+  editorMenu <- tkmenu(top)
+  tkconfigure(top, menu = editorMenu)
+  fileMenu <- tkmenu(editorMenu, tearoff=FALSE)
+  if (!is.null(file.menu)){
+    for (item in file.menu){
+      tkadd(fileMenu, "command", label=gettextRcmdr(item$label), command=item$command)
     }
-    tkadd(editMenu, "command", label=gettextRcmdr("Cut"), command=onCut)
-    tkadd(editMenu, "command", label=gettextRcmdr("Copy"), command=onCopy)
-    tkadd(editMenu, "command", label=gettextRcmdr("Paste"), command=onPaste)
-    tkadd(editMenu, "command", label=gettextRcmdr("Delete"), command=onDelete)
+    tkadd(fileMenu, "separator")
+  }
+  tkadd(fileMenu, "command", label=gettextRcmdr("Exit editor"), command=onOK)
+  tkadd(fileMenu, "command", label=gettextRcmdr("Cancel"), command=onCancel)
+  tkadd(editorMenu, "cascade", label=gettextRcmdr("File"), menu=fileMenu)
+  editMenu <- tkmenu(editorMenu, tearoff=FALSE)
+  if (!is.null(edit.menu)){
+    for (item in edit.menu){
+      tkadd(editMenu, "command", label=gettextRcmdr(item$label), command=item$command)
+    }
     tkadd(editMenu, "separator")
-    tkadd(editMenu, "command", label=gettextRcmdr("Find..."), command=onFind)
-    tkadd(editMenu, "command", label=gettextRcmdr("Select all"), command=onSelectAll)
-    tkadd(editMenu, "separator")
-    tkadd(editMenu, "command", label=gettextRcmdr("Undo"), command=onUndo)
-    tkadd(editMenu, "command", label=gettextRcmdr("Redo"), command=onRedo)
-    tkadd(editMenu, "separator")
-    tkadd(editMenu, "command", label=gettextRcmdr("Clear window"), command=onClear)
-    tkadd(editorMenu, "cascade", label=gettextRcmdr("Edit"), menu=editMenu)
-    helpMenu <- tkmenu(editorMenu, tearoff=FALSE)
-    onEditorHelp <- function() print(help("ScriptEditor", package="Rcmdr"))
-    tkadd(helpMenu, "command", label=gettextRcmdr("Editor help"), command=onEditorHelp)
-    if (!is.null(help)){
-        tkadd(helpMenu, "command", label=gettextRcmdr(help$label), command=help$command)
+  }
+  tkadd(editMenu, "command", label=gettextRcmdr("Cut"), command=onCut)
+  tkadd(editMenu, "command", label=gettextRcmdr("Copy"), command=onCopy)
+  tkadd(editMenu, "command", label=gettextRcmdr("Paste"), command=onPaste)
+  tkadd(editMenu, "command", label=gettextRcmdr("Delete"), command=onDelete)
+  tkadd(editMenu, "separator")
+  tkadd(editMenu, "command", label=gettextRcmdr("Find..."), command=onFind)
+  tkadd(editMenu, "command", label=gettextRcmdr("Select all"), command=onSelectAll)
+  tkadd(editMenu, "separator")
+  tkadd(editMenu, "command", label=gettextRcmdr("Undo"), command=onUndo)
+  tkadd(editMenu, "command", label=gettextRcmdr("Redo"), command=onRedo)
+  tkadd(editMenu, "separator")
+  tkadd(editMenu, "command", label=gettextRcmdr("Clear window"), command=onClear)
+  tkadd(editorMenu, "cascade", label=gettextRcmdr("Edit"), menu=editMenu)
+  helpMenu <- tkmenu(editorMenu, tearoff=FALSE)
+  onEditorHelp <- function() print(help("ScriptEditor", package="Rcmdr"))
+  tkadd(helpMenu, "command", label=gettextRcmdr("Editor help"), command=onEditorHelp)
+  if (!is.null(help)){
+    tkadd(helpMenu, "command", label=gettextRcmdr(help$label), command=help$command)
+  }
+  tkadd(editorMenu, "cascade", label=gettextRcmdr("Help"), menu=helpMenu)
+  tkgrid(editor, editorYscroll, sticky = "nsew")
+  tkgrid(editorXscroll)
+  if (!is.null(toolbar.buttons)){
+    for (i in 1:length(toolbar.buttons)){
+      tkgrid(eval(parse(text=paste("button", i, sep=""))), sticky="w", row=0, column=i - 1,
+             padx=c(3, 3), pady=c(0, 8))
     }
-    tkadd(editorMenu, "cascade", label=gettextRcmdr("Help"), menu=helpMenu)
-    tkgrid(editor, editorYscroll, sticky = "nsew")
-    tkgrid(editorXscroll)
-    if (!is.null(toolbar.buttons)){
-        for (i in 1:length(toolbar.buttons)){
-            tkgrid(eval(parse(text=paste("button", i, sep=""))), sticky="w", row=0, column=i - 1,
-                padx=c(3, 3), pady=c(0, 8))
-        }
-    }
-    else i <- 0
-    tkgrid(cutButton, sticky="w", row=0, column=i, padx=c(3, 3), pady=c(0, 8))
-    tkgrid(copyButton, sticky="w", row=0, column=i + 1, padx=c(3, 3), pady=c(0, 8))
-    tkgrid(pasteButton, sticky="w", row=0, column=i + 2, padx=c(3, 3), pady=c(0, 8))
-    tkgrid(deleteButton, sticky="w", row=0, column=i + 3, padx=c(3, 3), pady=c(0, 8))
-    tkgrid(undoButton, sticky="w", row=0, column=i + 4, padx=c(3, 3), pady=c(0, 8))
-    tkgrid(redoButton, sticky="w", row=0, column=i + 5, padx=c(3, 3), pady=c(0, 8))
-    tkgrid(findButton, sticky="w", row=0, column=i + 6, padx=c(3, 3), pady=c(0, 8))
-    tkgrid(toolbarFrame, sticky="w")
-    tk2tip(cutButton, gettextRcmdr("Cut"))
-    tk2tip(copyButton, gettextRcmdr("Copy"))
-    tk2tip(pasteButton, gettextRcmdr("Paste"))
-    tk2tip(deleteButton, gettextRcmdr("Delete"))
-    tk2tip(undoButton, gettextRcmdr("Undo"))
-    tk2tip(redoButton, gettextRcmdr("Redo"))
-    tk2tip(findButton, gettextRcmdr("Find"))
-    tkgrid(editorFrame, sticky = "nsew")
-    tkgrid.configure(editorXscroll, sticky = "ew")
-    tkgrid.configure(editorYscroll, sticky = "ns")
-    tkgrid.configure(editor, sticky = "nsew")
-    tkgrid.configure(editorFrame, sticky = "nsew")
-    tkgrid(buttonsFrame, sticky = "ew")
-    tkbind(top, "<ButtonPress-3>", contextMenu)
-    tkbind(top, "<Control-x>", onCut)
-    tkbind(top, "<Control-X>", onCut)
-    tkbind(top, "<Control-c>", onCopy)
-    tkbind(top, "<Control-C>", onCopy)
-    tkbind(top, "<Control-f>", onFind)
-    tkbind(top, "<Control-F>", onFind)
-    tkbind(top, "<F3>", onFind)
-    tkbind(top, "<Control-a>", onSelectAll)
-    tkbind(top, "<Control-A>", onSelectAll)
-    tkbind(top, "<Control-w>", onRedo)
-    tkbind(top, "<Control-W>", onRedo)
-    tkbind(top, "<Alt-BackSpace>", onUndo)
-    if (MacOSXP()){
-        tkbind(top, "<Meta-x>", onCut)
-        tkbind(top, "<Meta-X>", onCut)
-        tkbind(top, "<Meta-c>", onCopy)
-        tkbind(top, "<Meta-C>", onCopy)
-        tkbind(top, "<Meta-v>", onPaste)
-        tkbind(top, "<Meta-V>", onPaste)
-        tkbind(top, "<Meta-f>", onFind)
-        tkbind(top, "<Meta-F>", onFind)
-        tkbind(top, "<Meta-a>", onSelectAll)
-        tkbind(top, "<Meta-A>", onSelectAll)
-        tkbind(top, "<Meta-w>", onRedo)
-        tkbind(top, "<Meta-W>", onRedo)
-    }
-    tkwm.protocol(top, "WM_DELETE_WINDOW", onCancel)
-    dialogSuffix(bindReturn = FALSE, resizable=TRUE, focus=editor)
-    tkgrid.rowconfigure(top, 0, weight = 0)
-    tkgrid.rowconfigure(top, 1, weight = 1)
-    tkgrid.rowconfigure(top, 2, weight = 0)
-    tkgrid.columnconfigure(top, 0, weight=1)
-    tkgrid.rowconfigure(editorFrame, 1, weight=0)
-    tkgrid.rowconfigure(editorFrame, 0, weight=1)
-    tkgrid.columnconfigure(editorFrame, 0, weight=1)
-    tkgrid.columnconfigure(editorFrame, 1, weight=0)
+  }
+  else i <- 0
+  tkgrid(cutButton, sticky="w", row=0, column=i, padx=c(3, 3), pady=c(0, 8))
+  tkgrid(copyButton, sticky="w", row=0, column=i + 1, padx=c(3, 3), pady=c(0, 8))
+  tkgrid(pasteButton, sticky="w", row=0, column=i + 2, padx=c(3, 3), pady=c(0, 8))
+  tkgrid(deleteButton, sticky="w", row=0, column=i + 3, padx=c(3, 3), pady=c(0, 8))
+  tkgrid(undoButton, sticky="w", row=0, column=i + 4, padx=c(3, 3), pady=c(0, 8))
+  tkgrid(redoButton, sticky="w", row=0, column=i + 5, padx=c(3, 3), pady=c(0, 8))
+  tkgrid(findButton, sticky="w", row=0, column=i + 6, padx=c(3, 3), pady=c(0, 8))
+  tkgrid(toolbarFrame, sticky="w")
+  tk2tip(cutButton, gettextRcmdr("Cut"))
+  tk2tip(copyButton, gettextRcmdr("Copy"))
+  tk2tip(pasteButton, gettextRcmdr("Paste"))
+  tk2tip(deleteButton, gettextRcmdr("Delete"))
+  tk2tip(undoButton, gettextRcmdr("Undo"))
+  tk2tip(redoButton, gettextRcmdr("Redo"))
+  tk2tip(findButton, gettextRcmdr("Find"))
+  tkgrid(editorFrame, sticky = "nsew")
+  tkgrid.configure(editorXscroll, sticky = "ew")
+  tkgrid.configure(editorYscroll, sticky = "ns")
+  tkgrid.configure(editor, sticky = "nsew")
+  tkgrid.configure(editorFrame, sticky = "nsew")
+  tkgrid(buttonsFrame, sticky = "ew")
+  tkbind(top, "<ButtonPress-3>", contextMenu)
+  tkbind(top, "<Control-x>", onCut)
+  tkbind(top, "<Control-X>", onCut)
+  tkbind(top, "<Control-c>", onCopy)
+  tkbind(top, "<Control-C>", onCopy)
+  tkbind(top, "<Control-f>", onFind)
+  tkbind(top, "<Control-F>", onFind)
+  tkbind(top, "<F3>", onFind)
+  tkbind(top, "<Control-a>", onSelectAll)
+  tkbind(top, "<Control-A>", onSelectAll)
+  tkbind(top, "<Control-w>", onRedo)
+  tkbind(top, "<Control-W>", onRedo)
+  tkbind(top, "<Alt-BackSpace>", onUndo)
+  if (MacOSXP()){
+    tkbind(top, "<Meta-x>", onCut)
+    tkbind(top, "<Meta-X>", onCut)
+    tkbind(top, "<Meta-c>", onCopy)
+    tkbind(top, "<Meta-C>", onCopy)
+    tkbind(top, "<Meta-v>", onPaste)
+    tkbind(top, "<Meta-V>", onPaste)
+    tkbind(top, "<Meta-f>", onFind)
+    tkbind(top, "<Meta-F>", onFind)
+    tkbind(top, "<Meta-a>", onSelectAll)
+    tkbind(top, "<Meta-A>", onSelectAll)
+    tkbind(top, "<Meta-w>", onRedo)
+    tkbind(top, "<Meta-W>", onRedo)
+  }
+  tkwm.protocol(top, "WM_DELETE_WINDOW", onCancel)
+  dialogSuffix(bindReturn = FALSE, resizable=TRUE, focus=editor)
+  tkgrid.rowconfigure(top, 0, weight = 0)
+  tkgrid.rowconfigure(top, 1, weight = 1)
+  tkgrid.rowconfigure(top, 2, weight = 0)
+  tkgrid.columnconfigure(top, 0, weight=1)
+  tkgrid.rowconfigure(editorFrame, 1, weight=0)
+  tkgrid.rowconfigure(editorFrame, 0, weight=1)
+  tkgrid.columnconfigure(editorFrame, 0, weight=1)
+  tkgrid.columnconfigure(editorFrame, 1, weight=0)
 }
 
 # the rgb2col function translates #RRGGBB colors to names if a named color exists or otherwise a "close" color (not exported)
@@ -2687,15 +2723,10 @@ setIdleCursor <- function() {
     tkconfigure(.messages, cursor="xterm")
 }
 
-# hasJava <- function(){
-#     opts <- options(warn=-1, show.error.messages=FALSE)
-#     on.exit(options(opts))
-#     require("rJava", quietly=TRUE)
-# }
 
-hasJava <- function(){
-  Sys.which("java") != ""
-}
+# hasJava <- function(){
+#   getRcmdr("capabilities")$java
+# }
 
 # setupHelp <- function(){
 #   if (MacOSXP() && .Platform$GUI == "AQUA"){
@@ -3008,3 +3039,50 @@ tkmenu <- function (parent, activebackground, activeforeground, ...) {
   class(w) <- c("tk2menu", "tk2widget", class(w))
   return(w)
 }
+
+hasProgram <- function(program, version, prefix="--", line=1, compare=`>=`){
+    # Args:
+    #   program: quoted name of program
+    #   version: quoted version number (numerals . -)
+    #   prefix:  for version switch
+    #   line:    output line containing version number
+    #   compare: comparison operator for version
+    # Example: hasProgram("pandoc", version="1.12")
+    path <- Sys.which(program)
+    present <-  path != ""
+    if (missing(version) || !present) return(as.vector(present))
+    result <- try(system2(path, args=paste(prefix, "version", sep=""), stderr=TRUE, stdout=TRUE),
+        silent=TRUE)
+    if (inherits(result, "try-error")){
+        warning("could not execute '", path, " --version'")
+        return(FALSE)
+    }
+    result <- result[line]
+    match <- regexpr("((?:(\\d+)[\\.-])?)*(\\*|\\d+)", result)
+    if (match == -1) {
+        warning("could not locate version number in\n", result)
+        return(FALSE)
+    }
+    result <- substr(result, match, match + attr(match, "match.length") - 1)
+    compare(result, version)
+}
+
+RcmdrCapabilities <- function(check=list(c("pdflatex"), c("pandoc", version="1.12.3"))){
+    result <- vector(length(check), mode="list")
+    names(result) <- sapply(check, function(x) x[1])
+    for (i in 1:length(check)){
+        result[[i]] <- do.call(hasProgram, as.list(check[[i]]))
+    }
+    result
+}
+
+browsePDF <- function(file) {
+    if (WindowsP()) shell.exec(file)
+    else if (MacOSXP()) system(paste("open -a Preview", shQuote(file)))
+    else system(paste(shQuote(getOption("pdfviewer")), shQuote(file)), wait=FALSE)
+}
+
+# function to insure that "levels" of character variables are returned
+
+levels.character <- function(x) sort(unique(x))
+

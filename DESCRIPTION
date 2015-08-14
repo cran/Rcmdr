@@ -1,6 +1,6 @@
 Package: Rcmdr
-Version: 2.1-7
-Date: 2015/02/16
+Version: 2.2-0
+Date: 2015-08-14
 Title: R Commander
 Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaster.ca"),
     person("Milan", "Bouchet-Valat", role = "aut"),
@@ -27,20 +27,21 @@ Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaste
     person("Peter", "Wolf", role = "ctb"),
     person("Kevin", "Wright", role="ctb")
    )
-Depends: R (>= 3.0.0), grDevices, utils, splines, RcmdrMisc (>= 1.0-2),
-        car (>= 2.0-21)
-Imports: tcltk, tcltk2 (>= 1.2-6), abind
+Depends: R (>= 3.0.0), grDevices, utils, splines, RcmdrMisc (>= 1.0-3),
+        car (>= 2.0-26)
+Imports: tcltk, tcltk2 (>= 1.2-6), abind, graphics, methods, stats
 Suggests: aplpack, colorspace, effects (>= 3.0-1), e1071, foreign,
         grid, Hmisc, knitr, lattice, leaps, lmtest, markdown, MASS,
-        mgcv, multcomp (>= 0.991-2), nlme, nnet, relimp, rgl, rJava,
-        RODBC, sem (>= 2.1-1)
+        mgcv, multcomp (>= 0.991-2), nlme, nnet, readxl, relimp, rgl,
+        rmarkdown, sem (>= 2.1-1)
 ByteCompile: yes
 Description: 
   A platform-independent basic-statistics GUI (graphical user interface) for R, based on the tcltk package.
 License: GPL (>= 2)
 URL: http://www.r-project.org,
         http://socserv.socsci.mcmaster.ca/jfox/Misc/Rcmdr/
-Packaged: 2015-02-22 19:27:51 UTC; John Fox
+NeedsCompilation: yes
+Packaged: 2015-08-19 15:33:53 UTC; User
 Author: John Fox [aut, cre],
   Milan Bouchet-Valat [aut],
   Liviu Andronic [ctb],
@@ -66,6 +67,5 @@ Author: John Fox [aut, cre],
   Peter Wolf [ctb],
   Kevin Wright [ctb]
 Maintainer: John Fox <jfox@mcmaster.ca>
-NeedsCompilation: yes
 Repository: CRAN
-Date/Publication: 2015-02-22 21:17:12
+Date/Publication: 2015-08-19 18:38:38

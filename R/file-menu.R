@@ -1,4 +1,4 @@
-# last modified 2014-10-07 by J. Fox
+# last modified 2015-06-14 by J. Fox
 
 # File (and Edit) menu dialogs
 
@@ -95,7 +95,7 @@ loadRnw <- function(){
 saveRmd <- function(Rmdfilename) {
     .RmdFileName <- if (missing(Rmdfilename) || (Rmdfilename == "%Rmdfilename")) 
                         getRcmdr("RmdFileName") else Rmdfilename
-    if ((.RmdFileName == "RcmdrMarkdown.Rmd") || is.null(.RmdFileName)) {
+    if ((.RmdFileName == "RcmdrMarkdown.Rmd") || (.RmdFileName == "RcmdrRMarkdown.Rmd") || is.null(.RmdFileName)) {
         saveRmdAs()
         return()
     }
@@ -240,6 +240,9 @@ closeCommander <- function(ask=TRUE, ask.save=ask){
 				icon="question", type="yesno", default="yes")
 		if ("yes" == tclvalue(response3)) saveOutput()
 	}
+  if (MacOSXP()){
+    Sys.setenv(PATH=getRcmdr("PATH"))
+  }
 	if (!WindowsP()) options(getRcmdr("oldPager"))
 	if (getRcmdr("suppress.X11.warnings")) {
 		sink(type = "message")
@@ -899,70 +902,50 @@ Setwd <- function(){
 
 
 editMarkdown <- function(){
+  .rmd <- RmdWindow()
+  buffer <- tclvalue(tkget(.rmd, "1.0", "end"))
+  compile <- function() {
     .rmd <- RmdWindow()
+    editor <- getRcmdr("editor.text")
+    buffer <- tclvalue(tkget(editor, "1.0", "end"))
+    tkdelete(.rmd, "1.0", "end")
+    tkinsert(.rmd, "end", buffer)
+    compileRmd()
+  }
+  removeLastBlock <- function(){
+    .rmd <- RmdWindow()
+    editor <- getRcmdr("editor.text")
+    buffer <- tclvalue(tkget(editor, "1.0", "end"))
+    tkdelete(.rmd, "1.0", "end")
+    tkinsert(.rmd, "end", buffer)
+    removeLastRmdBlock()
     buffer <- tclvalue(tkget(.rmd, "1.0", "end"))
-#     RcmdrEditor(buffer, title=gettextRcmdr("Edit R Markdown document"),
-#         help=list(label="Using R Markdown", command=browseRMarkdown),
-#         process=list(label="Generate HTML report", 
-#             command=function(){
-#                 editor.text <- getRcmdr("editor.text", fail=FALSE)
-#                 if (is.null(editor.text)) return()
-#                 edited <- tclvalue(tkget(editor.text, "1.0", "end"))
-#                 if (edited == "") return()
-#                 tkdelete(.rmd, "1.0", "end")
-#                 tkinsert(.rmd, "end", edited)
-#                 compileRmd()
-#             })
-#    )
-    compile <- function() {
-        .rmd <- RmdWindow()
-        editor <- getRcmdr("editor.text")
-        buffer <- tclvalue(tkget(editor, "1.0", "end"))
-        tkdelete(.rmd, "1.0", "end")
-        tkinsert(.rmd, "end", buffer)
-        compileRmd()
-    }
-    removeLastBlock <- function(){
-        .rmd <- RmdWindow()
-        editor <- getRcmdr("editor.text")
-        buffer <- tclvalue(tkget(editor, "1.0", "end"))
-        tkdelete(.rmd, "1.0", "end")
-        tkinsert(.rmd, "end", buffer)
-        removeLastRmdBlock()
-        buffer <- tclvalue(tkget(.rmd, "1.0", "end"))
-        tkdelete(editor, "1.0", "end")
-        tkinsert(editor, "end", buffer)
-    }
-    RcmdrEditor(buffer,  title="Edit R Markdown document",
-        help=list(label="Using R Markdown", command=browseRMarkdown),
-        file.menu=list(list(label="Generate HTML report", command=compile)), 
-#        edit.menu=list(list(label="Remove last command block", command=removeLastBlock)), 
-#        context.menu=list(list(label="Remove last command block", command=removeLastBlock)), 
-        toolbar.buttons=list(list(label="Generate HTML report", command=compile, image="::image::submitIcon")))
-#            list(label="Remove last command block", command=removeLastBlock, image="::image::removeIcon")))
-    edited <- getRcmdr("buffer")
-    if (!is.null(edited)){
-        tkdelete(.rmd, "1.0", "end")
-        tkinsert(.rmd, "end", edited)
-        tkyview.moveto(.rmd, 1)
-    }
+    tkdelete(editor, "1.0", "end")
+    tkinsert(editor, "end", buffer)
+  }
+  ok <- function(){
+    .rmd <- RmdWindow()
+    editor <- getRcmdr("editor.text")
+    buffer <- tclvalue(tkget(editor, "1.0", "end"))
+    tkdelete(.rmd, "1.0", "end")
+    tkinsert(.rmd, "end", buffer)
+  }
+  RcmdrEditor(buffer,  title="Edit R Markdown document", ok=ok,
+              help=list(label="Using R Markdown", command=browseRMarkdown),
+              file.menu=list(list(label="Generate report", command=compile)), 
+              toolbar.buttons=list(list(label="Generate report", command=compile, 
+                                        image="::image::submitIcon")))
+#   edited <- getRcmdr("buffer")
+#   if (!is.null(edited)){
+#     tkdelete(.rmd, "1.0", "end")
+#     tkinsert(.rmd, "end", edited)
+#     tkyview.moveto(.rmd, 1)
+#   }
 }
 
 editKnitr <- function(){
     .rnw <- RnwWindow()
     buffer <- tclvalue(tkget(.rnw, "1.0", "end"))
-#     RcmdrEditor(buffer, title=gettextRcmdr("Edit knitr document"),
-#         process=list(label="Generate PDF report", 
-#             command=function(){
-#                 editor.text <- getRcmdr("editor.text", fail=FALSE)
-#                 if (is.null(editor.text)) return()
-#                 edited <- tclvalue(tkget(editor.text, "1.0", "end"))
-#                 if (edited == "") return()
-#                 tkdelete(.rnw, "1.0", "end")
-#                 tkinsert(.rnw, "end", edited)
-#                 compileRnw()
-#             })
-#     )
     compile <- function() {
         .rnw <- RnwWindow()
         editor <- getRcmdr("editor.text")
@@ -982,18 +965,22 @@ editKnitr <- function(){
         tkdelete(editor, "1.0", "end")
         tkinsert(editor, "end", buffer)
     }
-    RcmdrEditor(buffer,  title="Edit knitr document",
-        file.menu=list(list(label="Generate PDF report", command=compile)), 
-#       edit.menu=list(list(label="Remove last command block", command=removeLastBlock)), 
-#        context.menu=list(list(label="Remove last command block", command=removeLastBlock)), 
-        toolbar.buttons=list(list(label="Generate PDF report", command=compile, image="::image::submitIcon")))
-#            list(label="Remove last command block", command=removeLastBlock, image="::image::removeIcon")))
-    edited <- getRcmdr("buffer")
-    if (!is.null(edited)){
-        tkdelete(.rnw, "1.0", "end")
-        tkinsert(.rnw, "end", edited)
-        tkyview.moveto(.rnw, 1)
+    ok <- function(){
+      .rnw <- RnwWindow()
+      editor <- getRcmdr("editor.text")
+      buffer <- tclvalue(tkget(editor, "1.0", "end"))
+      tkdelete(.rnw, "1.0", "end")
+      tkinsert(.rnw, "end", buffer)
     }
+    RcmdrEditor(buffer,  title="Edit knitr document", ok=ok,
+        file.menu=list(list(label="Generate PDF report", command=compile)), 
+        toolbar.buttons=list(list(label="Generate PDF report", command=compile, image="::image::submitIcon")))
+#     edited <- getRcmdr("buffer")
+#     if (!is.null(edited)){
+#         tkdelete(.rnw, "1.0", "end")
+#         tkinsert(.rnw, "end", edited)
+#         tkyview.moveto(.rnw, 1)
+#     }
 }
 
 appNap <- function(){
@@ -1009,4 +996,29 @@ appNap <- function(){
   tkgrid(appnapFrame, sticky="w")
   tkgrid(buttonsFrame, sticky="ew")
   dialogSuffix()
+}
+
+installSoftware <- function(){
+    initializeDialog(title=gettextRcmdr("Install Auxiliary Software"))
+    has <- unlist(getRcmdr("capabilities"))
+    installed <- c("", gettextRcmdr("(already installed)"))[1 + has]
+    checkBoxes(frame="selectSoftwareFrame", boxes=c("latex", "pandoc"),
+        initialValues=!as.numeric(has),
+        labels=paste(gettextRcmdr(c("LaTeX", "Pandoc")), installed),
+        title=gettextRcmdr("Software to Install"))
+    onOK <- function(){
+        if (tclvalue(latexVariable) == "1"){
+            if (WindowsP()) browseURL("http://miktex.org/download")
+            else if (MacOSXP()) browseURL("http://www.tug.org/mactex/")
+            else browseURL("http://latex-project.org/ftp.html")
+        }
+        if (tclvalue(pandocVariable) == "1") browseURL("http://johnmacfarlane.net/pandoc/installing.html")
+        closeDialog()
+        tkfocus(CommanderWindow())
+    }
+    OKCancelHelp(helpSubject="AuxiliarySoftware")
+    tkgrid(labelRcmdr(top, text = paste(
+        gettextRcmdr("Please read the help for this dialog\nbefore installing auxiliary software."), "\n")))
+    tkgrid(selectSoftwareFrame, sticky="w")
+    dialogSuffix(grid.buttons=TRUE)
 }
