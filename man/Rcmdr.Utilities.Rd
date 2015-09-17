@@ -248,7 +248,8 @@ MarkdownP()
 mavericksP()
 Message(message, type=c("note", "error", "warning"))
 MessagesWindow()
-modelFormula(frame=top, hasLhs=TRUE)  # macro
+modelFormula(frame=top, hasLhs=TRUE, rhsExtras=NULL,
+    formulaLabel=gettextRcmdr("Model Formula"))  # macro
 modelsP(n=1)
 multinomP()
 Numeric(names)
@@ -369,6 +370,7 @@ commanderPosition()
     is closed; overrides the \pkg{Rcmdr} \code{tkwait.dialog} option (see \code{\link{Commander}})
     if the latter is set to \code{FALSE} (its default). The \code{force.wait} argument should be set to \code{TRUE} for
     subdialogs.}
+  \item{formulaLabel}{text label printed above the formula widget.}
   \item{frame}{frame or quoted name for frame depending upon the function.}
   \item{generic}{quoted name of generic function.}
   \item{glm}{\code{TRUE} if the model is a \code{glm} object, \code{FALSE} otherwise.}
@@ -434,6 +436,9 @@ commanderPosition()
   \item{resettable}{should dialog state be reset when the data set changes? The default is 
   code{TRUE}.}
   \item{resizable}{should the dialog be resizable by the user? The default is \code{FALSE}.}
+  \item{rhsExtras}{show controls for splines and polynomials for a model formula; for backwards
+    compatibility, defaults to \code{TRUE} for a two-sided formula and \code{FALSE} for a
+    one-sided formula.}
   \item{right.buttons}{radio button placed to right of button-labels; defaults to \code{FALSE}.}
   \item{rmd}{enter the command in the R Markdown tab.}
   \item{rows, columns}{numbers of rows and columns of widgets in the dialog box; this is actually no longer used, but

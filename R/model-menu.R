@@ -1,6 +1,6 @@
 # Model menu dialogs
 
-# last modified 2015-02-03 by J. Fox
+# last modified 2015-09-04 by J. Fox
 
 selectActiveModel <- function(){
 	models <- listAllModels()
@@ -237,7 +237,7 @@ anovaTable <- function () {
     initializeDialog(title = gettextRcmdr("ANOVA Table"))
     radioButtons(name = "type", buttons = c("I", "II", "III"), 
         values = c("I", "II", "III"), labels = gettextRcmdr(c("Sequential (\"Type I\")", 
-            "Partial, obeying marginality (\"Type II\")", "Partial, ignoring marginality (\"Type III\")")), 
+            "Partial obeying marginality (\"Type II\")", "Partial ignoring marginality (\"Type III\")")), 
         title = gettextRcmdr("Type of Tests"), initialValue = dialog.values$initial.type)
     sandwichVar <- tclVar(dialog.values$initial.sandwich)
     sandwichFrame <- tkframe(top)
@@ -723,7 +723,7 @@ BreuschPaganTest <- function () {
                                                                                                          "Explanatory variables", "Other (specify)")), title = gettextRcmdr("Variance Formula"), 
                  initialValue = dialog.values$initial.var)
     tkgrid(varFrame, sticky = "w")
-    modelFormula(optionsFrame, hasLhs = FALSE)
+    modelFormula(optionsFrame, hasLhs = FALSE, rhsExtras=TRUE, formulaLabel="")
     tkgrid(formulaFrame, sticky = "w")
     tkgrid(outerOperatorsFrame)
     tkgrid(getFrame(xBox), sticky = "w")
