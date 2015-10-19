@@ -242,7 +242,7 @@ listVariables(dataSet=ActiveDataSet())
 lmP()
 logger(command, rmd=TRUE)
 LogWindow()
-MacOSXP()
+MacOSXP(release)
 manualTranslationP()
 MarkdownP()
 mavericksP()
@@ -259,8 +259,8 @@ OKCancelHelp(window=top, helpSubject=NULL, model=FALSE,
 OutputWindow()
 packageAvailable(name)
 polrP()
-popCommand()
-popOutput()
+popCommand(keep=FALSE)
+popOutput(keep=FALSE)
 putDialog(dialog, values=NULL, resettable=TRUE)
 putRcmdr(x, value)
 radioButtons(window=top, name=stop("name not supplied"), 
@@ -396,6 +396,7 @@ commanderPosition()
   \item{initialSelection}{index of item initially selected, 0-base indexing.}
   \item{initialValue}{for a set of related radio buttons.}
   \item{initialValues}{for a set of related check boxes.}
+  \item{keep}{if \code{TRUE}, keep (rather than pop) last output or command in the stack; the default is \code{FALSE}.}
   \item{label}{label prefix for groups button after a selection is made.}
   \item{labels}{a vector of character strings to label a set of radio buttons or check boxes.}
   \item{lib.loc}{see documentation for \code{\link[utils]{data}}.}
@@ -430,7 +431,8 @@ commanderPosition()
     to build the model formula.}
   \item{preventCrisp}{this argument is ignored, and is present only for backwards compatibility.}
   \item{recall}{function to call after error --- usually the function that initiates the dialog.}
-  \item{release}{release the focus if the grab.focus option has been set.}
+  \item{release}{release the focus if the grab.focus option has been set. In
+  \code{MacOSXP}, the minimum release (version) required.}
   \item{reportError}{if \code{TRUE}, report an error message.}
   \item{reset}{quoted name of dialog function, to be invoked with all defaults by Reset button.}
   \item{resettable}{should dialog state be reset when the data set changes? The default is 
@@ -497,7 +499,7 @@ commanderPosition()
   output produced by the command.
   The R Commander maintains a list of output objects, by default including the last
   10 outputs. \code{popOutput()} ``pops'' (i.e., returns and removes) the first entry
-  of the output stack. Note that, as a stack, the queue is LIFO (``last in, first out'').
+  of the output stack. Note that, as a stack, the queue is LIFO (``last in, first out''). Use \code{popOutput(keep=TRUE)} to access the last output but keep it in the stack.
   There is also a stack of commands, which is accessed similarly by \code{popCommand()}.
   Ocassionally, it's necessary to assign an object directly in the global environment, and
   this can be done with the \code{gassign} function. 
