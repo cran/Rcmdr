@@ -1,6 +1,6 @@
-5a09f0bc7cf9dbe98f4b0439c51f342f *DESCRIPTION
+386f734d2acb28fbbaf4ab5765e4dc24 *DESCRIPTION
 e92593fdc55b147f4e336889e00ff9de *NAMESPACE
-996b11b284ee6781cc30c10aafe41fea *NEWS
+b8bc9bcf3a21e76ff1c84a0c1be2e67c *NEWS
 7634ae5993a7ae10717455c6bfe9c301 *R/Rexcel-specific.R
 afd40765506a1233d08407d1161e2180 *R/cluster.R
 665a8b47aeb65375e2e92e52db2400d5 *R/commander.R
@@ -68,7 +68,7 @@ ca3abe919a2e8bdda6cb3ea2cad42264 *inst/etc/submit.gif
 b4515e9c5d329dd6fa936d5d2cfd8950 *inst/po/el/LC_MESSAGES/R-Rcmdr.mo
 76b71db3608153b558ee9b908068d788 *inst/po/es/LC_MESSAGES/R-Rcmdr.mo
 bf1f150683d217eb4ee7454b10347196 *inst/po/eu/LC_MESSAGES/R-Rcmdr.mo
-6204207e5395d46250c88df1d036ab1b *inst/po/fr/LC_MESSAGES/R-Rcmdr.mo
+89e85758605e9d7bdf9701adaadd0247 *inst/po/fr/LC_MESSAGES/R-Rcmdr.mo
 34973ee669de7fc3557cde20a636caff *inst/po/gl/LC_MESSAGES/R-Rcmdr.mo
 2572e16fdf5c2828b4540c79167c0b96 *inst/po/id/LC_MESSAGES/R-Rcmdr.mo
 50259233874dc511034707fa2cc812ca *inst/po/it/LC_MESSAGES/R-Rcmdr.mo
@@ -78,7 +78,7 @@ bf1f150683d217eb4ee7454b10347196 *inst/po/eu/LC_MESSAGES/R-Rcmdr.mo
 61b8de83189ae0353f9e16353102a075 *inst/po/pt_BR/LC_MESSAGES/R-Rcmdr.mo
 8211ef9791220b79a6dd330bbc29a56a *inst/po/ro/LC_MESSAGES/R-Rcmdr.mo
 4eed8568eef0180772b025de8fb97c7a *inst/po/ru/LC_MESSAGES/R-Rcmdr.mo
-9b123bf0b4270f76ebae943ea8105565 *inst/po/sl/LC_MESSAGES/R-Rcmdr.mo
+ed4eb6ec7e9229e66f394a6ea38b4c97 *inst/po/sl/LC_MESSAGES/R-Rcmdr.mo
 b12325c7418279e4efc627aa658f3eb8 *inst/po/zh/LC_MESSAGES/R-Rcmdr.mo
 535de6132038ac27712fc3b7d7558889 *inst/po/zh_CN/LC_MESSAGES/R-Rcmdr.mo
 1346991ab91252315d77bc7f8c889b56 *man/AuxiliarySoftware.Rd
@@ -89,7 +89,7 @@ b12325c7418279e4efc627aa658f3eb8 *inst/po/zh/LC_MESSAGES/R-Rcmdr.mo
 a835b816b02e43d871d0625ff34b8002 *man/Confint.Rd
 8b58b3563bfcbf2138cc0132fa449ecd *man/Plugins.Rd
 d64f0760308a70c60ec22ee83069750e *man/Rcmdr-internal.Rd
-78daca0987023817290fc34711a6e653 *man/Rcmdr-package.Rd
+7e646e4081ee0140d10e6931d19a74b4 *man/Rcmdr-package.Rd
 755aebb00abd9287e1590e46d8f844c6 *man/Rcmdr.Utilities.Rd
 60c10d6a234daa9aa4fb42e73ed0b74c *man/RcmdrEditor.Rd
 f748653782f882fa214526c297ad71e9 *man/RcmdrPager.Rd
@@ -116,7 +116,7 @@ ff5f3722733f4861d9ba51d9a2030e3a *po/R-ko.po
 3da5c8ac9ee56dce1c9472ac37fe73cd *po/R-pt_BR.po
 1337e34f84f4f0e84f82d4429d12a893 *po/R-ro.po
 fb7c6e4c28d74799f8e1d3ebfd53fb48 *po/R-ru.po
-7c0d06e60d5f0b7c677a7e54cee13343 *po/R-sl.po
+722b95fa4d1fac6e04bfb6bbf428f03d *po/R-sl.po
 b9a6210273cab268234b1a506b240a75 *po/R-zh.po
 14060f5abd0d944de233e7a925354ac3 *po/R-zh_CN.po
 8d26545ae32cc4a41731298d1dc4313f *src/Makevars.win
