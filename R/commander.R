@@ -1,7 +1,7 @@
 
 # The R Commander and command logger
 
-# last modified 2015-10-18 by John Fox
+# last modified 2016-03-20 by John Fox
 
 # contributions by Milan Bouchet-Valat, Richard Heiberger, Duncan Murdoch, Erich Neuwirth, Brian Ripley
 
@@ -216,11 +216,14 @@ Commander <- function(){
     putRcmdr("modelNumber", 0)
     putRcmdr("reset.model", FALSE)
     putRcmdr("rgl", FALSE)
+    putRcmdr("rgl.command", FALSE)
     putRcmdr("Identify3d", NULL)
     putRcmdr("open.dialog.here", NULL)
     putRcmdr("restoreTab", FALSE)
     putRcmdr("cancelDialogReopen", FALSE)
     putRcmdr("last.search", "")
+    
+    setOption("use.rgl", TRUE)
 
     # set up Rcmdr default and text (log) fonts, Tk scaling factor
     default.font.family.val <- tclvalue(.Tcl("font actual TkDefaultFont -family"))
@@ -306,12 +309,12 @@ Commander <- function(){
     putRcmdr("dialog.values", list())
     putRcmdr("dialog.values.noreset", list())
     putRcmdr("savedTable", NULL)
-    log.height <- as.character(setOption("log.height", if (!getRcmdr("log.commands")) 0 else 10, global=FALSE))
-    log.width <- as.character(setOption("log.width", 80, global=FALSE))
+    log.height <- as.character(setOption("log.height", if (!getRcmdr("log.commands")) 0 else 10))
+    log.width <- as.character(setOption("log.width", 80))
     output.height <- as.character(setOption("output.height",
         if (getRcmdr("console.output")) 0
         else if ((as.numeric(log.height) != 0) || (!getRcmdr("log.commands"))) 2*as.numeric(log.height)
-        else 20, global=FALSE))
+        else 20))
     messages.height <- as.character(setOption("messages.height", 3))
     putRcmdr("saveOptions", options(warn=1, contrasts=getRcmdr("default.contrasts"), width=as.numeric(log.width),
         na.action="na.exclude", graphics.record=TRUE))
@@ -354,6 +357,9 @@ Commander <- function(){
     putRcmdr("theme", theme)
     tk2theme(theme)
     placement <- setOption("placement", "", global=FALSE)
+    
+    putRcmdr("open.showData.windows", list())
+    
     # platform-specific issues
     if (getRcmdr("suppress.X11.warnings")) {
         putRcmdr("messages.connection", file(open = "w+"))
@@ -546,7 +552,7 @@ Commander <- function(){
     
     # data-set view
     onView <- function(){
-        if (packageAvailable("relimp")) Library("relimp", rmd=FALSE)
+#        if (packageAvailable("relimp")) Library("relimp", rmd=FALSE)
         if (activeDataSet() == FALSE) {
             tkfocus(CommanderWindow())
             return()
@@ -554,12 +560,19 @@ Commander <- function(){
         suppress <- if(getRcmdr("suppress.X11.warnings")) ", suppress.X11.warnings=FALSE" else ""
         view.height <- max(as.numeric(output.height) + as.numeric(log.height), 10)
         ncols <- ncol(get(ActiveDataSet()))
-        command <- if (packageAvailable("relimp") && ncols <= getRcmdr("showData.threshold")){
+        command <- if (ncols <= getRcmdr("showData.threshold")){
             paste("showData(", ActiveDataSet(), ", placement='-20+200', font=getRcmdr('logFont'), maxwidth=",
                 log.width, ", maxheight=", view.height, suppress, ")", sep="")
         }
         else paste("View(", ActiveDataSet(), ")", sep="")
-        doItAndPrint(command, rmd=FALSE)
+        window <- justDoIt(command)
+        if (!is.null(window)){
+          open.showData.windows <- getRcmdr("open.showData.windows")
+          open.window <- open.showData.windows[[ActiveDataSet()]]
+          if (!is.null(open.window)) tkdestroy(open.window)
+          open.showData.windows[[ActiveDataSet()]] <- window
+          putRcmdr("open.showData.windows", open.showData.windows)
+        }
     }
     
     # submit command in script tab or compile .Rmd file in markdown tab or compile .Rnw file in knitr tab
@@ -811,6 +824,8 @@ Commander <- function(){
         system.file("etc", if (getRcmdr("capabilities")$pandoc) "Rcmdr-RMarkdown-Template.Rmd"
             else "Rcmdr-Markdown-Template.Rmd", package="Rcmdr"))
     template <- paste(readLines(rmd.template), collapse="\n")
+    if (getRcmdr("use.rgl")) template <- paste0(template, 
+      "\n\n```{r echo=FALSE}\n# include this code chunk as-is to enable 3D graphs\nlibrary(rgl)\nknitr::knit_hooks$set(webgl = hook_webgl)\n```\n\n")
     tkinsert(.rmd, "end", template)
     putRcmdr("markdown.output", FALSE)
     RmdXscroll <- ttkscrollbar(RmdFrame, orient="horizontal",
@@ -1032,7 +1047,7 @@ Commander <- function(){
     }
     Message(paste(gettextRcmdr("R Commander Version "), " ", getRcmdr("RcmdrVersion"), ": ", date(), sep=""))
     if (.Platform$GUI == "Rgui"  && ismdi()) Message(gettextRcmdr(
-        "The Windows version of the R Commander works best under RGui\nwith the single-document interface (SDI); see ?Commander."),
+        "The Windows version of the R Commander works best under\nRGui with the single-document interface (SDI); see ?Commander."),
         type="warning")
     if (RappP()  && mavericksP() && appnap() == "on") Message(gettextRcmdr(
       "The Mac OS X version of the R Commander works best under R.app\nwith app nap turned off. See ?Commander and the Tools menu."),

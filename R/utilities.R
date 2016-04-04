@@ -1,4 +1,4 @@
-# last modified 2015-10-17 by J. Fox
+# last modified 2016-03-31 by J. Fox
 
 # utility functions
 
@@ -485,6 +485,7 @@ OKCancelHelp <- defmacro(window=top, helpSubject=NULL,  model=FALSE, reset=NULL,
                 }
                 removeNullRnwBlocks()
             }
+            putRcmdr("rgl.command", FALSE)
         }
         
         OKbutton <- buttonRcmdr(rightButtonsBox, text=gettextRcmdr("OK"), foreground="darkgreen", width=width, command=OnOK, default="active",
@@ -499,6 +500,7 @@ OKCancelHelp <- defmacro(window=top, helpSubject=NULL,  model=FALSE, reset=NULL,
             if (model) putRcmdr("modelNumber", getRcmdr("modelNumber") - 1)
             if (GrabFocus()) tkgrab.release(window)
             tkdestroy(window)
+            putRcmdr("rgl.command", FALSE)
             tkfocus(CommanderWindow())
         }
         
@@ -549,6 +551,7 @@ OKCancelHelp <- defmacro(window=top, helpSubject=NULL,  model=FALSE, reset=NULL,
                 setBusyCursor()
                 on.exit(setIdleCursor())
                 onOK()
+                putRcmdr("rgl.command", FALSE)
                 if (getRcmdr("use.markdown")){
                     removeNullRmdBlocks()
                     putRcmdr("startNewCommandBlock", TRUE)
@@ -808,7 +811,7 @@ variableListBox <- function(parentWindow, variableList=Variables(), bg="white",
     minmax <- getRcmdr("variable.list.width")
     listbox <- tklistbox(frame, height=min(listHeight, length(variableList)),
         selectmode=selectmode, background=bg, exportselection=export, 
-        width=min(max(minmax[1], nchar(variableList)), minmax[2]))
+        width=min(max(minmax[1], 2 + nchar(variableList)), minmax[2]))
     scrollbar <- ttkscrollbar(frame, command=function(...) tkyview(listbox, ...))
     tkconfigure(listbox, yscrollcommand=function(...) tkset(scrollbar, ...))
     for (var in variableList) tkinsert(listbox, "end", var)
@@ -1557,12 +1560,28 @@ ActiveDataSet <- function(name){
     else {
         putRcmdr(".activeDataSet", name)
 
-        if(!is.null(name)) {
-            Variables(listVariables(name))
-            Numeric(listNumeric(name))
-            Factors(listFactors(name))
-            TwoLevelFactors(listTwoLevelFactors(name))
+      if(!is.null(name)) {
+        Variables(listVariables(name))
+        Numeric(listNumeric(name))
+        Factors(listFactors(name))
+        TwoLevelFactors(listTwoLevelFactors(name))
+        open.showData.windows <- getRcmdr("open.showData.windows")
+        if (!is.null(open.showData.windows) && name %in% names(open.showData.windows)){
+          ID <- open.showData.windows[[name]]$ID
+          posn <- as.numeric(c(tclvalue(.Tcl(paste("winfo x", ID))),
+                       tclvalue(.Tcl(paste("winfo y", ID)))))
+          posn <- paste("+", paste(posn, collapse = "+"), sep = "")
+          tkdestroy(open.showData.windows[[name]])
+          suppress <- if(getRcmdr("suppress.X11.warnings")) ", suppress.X11.warnings=FALSE" else ""
+          view.height <- max(as.numeric(getRcmdr("output.height")) + as.numeric(getRcmdr("log.height")), 10)
+          command <- paste("showData(", name, ", placement='", posn, "', font=getRcmdr('logFont'), maxwidth=",
+                           getRcmdr("log.width"), ", maxheight=", view.height, suppress, ")", sep="")
+          window <- justDoIt(command)
+          open.showData.windows[[ActiveDataSet()]] <- window
+          putRcmdr("open.showData.windows", open.showData.windows)
         }
+        
+      }
         else {
             Variables(NULL)
             Numeric(NULL)
@@ -2104,6 +2123,15 @@ X11P <- function(){
 
 # the following functions to support R Markdown
 
+trimTrailingNewLines <- function(string){
+  repeat{
+    where <- regexpr("\n\n[ ]*$", string)
+    if (where == -1) break
+    string <- paste0(substr(string, 1, where - 1), substr(string, where + 2, nchar(string)))
+  }
+  paste0(string, "\n")
+}
+
 suppressMarkdown <- function(command){
     attr(command, "suppressRmd") <- TRUE
     command
@@ -2114,7 +2142,8 @@ beginRmdBlock <- function(){
     last2 <- tclvalue(tkget(.rmd, "end -2 chars", "end"))
     if (last2 != "\n\n") tkinsert(.rmd, "end", "\n")
     tkinsert(.rmd, "end", "\n")
-    tkinsert(.rmd, "end", "```{r}\n")
+    if (getRcmdr("rgl.command") && getRcmdr("use.rgl")) tkinsert(.rmd, "end", "```{r, webgl=TRUE}\n")
+      else tkinsert(.rmd, "end", "```{r}\n")
 }
 
 endRmdBlock <- function(){
@@ -2122,6 +2151,7 @@ endRmdBlock <- function(){
     rmd <- tclvalue(tkget(.rmd, "1.0", "end"))
     rmd <- paste(substring(rmd, 1, nchar(rmd) - 1), "```\n", sep="")
     rmd <- trimHangingEndRmdBlock(rmd)
+    rmd <- trimTrailingNewLines(rmd)
     tkdelete(.rmd, "1.0", "end")
     tkinsert(.rmd, "end", rmd)
     tkyview.moveto(.rmd, 1)
@@ -2181,7 +2211,7 @@ trimHangingEndRmdBlock <- function(string){
     n.ends <- length(loc.ends)
     if (n.ends > 1){
         substr <- substring(string, loc.ends[n.ends - 1], loc.ends[n.ends])
-        if (!grepl("```\\{r\\}", substr)){
+        if (!grepl("```\\{r\\}|```\\{r, webgl=TRUE\\}", substr)){
             string <- cutstring(string, loc.ends[n.ends], loc.ends[n.ends] + 3)
         }
     }
@@ -2191,7 +2221,7 @@ trimHangingEndRmdBlock <- function(string){
 removeLastRmdBlock <- function(){
     .rmd <- RmdWindow()    
     rmd <- tclvalue(tkget(.rmd, "1.0", "end"))
-    start <- gregexpr("```\\{r\\}\n", rmd)
+    start <- gregexpr("```\\{r\\}\n|```\\{r, webgl=TRUE\\}\n", rmd)
     if (start[[1]][1] > 0){
         start <- start[[1]]
         start <- start[length(start)]
@@ -2199,10 +2229,21 @@ removeLastRmdBlock <- function(){
         end <- gregexpr("```\n", tail)
         end <- if (end[[1]][1] > 0) end[[1]][1] + 3 else nchar(tail)
         rmd <- cutstring(rmd, start, start + end)
+        rmd <- trimTrailingNewLines(rmd)
         tkdelete(.rmd, "1.0", "end")
         tkinsert(.rmd, "end", rmd)
         tkyview.moveto(.rmd, 1)
     }
+}
+
+removeRglRmdBlocks <- function(string){
+  repeat{
+    match <- regexpr("```\\{r, webgl=TRUE\\}\n", string)
+    if (match == -1) return(trimTrailingNewLines(string))
+    substring <- cutstring(string, end=match)
+    match.end <- regexpr("```\n", substring)
+    string <- cutstring(string, match, match + match.end + 3)
+  }
 }
 
 cutstring <- function(x, start=1, end=nchar(x)){
@@ -2269,6 +2310,8 @@ compileRmd <- function() {
                 browseURL(.html.file.location)
             },
             pdf = {
+                lines <- removeRglRmdBlocks(lines)
+                writeLines(lines, .RmdFile)
                 rmarkdown::render(.RmdFile, rmarkdown::pdf_document())
                 .pdf.file <- paste(.filename, ".pdf", sep="")
                 .pdf.file.location <- paste("file:///", normalizePath(.pdf.file), sep="")
@@ -2276,6 +2319,8 @@ compileRmd <- function() {
                 browseURL(.pdf.file.location)
             },
             docx = {
+              lines <- removeRglRmdBlocks(lines)
+              writeLines(lines, .RmdFile)
                 rmarkdown::render(.RmdFile, rmarkdown::word_document())
                 .docx.file <- paste(.filename, ".docx", sep="")
                 Message(paste(gettextRcmdr("Word file written to:"), normalizePath(.docx.file)), type="note")
@@ -2308,6 +2353,7 @@ endRnwBlock <- function(){
     rnw <- tclvalue(tkget(.rnw, "1.0", "end"))
     rnw <- paste(substring(rnw, 1, nchar(rnw) - 1), "@\n", sep="")
     rnw <- trimHangingEndRnwBlock(rnw)
+    rmw <- trimTrailingNewLines(rnw)
     tkdelete(.rnw, "1.0", "end")
     tkinsert(.rnw, "end", rnw)
     tkyview.moveto(.rnw, 1)    
@@ -2387,6 +2433,7 @@ removeLastRnwBlock <- function(){
         end <- gregexpr("@\n", tail)
         end <- if (end[[1]][1] > 0) end[[1]][1] + 1 else nchar(tail)
         rnw <- cutstring(rnw, start, start + end)
+        rnw <- trimTrailingNewLines(rnw)
         tkdelete(.rnw, "1.0", "end")
         tkinsert(.rnw, "end", rnw)
         tkyview.moveto(.rnw, 1)
@@ -2759,259 +2806,535 @@ setIdleCursor <- function() {
 # Rcmdr data editor
 
 editDataset <- function(data, dsname){
-    putRcmdr("dataset.modified", FALSE)
-    if (missing(data)){
-        if (missing(dsname)) dsname <- "Dataset"
-        data <- data.frame(V1="NA")
-    }
-    else {
-        if (!inherits(data, "data.frame")) stop ("data argument must be a data frame")
-        if (missing(dsname)) dsname <- deparse(substitute(data))
-    }
-    if (getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
-    top <- tktoplevel(borderwidth = 10)
-    tkwm.title(top, paste(gettextRcmdr("Data Editor"), ": ", dsname, sep=""))
-#     location <- getRcmdr("open.dialog.here")  # FIXME!
-#     pos <- 10 + commanderPosition()           # Don't do this because window doesn't stay on top
-#     position <- if (any(pos < 0)) "-50+50" 
-#     else paste("+", paste(pos, collapse = "+"), sep = "")
-#     tkwm.geometry(top, position)
-    tkwm.geometry(top, '-20+200')
-    tcl.array <- tclArray()
-    nr <- nrow(data)
-    nc <- ncol(data)
+  putRcmdr("dataset.modified", FALSE)
+  if (missing(data)){
+    if (missing(dsname)) dsname <- "Dataset"
+    data <- data.frame(V1="NA")
+  }
+  else {
+    if (!inherits(data, "data.frame")) stop ("data argument must be a data frame")
+    if (missing(dsname)) dsname <- deparse(substitute(data))
+  }
+  if (getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
+  top <- tktoplevel(borderwidth = 10)
+  tkwm.title(top, paste(gettextRcmdr("Data Editor"), ": ", dsname, sep=""))
+  location <- getRcmdr("open.dialog.here")
+  pos <- 10 + commanderPosition()
+  position <- if (any(pos < 0)) "-50+50" 
+  else paste("+", paste(pos, collapse = "+"), sep = "")
+  tkwm.geometry(top, position)
+  #  tkwm.geometry(top, '-20+200')
+  tcl.array <- tclArray()
+  nr <- nrow(data)
+  nc <- ncol(data)
+  for (j in 1:nc){
+    data[, j] <- as.character(data[, j])
+  }
+  colnames <- colnames(data)
+  rownames <- rownames(data)
+  putRcmdr("data.dim", list(nr=nr, nc=nc, NR=nr, NC=nc))
+  # NR, NC not decremented on row/column deletion
+  #   to avoid possibly duplicate 
+  #   auto-generated row/column names
+  for (i in 1:nr) {
+    tcl.array[[i + 1, 0]] <- i
+    tcl.array[[i + 1, 1]] <- rownames[i]
+  }
+  for (j in 1:nc){
+    tcl.array[[0, j + 1]] <- j
+    tcl.array[[1, j + 1]] <- colnames[j]
+  }
+  tcl.array[[1, 1]] <- "rowname"
+  for (i in 1:nr){
     for (j in 1:nc){
-        data[, j] <- as.character(data[, j])
+      tcl.array[[i + 1, j + 1]] <- data[i, j]
     }
-    colnames <- colnames(data)
-    rownames <- rownames(data)
-    putRcmdr("data.dim", list(nr=nr, nc=nc, NR=nr, NC=nc))
-    # NR, NC not decremented on row/column deletion
-    #   to avoid possibly duplicate 
-    #   auto-generated row/column names
-    for (i in 1:nr) {
-        tcl.array[[i + 1, 0]] <- i
-        tcl.array[[i + 1, 1]] <- rownames[i]
-    }
-    for (j in 1:nc){
-        tcl.array[[0, j + 1]] <- j
-        tcl.array[[1, j + 1]] <- colnames[j]
-    }
-    tcl.array[[1, 1]] <- "rowname"
-    for (i in 1:nr){
-        for (j in 1:nc){
-            tcl.array[[i + 1, j + 1]] <- data[i, j]
-        }
-    }
-    tableFrame <- tkframe(top)
-    data.table <- tk2table(tableFrame, rows=nr + 2, cols=nc + 2, 
-        titlerows=1, titlecols=1,
-        width=nc + 2, height=nr + 2, sparsearray=0,
-        cache=1, flashmode=1, autoclear=1, wrap=1, 
-        colstretchmode="all", rowstretchmode="all",
-        font=getRcmdr('logFont'), anchor="e", padx=6, 
-        resizeborders="both",
-        xscrollcommand=function(...) tkset(xscroll,...),
-        yscrollcommand=function(...) tkset(yscroll,...))
-    tcl(data.table, "width", 0, max(max(nchar(as.character(nr))), 3))
-    tcl(data.table, "width", 1, max(max(nchar(c(rownames, "rowname"))), 3))
-    for (j in 1:nc){
-        tcl(data.table, "width", j + 1, 
-            max(max(nchar(c(colnames[j], data[, j]))), 8))
-    }
-    xscroll <- ttkscrollbar(tableFrame, orient="horizontal", 
-        command=function(...) tkxview(data.table,...))
-    yscroll <- ttkscrollbar(tableFrame,
-        command=function(...) tkyview(data.table,...))
-    deleteCell <- function() {
-        result <- try(tkdelete(data.table, "active", "0", "end"), silent=TRUE)
-        if (inherits(text, "try-error")) return()
-        tkinsert(data.table, "active", "0", "NA")
-    }
-    copyCell <- function(){
-        text <- try(tclvalue(tkget(data.table, "active")), silent=TRUE)
-        if (inherits(text, "try-error")) return()
-        tkclipboard.clear()
-        tkclipboard.append(text)
-    }
-    pasteCell <- function(){
-        text <- tclvalue(.Tcl("selection get -selection CLIPBOARD"))
-        if (length(text) == 0) return()
-        result <- try(tkdelete(data.table, "active", "0", "end"), silent=TRUE)
-        if (inherits(text, "try-error")) return()
-        tkinsert(data.table, "active", "0", text)
-    }
-    cutCell <- function(){
-        copyCell()
-        deleteCell()
-    }
-    addRow <- function(){
-        dims <- getRcmdr("data.dim")
-        nr <- dims$nr + 2
-        nc <- dims$nc + 1
-        NR <- dims$NR + 1
-        NC <- dims$NC
-        tkinsert(data.table, "row", nr + 1, 1)
-        putRcmdr("data.dim", list(nr=nr - 1, nc=nc - 1, NR=NR, NC=NC))
-        tcl.array[[nr, 0]] <- NR
-        tcl.array[[nr, 1]] <- NR
-        for (j in 1:nc) tcl.array[[nr, j + 1]] <- "NA"
-        tkconfigure(data.table, width=nc + 1, height=nr + 1)
-    }
-    addCol <- function(){
-        dims <- getRcmdr("data.dim")
-        nr <- dims$nr + 1
-        nc <- dims$nc + 2
-        NR <- dims$NR
-        NC <- dims$NC + 1
-        tkinsert(data.table, "cols", nc + 1, 1)
-        putRcmdr("data.dim", list(nr=nr - 1, nc=nc - 1, NR=NR, NC=NC))
-        tcl.array[[0, nc]] <- NC
-        tcl.array[[1, nc]] <- paste("V", NC, sep="")
-        for (i in 1:nr) tcl.array[[i + 1, nc]] <- "NA"
-        tkconfigure(data.table, width=nc + 1, height=nr + 1)
-    }
-    deleteRow <- function(){
-        result <- try(tkdelete(data.table , "rows",
-            tclvalue(tkindex(data.table, "active" ,"row")), 1),
-            silent=TRUE)
-        if (inherits(result, "try-error")) return()
-        dims <- getRcmdr("data.dim")
-        nr <- dims$nr - 1
-        nc <- dims$nc
-        NR <- dims$NR
-        NC <- dims$NC
-        putRcmdr("data.dim", list(nr=nr, nc=nc, NR=NR, NC=NC))
-    }
-    deleteCol <- function(){
-        result <- try(tkdelete(data.table , "cols",
-            tclvalue(tkindex(data.table, "active" ,"col")), 1),
-            silent=TRUE)
-        if (inherits(result, "try-error")) return()
-        dims <- getRcmdr("data.dim")
-        nr <- dims$nr
-        nc <- dims$nc - 1
-        NR <- dims$NR
-        NC <- dims$NC
-        putRcmdr("data.dim", list(nr=nr, nc=nc, NR=NR, NC=NC))
-    }
-    onContextMenu <- function(){
-        contextMenu <- tkmenu(tkmenu(data.table), tearoff=FALSE)
-        tkadd(contextMenu, "command", label=gettextRcmdr("Delete current row"), 
-            command=deleteRow)
-        tkadd(contextMenu, "command", label=gettextRcmdr("Delete current column"),
-            command=deleteCol)
-        tkadd(contextMenu, "command", label=gettextRcmdr("Delete cell"), 
-            command=deleteCell)
-        tkadd(contextMenu, "command", label=gettextRcmdr("Cut cell"), 
-            command=cutCell)
-        tkadd(contextMenu, "command", label=gettextRcmdr("Copy cell"), 
-            command=copyCell)
-        tkadd(contextMenu, "command", label=gettextRcmdr("Paste cell"), 
-            command=pasteCell)
-        tkpopup(contextMenu, tkwinfo("pointerx", data.table), 
+  }
+  tableFrame <- tkframe(top)
+  data.table <- tk2table(tableFrame, rows=nr + 2, cols=nc + 2, 
+                         titlerows=1, titlecols=1,
+                         width=nc + 2, height=nr + 2, sparsearray=0,
+                         cache=1, flashmode=1, autoclear=1, wrap=1, 
+                         colstretchmode="all", rowstretchmode="all",
+                         font=getRcmdr('logFont'), anchor="e", padx=6, 
+                         resizeborders="both", drawmode="slow",
+                         xscrollcommand=function(...) tkset(xscroll,...),
+                         yscrollcommand=function(...) tkset(yscroll,...))
+  tcl(data.table, "width", 0, max(max(nchar(as.character(nr))), 3))
+  tcl(data.table, "width", 1, max(max(nchar(c(rownames, "rowname"))), 3))
+  for (j in 1:nc){
+    tcl(data.table, "width", j + 1, 
+        max(max(nchar(c(colnames[j], data[, j]))), 8))
+  }
+  xscroll <- ttkscrollbar(tableFrame, orient="horizontal", 
+                          command=function(...) tkxview(data.table,...))
+  yscroll <- ttkscrollbar(tableFrame,
+                          command=function(...) tkyview(data.table,...))
+  deleteCell <- function() {
+    result <- try(tkdelete(data.table, "active", "0", "end"), silent=TRUE)
+    if (inherits(result, "try-error")) return()
+    tkinsert(data.table, "active", "0", "NA")
+  }
+  copyCell <- function(){
+    text <- try(tclvalue(tkget(data.table, "active")), silent=TRUE)
+    if (inherits(text, "try-error")) return()
+    tkclipboard.clear()
+    tkclipboard.append(text)
+  }
+  pasteCell <- function(){
+    text <- tclvalue(.Tcl("selection get -selection CLIPBOARD"))
+    if (length(text) == 0) return()
+    result <- try(tkdelete(data.table, "active", "0", "end"), silent=TRUE)
+    if (inherits(result, "try-error")) return()
+    tkinsert(data.table, "active", "0", text)
+  }
+  cutCell <- function(){
+    copyCell()
+    deleteCell()
+  }
+  addRow <- function(){
+    dims <- getRcmdr("data.dim")
+    nr <- dims$nr + 2
+    nc <- dims$nc + 1
+    NR <- dims$NR + 1
+    NC <- dims$NC
+    tkinsert(data.table, "row", nr + 1, 1)
+    putRcmdr("data.dim", list(nr=nr - 1, nc=nc - 1, NR=NR, NC=NC))
+    tcl.array[[nr, 0]] <- NR
+    tcl.array[[nr, 1]] <- NR
+    for (j in 1:nc) tcl.array[[nr, j + 1]] <- "NA"
+    tkconfigure(data.table, width=nc + 1, height=nr + 1)
+    tkactivate(data.table, paste0(nr, ",", 2))
+    tcl(data.table, "yview", nr)
+    tcl(data.table, "xview", 0)
+  }
+  addCol <- function(){
+    dims <- getRcmdr("data.dim")
+    nr <- dims$nr + 1
+    nc <- dims$nc + 2
+    NR <- dims$NR
+    NC <- dims$NC + 1
+    tkinsert(data.table, "cols", nc + 1, 1)
+    putRcmdr("data.dim", list(nr=nr - 1, nc=nc - 1, NR=NR, NC=NC))
+    tcl.array[[0, nc]] <- NC
+    tcl.array[[1, nc]] <- paste("V", NC, sep="")
+    for (i in 1:nr) tcl.array[[i + 1, nc]] <- "NA"
+    tkconfigure(data.table, width=nc + 1, height=nr + 1)
+    tkactivate(data.table, paste0(2, ",", nc))
+    tcl(data.table, "xview", nc)
+    tcl(data.table, "yview", 0)
+  }
+  deleteRow <- function(){
+    result <- try(tkdelete(data.table , "rows",
+                           tclvalue(tkindex(data.table, "active" ,"row")), 1),
+                  silent=TRUE)
+    if (inherits(result, "try-error")) return()
+    dims <- getRcmdr("data.dim")
+    nr <- dims$nr - 1
+    nc <- dims$nc
+    NR <- dims$NR
+    NC <- dims$NC
+    putRcmdr("data.dim", list(nr=nr, nc=nc, NR=NR, NC=NC))
+  }
+  deleteCol <- function(){
+    result <- try(tkdelete(data.table , "cols",
+                           tclvalue(tkindex(data.table, "active" ,"col")), 1),
+                  silent=TRUE)
+    if (inherits(result, "try-error")) return()
+    dims <- getRcmdr("data.dim")
+    nr <- dims$nr
+    nc <- dims$nc - 1
+    NR <- dims$NR
+    NC <- dims$NC
+    putRcmdr("data.dim", list(nr=nr, nc=nc, NR=NR, NC=NC))
+  }
+  onContextMenu <- function(){
+    contextMenu <- tkmenu(tkmenu(data.table), tearoff=FALSE)
+    tkadd(contextMenu, "command", label=gettextRcmdr("Delete current row"), 
+          command=deleteRow)
+    tkadd(contextMenu, "command", label=gettextRcmdr("Delete current column"),
+          command=deleteCol)
+    tkadd(contextMenu, "command", label=gettextRcmdr("Delete cell"), 
+          command=deleteCell)
+    tkadd(contextMenu, "command", label=gettextRcmdr("Cut cell"), 
+          command=cutCell)
+    tkadd(contextMenu, "command", label=gettextRcmdr("Copy cell"), 
+          command=copyCell)
+    tkadd(contextMenu, "command", label=gettextRcmdr("Paste cell"), 
+          command=pasteCell)
+    tkpopup(contextMenu, tkwinfo("pointerx", data.table), 
             tkwinfo("pointery", data.table))
+  }
+  onOK <- function(){
+    closeDialog()
+    dims <- getRcmdr("data.dim")
+    nr <- dims$nr + 1
+    nc <- dims$nc + 1
+    data <- matrix("", nc + 1, nr)
+    for (i in 1:nr){
+      for (j in 1:nc){
+        data[j, i] <- tclvalue(tcl.array[[i, j]])
+        if (trim.blanks(data[j, i]) == "") data[j, i] <- "NA"
+      }
+      data[nc + 1, i] <- "\n"
     }
-    onOK <- function(){
-        closeDialog()
-        dims <- getRcmdr("data.dim")
-        nr <- dims$nr + 1
-        nc <- dims$nc + 1
-        data <- matrix("", nc + 1, nr)
-        for (i in 1:nr){
-            for (j in 1:nc){
-                data[j, i] <- tclvalue(tcl.array[[i, j]])
-            }
-            data[nc + 1, i] <- "\n"
-        }
-        data <- paste(data[-1], collapse=" ")
-        Data <- read.table(textConnection(data), header=TRUE)
-        gassign(dsname, Data)
-        activeDataSet(dsname)
-        putRcmdr("dataset.modified", TRUE)
-    }
-    .exit <- function(){
-        answer <- RcmdrTkmessageBox("Discard edits?", icon="question", type="yesno")
-        if (as.character(answer) == "no") "abort" else ""
-    }
-    OKCancelHelp(helpSubject="editDataset")
-    editorMenu <- tkmenu(top)
-    tkconfigure(top, menu = editorMenu)
-    fileMenu <- tkmenu(editorMenu, tearoff=FALSE)
-    tkadd(fileMenu, "command", label=gettextRcmdr("Exit and save"), command=onOK)
-    tkadd(fileMenu, "command", label=gettextRcmdr("Cancel"), command=onCancel)
-    tkadd(editorMenu, "cascade", label=gettextRcmdr("File"), menu=fileMenu)   
-    editMenu <- tkmenu(editorMenu, tearoff=FALSE)
-    tkadd(editMenu, "command", label=gettextRcmdr("Delete current row"), 
+    data <- paste(data[-1], collapse=" ")
+    Data <- read.table(textConnection(data), header=TRUE)
+    gassign(dsname, Data)
+    activeDataSet(dsname)
+    putRcmdr("dataset.modified", TRUE)
+  }
+  onReturn <- function(){
+    location <- try(as.numeric(unlist(strsplit(tclvalue(tkindex(data.table, "active")), ","))), 
+                    silent=TRUE)
+    if (inherits(location, "try-error")) return()
+    text <- tclvalue(tcl.array[[location[1], location[2]]])
+    on.exit(tcl.array[[location[1], location[2]]] <- sub("\n", "", text))
+    addRow()
+  }
+  .exit <- function(){
+    answer <- RcmdrTkmessageBox("Discard edits?", icon="question", type="yesno", default="no")
+    if (as.character(answer) == "no") "abort" else ""
+  }
+  OKCancelHelp(helpSubject="editDataset")
+  editorMenu <- tkmenu(top)
+  tkconfigure(top, menu = editorMenu)
+  fileMenu <- tkmenu(editorMenu, tearoff=FALSE)
+  tkadd(fileMenu, "command", label=gettextRcmdr("Exit and save"), command=onOK)
+  tkadd(fileMenu, "command", label=gettextRcmdr("Cancel"), command=onCancel)
+  tkadd(editorMenu, "cascade", label=gettextRcmdr("File"), menu=fileMenu)   
+  editMenu <- tkmenu(editorMenu, tearoff=FALSE)
+  tkadd(editMenu, "command", label=gettextRcmdr("Delete current row"), 
         command=deleteRow)
-    tkadd(editMenu, "command", label=gettextRcmdr("Delete current column"), 
+  tkadd(editMenu, "command", label=gettextRcmdr("Delete current column"), 
         command=deleteCol)
-    tkadd(editMenu, "command", label=gettextRcmdr("Add row"), command=addRow)
-    tkadd(editMenu, "command", label=gettextRcmdr("Add column"), command=addCol)
-    tkadd(editMenu, "command", label=gettextRcmdr("Cut cell"), command=cutCell)
-    tkadd(editMenu, "command", label=gettextRcmdr("Copy cell"), command=copyCell)
-    tkadd(editMenu, "command", label=gettextRcmdr("Paste cell"), 
+  tkadd(editMenu, "command", label=gettextRcmdr("Add row"), command=addRow)
+  tkadd(editMenu, "command", label=gettextRcmdr("Add column"), command=addCol)
+  tkadd(editMenu, "command", label=gettextRcmdr("Cut cell"), command=cutCell)
+  tkadd(editMenu, "command", label=gettextRcmdr("Copy cell"), command=copyCell)
+  tkadd(editMenu, "command", label=gettextRcmdr("Paste cell"), 
         command=pasteCell)
-    tkadd(editorMenu, "cascade", label=gettextRcmdr("Edit"), menu=editMenu)   
-    helpMenu <- tkmenu(editorMenu, tearoff=FALSE)
-    onEditorHelp <- function() print(help("editDataset"))
-    tkadd(helpMenu, "command", label=gettextRcmdr("Editor help"), 
+  tkadd(editorMenu, "cascade", label=gettextRcmdr("Edit"), menu=editMenu)   
+  helpMenu <- tkmenu(editorMenu, tearoff=FALSE)
+  onEditorHelp <- function() print(help("editDataset"))
+  tkadd(helpMenu, "command", label=gettextRcmdr("Editor help"), 
         command=onEditorHelp)
-    tkadd(editorMenu, "cascade", label=gettextRcmdr("Help"), menu=helpMenu)    
-    #    tkbind(data.table, "<Control-x>", cutCell) # FIXME!
-    #    tkbind(data.table, "<Control-X>", cutCell) #  doesn't work -- source of error unclear
-    tkbind(data.table, "<Control-c>", copyCell)
-    tkbind(data.table, "<Control-C>", copyCell)
-    tkbind(data.table, "<Control-v>", pasteCell)
-    tkbind(data.table, "<Control-V>", pasteCell) 
-    tkbind(data.table, "<ButtonPress-3>", onContextMenu)
-    tkbind(data.table, "<Control-ButtonPress-1>", onContextMenu)
-    tkbind(data.table, "<Double-Button-1>", deleteCell)
-    if (MacOSXP()){
-        tkbind(data.table, "<Meta-c>", copyCell)
-        tkbind(data.table, "<Meta-C>", copyCell)
-        tkbind(data.table, "<Meta-v>", pasteCell)
-        tkbind(data.table, "<Meta-V>", pasteCell) 
-        tkbind(data.table, "<Meta-ButtonPress-1>", onContextMenu)
-    }
-    buttonsAddFrame <- tkframe(top)
-    addRowButton <- ttkbutton(buttonsAddFrame, command=addRow, 
-        text=gettextRcmdr("Add row"))
-    addColButton <- ttkbutton(buttonsAddFrame, command=addCol, 
-        text=gettextRcmdr("Add column"))
-    tkgrid(addRowButton, addColButton, sticky="w")
-    tkgrid(buttonsAddFrame, sticky="w")
-    tkgrid(data.table, yscroll, sticky="news")
-    tkgrid.configure(yscroll, sticky="ns")
-    tkgrid(xscroll, sticky="ew")
-    tkconfigure(data.table, variable=tcl.array, background="lightgray", 
-        selectmode="extended")
-    tktag.configure(data.table, "active", fg="black", bg="white")
-    tktag.configure(data.table, "flash", fg="white", bg="gray")
-    tcl(data.table, "tag", "col", "rownos", 0)
-    tktag.configure(data.table, "rownos", anchor="e")  
-    warn <- options(warn=-1)
-    on.exit(warn)
-    row.numbers <- !any(is.na(as.numeric(rownames)))
-    tcl(data.table, "tag", "col", "rownames", 1)
-    tktag.configure(data.table, "rownames", 
-        anchor=if (row.numbers) "e" else "w", bg="darkgray")  
-    tcl(data.table, "tag", "row", "colnames", 1)
-    tktag.configure(data.table, "colnames", bg="darkgray")  
-    tkgrid(tableFrame, sticky="news")
-    tkgrid(buttonsFrame, sticky="w")
-    tkwm.protocol(top, "WM_DELETE_WINDOW", onCancel)
-    dialogSuffix(resizable=TRUE)
-    tkgrid.rowconfigure(top, 0, weight = 0)
-    tkgrid.rowconfigure(top, 1, weight = 1)
-    tkgrid.rowconfigure(top, 2, weight = 0)
-    tkgrid.columnconfigure(top, 0, weight = 1)
-    tkgrid.rowconfigure(tableFrame, 0, weight = 1)
-    tkgrid.rowconfigure(tableFrame, 1, weight = 0)
-    tkgrid.columnconfigure(tableFrame, 0, weight = 1)
-    tkgrid.columnconfigure(tableFrame, 1, weight = 0)
-    tkwait.window(top)
+  tkadd(editorMenu, "cascade", label=gettextRcmdr("Help"), menu=helpMenu)    
+  tkbind(data.table, "<Control-x>", cutCell) # FIXME!
+  tkbind(data.table, "<Control-X>", cutCell) #  doesn't work -- source of error unclear
+  tkbind(data.table, "<Control-c>", copyCell)
+  tkbind(data.table, "<Control-C>", copyCell)
+  tkbind(data.table, "<Control-v>", pasteCell)
+  tkbind(data.table, "<Control-V>", pasteCell) 
+  tkbind(data.table, "<ButtonPress-3>", onContextMenu)
+  tkbind(data.table, "<Control-ButtonPress-1>", onContextMenu)
+  tkbind(data.table, "<Double-Button-1>", deleteCell)
+  if (MacOSXP()){
+    tkbind(data.table, "<Meta-x>", cutCell) # FIXME!
+    tkbind(data.table, "<Meta-X>", cutCell) #  doesn't work -- source of error unclear
+    tkbind(data.table, "<Meta-c>", copyCell)
+    tkbind(data.table, "<Meta-C>", copyCell)
+    tkbind(data.table, "<Meta-v>", pasteCell)
+    tkbind(data.table, "<Meta-V>", pasteCell) 
+    tkbind(data.table, "<Meta-ButtonPress-1>", onContextMenu)
+  }
+  buttonsAddFrame <- tkframe(top)
+  addRowButton <- ttkbutton(buttonsAddFrame, command=addRow, 
+                            text=gettextRcmdr("Add row"))
+  addColButton <- ttkbutton(buttonsAddFrame, command=addCol, 
+                            text=gettextRcmdr("Add column"))
+  tkgrid(addRowButton, addColButton, sticky="w")
+  tkgrid(buttonsAddFrame, sticky="w")
+  tkgrid(data.table, yscroll, sticky="news")
+  tkgrid.configure(yscroll, sticky="ns")
+  tkgrid(xscroll, sticky="ew")
+  tkconfigure(data.table, variable=tcl.array, background="lightgray", 
+              selectmode="extended")
+  tktag.configure(data.table, "active", fg="black", bg="white")
+  tktag.configure(data.table, "flash", fg="white", bg="gray")
+  tcl(data.table, "tag", "col", "rownos", 0)
+  tktag.configure(data.table, "rownos", anchor="e")  
+  warn <- options(warn=-1)
+  on.exit(warn)
+  row.numbers <- !any(is.na(as.numeric(rownames)))
+  tcl(data.table, "tag", "col", "rownames", 1)
+  tktag.configure(data.table, "rownames", 
+                  anchor=if (row.numbers) "e" else "w", bg="darkgray")  
+  tcl(data.table, "tag", "row", "colnames", 1)
+  tktag.configure(data.table, "colnames", bg="darkgray")  
+  tkgrid(tableFrame, sticky="news")
+  tkgrid(buttonsFrame, sticky="w")
+  tkwm.protocol(top, "WM_DELETE_WINDOW", onCancel)
+  dialogSuffix(resizable=TRUE)
+  tkgrid.rowconfigure(top, 0, weight = 0)
+  tkgrid.rowconfigure(top, 1, weight = 1)
+  tkgrid.rowconfigure(top, 2, weight = 0)
+  tkgrid.columnconfigure(top, 0, weight = 1)
+  tkgrid.rowconfigure(tableFrame, 0, weight = 1)
+  tkgrid.rowconfigure(tableFrame, 1, weight = 0)
+  tkgrid.columnconfigure(tableFrame, 0, weight = 1)
+  tkgrid.columnconfigure(tableFrame, 1, weight = 0)
+  tkconfigure(data.table, selectmode = "extended", rowseparator = "\"\n\"", colseparator = "\"\t\"")
+  tkconfigure(data.table, multiline = FALSE)
+  tkbind(top, "<Key-Return>", onReturn)
+  tkbind(top, "<Key-Tab>", addCol)
+  tkwait.window(top)
 }
+
+# editDataset <- function(data, dsname){
+#     putRcmdr("dataset.modified", FALSE)
+#     if (missing(data)){
+#         if (missing(dsname)) dsname <- "Dataset"
+#         data <- data.frame(V1="NA")
+#     }
+#     else {
+#         if (!inherits(data, "data.frame")) stop ("data argument must be a data frame")
+#         if (missing(dsname)) dsname <- deparse(substitute(data))
+#     }
+#     if (getRcmdr("crisp.dialogs")) tclServiceMode(on=FALSE)
+#     top <- tktoplevel(borderwidth = 10)
+#     tkwm.title(top, paste(gettextRcmdr("Data Editor"), ": ", dsname, sep=""))
+# #     location <- getRcmdr("open.dialog.here")  # FIXME!
+# #     pos <- 10 + commanderPosition()           # Don't do this because window doesn't stay on top
+# #     position <- if (any(pos < 0)) "-50+50" 
+# #     else paste("+", paste(pos, collapse = "+"), sep = "")
+# #     tkwm.geometry(top, position)
+#     tkwm.geometry(top, '-20+200')
+#     tcl.array <- tclArray()
+#     nr <- nrow(data)
+#     nc <- ncol(data)
+#     for (j in 1:nc){
+#         data[, j] <- as.character(data[, j])
+#     }
+#     colnames <- colnames(data)
+#     rownames <- rownames(data)
+#     putRcmdr("data.dim", list(nr=nr, nc=nc, NR=nr, NC=nc))
+#     # NR, NC not decremented on row/column deletion
+#     #   to avoid possibly duplicate 
+#     #   auto-generated row/column names
+#     for (i in 1:nr) {
+#         tcl.array[[i + 1, 0]] <- i
+#         tcl.array[[i + 1, 1]] <- rownames[i]
+#     }
+#     for (j in 1:nc){
+#         tcl.array[[0, j + 1]] <- j
+#         tcl.array[[1, j + 1]] <- colnames[j]
+#     }
+#     tcl.array[[1, 1]] <- "rowname"
+#     for (i in 1:nr){
+#         for (j in 1:nc){
+#             tcl.array[[i + 1, j + 1]] <- data[i, j]
+#         }
+#     }
+#     tableFrame <- tkframe(top)
+#     data.table <- tk2table(tableFrame, rows=nr + 2, cols=nc + 2, 
+#         titlerows=1, titlecols=1,
+#         width=nc + 2, height=nr + 2, sparsearray=0,
+#         cache=1, flashmode=1, autoclear=1, wrap=1, 
+#         colstretchmode="all", rowstretchmode="all",
+#         font=getRcmdr('logFont'), anchor="e", padx=6, 
+#         resizeborders="both",
+#         xscrollcommand=function(...) tkset(xscroll,...),
+#         yscrollcommand=function(...) tkset(yscroll,...))
+#     tcl(data.table, "width", 0, max(max(nchar(as.character(nr))), 3))
+#     tcl(data.table, "width", 1, max(max(nchar(c(rownames, "rowname"))), 3))
+#     for (j in 1:nc){
+#         tcl(data.table, "width", j + 1, 
+#             max(max(nchar(c(colnames[j], data[, j]))), 8))
+#     }
+#     xscroll <- ttkscrollbar(tableFrame, orient="horizontal", 
+#         command=function(...) tkxview(data.table,...))
+#     yscroll <- ttkscrollbar(tableFrame,
+#         command=function(...) tkyview(data.table,...))
+#     deleteCell <- function() {
+#         result <- try(tkdelete(data.table, "active", "0", "end"), silent=TRUE)
+#         if (inherits(text, "try-error")) return()
+#         tkinsert(data.table, "active", "0", "NA")
+#     }
+#     copyCell <- function(){
+#         text <- try(tclvalue(tkget(data.table, "active")), silent=TRUE)
+#         if (inherits(text, "try-error")) return()
+#         tkclipboard.clear()
+#         tkclipboard.append(text)
+#     }
+#     pasteCell <- function(){
+#         text <- tclvalue(.Tcl("selection get -selection CLIPBOARD"))
+#         if (length(text) == 0) return()
+#         result <- try(tkdelete(data.table, "active", "0", "end"), silent=TRUE)
+#         if (inherits(text, "try-error")) return()
+#         tkinsert(data.table, "active", "0", text)
+#     }
+#     cutCell <- function(){
+#         copyCell()
+#         deleteCell()
+#     }
+#     addRow <- function(){
+#         dims <- getRcmdr("data.dim")
+#         nr <- dims$nr + 2
+#         nc <- dims$nc + 1
+#         NR <- dims$NR + 1
+#         NC <- dims$NC
+#         tkinsert(data.table, "row", nr + 1, 1)
+#         putRcmdr("data.dim", list(nr=nr - 1, nc=nc - 1, NR=NR, NC=NC))
+#         tcl.array[[nr, 0]] <- NR
+#         tcl.array[[nr, 1]] <- NR
+#         for (j in 1:nc) tcl.array[[nr, j + 1]] <- "NA"
+#         tkconfigure(data.table, width=nc + 1, height=nr + 1)
+#     }
+#     addCol <- function(){
+#         dims <- getRcmdr("data.dim")
+#         nr <- dims$nr + 1
+#         nc <- dims$nc + 2
+#         NR <- dims$NR
+#         NC <- dims$NC + 1
+#         tkinsert(data.table, "cols", nc + 1, 1)
+#         putRcmdr("data.dim", list(nr=nr - 1, nc=nc - 1, NR=NR, NC=NC))
+#         tcl.array[[0, nc]] <- NC
+#         tcl.array[[1, nc]] <- paste("V", NC, sep="")
+#         for (i in 1:nr) tcl.array[[i + 1, nc]] <- "NA"
+#         tkconfigure(data.table, width=nc + 1, height=nr + 1)
+#     }
+#     deleteRow <- function(){
+#         result <- try(tkdelete(data.table , "rows",
+#             tclvalue(tkindex(data.table, "active" ,"row")), 1),
+#             silent=TRUE)
+#         if (inherits(result, "try-error")) return()
+#         dims <- getRcmdr("data.dim")
+#         nr <- dims$nr - 1
+#         nc <- dims$nc
+#         NR <- dims$NR
+#         NC <- dims$NC
+#         putRcmdr("data.dim", list(nr=nr, nc=nc, NR=NR, NC=NC))
+#     }
+#     deleteCol <- function(){
+#         result <- try(tkdelete(data.table , "cols",
+#             tclvalue(tkindex(data.table, "active" ,"col")), 1),
+#             silent=TRUE)
+#         if (inherits(result, "try-error")) return()
+#         dims <- getRcmdr("data.dim")
+#         nr <- dims$nr
+#         nc <- dims$nc - 1
+#         NR <- dims$NR
+#         NC <- dims$NC
+#         putRcmdr("data.dim", list(nr=nr, nc=nc, NR=NR, NC=NC))
+#     }
+#     onContextMenu <- function(){
+#         contextMenu <- tkmenu(tkmenu(data.table), tearoff=FALSE)
+#         tkadd(contextMenu, "command", label=gettextRcmdr("Delete current row"), 
+#             command=deleteRow)
+#         tkadd(contextMenu, "command", label=gettextRcmdr("Delete current column"),
+#             command=deleteCol)
+#         tkadd(contextMenu, "command", label=gettextRcmdr("Delete cell"), 
+#             command=deleteCell)
+#         tkadd(contextMenu, "command", label=gettextRcmdr("Cut cell"), 
+#             command=cutCell)
+#         tkadd(contextMenu, "command", label=gettextRcmdr("Copy cell"), 
+#             command=copyCell)
+#         tkadd(contextMenu, "command", label=gettextRcmdr("Paste cell"), 
+#             command=pasteCell)
+#         tkpopup(contextMenu, tkwinfo("pointerx", data.table), 
+#             tkwinfo("pointery", data.table))
+#     }
+#     onOK <- function(){
+#         closeDialog()
+#         dims <- getRcmdr("data.dim")
+#         nr <- dims$nr + 1
+#         nc <- dims$nc + 1
+#         data <- matrix("", nc + 1, nr)
+#         for (i in 1:nr){
+#             for (j in 1:nc){
+#                 data[j, i] <- tclvalue(tcl.array[[i, j]])
+#             }
+#             data[nc + 1, i] <- "\n"
+#         }
+#         data <- paste(data[-1], collapse=" ")
+#         Data <- read.table(textConnection(data), header=TRUE)
+#         gassign(dsname, Data)
+#         activeDataSet(dsname)
+#         putRcmdr("dataset.modified", TRUE)
+#     }
+#     .exit <- function(){
+#         answer <- RcmdrTkmessageBox("Discard edits?", icon="question", type="yesno")
+#         if (as.character(answer) == "no") "abort" else ""
+#     }
+#     OKCancelHelp(helpSubject="editDataset")
+#     editorMenu <- tkmenu(top)
+#     tkconfigure(top, menu = editorMenu)
+#     fileMenu <- tkmenu(editorMenu, tearoff=FALSE)
+#     tkadd(fileMenu, "command", label=gettextRcmdr("Exit and save"), command=onOK)
+#     tkadd(fileMenu, "command", label=gettextRcmdr("Cancel"), command=onCancel)
+#     tkadd(editorMenu, "cascade", label=gettextRcmdr("File"), menu=fileMenu)   
+#     editMenu <- tkmenu(editorMenu, tearoff=FALSE)
+#     tkadd(editMenu, "command", label=gettextRcmdr("Delete current row"), 
+#         command=deleteRow)
+#     tkadd(editMenu, "command", label=gettextRcmdr("Delete current column"), 
+#         command=deleteCol)
+#     tkadd(editMenu, "command", label=gettextRcmdr("Add row"), command=addRow)
+#     tkadd(editMenu, "command", label=gettextRcmdr("Add column"), command=addCol)
+#     tkadd(editMenu, "command", label=gettextRcmdr("Cut cell"), command=cutCell)
+#     tkadd(editMenu, "command", label=gettextRcmdr("Copy cell"), command=copyCell)
+#     tkadd(editMenu, "command", label=gettextRcmdr("Paste cell"), 
+#         command=pasteCell)
+#     tkadd(editorMenu, "cascade", label=gettextRcmdr("Edit"), menu=editMenu)   
+#     helpMenu <- tkmenu(editorMenu, tearoff=FALSE)
+#     onEditorHelp <- function() print(help("editDataset"))
+#     tkadd(helpMenu, "command", label=gettextRcmdr("Editor help"), 
+#         command=onEditorHelp)
+#     tkadd(editorMenu, "cascade", label=gettextRcmdr("Help"), menu=helpMenu)    
+#     #    tkbind(data.table, "<Control-x>", cutCell) # FIXME!
+#     #    tkbind(data.table, "<Control-X>", cutCell) #  doesn't work -- source of error unclear
+#     tkbind(data.table, "<Control-c>", copyCell)
+#     tkbind(data.table, "<Control-C>", copyCell)
+#     tkbind(data.table, "<Control-v>", pasteCell)
+#     tkbind(data.table, "<Control-V>", pasteCell) 
+#     tkbind(data.table, "<ButtonPress-3>", onContextMenu)
+#     tkbind(data.table, "<Control-ButtonPress-1>", onContextMenu)
+#     tkbind(data.table, "<Double-Button-1>", deleteCell)
+#     if (MacOSXP()){
+#         tkbind(data.table, "<Meta-c>", copyCell)
+#         tkbind(data.table, "<Meta-C>", copyCell)
+#         tkbind(data.table, "<Meta-v>", pasteCell)
+#         tkbind(data.table, "<Meta-V>", pasteCell) 
+#         tkbind(data.table, "<Meta-ButtonPress-1>", onContextMenu)
+#     }
+#     buttonsAddFrame <- tkframe(top)
+#     addRowButton <- ttkbutton(buttonsAddFrame, command=addRow, 
+#         text=gettextRcmdr("Add row"))
+#     addColButton <- ttkbutton(buttonsAddFrame, command=addCol, 
+#         text=gettextRcmdr("Add column"))
+#     tkgrid(addRowButton, addColButton, sticky="w")
+#     tkgrid(buttonsAddFrame, sticky="w")
+#     tkgrid(data.table, yscroll, sticky="news")
+#     tkgrid.configure(yscroll, sticky="ns")
+#     tkgrid(xscroll, sticky="ew")
+#     tkconfigure(data.table, variable=tcl.array, background="lightgray", 
+#         selectmode="extended")
+#     tktag.configure(data.table, "active", fg="black", bg="white")
+#     tktag.configure(data.table, "flash", fg="white", bg="gray")
+#     tcl(data.table, "tag", "col", "rownos", 0)
+#     tktag.configure(data.table, "rownos", anchor="e")  
+#     warn <- options(warn=-1)
+#     on.exit(warn)
+#     row.numbers <- !any(is.na(as.numeric(rownames)))
+#     tcl(data.table, "tag", "col", "rownames", 1)
+#     tktag.configure(data.table, "rownames", 
+#         anchor=if (row.numbers) "e" else "w", bg="darkgray")  
+#     tcl(data.table, "tag", "row", "colnames", 1)
+#     tktag.configure(data.table, "colnames", bg="darkgray")  
+#     tkgrid(tableFrame, sticky="news")
+#     tkgrid(buttonsFrame, sticky="w")
+#     tkwm.protocol(top, "WM_DELETE_WINDOW", onCancel)
+#     dialogSuffix(resizable=TRUE)
+#     tkgrid.rowconfigure(top, 0, weight = 0)
+#     tkgrid.rowconfigure(top, 1, weight = 1)
+#     tkgrid.rowconfigure(top, 2, weight = 0)
+#     tkgrid.columnconfigure(top, 0, weight = 1)
+#     tkgrid.rowconfigure(tableFrame, 0, weight = 1)
+#     tkgrid.rowconfigure(tableFrame, 1, weight = 0)
+#     tkgrid.columnconfigure(tableFrame, 0, weight = 1)
+#     tkgrid.columnconfigure(tableFrame, 1, weight = 0)
+#     tkwait.window(top)
+# }
 
 # some Mac OS X related functions
 
