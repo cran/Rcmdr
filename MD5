@@ -1,6 +1,6 @@
-6468a326cf9bd41c155d54c1da90057b *DESCRIPTION
+d2b9a4eb83cf35661aaeb7ff93caf1a5 *DESCRIPTION
 9f3c70ba704e225e68463b337fb525da *NAMESPACE
-72e5aac9488501f8ad6ce2e055504be0 *NEWS
+2e3a60dfbc27811af8b19e931e7c4906 *NEWS
 7634ae5993a7ae10717455c6bfe9c301 *R/Rexcel-specific.R
 afd40765506a1233d08407d1161e2180 *R/cluster.R
 56f85cf08ff2193b0b8798d83948c155 *R/commander.R
@@ -22,7 +22,7 @@ a50be8d0a57d0bc282f66c36153ee177 *R/statistics-proportions-menu.R
 d912a09b39e532696901621ec39e6d5f *R/statistics-summaries-menu.R
 1296a8e43365097261b803995628ca17 *R/statistics-tables-menu.R
 8b6cddcfcb0a78848ee369e67045b2d9 *R/statistics-variances-menu.R
-d2ec61a207162138f19098262fb7f942 *R/utilities.R
+108dc833730dc8b94ef2e0b66ac98bf8 *R/utilities.R
 6086daaa02857bc72d55c09f96d840ba *inst/CHANGES
 797e851b07b6a25c257a850550ff2e19 *inst/CITATION
 31de694855b1d3984d706109f0db3d13 *inst/doc/Commander-ru.pdf
@@ -89,7 +89,7 @@ b12325c7418279e4efc627aa658f3eb8 *inst/po/zh/LC_MESSAGES/R-Rcmdr.mo
 a835b816b02e43d871d0625ff34b8002 *man/Confint.Rd
 8b58b3563bfcbf2138cc0132fa449ecd *man/Plugins.Rd
 8dbf667a589949a5ca09fca725bd3408 *man/Rcmdr-internal.Rd
-d0a94bd9eb3dc184911dd67945972fb8 *man/Rcmdr-package.Rd
+2fd12e5f668bb71e29653ea322064f42 *man/Rcmdr-package.Rd
 755aebb00abd9287e1590e46d8f844c6 *man/Rcmdr.Utilities.Rd
 60c10d6a234daa9aa4fb42e73ed0b74c *man/RcmdrEditor.Rd
 f748653782f882fa214526c297ad71e9 *man/RcmdrPager.Rd
