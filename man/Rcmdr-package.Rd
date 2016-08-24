@@ -12,15 +12,15 @@ user interface) for R, based on the tcltk package.
 \details{
 \tabular{ll}{
 Package: \tab Rcmdr\cr
-Version: \tab 2.2-5\cr
-Date: \tab 2016-06-14\cr
-Depends: \tab R (>= 3.2.0), grDevices, utils, splines, RcmdrMisc (>= 1.0-3), 
-  car (>= 2.1-2)\cr
-Imports: \tab tcltk, tcltk2 (>= 1.2-6), abind, graphics, methods, stats, relimp (>= 1.0-5)\cr
-Suggests: \tab aplpack, colorspace, effects (>= 3.0-1), e1071, foreign, 
+Version: \tab 2.3-0\cr
+Date: \tab 2016-08-22\cr
+Depends: \tab R (>= 3.3.0), grDevices, utils, splines, RcmdrMisc (>= 1.0-5), 
+  car (>= 2.1-3)\cr
+Imports: \tab tcltk, tcltk2 (>= 1.2-11), abind, graphics, methods, stats, relimp (>= 1.0-5)\cr
+Suggests: \tab aplpack, boot, colorspace, effects (>= 3.1-1), e1071, foreign, 
   grid, Hmisc, knitr, lattice, leaps, lmtest, markdown, MASS, mgcv, 
-  multcomp (>= 0.991-2), nlme, nnet, readxl, relimp,  rgl, rmarkdown (>= 0.9.5), 
-  sem (>= 2.1-1) \cr
+  multcomp (>= 1.4-5), nlme, nnet, nortest, readxl, relimp,  rgl, rmarkdown, 
+  sem (>= 3.1-7) \cr
 ByteCompile: \tab yes\cr
 License: \tab GPL (>= 2)\cr
 URL: \tab http://www.r-project.org,

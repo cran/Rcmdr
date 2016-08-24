@@ -1,4 +1,4 @@
-# last modified 2015-10-16 by J. Fox
+# last modified 2016-06-02 by J. Fox
 
 # Data menu dialogs
 
@@ -335,8 +335,8 @@ readDataSet <- function() {
                  labels=gettextRcmdr(c("Local file system", "Clipboard", "Internet URL")), title=gettextRcmdr("Location of Data File"))
     headerVariable <- tclVar("1")
     headerCheckBox <- ttkcheckbutton(optionsFrame, variable=headerVariable)
-    radioButtons(optionsFrame, "delimiter", buttons=c("whitespace", "commas", "tabs"),
-                 labels=gettextRcmdr(c("White space", "Commas", "Tabs")), title=gettextRcmdr("Field Separator"))
+    radioButtons(optionsFrame, "delimiter", buttons=c("whitespace", "commas", "semicolons", "tabs"),
+                 labels=gettextRcmdr(c("White space", "Commas [,]", "Semicolons [;]", "Tabs")), title=gettextRcmdr("Field Separator"))
     otherDelimiterFrame <- tkframe(delimiterFrame)
     otherButton <- ttkradiobutton(otherDelimiterFrame, variable=delimiterVariable, value="other", text=gettextRcmdr("Other"))
     otherVariable <- tclVar("")
@@ -399,6 +399,7 @@ readDataSet <- function() {
         delimiter <- tclvalue(delimiterVariable)
         del <- if (delimiter == "whitespace") ""
         else if (delimiter == "commas") ","
+        else if (delimiter == "semicolons") ";"
         else if (delimiter == "tabs") "\\t"
         else tclvalue(otherVariable)
         miss <- tclvalue(missingVariable)
@@ -442,6 +443,7 @@ readDataFromPackage <- function() {
 						ds <- data(package=package)$results
 						if (nrow(ds) == 0) return(FALSE)
 						ds <- ds[, "Item"]
+						# ds <- trim.blanks(sub("\\(.*\\)", "", ds))
 						valid <- sapply(ds, is.valid.name)
 						length(ds[valid]) > 0
 					})]
@@ -1619,7 +1621,8 @@ exportDataSet <- function() {
     missingFrame <- tkframe(optionsFrame)
     missingVariable <- tclVar("NA")
     missingEntry <- ttkentry(missingFrame, width="8", textvariable=missingVariable)
-    radioButtons(name="delimiter", buttons=c("spaces", "tabs", "commas"), labels=gettextRcmdr(c("Spaces", "Tabs", "Commas")),
+    radioButtons(name="delimiter", buttons=c("spaces", "tabs", "commas", "semicolons"), 
+                 labels=gettextRcmdr(c("Spaces", "Tabs", "Commas [,]", "Semicolons [;]")),
                  title=gettextRcmdr("Field Separator"))
     otherButton <- ttkradiobutton(delimiterFrame, variable=delimiterVariable, value="other", text=gettextRcmdr("Other"))
     otherVariable <- tclVar("")
@@ -1634,6 +1637,7 @@ exportDataSet <- function() {
         sep <- if (delim == "tabs") "\\t"
         else if (delim == "spaces") " "
         else if (delim == "commas") ","
+        else if (delim == "semicolons") ";"
         else trim.blanks(tclvalue(otherVariable))
         saveFile <- tclvalue(tkgetSaveFile(filetypes=gettextRcmdr('{"All Files" {"*"}} {"Text Files" {".txt" ".TXT" ".dat" ".DAT" ".csv" ".CSV"}}'),
                                            defaultextension="txt",
@@ -1759,7 +1763,7 @@ subsetDataSet <- function(){
         selectVars <- if (tclvalue(allVariables) == "1") ""
         else {
             x <- getSelection(variablesBox)
-            if (0 > length(x)) {
+            if (0 == length(x)) {
                 errorCondition(recall=subsetDataSet,
                                message=gettextRcmdr("No variables were selected."))
                 return()
@@ -2094,7 +2098,14 @@ loadDataSet <- function() {
 	command <- paste('load("', file,'")', sep="")
 	dsname <- justDoIt(command)
 	logger(command)
-	if (class(dsname)[1] !=  "try-error") activeDataSet(dsname)
+	if (class(dsname)[1] !=  "try-error") {
+	    if (length(dsname) > 1) {
+	        Message(message=paste(gettextRcmdr("There is more than one object in the file, with the following names:\n"),
+	                                     paste(dsname, collapse=", ")), type="error")
+	        return()
+	    }
+	    activeDataSet(dsname)
+	}
 	tkfocus(CommanderWindow())
 }
 
@@ -2377,3 +2388,174 @@ dropUnusedFactorLevels <- function(){
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix()
 }
+
+viewData <- function(){
+    defaults <- list (initial.allVariables = "1", initial.variables = NULL, 
+                      initial.subset=gettextRcmdr("<all cases>"))
+    dialog.values <- getDialog ("viewData", defaults)
+    dataSet <- activeDataSet()
+    initializeDialog(title=gettextRcmdr("View Data"))
+    allVariablesFrame <- tkframe(top)
+    allVariables <- tclVar(dialog.values$initial.allVariables)
+    allVariablesCheckBox <- ttkcheckbutton(allVariablesFrame, variable=allVariables)
+    variablesBox <- variableListBox(top, Variables(), selectmode="multiple",
+                                    initialSelection= varPosn (dialog.values$initial.variables), 
+                                    title=gettextRcmdr("Variables (select one or more)"))
+    subsetVariable <- tclVar(gettextRcmdr(dialog.values$initial.subset))
+    subsetFrame <- tkframe(top)
+    subsetEntry <- ttkentry(subsetFrame, width="20", textvariable=subsetVariable)
+    subsetScroll <- ttkscrollbar(subsetFrame, orient="horizontal",
+                                 command=function(...) tkxview(subsetEntry, ...))
+    tkconfigure(subsetEntry, xscrollcommand=function(...) tkset(subsetScroll, ...))
+    onOK <- function(){
+        selectVars <- if (tclvalue(allVariables) == "1") {
+            x <- ""
+            x
+        }
+        else {
+            x <- getSelection(variablesBox)
+            if (0 == length(x)) {
+                errorCondition(recall=viewData,
+                               message=gettextRcmdr("No variables were selected."))
+                return()
+            }
+            paste(", select=c(", paste(x, collapse=","), ")", sep="")
+        }
+        closeDialog()
+        cases <- tclvalue(subsetVariable)
+        selectCases <- if (cases == gettextRcmdr("<all cases>")) ""
+        else paste(", subset=", cases, sep="")
+        view.height <- max(getRcmdr("output.height") + getRcmdr("log.height"), 10)
+        ncols <- ncol(get(dataSet))
+        suppress <- if(getRcmdr("suppress.X11.warnings")) ", suppress.X11.warnings=FALSE" else ""
+        result <- try(assign(dataSet, eval(parse(text=paste("subset(", dataSet, 
+                                                      selectCases, selectVars, ")", sep="")))),
+                      silent=TRUE)
+        if (class(result)[1] ==  "try-error"){
+            errorCondition(recall=viewData,
+                           message=gettextRcmdr("Bad subset expression."))
+            return()
+        }
+        if (nrow(get(dataSet)) == 0){
+            errorCondition(recall=viewData,
+                           message=gettextRcmdr("No data to show."))
+            return()
+        }
+        command <- if (ncols <= getRcmdr("showData.threshold")){
+            paste("showData(", dataSet, ", 
+                  placement='-20+200', font=getRcmdr('logFont'), maxwidth=",
+                  getRcmdr("log.width"), ", maxheight=", view.height, suppress, ")", sep="")
+        }
+        else paste("View(", dataSet, ")", sep="")
+        result <- try(eval(parse(text=command)), silent=TRUE)
+        if (class(result)[1] ==  "try-error"){
+            errorCondition(recall=viewData,
+                           message=gettextRcmdr("View data error."))
+            return()
+        }
+        putDialog ("viewData", list(initial.allVariables = tclvalue(allVariables), 
+                                    initial.variables = if (x[1] == "") NULL else x, initial.subset=cases))
+        tkfocus(CommanderWindow())
+    }
+    OKCancelHelp(helpSubject="showData", helpPackage="relimp", reset="viewData")
+    tkgrid(allVariablesCheckBox, labelRcmdr(allVariablesFrame, text=gettextRcmdr("Include all variables")),
+           sticky="w")
+    tkgrid(allVariablesFrame, sticky="w")
+    tkgrid(labelRcmdr(top, text=gettextRcmdr("   OR"), fg="red"), sticky="w")
+    tkgrid(getFrame(variablesBox), sticky="nw")
+    tkgrid(labelRcmdr(subsetFrame, text=gettextRcmdr("Subset expression")), sticky="w")
+    tkgrid(subsetEntry, sticky="w")
+    tkgrid(subsetScroll, sticky="ew")
+    tkgrid(subsetFrame, sticky="w")
+    tkgrid(buttonsFrame, sticky="w")
+    dialogSuffix()
+}
+
+sortDataSet <- function(){
+    dataSet <- activeDataSet()
+    initializeDialog(title=gettextRcmdr("Sort Active Data Set"))
+    variablesBox <- variableListBox(top, Variables(), selectmode="multiple",
+                                    initialSelection=NULL, 
+                                    title=gettextRcmdr("Sort Keys (select one or more)"))
+    radioButtons(name="direction",
+                 buttons=c("increasing", "decreasing"),
+                 values=c("FALSE", "TRUE"),
+                 labels=gettextRcmdr(c("Increasing", "Decreasing")), 
+                 title=gettextRcmdr("Sort Direction"))
+    newDataSetName <- tclVar(gettextRcmdr("<same as active data set>"))
+    dataSetNameFrame <- tkframe(top)
+    dataSetNameEntry <- ttkentry(dataSetNameFrame, width="25", textvariable=newDataSetName)
+    onOK <- function(){
+        newName <- trim.blanks(tclvalue(newDataSetName))
+        if (newName == gettextRcmdr("<same as active data set>")) newName <- ActiveDataSet()
+        if (!is.valid.name(newName)){
+            errorCondition(recall=sortDataSet,
+                           message=paste('"', newName, '" ', gettextRcmdr("is not a valid name."), sep=""))
+            return()
+        }
+        if (is.element(newName, listDataSets())) {
+            if ("no" == tclvalue(checkReplace(newName, type=gettextRcmdr("Data set")))){
+                closeDialog()
+                sortDataSet()
+                return()
+            }
+        }
+        x <- getSelection(variablesBox)
+        if (0 == length(x)) {
+            errorCondition(recall=sortDataSet,
+                           message=gettextRcmdr("No variables were selected."))
+            return()
+        }
+        direction <- tclvalue(directionVariable)
+        closeDialog()
+        if (length(x) > 1){
+            initializeDialog(subdialog, title=gettextRcmdr("Reorder Sort Keys"))
+            nvalues <- length(x)
+            order <- 1:nvalues
+            onOKsub <- function() {
+                closeDialog(subdialog)
+                opt <- options(warn=-1)
+                for (i in 1:nvalues){
+                    order[i] <- as.numeric(eval(parse(text=paste("tclvalue(keyOrder", i, ")", sep=""))))
+                }
+                options(opt)
+                if (any(sort(order) != 1:nvalues) || any(is.na(order))){
+                    errorCondition(recall=sortDataSet,
+                                   message=paste(gettextRcmdr("Order of keys must include all integers from 1 to "), 
+                                                 nvalues, sep=""))
+                    return()
+                }
+                x <- x[order(order)]
+                doItAndPrint(paste(newName, " <- with(", dataSet, ", ", dataSet, "[order(", 
+                                   paste(x, collapse=", "), ", decreasing=", direction, "), ])", sep=""))
+                activeDataSet(newName)
+            }
+            subOKCancelHelp()
+            tkgrid(labelRcmdr(subdialog, text=gettextRcmdr("Sort Keys"), fg=getRcmdr("title.color"), font="RcmdrTitleFont"),
+                   labelRcmdr(subdialog, text=gettextRcmdr("Order"), fg=getRcmdr("title.color"), font="RcmdrTitleFont"), sticky="w")
+            for (i in 1:length(x)){
+                valVar <- paste("keyOrder", i, sep="")
+                assign(valVar, tclVar(i))
+                assign(paste("entry", i, sep=""), ttkentry(subdialog, width="2",
+                                                           textvariable=get(valVar)))
+                tkgrid(labelRcmdr(subdialog, text=x[i]), get(paste("entry", i, sep="")), sticky="w")
+            }
+            tkgrid(subButtonsFrame, sticky="w", columnspan=2)
+            dialogSuffix(subdialog, focus=entry1, force.wait=TRUE)
+        }
+        else {
+            doItAndPrint(paste(newName, " <- with(", dataSet, ", ", dataSet, "[order(", x, ", decreasing=", direction, "), ])", sep=""))
+            activeDataSet(newName)
+        }
+
+        tkfocus(CommanderWindow())
+    }
+    OKCancelHelp(helpSubject="order")
+    tkgrid(getFrame(variablesBox), sticky="nw")
+    tkgrid(directionFrame, sticky="w")
+    tkgrid(labelRcmdr(dataSetNameFrame, text=gettextRcmdr("Name for new data set")), sticky="w")
+    tkgrid(dataSetNameEntry, sticky="w")
+    tkgrid(dataSetNameFrame, sticky="w")
+    tkgrid(buttonsFrame, sticky="w")
+    dialogSuffix()
+    }

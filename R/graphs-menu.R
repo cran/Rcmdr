@@ -1,6 +1,6 @@
 # Graphs menu dialogs
 
-# last modified 2016-02-17 by J. Fox
+# last modified 2016-07-19 by J. Fox
 #  applied patch to improve window behaviour supplied by Milan Bouchet-Valat 2011-09-22
 
 # the following functions improved by Miroslav Ristic 2013-07: barGraph, indexPlot, boxPlot, 
@@ -1385,7 +1385,7 @@ QQPlot <- function () {
 PlotMeans <- function () {
     defaults <- list(initial.groups = NULL, initial.response = NULL, initial.error.bars = "se",
         initial.level = "0.95", initial.xlab=gettextRcmdr("<auto>"), initial.ylab=gettextRcmdr("<auto>"),
-        initial.main=gettextRcmdr("<auto>"), initial.tab=0)
+        initial.main=gettextRcmdr("<auto>"), initial.connect="1", initial.tab=0)
     dialog.values <- getDialog("PlotMeans", defaults)
     initializeDialog(title = gettextRcmdr("Plot Means"), use.tabs=TRUE)
     groupBox <- variableListBox(dataTab, Factors(), title = gettextRcmdr("Factors (pick one or two)"),
@@ -1400,6 +1400,7 @@ PlotMeans <- function () {
     xlabVar <- tclVar(dialog.values$initial.xlab)
     ylabVar <- tclVar(dialog.values$initial.ylab)
     mainVar <- tclVar(dialog.values$initial.main)
+    connectvar <- tclVar(dialog.values$initial.connect)
     xlabEntry <- ttkentry(parFrame, width = "25", textvariable = xlabVar)
     xlabScroll <- ttkscrollbar(parFrame, orient = "horizontal",
         command = function(...) tkxview(xlabEntry, ...))
@@ -1412,6 +1413,8 @@ PlotMeans <- function () {
         command = function(...) tkxview(ylabEntry, ...))
     tkconfigure(ylabEntry, xscrollcommand = function(...) tkset(ylabScroll,
         ...))
+    connectFrame <- tkframe(optionsFrame)
+    connectCheckBox <- ttkcheckbutton(connectFrame, variable = connectvar)
     tkgrid(labelRcmdr(parFrame, text = gettextRcmdr("y-axis label")), ylabEntry, sticky = "ew", padx=6)
     tkgrid(labelRcmdr(parFrame, text =""), ylabScroll, sticky = "ew", padx=6)
     mainEntry <- ttkentry(parFrame, width = "25", textvariable = mainVar)
@@ -1455,15 +1458,17 @@ PlotMeans <- function () {
         main <- if (main == gettextRcmdr("<auto>"))
             ""
         else paste(", main=\"", main, "\"", sep = "")
+        connect <- tclvalue(connectvar)
         putDialog ("PlotMeans", list(initial.groups = groups, initial.response = response,
             initial.error.bars = error.bars,
             initial.level = tclvalue(levelVariable),
             initial.xlab=tclvalue(xlabVar), initial.ylab=tclvalue(ylabVar),
-            initial.main=tclvalue(mainVar), initial.tab=tab))
+            initial.main=tclvalue(mainVar), initial.connect=connect, initial.tab=tab))
         if (length(groups) == 1)
             doItAndPrint(paste("with(", .activeDataSet, ", plotMeans(", 
                 response, ", ", groups[1],
-                ", error.bars=\"", error.bars, "\"", level, xlab, ylab, main, "))",
+                ", error.bars=\"", error.bars, "\"", level, xlab, ylab, main, 
+                ", connect=", if (connect == "1") "TRUE" else "FALSE", "))",
                 sep = ""))
         else {
             if (eval(parse(text = paste("with(", .activeDataSet, ", length(levels(", 
@@ -1473,7 +1478,8 @@ PlotMeans <- function () {
             doItAndPrint(paste("with(", .activeDataSet, ", plotMeans(", 
                 response, ", ", groups[1],
                 ", ", groups[2], ", error.bars=\"",
-                error.bars, "\"", level, xlab, ylab, main, "))", sep = ""))
+                error.bars, "\"", level, xlab, ylab, main, 
+                ", connect=", if (connect == "1") "TRUE" else "FALSE", "))", sep = ""))
         }
         activateMenus()
         tkfocus(CommanderWindow())
@@ -1491,8 +1497,6 @@ PlotMeans <- function () {
     levelEntry <- ttkentry(optFrame, width = "6", textvariable = levelVariable)
     OKCancelHelp(helpSubject = "plotMeans", reset = "PlotMeans", apply = "PlotMeans")
     tkgrid(getFrame(groupBox), getFrame(responseBox), sticky = "nw")
-    #     tkgrid(labelRcmdr(optFrame, text = gettextRcmdr("Error Bars"),
-    #                       fg = getRcmdr("title.color"), font="RcmdrTitleFont"), sticky = "w")
     tkgrid(seButton, labelRcmdr(optFrame, text = gettextRcmdr("Standard errors")),
         sticky = "w")
     tkgrid(sdButton, labelRcmdr(optFrame, text = gettextRcmdr("Standard deviations")),
@@ -1503,6 +1507,8 @@ PlotMeans <- function () {
     tkgrid(noneButton, labelRcmdr(optFrame, text = gettextRcmdr("No error bars")),
         sticky = "w")
     tkgrid(optFrame, parFrame, sticky = "nswe", padx=6, pady=6)
+    tkgrid(labelRcmdr(connectFrame, text=gettextRcmdr("Connect profiles of means")), connectCheckBox, sticky="w")
+    tkgrid(connectFrame, sticky="w")
     tkgrid(optionsFrame, sticky = "w")
     dialogSuffix(use.tabs=TRUE, grid.buttons=TRUE)
 }
@@ -2367,35 +2373,40 @@ Xyplot <- function() {
 
 # set the colour palette
 
-setPalette <- function() {
-    cval <- function(x,y) -sum((x-y)^2)
-    contrasting <- function(x)
-        optim(rep(127, 3),cval,lower=0,upper=255,method="L-BFGS-B",y=x)$par
-    # the following local function from Thomas Lumley via r-help
-    convert <- function (color){
-        rgb <- col2rgb(color)/255
-        L <- c(0.2, 0.6, 0) %*% rgb
-        ifelse(L >= 0.2, "#000060", "#FFFFA0")
-    }
-    env <- environment()
-    pal <- palette()
-    pickColor <- function(initialcolor, parent){
-        newcolor <- tclvalue(.Tcl(paste("tk_chooseColor", .Tcl.args(title = "Select a Color",
-            initialcolor=initialcolor, parent=parent))))
-        if (newcolor == "") initialcolor else newcolor
-    }
-    initializeDialog(title=gettextRcmdr("Set Color Palette"))
+# some unexported functions for dealing with colors
+
+pickColor <- function(initialcolor, parent){
+    newcolor <- tclvalue(.Tcl(paste("tk_chooseColor", .Tcl.args(title = "Select a Color",
+                                                                initialcolor=initialcolor, parent=parent))))
+    newcolor <- toupper(newcolor)
+    if (newcolor == "") initialcolor else newcolor
+}
+
+# the following local function from Thomas Lumley via r-help
+convert <- function (color){
+    rgb <- col2rgb(color)/255
+    L <- c(0.2, 0.6, 0) %*% rgb
+    ifelse(L >= 0.2, "#000060", "#FFFFA0")
+}
+
+col2hex <- function(col){
     hexcolor <- colorConverter(toXYZ = function(hex,...) {
         rgb <- t(col2rgb(hex))/255
         colorspaces$sRGB$toXYZ(rgb,...) },
         fromXYZ = function(xyz,...) {
-            rgb <- colorspaces$sRGB$fromXYZ(xyz,..)
+            rgb <- colorspaces$sRGB$fromXYZ(xyz,...)
             rgb <- round(rgb,5)
             if (min(rgb) < 0 || max(rgb) > 1) as.character(NA)
             else rgb(rgb[1],rgb[2],rgb[3])},
         white = "D65", name = "#rrggbb")
-    cols <- t(col2rgb(pal))
-    hex <- convertColor(cols, from="sRGB", to=hexcolor, scale.in=255, scale.out=NULL)
+    cols <- t(col2rgb(col))
+    convertColor(cols, from="sRGB", to=hexcolor, scale.in=255, scale.out=NULL)
+}
+
+setPalette <- function() {
+    env <- environment()
+    initializeDialog(title=gettextRcmdr("Set Color Palette"))
+    hex <- col2hex(palette())
     for (i in 1:8) assign(paste("hex", i, sep="."), hex[i], envir=env)
     paletteFrame <- tkframe(top)
     colorField1 <- labelRcmdr(paletteFrame, text=rgb2col(hex[1]), fg=hex[1])

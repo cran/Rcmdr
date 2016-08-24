@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Rcmdr 2.2-2\n"
+"Project-Id-Version: Rcmdr 2.3-0\n"
 "Report-Msgid-Bugs-To: jfox@mcmaster.ca\n"
-"POT-Creation-Date: 2015-10-16 12:05:00\n"
+"POT-Creation-Date: 2016-07-19 21:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4662,3 +4662,232 @@ msgstr ""
 
 msgid "Concentration levels:"
 msgstr ""
+
+
+# additional messages in version 2.3-0
+
+  # .rtf output from RMarkdown reports
+  
+msgid ".rtf (rich text file)"
+msgstr ""
+
+msgid "Rich text file written to:"
+msgstr ""
+
+ # bootstrapping dialog
+ 
+msgid "Bootstrap confidence intervals..."
+msgstr ""
+
+msgid "Bootstrap"
+msgstr ""
+
+msgid "Bootstrap Confidence Intervals for Coefficients"
+msgstr ""
+
+msgid "Number of bootstrap samples:"
+msgstr ""
+
+msgid "Number of samples must be a positive integer."
+msgstr ""
+
+msgid "Type of Confidence Intervals"
+msgstr ""
+
+msgid "BCa (adjusted percentile)"
+msgstr ""
+
+msgid "Normal theory"
+msgstr ""
+
+msgid "Basic bootstrap"
+msgstr ""
+
+msgid "Percentile"
+msgstr ""
+
+msgid "Resampling Method"
+msgstr ""
+
+msgid "Case resampling"
+msgstr ""
+
+msgid "Residual resampling"
+msgstr ""
+
+ # delta method dialog
+ 
+msgid "Delta method confidence interval..."
+msgstr ""
+
+msgid "Delta Method"
+msgstr ""
+
+msgid "Confidence Interval by the Delta Method"
+msgstr ""
+
+msgid "Expression to evaluate; use parameter names:"
+msgstr ""
+
+ # view data dialog
+ 
+msgid "View data..."
+msgstr ""
+
+msgid "View Data"
+msgstr ""
+
+msgid "Bad subset expression."
+msgstr ""
+
+msgid "No data to show."
+msgstr ""
+
+msgid "View data error."
+msgstr ""
+
+ # sort active data set dialog
+ 
+msgid "Sort active data set..."
+msgstr ""
+
+msgid "Sort Active Data Set"
+msgstr ""
+
+msgid "Sort Keys (select one or more)"
+msgstr ""
+
+msgid "Sort Direction"
+msgstr ""
+
+msgid "Increasing"
+msgstr ""
+
+msgid "Decreasing"
+msgstr ""
+
+msgid "Reorder Sort Keys"
+msgstr ""
+
+msgid "Order of keys must include all integers from 1 to"
+msgstr ""
+
+msgid "Sort Keys"
+msgstr ""
+
+msgid "Order"
+msgstr ""
+
+ # added to plot means dialog
+ 
+msgid "Connect profiles of means"
+msgstr ""
+
+ # adding to one-way ANOVA dialog
+ 
+msgid "Welch F-test not assuming equal variances"
+msgstr ""
+
+ # the new normality-tests dialog, which replaces the Shapiro-Wilk normality-test dialog
+ 
+msgid "Test of normality..."
+msgstr ""
+
+msgid "Test of Normality"
+msgstr ""
+
+msgid "Shapiro-Wilk"
+msgstr ""
+
+msgid "Anderson-Darling"
+msgstr ""
+
+msgid "Cramer-von Mises"
+msgstr ""
+
+msgid "Lilliefors (Kolmogorov-Smirnov)"
+msgstr ""
+
+msgid "Shapiro-Francia"
+msgstr ""
+
+msgid "Pearson chi-square"
+msgstr ""
+
+msgid "Normality Test"
+msgstr ""
+
+msgid "Number of bins must be a number >= 4"
+msgstr ""
+
+msgid "Number of bins\nfor Pearson chi-square"
+msgstr ""
+
+ # small changes to the read text data dialog
+ 
+msgid "Commas [,]"
+msgstr ""
+
+msgid "Semicolons [;]"
+msgstr ""
+
+ # additional error check in load data set dialog
+ 
+msgid "There is more than one object in the file, with the following names:\n"
+msgstr ""
+
+ # new messages for distribution plot dialogs produced by distributionPlot()
+ 
+msgid "Optionally specify regions under the density function by"
+msgstr ""
+ 
+msgid "x-values"
+msgstr ""
+
+msgid "quantiles"
+msgstr ""
+
+msgid "is not a valid number."
+msgstr ""
+
+msgid "You must specify 'from' and 'to' for at least one range."
+msgstr ""
+
+msgid "In specifying a range, 'to' must be greater than 'from'."
+msgstr ""
+
+msgid "Quantiles must be between 0 and 1."
+msgstr ""
+
+msgid "Regions to Fill (specify one or two, or leave blank)"
+msgstr ""
+
+msgid "Region 1: from"
+msgstr ""
+
+msgid "Region 2: from"
+msgstr ""
+
+msgid "to"
+msgstr ""
+
+msgid "color"
+msgstr ""
+
+msgid "Top center"
+msgstr ""
+
+  # new compare model coefficients dialog
+  
+msgid "Compare model coefficients..."
+msgstr ""
+
+msgid "Compare Model Coefficients"
+msgstr ""
+
+msgid "Select models (pick two or more)"
+msgstr ""
+
+msgid "You must select at least two models."
+msgstr ""
+

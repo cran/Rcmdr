@@ -1,4 +1,4 @@
-# last modified 2016-06-14 by J. Fox
+# last modified 2016-07-12 by J. Fox
 
 # utility functions
 
@@ -95,8 +95,12 @@ activeDataSet <- function(dsname, flushModel=TRUE, flushDialogMemory=TRUE){
     }
     if (flushDialogMemory) putRcmdr("dialog.values", list())
     ActiveDataSet(dsname)
+    nrow <- nrow(get(dsname, envir=.GlobalEnv))
+    ncol <- ncol(get(dsname, envir=.GlobalEnv))
+    putRcmdr("nrow", nrow)
+    putRcmdr("ncol", ncol)
     Message(sprintf(gettextRcmdr("The dataset %s has %d rows and %d columns."), dsname,
-        nrow(get(dsname, envir=.GlobalEnv)), ncol(get(dsname, envir=.GlobalEnv))), type="note")
+        nrow, ncol), type="note")
     if (any(badnames)) Message(message=paste(dsname, gettextRcmdr(" contains non-standard variable names:\n"),
         paste(varnames[badnames], collapse=", "),
         gettextRcmdr("\nThese have been changed to:\n"), paste(newnames[badnames], collapse=", "),
@@ -180,6 +184,12 @@ is.valid.name <- function(x){
     length(x) == 1 && is.character(x) && x == make.names(x)
 }
 
+is.valid.number <- function(string){
+    warn <- options(warn=-1)
+    on.exit(warn)
+    number <- as.numeric(string)
+    if (any(is.na(number))) FALSE else TRUE
+}
 
 # statistical
 
@@ -1549,6 +1559,8 @@ ActiveDataSet <- function(name){
                 TwoLevelFactors(NULL)
                 RcmdrTclSet("dataSetName", gettextRcmdr("<No active dataset>"))
                 putRcmdr(".activeModel", NULL)
+                putRcmdr("nrow", NULL)
+                putRcmdr("ncol", NULL)
                 RcmdrTclSet("modelName", gettextRcmdr("<No active model>"))
                 tkconfigure(getRcmdr("dataSetLabel"), foreground="red") 
                 tkconfigure(getRcmdr("modelLabel"), foreground="red") 
@@ -1589,6 +1601,8 @@ ActiveDataSet <- function(name){
             TwoLevelFactors(NULL)
             RcmdrTclSet("dataSetName", gettextRcmdr("<No active dataset>"))
             putRcmdr(".activeModel", NULL)
+            putRcmdr("nrow", NULL)
+            putRcmdr("ncol", NULL)
             RcmdrTclSet("modelName", gettextRcmdr("<No active model>"))
             tkconfigure(getRcmdr("dataSetLabel"), foreground="red") 
             tkconfigure(getRcmdr("modelLabel"), foreground="red") 
@@ -2263,10 +2277,10 @@ compileRmd <- function() {
         putRcmdr("abort.compile.rmd", TRUE)
         hasLatex <- getRcmdr("capabilities")$pdflatex
         radioButtons(name="formatButtons", 
-            buttons=c("html", if (hasLatex) "pdf", "docx"), 
+            buttons=c("html", if (hasLatex) "pdf", "docx", "rtf"), 
             initialValue=format,
             labels=c(gettextRcmdr(".html (web page)"), 
-                if (hasLatex) gettextRcmdr(".pdf (PDF file)"), gettextRcmdr(".docx (Word file)")))
+                if (hasLatex) gettextRcmdr(".pdf (PDF file)"), gettextRcmdr(".docx (Word file)"), gettextRcmdr(".rtf (rich text file)")))
         onOK <- function(){
             putRcmdr("abort.compile.rmd", FALSE)
             format <- tclvalue(formatButtonsVariable)
@@ -2324,6 +2338,13 @@ compileRmd <- function() {
                 rmarkdown::render(.RmdFile, rmarkdown::word_document())
                 .docx.file <- paste(.filename, ".docx", sep="")
                 Message(paste(gettextRcmdr("Word file written to:"), normalizePath(.docx.file)), type="note")
+            },
+            rtf = {
+              lines <- removeRglRmdBlocks(lines)
+              writeLines(lines, .RmdFile)
+              rmarkdown::render(.RmdFile, rmarkdown::rtf_document())
+              .rtf.file <- paste(.filename, ".rtf", sep="")
+              Message(paste(gettextRcmdr("Rich text file written to:"), normalizePath(.rtf.file)), type="note")
             }
         )
     }
