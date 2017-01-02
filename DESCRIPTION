@@ -1,6 +1,6 @@
 Package: Rcmdr
-Version: 2.3-1
-Date: 2016-10-25
+Version: 2.3-2
+Date: 2017-01-02
 Title: R Commander
 Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaster.ca"),
     person("Milan", "Bouchet-Valat", role = "aut"),
@@ -39,10 +39,10 @@ ByteCompile: yes
 Description: 
   A platform-independent basic-statistics GUI (graphical user interface) for R, based on the tcltk package.
 License: GPL (>= 2)
-URL: http://www.r-project.org,
+URL: https://www.r-project.org,
         http://socserv.socsci.mcmaster.ca/jfox/Misc/Rcmdr/
 NeedsCompilation: no
-Packaged: 2016-10-25 15:50:43 UTC; jfox
+Packaged: 2017-01-02 16:42:35 UTC; jfox
 Author: John Fox [aut, cre],
   Milan Bouchet-Valat [aut],
   Liviu Andronic [ctb],
@@ -69,4 +69,4 @@ Author: John Fox [aut, cre],
   Kevin Wright [ctb]
 Maintainer: John Fox <jfox@mcmaster.ca>
 Repository: CRAN
-Date/Publication: 2016-10-25 20:32:03
+Date/Publication: 2017-01-02 22:22:12
