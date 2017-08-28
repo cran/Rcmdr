@@ -9,7 +9,7 @@
 \alias{activeModel}
 \alias{ActiveModel}
 \alias{activeModelP}
-\alias{aicP}
+\alias{anovaP}
 \alias{beginRmdBlock}
 \alias{beginRnwBlock}
 \alias{checkActiveDataSet}
@@ -30,6 +30,7 @@
 \alias{defmacro}
 \alias{dialogSuffix}
 \alias{doItAndPrint}
+\alias{EffectP}
 \alias{endRmdBlock}
 \alias{endRnwBlock}
 \alias{enterMarkdown}
@@ -76,6 +77,7 @@
 \alias{listVariables}
 \alias{lmP}
 \alias{logger}
+\alias{logLikP}
 \alias{LogWindow}
 \alias{MacOSXP}
 \alias{manualTranslationP}
@@ -83,6 +85,7 @@
 \alias{mavericksP}
 \alias{Message}
 \alias{MessagesWindow}
+\alias{modelCapability}
 \alias{modelFormula}
 \alias{modelsP}
 \alias{multinomP}
@@ -158,7 +161,7 @@ activeDataSetP()
 activeModel(model)
 ActiveModel(name)
 activeModelP()
-aicP()
+anovaP()
 beginRmdBlock()
 beginRnwBlock()
 checkActiveDataSet()
@@ -189,6 +192,7 @@ dialogSuffix(window=top, onOK=onOK, onCancel=onCancel, rows, columns,
     tab.names=c("Data", "Options"), grid.buttons=FALSE, resizable=FALSE,
     force.wait=FALSE)  # macro
 doItAndPrint(command, log=TRUE, rmd=log)
+EffectP()
 endRmdBlock()
 endRnwBlock()
 enterMarkdown(command)
@@ -217,7 +221,7 @@ groupsBox(recall=NULL, label=gettextRcmdr("Plot by:"),
     plotLinesByGroupsText=gettextRcmdr("Plot lines by group"), 
     initialGroup=NULL, initialLinesByGroup=1, window=top)  # macro
 groupsLabel(frame=top, groupsBox=groupsBox, columnspan=1, 
-    initialText=NULL)  # macro
+    initialText=NULL, ratio=FALSE)  # macro
 hclustSolutionsP()
 initializeDialog(window=top, title="", offset=10, preventCrisp,
     use.tabs=FALSE, notebook=notebook, 
@@ -243,6 +247,7 @@ listTwoLevelFactors(dataSet=ActiveDataSet())
 listVariables(dataSet=ActiveDataSet())
 lmP()
 logger(command, rmd=TRUE)
+logLikP()
 LogWindow()
 MacOSXP(release)
 manualTranslationP()
@@ -250,6 +255,7 @@ MarkdownP()
 mavericksP()
 Message(message, type=c("note", "error", "warning"))
 MessagesWindow()
+modelCapability(capability)
 modelFormula(frame=top, hasLhs=TRUE, rhsExtras=NULL,
     formulaLabel=gettextRcmdr("Model Formula"))  # macro
 modelsP(n=1)
@@ -335,6 +341,10 @@ commanderPosition()
   \item{buffer}{a text string, typically representing the contents of a text widget, such as an R Markdown or
     knitr document.}
   \item{buttons}{vector of quoted names for buttons in a set of related radio buttons.}
+  \item{capability}{character string giving the name of a column in the R Commander model-capabilities table,
+    including the name of a column added by a plug-in; see \code{model-capabilities.txt} in the \pkg{Rcmdr}
+    sources for the standard table; e.g., \code{"sum"} indicates the availability of an applicable \code{summary()}
+    method for the current model.}
   \item{class}{quoted name of class.}
   \item{columnspan}{number of dialog-box columns to be spanned by frame.}
   \item{command}{a character string that evaluates to an R command or (in the case of \code{radioButton}) a
@@ -435,6 +445,7 @@ commanderPosition()
   \item{recall}{function to call after error --- usually the function that initiates the dialog.}
   \item{release}{release the focus if the grab.focus option has been set. In
   \code{MacOSXP}, the minimum release (version) required.}
+  \item{ratio}{If \code{FALSE}, the default, the test will be expressed as a test for a difference (e.g., a difference in means); if \code{TRUE}, as a test for a ratio (e.g., a ratio of variances).}
   \item{reportError}{if \code{TRUE}, report an error message.}
   \item{reset}{quoted name of dialog function, to be invoked with all defaults by Reset button.}
   \item{resettable}{should dialog state be reset when the data set changes? The default is 
@@ -549,6 +560,10 @@ commanderPosition()
   The function \code{exists.method} checks whether a method exists for a particular generic that is
   appropriate for a particular object, and returns \code{TRUE} or \code{FALSE}. The function \code{is.SciViews} always returns \code{FALSE}
   since the SciViews GUI is no longer supported.
+  
+  The function \code{modelCapability()} returns \code{TRUE} if there is an active statistical model and if it has the specified capability.
+  For example, \code{modelCapability("sum")} returns \code{TRUE} if the model-capabilities table indicates that there's an applicable
+  \code{summary()} method for the active model. Otherwise, \code{FALSE} is returned. If the specified capability doesn't exist, a warning is printed.
   
   \emph{Building dialog boxes: }
   

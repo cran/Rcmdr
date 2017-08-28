@@ -1,4 +1,4 @@
-# last modified 2016-07-13 by J. Fox
+# last modified 2017-01-18 by J. Fox
 
 # File (and Edit) menu dialogs
 
@@ -99,6 +99,13 @@ saveRmd <- function(Rmdfilename) {
         saveRmdAs()
         return()
     }
+    if (getRcmdr("Markdown.editor.open")){
+        .rmd.window <- RmdWindow()
+        .markdown.editor.window <- MarkdownEditorWindow()
+        .markdown.editor <- tclvalue(tkget(.markdown.editor.window, "1.0", "end"))
+        tkdelete(.rmd.window, "1.0", "end")
+        tkinsert(.rmd.window, "end", .markdown.editor)
+    }
     .rmd <- tclvalue(tkget(RmdWindow(), "1.0", "end"))
     fileCon <- file(.RmdFileName, "w")
     cat(.rmd, file = fileCon)
@@ -112,6 +119,13 @@ saveRnw <- function(Rnwfilename) {
     if ((.RnwFileName == "RcmdrKnitr.Rnw") || is.null(.RnwFileName)) {
         saveRnwAs()
         return()
+    }
+    if (getRcmdr("knitr.editor.open")){
+        .rnw.window <- RnwWindow()
+        .knitr.editor.window <- knitrEditorWindow()
+        .knitr.editor <- tclvalue(tkget(.knitr.editor.window, "1.0", "end"))
+        tkdelete(.rnw.window, "1.0", "end")
+        tkinsert(.rnw.window, "end", .knitr.editor)
     }
     .rnw <- tclvalue(tkget(RnwWindow(), "1.0", "end"))
     .rnw <- paste(.rnw, "\n\\end{document}\n")
@@ -128,6 +142,13 @@ saveRmdAs <- function() {
         initialfile="RCommanderMarkdown.Rmd",
         parent=CommanderWindow()))
     if (RmdFile == "") return()
+    if (getRcmdr("Markdown.editor.open")){
+        .rmd.window <- RmdWindow()
+        .markdown.editor.window <- MarkdownEditorWindow()
+        .markdown.editor <- tclvalue(tkget(.markdown.editor.window, "1.0", "end"))
+        tkdelete(.rmd.window, "1.0", "end")
+        tkinsert(.rmd.window, "end", .markdown.editor)
+    }
     .rmd <- tclvalue(tkget(RmdWindow(), "1.0", "end"))
     fileCon <- file(RmdFile, "w")
     cat(.rmd, file = fileCon)
@@ -142,6 +163,13 @@ saveRnwAs <- function() {
                                       initialfile="RCommanderKnitr.Rnw",
                                       parent=CommanderWindow()))
     if (RnwFile == "") return()
+    if (getRcmdr("knitr.editor.open")){
+        .rnw.window <- RnwWindow()
+        .knitr.editor.window <- knitrEditorWindow()
+        .knitr.editor <- tclvalue(tkget(.knitr.editor.window, "1.0", "end"))
+        tkdelete(.rnw.window, "1.0", "end")
+        tkinsert(.rnw.window, "end", .knitr.editor)
+    }
     .rnw <- tclvalue(tkget(RnwWindow(), "1.0", "end"))
     .rnw <- paste(.rnw, "\n\\end{document}\n")
     fileCon <- file(RnwFile, "w")
@@ -266,7 +294,15 @@ closeCommander <- function(ask=TRUE, ask.save=ask){
 	  }
 	  putRcmdr("open.showData.windows", list())
 	}
+	if (getRcmdr("Markdown.editor.open")){
+	    tkdestroy(getRcmdr("markdown.editor.toplevel.window"))
+	}
+	if (getRcmdr("knitr.editor.open")){
+	    tkdestroy(getRcmdr("knitr.editor.toplevel.window"))
+	}
 	options(getRcmdr("quotes"))
+	options(getRcmdr("max.print"))
+	options(scipen=getRcmdr("scipen"))
 	tkwait <- options("Rcmdr")[[1]]$tkwait  # to address problem in Debian Linux
 	if ((!is.null(tkwait)) && tkwait) putRcmdr(".commander.done", tclVar("1"))
 	return(invisible(response))
@@ -304,6 +340,7 @@ Options <- function(){
   else if (!log.commands) 0 else 10
   output.height <- if (!is.null(current$output.height)) current$output.height
   else if (console.output) 0 else 2*log.height
+  scientific.notation <- getRcmdr("scientific.notation")
   contrasts <- setOption("default.contrasts", c("contr.Treatment", "contr.poly"))
   grab.focus <- getRcmdr("grab.focus")
   double.click <- getRcmdr("double.click")
@@ -448,7 +485,11 @@ Options <- function(){
                                 resolution=5, orient="horizontal")
   messagesHeightVar <- tclVar(messages.height)
   messagesHeightSlider <- tkscale(outputSliderFrame, from=0, to=10, showvalue=TRUE, variable=messagesHeightVar,
-                                  resolution=1, orient="horizontal")       
+                                  resolution=1, orient="horizontal")
+  scientificNotationSliderFrame <- tkframe(outputTab)
+  scientificNotationVar <- tclVar(scientific.notation)
+  scientificNotartionSlider <- tkscale(scientificNotationSliderFrame, from=0, to=10, showvalue=TRUE, variable=scientificNotationVar,
+                                  resolution=1, orient="horizontal")
   contrasts1 <- tclVar(contrasts[1])
   contrasts2 <- tclVar(contrasts[2])
   contrastsFrame <- tkframe(otherTab)
@@ -528,6 +569,7 @@ Options <- function(){
     log.height <- as.numeric(tclvalue(logHeightVar))
     log.commands <- asLogical(tclvalue(logCommandsVariable)) && (log.height != 0)
     output.height <- as.numeric(tclvalue(outputHeightVar))
+    scientific.notation <- as.numeric(tclvalue(scientificNotationVar))
     console.output <- asLogical(tclvalue(consoleOutputVariable)) || (output.height == 0)
     contrasts <- c(tclvalue(contrasts1), tclvalue(contrasts2))
     grab.focus <- asLogical(tclvalue(grabFocusVariable))
@@ -556,6 +598,7 @@ Options <- function(){
     options$log.height <- log.height
     options$log.commands <- log.commands
     options$output.height <- output.height
+    options$scientific.notation <- scientific.notation
     options$console.output <- console.output
     options$default.contrasts <- contrasts
     options$grab.focus <- grab.focus
@@ -599,6 +642,9 @@ Options <- function(){
   tkgrid(labelRcmdr(outputSliderFrame, text=gettextRcmdr("Output window height (lines)")), outputHeightSlider, sticky="sw", padx=6)
   tkgrid(labelRcmdr(outputSliderFrame, text=gettextRcmdr("Messages window height (lines)")), messagesHeightSlider, sticky="sw", padx=6)
   tkgrid(outputSliderFrame, sticky="w")
+  tkgrid(labelRcmdr(scientificNotationSliderFrame, text=gettextRcmdr("Suppress scientific notation\n(higher = more suppression)")), 
+         scientificNotartionSlider, sticky="sw", padx=6)
+  tkgrid(scientificNotationSliderFrame, sticky="w")
   tkgrid(labelRcmdr(outputTab, text=" "), sticky="w")    
   tkgrid(outputOptionsFrame, sticky="nw", columnspan = 3)
   tkgrid(labelRcmdr(templateFrame, text="R Markdown template file"), rmdTemplateEntry, templateButton, sticky="w", padx=6)
@@ -789,6 +835,10 @@ saveOptions <- function(){
         tkbind(top, "<Meta-A>", onSelectAll)
         tkbind(top, "<Meta-w>", onRedo)
         tkbind(top, "<Meta-W>", onRedo)
+        tkbind(top, "<Meta-z>", onUndo)
+        tkbind(top, "<Meta-Z>", onUndo)
+        tkbind(top, "<Shift-Meta-z>", onRedo)
+        tkbind(top, "<Shift-Meta-Z>", onRedo)
     }
     tkbind(top, "<Alt-BackSpace>", onUndo)
     tkbind(optionsWindow, "<ButtonPress-3>", contextMenu)
@@ -906,24 +956,27 @@ editMarkdown <- function(){
     tkdelete(editor, "1.0", "end")
     tkinsert(editor, "end", buffer)
   }
+  saveEdits <- function(){
+      .rmd <- RmdWindow()
+      editor <- getRcmdr("editor.text")
+      buffer <- tclvalue(tkget(editor, "1.0", "end"))
+      tkdelete(.rmd, "1.0", "end")
+      tkinsert(.rmd, "end", buffer)
+      tkyview.moveto(.rmd, 1)
+  }
   ok <- function(){
     .rmd <- RmdWindow()
     editor <- getRcmdr("editor.text")
     buffer <- tclvalue(tkget(editor, "1.0", "end"))
     tkdelete(.rmd, "1.0", "end")
     tkinsert(.rmd, "end", buffer)
+    tkyview.moveto(.rmd, 1)
   }
   RcmdrEditor(buffer,  title="Edit R Markdown document", ok=ok,
               help=list(label="Using R Markdown", command=browseRMarkdown),
-              file.menu=list(list(label="Generate report", command=compile)), 
-              toolbar.buttons=list(list(label="Generate report", command=compile, 
-                                        image="::image::submitIcon")))
-#   edited <- getRcmdr("buffer")
-#   if (!is.null(edited)){
-#     tkdelete(.rmd, "1.0", "end")
-#     tkinsert(.rmd, "end", edited)
-#     tkyview.moveto(.rmd, 1)
-#   }
+              file.menu=list(list(label="Generate report", command=compile), list(label="Save current edits", command=saveEdits)), 
+              toolbar.buttons=list(list(label="Generate report", command=compile, image="::image::submitIcon"),
+                                   list(label="Save edits", command=saveEdits, image="::image::saveEditsIcon")))
 }
 
 editKnitr <- function(){
@@ -936,6 +989,14 @@ editKnitr <- function(){
         tkdelete(.rnw, "1.0", "end")
         tkinsert(.rnw, "end", buffer)
         compileRnw()
+    }
+    saveEdits <- function(){
+        .rnw <- RnwWindow()
+        editor <- getRcmdr("editor.text")
+        buffer <- tclvalue(tkget(editor, "1.0", "end"))
+        tkdelete(.rnw, "1.0", "end")
+        tkinsert(.rnw, "end", buffer)
+        tkyview.moveto(.rnw, 1)
     }
     removeLastBlock <- function(){
         .rnw <- RnwWindow()
@@ -954,16 +1015,12 @@ editKnitr <- function(){
       buffer <- tclvalue(tkget(editor, "1.0", "end"))
       tkdelete(.rnw, "1.0", "end")
       tkinsert(.rnw, "end", buffer)
+      tkyview.moveto(.rnw, 1)
     }
     RcmdrEditor(buffer,  title="Edit knitr document", ok=ok,
-        file.menu=list(list(label="Generate PDF report", command=compile)), 
-        toolbar.buttons=list(list(label="Generate PDF report", command=compile, image="::image::submitIcon")))
-#     edited <- getRcmdr("buffer")
-#     if (!is.null(edited)){
-#         tkdelete(.rnw, "1.0", "end")
-#         tkinsert(.rnw, "end", edited)
-#         tkyview.moveto(.rnw, 1)
-#     }
+        file.menu=list(list(label="Generate PDF report", command=compile), list(label="Save current edits", command=saveEdits)), 
+        toolbar.buttons=list(list(label="Generate PDF report", command=compile, image="::image::submitIcon"),
+                             list(label="Save edits", command=saveEdits, image="::image::saveEditsIcon")))
 }
 
 appNap <- function(){

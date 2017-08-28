@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Rcmdr 2.3-0\n"
+"Project-Id-Version: Rcmdr 2.4-0\n"
 "Report-Msgid-Bugs-To: jfox@mcmaster.ca\n"
-"POT-Creation-Date: 2016-07-19 21:00:00\n"
+"POT-Creation-Date: 2017-04-17 10:30:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2318,16 +2318,16 @@ msgstr ""
 msgid "Residual quantile-comparison plot..."
 msgstr ""
 
-msgid "Component+residual plots"
+msgid "Component+residual plots..."
 msgstr ""
 
-msgid "Added-variable plots"
+msgid "Added-variable plots..."
 msgstr ""
 
-msgid "Influence plot"
+msgid "Influence plot..."
 msgstr ""
 
-msgid "Effect plots"
+msgid "Effect plots..."
 msgstr ""
 
 msgid "Models"
@@ -4823,6 +4823,12 @@ msgstr ""
 msgid "Number of bins\nfor Pearson chi-square"
 msgstr ""
 
+msgid "Test by groups"
+msgstr ""
+
+msgid "Test by:"
+msgstr ""
+
  # small changes to the read text data dialog
  
 msgid "Commas [,]"
@@ -4891,3 +4897,111 @@ msgstr ""
 msgid "You must select at least two models."
 msgstr ""
 
+
+# additional messages in version 2.4-0
+
+  # enhancements to the Rcmdr script editor
+
+msgid "Only one instance of the R Commander script editor may be open at a time."
+msgstr ""
+
+msgid "Save current edits"
+msgstr ""
+
+msgid "Save edits"
+msgstr ""
+
+msgid "Exit editor saving edits"
+msgstr ""
+
+msgid "Cancel discarding edits"
+msgstr ""
+
+  # additions to the barplot dialog
+  
+msgid "Percentages for Group Bars"
+msgstr ""
+  
+msgid "Conditional"
+msgstr ""
+
+msgid "Total"
+msgstr ""
+
+msgid "Color Selection"
+msgstr ""
+
+msgid "From color palette"
+msgstr ""
+
+  # correct typo
+  
+msgid "Data set %s does not exist"
+msgstr ""
+
+  # addition to plot means dialog (position of legend)
+  
+msgid "To right of graph"
+msgstr ""
+
+  # For two-variances F-test dialog
+  
+msgid "Ratio:"
+msgstr ""
+
+msgid "Ratio < 1"
+msgstr ""
+
+msgid "Ratio > 1"
+msgstr ""
+
+  # For enter and analyze contingency table dialog
+  
+msgid "Name for Row Variable (optional):"
+msgstr ""
+
+msgid "Name for Column Variable (optional):"
+msgstr ""
+
+  # for import Stata and SAS b7dat data set dialogs
+
+msgid "Convert character variables to factors"
+msgstr ""
+
+msgid "First column contains row names"
+msgstr ""
+
+msgid "Import SAS b7dat Data Set"
+msgstr ""
+
+msgid "from SAS b7dat file..."
+msgstr ""
+
+msgid "{\"All Files\" {\"*\"}} {\"SAS b7dat dataset\" {\".sas7bdat\" \".SAS7BDAT\"}}"
+msgstr ""
+
+  # addition to the Commander Options dialog
+  
+msgid "Suppress scientific notation\n(higher = more suppression)"
+msgstr ""
+
+  # new plot discrete numeric variable dialog
+  
+msgid "Plot discrete numeric variable..."
+msgstr ""
+
+msgid "Plot Discrete Numeric Variable"
+msgstr ""
+
+msgid "%s has %d unique values\nDo you want to proceed?"
+msgstr ""
+
+  # for boostrapping dialog
+  
+msgid "Plot bootstrap samples"
+msgstr ""
+
+  # for numerical summaries dialog
+  
+msgid "Binned Frequency Counts"
+msgstr ""

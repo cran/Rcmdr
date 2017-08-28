@@ -1,10 +1,58 @@
+Changes to version 2.4-0
+
+  o The R Commander editor for Markdown and knitr documents is now a non-modal dialog, so may remain open while you work.
+  
+  o Improvement to the barplot dialog (suggestions of Beatriz Lacruz).
+  
+  o Added dialog for plotting the distribution of a discrete numeric variable (suggestion of Beatriz Lacruz).
+  
+  o Allow color selection in pie charts.
+  
+  o Small improvements to activation of menu items.
+  
+  o Rcmdr showData.threshold option now tests number of rows as well as number of columns.
+  
+  o Introduced Rcmdr scientific.notation option to suppress scientific notation; corresponds to R scipen option, and default is 5 (as opposed to 0 in R).
+  
+  o Improved labeling of two-variances test dialog (suggestion of Beatriz Lacruz).
+  
+  o Improvements to Rcmdr data editor in handling blanks and quotes.
+  
+  o Moved the following standard packages from Imports: to Depends: graphics, methods, stats.
+  
+  o Allow entry of variable names in enter table dialog (suggestion of Beatriz Lacruz).
+  
+  o Improved import of Stata and SPSS data files and provision to import SAS b7dat files.
+  
+  o Added right-click context menus to text entry boxes.
+  
+  o Getting Started manual is now supplied as a vignette (with help from Manuel Munoz Marquez).
+  
+  o Refactored Commander() code.
+  
+  o Separators in plug-in menus can now be placed more precisely, if necessary (following a problem reported by Manuel Munoz Marquez).
+  
+  o Reworked handling of statistical models in plug-ins.
+  
+  o Boostrap dialog will now plot bootstrap samples.
+  
+  o Parameter estimate correlations are now reported with VIFs.
+  
+  o Index plot dialog will now plot more than one variable (suggestion of Manuel Munoz Marquez).
+  
+  o Numerical summaries dialog has new option to show binned distribution of frequency counts (suggestion of Manuel Munoz Marquez).
+  
+  o Small interface improvements.
+  
+  o Updated translations (with thanks): simplified Chinese (Shulin Yang), French (Milan Bouchet-Valat), Indonesian (I Made Tirta), Japanese (Takaharu Araki), Polish (Lukasz Daniel), Russian (Alexey Shipunov), Spanish (Manual Munoz Marquez).
+  
 Changes to Version 2.3-2
 
   o Fixes to Spanish translation (from Manual Munoz Marquez).
   
   o Updated Spanish translation of Getting Started manual (thanks to Manual Munoz Marquez).
   
-  o Updated Slovenian translation (thanks to Matjaz Jeran)
+  o Updated Slovenian translation (thanks to Matjaz Jeran).
 
 Changes to Version 2.3-1
 
@@ -13,7 +61,7 @@ Changes to Version 2.3-1
   o Fixes to Catalan translation (from Manel Salamero).
   
   o Updated Basque and German translations (thanks to Joserra Rueda and Fritz Leisch).
-
+  
 Changes to Version 2.3-0
 
   o Added .rtf output to options for RMarkdown reports.

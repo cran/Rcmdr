@@ -1,6 +1,6 @@
 # Model menu dialogs
 
-# last modified 2016-08-10 by J. Fox
+# last modified 2017-02-07 by J. Fox
 
 selectActiveModel <- function(){
 	models <- listAllModels()
@@ -232,12 +232,14 @@ anovaTable <- function () {
     .activeModel <- ActiveModel()
     if (is.null(.activeModel)) 
         return()
-    defaults <- list (initial.type = "II", initial.sandwich="0", initial.sandwich.type="HC3")
+    aov <- modelCapability("aov")
+    Aov <- modelCapability("Aov")
+    defaults <- list (initial.type = if (Aov) "II" else "I", initial.sandwich="0", initial.sandwich.type="HC3")
     dialog.values <- getDialog ("anovaTable", defaults)
     initializeDialog(title = gettextRcmdr("ANOVA Table"))
-    radioButtons(name = "type", buttons = c("I", "II", "III"), 
-        values = c("I", "II", "III"), labels = gettextRcmdr(c("Sequential (\"Type I\")", 
-            "Partial obeying marginality (\"Type II\")", "Partial ignoring marginality (\"Type III\")")), 
+    radioButtons(name = "type", buttons = c(if (aov) "I", if(Aov) c("II", "III")), 
+        values = c(if (aov) "I", if (Aov) c("II", "III")), labels = gettextRcmdr(c(if (aov) "Sequential (\"Type I\")", 
+            if (Aov) c("Partial obeying marginality (\"Type II\")", "Partial ignoring marginality (\"Type III\")"))), 
         title = gettextRcmdr("Type of Tests"), initialValue = dialog.values$initial.type)
     sandwichVar <- tclVar(dialog.values$initial.sandwich)
     sandwichFrame <- tkframe(top)
@@ -323,6 +325,7 @@ VIF <- function(){
 	.activeModel <- ActiveModel()
 	if (is.null(.activeModel) || !checkMethod("vif", .activeModel, default=TRUE)) return()
 	doItAndPrint(paste("vif(", .activeModel, ")", sep=""))
+	doItAndPrint(paste("round(cov2cor(vcov(", .activeModel, ")), 3) # Correlations of parameter estimates", sep=""))
 }
 
 addObservationStatistics <- function () {
@@ -351,32 +354,38 @@ addObservationStatistics <- function () {
   initializeDialog(title = gettextRcmdr("Add Observation Statistics to Data"))
   .variables <- Variables()
   obsNumberExists <- is.element("obsNumber", .variables)
-  activate <- c(checkMethod("fitted", .activeModel, default = TRUE, 
-                            reportError = FALSE), checkMethod("residuals", .activeModel, 
-                                                              default = TRUE, reportError = FALSE), checkMethod("rstudent", 
-                                                                                                                .activeModel, reportError = FALSE), checkMethod("hatvalues", 
-                                                                                                                                                                .activeModel, reportError = FALSE), checkMethod("cooks.distance", 
-                                                                                                                                                                                                                .activeModel, reportError = FALSE))
+  # activate <- c(checkMethod("fitted", .activeModel, default = TRUE, 
+  #                           reportError = FALSE), checkMethod("residuals", .activeModel, 
+  #                                                             default = TRUE, reportError = FALSE), checkMethod("rstudent", 
+  #                                                                                                               .activeModel, reportError = FALSE), checkMethod("hatvalues", 
+  #                                                                                                                                                               .activeModel, reportError = FALSE), checkMethod("cooks.distance", 
+  #                                                                                                                                                                                                              .activeModel, reportError = FALSE))
+  activate <- c(modelCapability("fit"), modelCapability("res"), modelCapability("rst"), modelCapability("hat"), modelCapability("cook"))
   checkBoxes(frame = "selectFrame", boxes = c(c("fitted", "residuals", 
                                                 "rstudent", "hatvalues", "cookd")[activate], "obsNumbers"), 
              labels = c(gettextRcmdr(c("Fitted values", "Residuals", 
                                        "Studentized residuals", "Hat-values", "Cook's distances"))[activate], 
-                        gettextRcmdr("Observation indices")), initialValues = c(dialog.values$initial.fitted, 
+                        gettextRcmdr("Observation indices")), initialValues = c(c(dialog.values$initial.fitted, 
                                                                                 dialog.values$initial.residuals, dialog.values$initial.rstudent, 
-                                                                                dialog.values$initial.hatvalues, dialog.values$initial.cookd, dialog.values$initial.obsNumbers))
+                                                                                dialog.values$initial.hatvalues, dialog.values$initial.cookd)[activate], dialog.values$initial.obsNumbers))
   command <- paste(.activeDataSet, "<- within(", .activeDataSet, ", {", sep="")
   onOK <- function() {
     closeDialog()
     if (activate[1] && tclvalue(fittedVariable) == 1) 
       command <- paste(command, "\n  ", addVariable("fitted"), sep="")
+    else fittedVariable <- tclVar(0)
     if (activate[2] && tclvalue(residualsVariable) == 1) 
       command <- paste(command, "\n  ", addVariable("residuals"), sep="")
+    else residualsVariable <- tclVar(0)
     if (activate[3] && tclvalue(rstudentVariable) == 1) 
       command <- paste(command, "\n  ", addVariable("rstudent"), sep="")
+    else rstudentVariable <- tclVar(0)
     if (activate[4] && tclvalue(hatvaluesVariable) == 1) 
       command <- paste(command, "\n  ", addVariable("hatvalues"), sep="")
+    else hatvaluesVariable <- tclVar(0)
     if (activate[5] && tclvalue(cookdVariable) == 1) 
       command <- paste(command, "\n  ", addVariable("cooks.distance"), sep="")
+    else cookdVariable <- tclVar(0)
     obsNumbers <- tclvalue(obsNumbersVariable)
     putDialog ("addObservationStatistics", list (initial.fitted = tclvalue (fittedVariable),
                                                  initial.residuals = tclvalue (residualsVariable), initial.rstudent = tclvalue(rstudentVariable), 
@@ -973,7 +982,7 @@ subsetRegression <- function () {
 }
 
 effectPlots <- function () {
-  Library("effects")
+#  Library("effects")
   defaults <- list(initial.all.or.pick = "TRUE", initial.predictors = NULL, 
                    initial.partial.res = 0, initial.span = 50, initial.style = "stacked")
   dialog.values <- getDialog("effectPlots", defaults)
@@ -1068,7 +1077,7 @@ Bootstrap <- function () {
     .activeModel <- ActiveModel()
     if (is.null(.activeModel)) 
         return()
-    defaults <- list (initial.level = "0.95", initial.samples="999", initial.type="bca", initial.method="case")
+    defaults <- list (initial.level = "0.95", initial.samples="999", initial.type="bca", initial.method="case", initial.plot="1")
     dialog.values <- getDialog ("Bootstrap", defaults)
     initializeDialog(title = gettextRcmdr("Bootstrap"))
     tkgrid(labelRcmdr(top, text = gettextRcmdr("Bootstrap Confidence Intervals for Coefficients"), 
@@ -1098,13 +1107,25 @@ Bootstrap <- function () {
         }
         else defaults$initial.method
         type <- tclvalue(typeVariable)
-        putDialog ("Bootstrap", list (initial.level = level, initial.samples = samples, initial.type=type, initial.method = method))
+        plot.samples <- tclvalue(plotVar)
+        putDialog ("Bootstrap", list (initial.level = level, initial.samples = samples, initial.type=type, initial.method = method, 
+                                      initial.plot=plot.samples))
         command <- if (lm) 
-            paste0('confint(Boot(', .activeModel, ', R=', samples, ', method="', method, '"), level=', level, 
-                   ', type="', type, '")' )
-        else paste0("confint(Boot(", .activeModel, ', R=', samples, '), level=', level, 
-                    ', type="', type, '")' )
+            paste0('Boot(', .activeModel, ', R=', samples, ', method="', method, '")')
+        else paste0("Boot(", .activeModel, ', R=', samples, ')')
+        
+        if (plot.samples == "0"){
+            command <- paste0("confint(", command, ',  level=', level, ', type="', type, '")')
+            doItAndPrint(command)
+            return()
+        }
+        
+        command <- paste0(".bs.samples <- ", command, "\n",
+                          "plotBoot(.bs.samples)")
         doItAndPrint(command)
+        doItAndPrint(paste0('confint(.bs.samples, level=', level, ', type="', type, '")'))
+        logger("remove(.bs.samples)")
+        justDoIt("remove(.bs.samples, envir=.GlobalEnv)")
         tkfocus(CommanderWindow())
     }
     OKCancelHelp(helpSubject = "Boot", reset = "Bootstrap", apply = "Bootstrap")
@@ -1131,6 +1152,11 @@ Bootstrap <- function () {
                      labels = gettextRcmdr(c("Case resampling", "Residual resampling")), title = gettextRcmdr("Resampling Method"))
         tkgrid(methodFrame, sticky="w")
     }
+    plotVar <- tclVar(dialog.values$initial.plot)
+    plotFrame <- tkframe(top)
+    plotCheckBox <- ttkcheckbutton(plotFrame, variable = plotVar)
+    tkgrid(tklabel(plotFrame, text=gettextRcmdr("Plot bootstrap samples"), fg=getRcmdr("title.color")), plotCheckBox, sticky="w")
+    tkgrid(plotFrame, sticky="w")
     tkgrid(buttonsFrame, sticky = "w")
     dialogSuffix()
 }

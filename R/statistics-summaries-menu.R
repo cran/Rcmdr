@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 2016-06-02 by J. Fox
+# last modified 2017-04-17 by J. Fox
 
 # Summaries menu
 
@@ -22,35 +22,38 @@ numericalSummaries <- function(){
     Library("abind")
     Library("e1071")
     defaults <- list(initial.x=NULL, initial.mean="1", initial.sd="1", initial.se.mean="0", initial.IQR="1", initial.cv="0",
-        initial.quantiles.variable="1", 
-        initial.quantiles="0, .25, .5, .75, 1", 
-        initial.skewness="0", initial.kurtosis="0", initial.type="2",
-        initial.group=NULL, initial.tab=0)
+                     initial.quantiles.variable="1", 
+                     initial.quantiles="0, .25, .5, .75, 1", 
+                     initial.skewness="0", initial.kurtosis="0", initial.type="2",
+                     initial.counts="0",
+                     initial.group=NULL, initial.tab=0)
     dialog.values <- getDialog("numericalSummaries", defaults)
     initial.group <- dialog.values$initial.group
     initializeDialog(title=gettextRcmdr("Numerical Summaries"), use.tabs=TRUE, tabs=c("dataTab", "statisticsTab"))
     xBox <- variableListBox(dataTab, Numeric(), selectmode="multiple", title=gettextRcmdr("Variables (pick one or more)"),
-        initialSelection=varPosn(dialog.values$initial.x, "numeric"))
-    checkBoxes(window = statisticsTab, frame="checkBoxFrame", boxes=c("mean", "sd", "se.mean", "IQR", "cv"), 
-        initialValues=c(dialog.values$initial.mean, dialog.values$initial.sd, dialog.values$initial.se.mean, dialog.values$initial.IQR, dialog.values$initial.cv), 
-        labels=gettextRcmdr(c("Mean", "Standard Deviation", "Standard Error of Mean", "Interquartile Range", "Coefficient of Variation")))
+                            initialSelection=varPosn(dialog.values$initial.x, "numeric"))
+    checkBoxes(window = statisticsTab, frame="checkBoxFrame", boxes=c("mean", "sd", "se.mean", "IQR", "cv", "counts"), 
+               initialValues=c(dialog.values$initial.mean, dialog.values$initial.sd, dialog.values$initial.se.mean, 
+                               dialog.values$initial.IQR, dialog.values$initial.cv, dialog.values$initial.counts), 
+               labels=gettextRcmdr(c("Mean", "Standard Deviation", "Standard Error of Mean", "Interquartile Range", 
+                                     "Coefficient of Variation", "Binned Frequency Counts")))
     skFrame <- tkframe(statisticsTab)
     checkBoxes(window = skFrame, frame="skCheckBoxFrame", boxes=c("skewness", "kurtosis"), 
-        initialValues=c(dialog.values$initial.skewness, dialog.values$initial.kurtosis), 
-        labels=gettextRcmdr(c("Skewness", "Kurtosis")))
+               initialValues=c(dialog.values$initial.skewness, dialog.values$initial.kurtosis), 
+               labels=gettextRcmdr(c("Skewness", "Kurtosis")))
     radioButtons(window = skFrame, name="typeButtons", buttons=c("b1", "b2", "b3"), values=c("1", "2", "3"), 
-        initialValue=dialog.values$initial.type,
-        labels=gettextRcmdr(c("Type 1", "Type 2", "Type 3")))
+                 initialValue=dialog.values$initial.type,
+                 labels=gettextRcmdr(c("Type 1", "Type 2", "Type 3")))
     quantilesVariable <- tclVar(dialog.values$initial.quantiles.variable)
     quantilesFrame <- tkframe(statisticsTab)
     quantilesCheckBox <- tkcheckbutton(quantilesFrame, variable=quantilesVariable, 
-        text=gettextRcmdr("Quantiles:"))
+                                       text=gettextRcmdr("Quantiles:"))
     quantiles <- tclVar(dialog.values$initial.quantiles)
     quantilesEntry <- ttkentry(quantilesFrame, width="20", textvariable=quantiles)
     groupsBox(recall=numericalSummaries, label=gettextRcmdr("Summarize by:"), 
-        initialLabel=if (is.null(initial.group)) gettextRcmdr("Summarize by groups") 
-        else paste(gettextRcmdr("Summarize by:"), initial.group), 
-        initialGroup=initial.group, window = dataTab)
+              initialLabel=if (is.null(initial.group)) gettextRcmdr("Summarize by groups") 
+              else paste(gettextRcmdr("Summarize by:"), initial.group), 
+              initialGroup=initial.group, window = dataTab)
     onOK <- function(){
         tab <- if (as.character(tkselect(notebook)) == dataTab$ID) 0 else 1
         x <- getSelection(xBox)
@@ -60,12 +63,14 @@ numericalSummaries <- function(){
         se.meanVar <- tclvalue(se.meanVariable)
         IQRVar <- tclvalue(IQRVariable)
         cvVar <- tclvalue(cvVariable)
+        countsVar <- tclvalue(countsVariable)
         quantsVar <- tclvalue(quantilesVariable)
         skewnessVar <- tclvalue(skewnessVariable)
         kurtosisVar <- tclvalue(kurtosisVariable)
         typeVar <- tclvalue(typeButtonsVariable)
         putDialog("numericalSummaries", list(
-            initial.x=x, initial.mean=meanVar, initial.sd=sdVar, initial.se.mean=se.meanVar, initial.IQR=IQRVar, initial.cv=cvVar,
+            initial.x=x, initial.mean=meanVar, initial.sd=sdVar, initial.se.mean=se.meanVar, initial.IQR=IQRVar, 
+            initial.cv=cvVar, initial.counts=countsVar,
             initial.quantiles.variable=quantsVar, initial.quantiles=quants,
             initial.skewness=skewnessVar, initial.kurtosis=kurtosisVar, initial.type=typeVar,
             initial.group=if (.groups != FALSE) .groups else NULL, initial.tab=tab
@@ -79,24 +84,40 @@ numericalSummaries <- function(){
         .activeDataSet <- ActiveDataSet()
         vars <- if (length(x) == 1) paste('"', x, '"', sep="") 
         else paste("c(", paste('"', x, '"', collapse=", ", sep=""), ")", sep="")
-        vars <- paste(.activeDataSet, "[,", vars, "]", sep="")
+        ds.vars <- paste(.activeDataSet, "[,", vars, ", drop=FALSE]", sep="")
         stats <- paste("c(",
-            paste(c('"mean"', '"sd"', '"se(mean)"', '"IQR"', '"quantiles"', '"cv"', '"skewness"', '"kurtosis"')
-                [c(meanVar, sdVar, se.meanVar, IQRVar, quantsVar, cvVar, skewnessVar, kurtosisVar) == 1], 
-                collapse=", "), ")", sep="")
-        if (stats == "c()"){
+                       paste(c('"mean"', '"sd"', '"se(mean)"', '"IQR"', '"quantiles"', '"cv"', '"skewness"', '"kurtosis"')
+                             [c(meanVar, sdVar, se.meanVar, IQRVar, quantsVar, cvVar, skewnessVar, kurtosisVar) == 1], 
+                             collapse=", "), ")", sep="")
+        if (stats == "c()" && countsVar != 1){
             errorCondition(recall=numericalSummaries, message=gettextRcmdr("No statistics selected."))
             return()
         }
         type.text <- if (skewnessVar == 1 || kurtosisVar == 1) paste(', type="', typeVar, '"', sep="") else ""
-        command <- if (.groups != FALSE) {
-            grps <- paste(.activeDataSet, "$", .groups, sep="")
-            paste("numSummary(", vars, ", groups=", grps, ", statistics=", stats, 
-                ", quantiles=", quants, type.text, ")", sep="")
+        if (.groups != FALSE) grps <- paste(.activeDataSet, "$", .groups, sep="")
+        if (stats != "c()"){
+            command <- if (.groups != FALSE) {
+                paste("numSummary(", ds.vars, ", groups=", grps, ", statistics=", stats, 
+                      ", quantiles=", quants, type.text, ")", sep="")
+            }
+            else  paste("numSummary(", ds.vars, ", statistics=", stats, 
+                        ", quantiles=", quants, type.text, ")", sep="")
+            doItAndPrint(command) 
         }
-        else  paste("numSummary(", vars, ", statistics=", stats, 
-            ", quantiles=", quants, type.text, ")", sep="")
-        doItAndPrint(command) 
+        if (countsVar == 1){
+            if (.groups != FALSE){
+                levels <- eval(parse(text=paste0("levels(", grps, ")")), envir=.GlobalEnv)
+                for (level in levels){
+                    command <- paste0("binnedCounts(", .activeDataSet, "[", grps, " == ", "'", level, "', ", 
+                                      vars, ", drop=FALSE])\n  # ", .groups, " = ", level)
+                    doItAndPrint(command)
+                }
+            }
+            else {
+                command <- paste0("binnedCounts(", ds.vars, ")")
+                doItAndPrint(command)
+            }
+        }
         tkfocus(CommanderWindow())
     }
     OKCancelHelp(helpSubject="numSummary", reset="numericalSummaries", apply ="numericalSummaries")
@@ -108,7 +129,7 @@ numericalSummaries <- function(){
     tkgrid(quantilesFrame)
     tkgrid(groupsFrame, sticky = "w", padx=6)
     dialogSuffix(use.tabs=TRUE, grid.buttons=TRUE, tabs=c("dataTab", "statisticsTab"), 
-        tab.names=c("Data", "Statistics"))
+                 tab.names=c("Data", "Statistics"))
 }
 
 frequencyDistribution <- function () {
@@ -448,18 +469,82 @@ countMissing <- function(){
 #   dialogSuffix()
 # }
 
-normalityTest <- function () {
-    Library("nortest")
+# normalityTest <- function () {
+#     Library("nortest")
+#     nrows <- getRcmdr("nrow")
+#     defaults <- list (initial.var = NULL, initial.test=if (nrows <= 5000) "sw" else "anderson", 
+#                       initial.bins = gettextRcmdr("<auto>"))
+#     dialog.values <- getDialog ("normalityTest", defaults)
+#     initializeDialog(title = gettextRcmdr("Test of Normality"))
+#     variableBox <- variableListBox(top, Numeric(), title = gettextRcmdr("Variable (pick one)"),
+#                                    initialSelection = varPosn (dialog.values$initial.var, "numeric"))
+#     optionsFrame <- tkframe(top)
+#     radioButtons(optionsFrame, name = "test", 
+#                  buttons = c(if (nrows <= 5000) "sw", "anderson", "cramer", "lilliefors", if (nrows <= 5000) "sf", "pearson"),
+#                  labels = c(if (nrows <= 5000) gettextRcmdr("Shapiro-Wilk"), 
+#                             gettextRcmdr("Anderson-Darling"), 
+#                             gettextRcmdr("Cramer-von Mises"), 
+#                             gettextRcmdr("Lilliefors (Kolmogorov-Smirnov)"), 
+#                             if (nrows <= 5000) gettextRcmdr("Shapiro-Francia"), 
+#                             gettextRcmdr("Pearson chi-square")),
+#                  title = gettextRcmdr("Normality Test"),
+#                  initialValue = dialog.values$initial.test)
+#     binsFrame <- tkframe(optionsFrame)
+#     binsVariable <- tclVar(dialog.values$initial.bins)
+#     binsField <- ttkentry(binsFrame, width = "8", textvariable = binsVariable)
+#     onOK <- function() {
+#         var <- getSelection(variableBox)
+#         test <- tclvalue(testVariable)
+#         bins <- tclvalue(binsVariable)
+#         binsArg <- if (bins == gettextRcmdr ("<auto>")) ""
+#                    else {
+#                        warn <- options(warn = -1)
+#                        nbins <- as.numeric(bins)
+#                        options(warn)
+#                        if (is.na(nbins) || nbins < 4) {
+#                            errorCondition(recall = normalityTest, message = gettextRcmdr("Number of bins must be a number >= 4"))
+#                            return()
+#                        }
+#                        paste(", n.classes=", nbins, sep="")
+#                    }
+#         putDialog ("normalityTest", list (initial.var = var, initial.test = test, initial.bins=bins))
+#         if (length(var) == 0) {
+#             errorCondition(recall = normalityTest, message = gettextRcmdr("You must select a variable."))
+#             return()
+#         }
+#         closeDialog()
+#         switch(test, 
+#             sw = doItAndPrint(paste("with(", ActiveDataSet(), ", shapiro.test(", var, "))", sep = "")),
+#             anderson = doItAndPrint(paste("with(", ActiveDataSet(), ", ad.test(", var, "))", sep = "")),
+#             cramer = doItAndPrint(paste("with(", ActiveDataSet(), ", cvm.test(", var, "))", sep = "")),
+#             lilliefors = doItAndPrint(paste("with(", ActiveDataSet(), ", lillie.test(", var, "))", sep = "")),
+#             pearson = doItAndPrint(paste("with(", ActiveDataSet(), ", pearson.test(", var, binsArg, "))", sep = "")),
+#             sf = doItAndPrint(paste("with(", ActiveDataSet(), ", sf.test(", var, "))", sep = ""))
+#         )
+#         tkfocus(CommanderWindow())
+#     }
+#     OKCancelHelp(helpSubject = "normalityTest", reset = "normalityTest", apply = "normalityTest")
+#     tkgrid(getFrame(variableBox), sticky = "nw")
+#     tkgrid(labelRcmdr(binsFrame, text=gettextRcmdr("Number of bins\nfor Pearson chi-square")), 
+#            binsField, padx=3, sticky="sw")
+#     tkgrid(testFrame, binsFrame, sticky="sw")
+#     tkgrid(optionsFrame, sticky="sw")
+#     tkgrid(buttonsFrame, sticky = "w")
+#     dialogSuffix()
+# }
+
+NormalityTest <- function () {
     nrows <- getRcmdr("nrow")
-    defaults <- list (initial.var = NULL, initial.test=if (nrows <= 5000) "sw" else "anderson", 
-                      initial.bins = gettextRcmdr("<auto>"))
-    dialog.values <- getDialog ("normalityTest", defaults)
+    defaults <- list (initial.var = NULL, initial.test=if (nrows <= 5000) "shapiro.test" else "ad.test", 
+                      initial.bins = gettextRcmdr("<auto>"), initial.groups=NULL)
+    dialog.values <- getDialog ("NormalityTest", defaults)
     initializeDialog(title = gettextRcmdr("Test of Normality"))
     variableBox <- variableListBox(top, Numeric(), title = gettextRcmdr("Variable (pick one)"),
                                    initialSelection = varPosn (dialog.values$initial.var, "numeric"))
     optionsFrame <- tkframe(top)
     radioButtons(optionsFrame, name = "test", 
-                 buttons = c(if (nrows <= 5000) "sw", "anderson", "cramer", "lilliefors", if (nrows <= 5000) "sf", "pearson"),
+                 buttons = c(if (nrows <= 5000) "shapiro.test", "ad.test", "cvm.test", "lillie.test", 
+                             if (nrows <= 5000) "sf.test", "pearson.test"),
                  labels = c(if (nrows <= 5000) gettextRcmdr("Shapiro-Wilk"), 
                             gettextRcmdr("Anderson-Darling"), 
                             gettextRcmdr("Cramer-von Mises"), 
@@ -471,43 +556,45 @@ normalityTest <- function () {
     binsFrame <- tkframe(optionsFrame)
     binsVariable <- tclVar(dialog.values$initial.bins)
     binsField <- ttkentry(binsFrame, width = "8", textvariable = binsVariable)
+    groupsBox(recall=NormalityTest, label=gettextRcmdr("Test by:"), 
+              initialLabel=if (is.null(dialog.values$initial.group)) gettextRcmdr("Test by groups") 
+              else paste(gettextRcmdr("Test by:"), dialog.values$initial.group), 
+              initialGroup=dialog.values$initial.group)
     onOK <- function() {
         var <- getSelection(variableBox)
         test <- tclvalue(testVariable)
         bins <- tclvalue(binsVariable)
-        binsArg <- if (bins == gettextRcmdr ("<auto>")) ""
-                   else {
-                       warn <- options(warn = -1)
-                       nbins <- as.numeric(bins)
-                       options(warn)
-                       if (is.na(nbins) || nbins < 4) {
-                           errorCondition(recall = normalityTest, message = gettextRcmdr("Number of bins must be a number >= 4"))
-                           return()
-                       }
-                       paste(", n.classes=", nbins, sep="")
-                   }
-        putDialog ("normalityTest", list (initial.var = var, initial.test = test, initial.bins=bins))
+        warn <- options(warn = -1)
+        nbins <- as.numeric(bins)
+        options(warn)
+        if (bins != gettextRcmdr("<auto>") && (is.na(nbins) || nbins < 4)) {
+            errorCondition(recall = NormalityTest, message = gettextRcmdr("Number of bins must be a number >= 4"))
+            return()
+        }
+        n.classes <- if (test != "pearson.test" || bins == gettextRcmdr ("<auto>")) "" else paste0(", n.classes=", bins)
+        putDialog ("NormalityTest", list (initial.var = var, initial.test = test, initial.bins=bins, 
+                                          initial.groups=if (.groups == FALSE) NULL else .groups))
         if (length(var) == 0) {
-            errorCondition(recall = normalityTest, message = gettextRcmdr("You must select a variable."))
+            errorCondition(recall = NormalityTest, message = gettextRcmdr("You must select a variable."))
             return()
         }
         closeDialog()
-        switch(test, 
-            sw = doItAndPrint(paste("with(", ActiveDataSet(), ", shapiro.test(", var, "))", sep = "")),
-            anderson = doItAndPrint(paste("with(", ActiveDataSet(), ", ad.test(", var, "))", sep = "")),
-            cramer = doItAndPrint(paste("with(", ActiveDataSet(), ", cvm.test(", var, "))", sep = "")),
-            lilliefors = doItAndPrint(paste("with(", ActiveDataSet(), ", lillie.test(", var, "))", sep = "")),
-            pearson = doItAndPrint(paste("with(", ActiveDataSet(), ", pearson.test(", var, binsArg, "))", sep = "")),
-            sf = doItAndPrint(paste("with(", ActiveDataSet(), ", sf.test(", var, "))", sep = ""))
-        )
+        if (.groups == FALSE){
+            command <- paste0("normalityTest(~", var, ', test="', test, '", data=', ActiveDataSet(), n.classes, ")")
+        }
+        else{
+            command <- paste0("normalityTest(", var, " ~ ", .groups, ', test="', test, '", data=', ActiveDataSet(), n.classes,  ")")
+        }
+        doItAndPrint(command)
         tkfocus(CommanderWindow())
     }
-    OKCancelHelp(helpSubject = "normalityTest", reset = "normalityTest", apply = "normalityTest")
+    OKCancelHelp(helpSubject = "normalityTest", reset = "NormalityTest", apply = "NormalityTest")
     tkgrid(getFrame(variableBox), sticky = "nw")
     tkgrid(labelRcmdr(binsFrame, text=gettextRcmdr("Number of bins\nfor Pearson chi-square")), 
            binsField, padx=3, sticky="sw")
     tkgrid(testFrame, binsFrame, sticky="sw")
     tkgrid(optionsFrame, sticky="sw")
+    tkgrid(groupsFrame, sticky = "w", padx=6)
     tkgrid(buttonsFrame, sticky = "w")
     dialogSuffix()
 }
