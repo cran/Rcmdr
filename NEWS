@@ -1,3 +1,11 @@
+Changes to version 2.4-1
+
+  o Work around for Tk getSaveFile bug affecting Windows, causing doubled-up file extensions, e.g., .txt.txt (reported by Manuel Munoz Marquez).
+  
+  o Updated translations (with thanks to): Basque (Jose Ramon Rueda), Chinese (Tsung-wu Ho), German (Friedrich Leisch), Korean (Jong-Hwa Shin), Romanian (Adrian Dusa).
+
+  o Small fixes.
+
 Changes to version 2.4-0
 
   o The R Commander editor for Markdown and knitr documents is now a non-modal dialog, so may remain open while you work.
