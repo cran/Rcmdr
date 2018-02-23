@@ -1,3 +1,9 @@
+Changes to version 2.4-2
+
+  o Updated Slovenian and Spanish translations (thanks to Matjaz Jeran andManuel Munoz Marquez).
+
+  o A few updates to R-Rcmdr.pot supplying previously missing messages for translation.
+
 Changes to version 2.4-1
 
   o Work around for Tk getSaveFile bug affecting Windows, causing doubled-up file extensions, e.g., .txt.txt (reported by Manuel Munoz Marquez).
