@@ -1,3 +1,23 @@
+Changes in version 2.5-0
+
+  o Added Predictor Effect Plots and Response Transformation dialogs to Models menu.
+  
+  o New Transform Variables Toward Normality dialog in Statistics > Summaries menu.
+  
+  o New Symmetry Boxplot dialog in Graphs menu.
+  
+  o New Influence Index Plot dialog in Models > Graphs menu.
+  
+  o QQ plots may be drawn by groups.
+  
+  o Index plots may be marked by groups.
+  
+  o Enhancements to Density Plot dialog.
+  
+  o Interface improvements.
+  
+  o Updated translations (with thanks): Chinese (Tsung-wu Ho), Indonesian (I Made Tirta), Polish (Lukasz Daniel), Russian (Alexey Shipunov), Spanish (Manuel Munoz Marquez).
+
 Changes in version 2.4-4
 
   o Fixed bug in recode dialog due to inconsistency with Recode() in car 3.0-0 (reported by Stylianos Serghiou).
@@ -10,7 +30,7 @@ Changes to version 2.4-3
 
 Changes to version 2.4-2
 
-  o Updated Slovenian and Spanish translations (thanks to Matjaz Jeran andManuel Munoz Marquez).
+  o Updated Slovenian and Spanish translations (thanks to Matjaz Jeran and Manuel Munoz Marquez).
 
   o A few updates to R-Rcmdr.pot supplying previously missing messages for translation.
 

@@ -1,4 +1,4 @@
-# last modified 2018-04-11 by J. Fox
+# last modified 2018-08-06 by J. Fox
 
 # Data menu dialogs
 
@@ -336,8 +336,9 @@ readDataSet <- function() {
     headerVariable <- tclVar("1")
     headerCheckBox <- ttkcheckbutton(optionsFrame, variable=headerVariable)
     radioButtons(optionsFrame, "delimiter", buttons=c("whitespace", "commas", "semicolons", "tabs"),
-                 labels=gettextRcmdr(c("White space", "Commas [,]", "Semicolons [;]", "Tabs")), title=gettextRcmdr("Field Separator"))
-    otherDelimiterFrame <- tkframe(delimiterFrame)
+                 labels=gettextRcmdr(c("White space", "Commas [,]", "Semicolons [;]", "Tabs")), title=gettextRcmdr("Field Separator"),
+                 columns=2) 
+    otherDelimiterFrame <- tkframe(optionsFrame)
     otherButton <- ttkradiobutton(otherDelimiterFrame, variable=delimiterVariable, value="other", text=gettextRcmdr("Other"))
     otherVariable <- tclVar("")
     otherEntry <- ttkentry(otherDelimiterFrame, width="4", textvariable=otherVariable)
@@ -420,9 +421,9 @@ readDataSet <- function() {
     tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Missing data indicator:")), missingEntry, sticky="w")
     tkgrid(locationFrame, sticky="w")
     tkgrid(otherButton, 
-           labelRcmdr(otherDelimiterFrame, text=gettextRcmdr("    Specify:")), otherEntry, sticky="w")
+           labelRcmdr(otherDelimiterFrame, text=gettextRcmdr("    Specify:")), otherEntry, sticky="ew", padx="3")
+    tkgrid(delimiterFrame, sticky="nw", columnspan=2)
     tkgrid(otherDelimiterFrame, sticky="w")
-    tkgrid(delimiterFrame, sticky="w", columnspan=2)
     tkgrid(decimalFrame, sticky="w")
     tkgrid(optionsFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
@@ -1741,10 +1742,11 @@ exportDataSet <- function() {
     missingEntry <- ttkentry(missingFrame, width="8", textvariable=missingVariable)
     radioButtons(name="delimiter", buttons=c("spaces", "tabs", "commas", "semicolons"), 
                  labels=gettextRcmdr(c("Spaces", "Tabs", "Commas [,]", "Semicolons [;]")),
-                 title=gettextRcmdr("Field Separator"))
-    otherButton <- ttkradiobutton(delimiterFrame, variable=delimiterVariable, value="other", text=gettextRcmdr("Other"))
+                 title=gettextRcmdr("Field Separator"), columns=2)
+    otherDelimiterFrame <- tkframe(top)
+    otherButton <- ttkradiobutton(otherDelimiterFrame, variable=delimiterVariable, value="other", text=gettextRcmdr("Other"))
     otherVariable <- tclVar("")
-    otherEntry <- ttkentry(delimiterFrame, width="4", textvariable=otherVariable)
+    otherEntry <- ttkentry(otherDelimiterFrame, width="4", textvariable=otherVariable)
     onOK <- function(){
         closeDialog()
         col <- tclvalue(colnamesVariable) == 1
@@ -1778,9 +1780,10 @@ exportDataSet <- function() {
     tkgrid(labelRcmdr(missingFrame, text=gettextRcmdr("Missing values:  ")), missingEntry, sticky="w")
     tkgrid(missingFrame, sticky="w")
     tkgrid(optionsFrame, sticky="w")
+    tkgrid(delimiterFrame, stick="nw")
     tkgrid(otherButton,
-           labelRcmdr(delimiterFrame, text=gettextRcmdr("Specify:")), otherEntry, sticky="w")
-    tkgrid(delimiterFrame, stick="w")
+           labelRcmdr(otherDelimiterFrame, text=gettextRcmdr("Specify:")), otherEntry, sticky="w", padx="3")
+    tkgrid(otherDelimiterFrame, sticky="w")
     tkgrid(buttonsFrame, sticky="w")
     dialogSuffix()
 }
@@ -2024,7 +2027,8 @@ setContrasts <- function(){
   radioButtons(name="contrasts", buttons=c("treatment", "sum", "helmert", "poly", "specify"),
                values=c("contr.Treatment", "contr.Sum", "contr.helmert", "contr.poly", "specify"),
                labels=gettextRcmdr(c("Treatment (dummy) contrasts", "Sum (deviation) contrasts", "Helmert contrasts",
-                                     "Polynomial contrasts", "Other (specify)")), title=gettextRcmdr("Contrasts"))
+                                     "Polynomial contrasts", "Other (specify)")), title=gettextRcmdr("Contrasts"),
+               columns=2)
   onOK <- function(){
     variable <- getSelection(variableBox)
     closeDialog()
@@ -2121,7 +2125,7 @@ setContrasts <- function(){
   }
   OKCancelHelp(helpSubject="contrasts")
   tkgrid(getFrame(variableBox), sticky="nw")
-  tkgrid(contrastsFrame, sticky="w")
+  tkgrid(contrastsFrame, sticky="nw")
   tkgrid(buttonsFrame, sticky="w")
   dialogSuffix()
 }

@@ -1,6 +1,6 @@
 # Model menu dialogs
 
-# last modified 2018-03-20 by J. Fox
+# last modified 2018-08-05 by J. Fox
 
 selectActiveModel <- function(){
 	models <- listAllModels()
@@ -247,7 +247,7 @@ anovaTable <- function () {
     sandwichCheckBox <- ttkcheckbutton(sandwichCheckFrame, variable = sandwichVar)
     radioButtons(sandwichFrame, name = "sandwichType", buttons = c("HC0", "HC1", "HC2", "HC3", "HC4", "HAC"), 
         labels = c("HC0", "HC1", "HC2", "HC3", "HC4", "HAC"), 
-        title = gettextRcmdr("Sandwich estimator"), initialValue = dialog.values$initial.sandwich.type)
+        title = gettextRcmdr("Sandwich estimator"), initialValue = dialog.values$initial.sandwich.type, columns=2)
     onOK <- function() {
         type <- as.character(tclvalue(typeVariable))
         sandwich <- tclvalue(sandwichVar)
@@ -315,7 +315,7 @@ anovaTable <- function () {
             text=gettextRcmdr("Use sandwich estimator of\ncoefficient covariance matrix   ")), 
             sticky="nw")
         tkgrid(sandwichCheckFrame, sandwichTypeFrame, sticky="nw")
-        tkgrid(sandwichFrame, sticky = "w")
+        tkgrid(sandwichFrame, sticky = "nw")
     }
     tkgrid(buttonsFrame, sticky = "w")
     dialogSuffix()
@@ -1030,11 +1030,11 @@ effectPlots <- function () {
                        message = gettextRcmdr("You must select one or more predictors\n or plot all high-order effects."))
         return()
       }
-      if (partial.residuals && (all(predictors %in% Factors()))){
-        errorCondition(recall = effectPlots, 
-                       message = gettextRcmdr("To plot partial residuals,\n there must be a least one numeric predictor."))
-        return()
-      }
+      # if (partial.residuals && (all(predictors %in% Factors()))){
+      #   errorCondition(recall = effectPlots, 
+      #                  message = gettextRcmdr("To plot partial residuals,\n there must be a least one numeric predictor."))
+      #   return()
+      # }
       command <- if (class(get(activeModel(), envir=.GlobalEnv))[1] %in% c("multinom", "polr"))
         paste("plot(Effect(c(", paste(paste('"', predictors, '"', sep=""), collapse=", "), "), ", 
               activeModel(), '), axes=list(y=list(style="', style, '")))', sep="")      
@@ -1260,4 +1260,173 @@ compareCoefficients <- function () {
     tkgrid(getFrame(modelsBox), sticky = "nw")
     tkgrid(buttonsFrame, columnspan = 2, sticky = "w")
     dialogSuffix()
+}
+
+predictorEffectPlots <- function () {
+    defaults <- list(initial.all.or.pick = "TRUE", initial.predictors = NULL, 
+                     initial.partial.res = 0, initial.span = 50, initial.style = "stacked")
+    dialog.values <- getDialog("predictorEffectPlots", defaults)
+    initializeDialog(title = gettextRcmdr("Predictor Effect Plots"))
+    predictors <- all.vars(formula(get(activeModel(), envir=.GlobalEnv))[[3]])
+    predictorsFrame <- tkframe(top)
+    radioButtons(predictorsFrame, name = "allPredictorEffects", buttons = c("yes", "no"), 
+                 values = c("TRUE", "FALSE"),  
+                 labels = gettextRcmdr(c("Yes", "No")), title = gettextRcmdr("Plot all predictor effects?"),
+                 initialValue = dialog.values$initial.all.or.pick)
+    predictorsBox <- variableListBox(predictorsFrame, predictors, selectmode = "multiple", 
+                                     title = gettextRcmdr("Predictors (pick one or more)"), 
+                                     initialSelection = varPosn(dialog.values$initial.predictors, vars=predictors))
+    
+    partialResFrame <- tkframe(top)
+    partialResVariable <- tclVar(dialog.values$initial.partial.res)
+    partialResCheckBoxFrame <- tkframe(partialResFrame)
+    partialResCheckBox <- ttkcheckbutton(partialResCheckBoxFrame, variable = partialResVariable)
+    styleFrame <- tkframe(top)
+    radioButtons(styleFrame, name="styleButtons", buttons = c("stacked", "lines"),
+                 labels = gettextRcmdr(c("Stacked areas", "Lines with confidence bands")),
+                 title=gettextRcmdr("Style of Graph"), initialValue=dialog.values$initial.style)
+    sliderValue <- tclVar(dialog.values$initial.span)
+    sliderFrame <- tkframe(partialResFrame)
+    slider <- tkscale(sliderFrame, from = 5, to = 100, showvalue = TRUE,
+                      variable = sliderValue, resolution = 5, orient = "horizontal")
+    onOK <- function() {
+        predictors <- getSelection(predictorsBox)
+        allPredictorEffects <- as.logical(tclvalue(allPredictorEffectsVariable))
+        partial.residuals <- tclvalue(partialResVariable) == "1"
+        span <- as.numeric(tclvalue(sliderValue))
+        style <- tclvalue(styleButtonsVariable)
+        closeDialog() 
+        if (allPredictorEffects){
+            command <- if (class(get(activeModel(), envir=.GlobalEnv))[1] %in% c("multinom", "polr"))
+                paste("plot(predictorEffects(", activeModel(), '), axes=list(y=list(style="', style, '")))', sep="")
+            else paste("plot(predictorEffects(", activeModel(), 
+                       if (partial.residuals) paste(", residuals=TRUE), partial.residuals=list(span=", span/100, "))", sep="")
+                       else "))", sep="")
+            doItAndPrint(command)
+            predictors <- NULL
+        }
+        else {
+            if (length(predictors) == 0) {
+                errorCondition(recall = effectPlots, 
+                               message = gettextRcmdr("You must select one or more predictors\n or plot all predictor effects."))
+                return()
+            }
+            command <- if (class(get(activeModel(), envir=.GlobalEnv))[1] %in% c("multinom", "polr"))
+                paste("plot(predictorEffects(", activeModel(), ", c(", paste(paste('"', predictors, '"', sep=""), collapse=", "), ")", '), axes=list(y=list(style="', style, '")))', sep="")      
+            else paste("plot(predictorEffects(", activeModel(), ", c(", paste(paste('"', predictors, '"', sep=""), collapse=", "), ")",
+                       if (partial.residuals) paste(", residuals=TRUE), partial.residuals=list(span=", span/100, "))", sep="")
+                       else "))", sep = "")
+            doItAndPrint(command)
+        }
+        putDialog ("predictorEffectPlots", list(initial.all.or.pick=as.character(allPredictorEffects), initial.predictors=predictors, 
+                                                initial.partial.res=as.numeric(partial.residuals),
+                                                initial.span=span, initial.style=style))
+        tkfocus(CommanderWindow())
+    }
+    OKCancelHelp(helpSubject = "predictorEffects", reset = "predictorEffectPlots", apply = "predictorEffectPlots")
+    tkgrid(allPredictorEffectsFrame, sticky="w")
+    tkgrid(getFrame(predictorsBox), sticky="w")
+    tkgrid(predictorsFrame, sticky="w")
+    if (class(get(activeModel(), envir=.GlobalEnv))[1] %in% c("lm", "glm")){
+        tkgrid(labelRcmdr(partialResFrame, text=" "))
+        tkgrid(partialResCheckBox, 
+               labelRcmdr(partialResCheckBoxFrame, text=gettextRcmdr("Plot partial residuals")), 
+               sticky="w")
+        tkgrid(partialResCheckBoxFrame, sticky="w")
+        tkgrid(slider, labelRcmdr(sliderFrame, text = gettextRcmdr("Span for smooth")),
+               sticky = "swe", padx=6, pady=6)
+        tkgrid(sliderFrame, sticky="w")
+        tkgrid(partialResFrame, sticky="w")
+    }
+    else if (class(get(activeModel(), envir=.GlobalEnv))[1] %in% c("multinom", "polr")){
+        tkgrid(labelRcmdr(styleFrame, text=" "))
+        tkgrid(styleButtonsFrame, sticky="w")
+        tkgrid(styleFrame, sticky="w")
+    }
+    tkgrid(buttonsFrame, sticky = "w")
+    dialogSuffix()
+}
+
+transformResponse <- function (){
+  defaults <- list(initial.family="bcPower")  
+  dialog.values <- getDialog ("transformResponse", defaults)
+  initializeDialog(title = gettextRcmdr("Response Transformation"))
+  radioButtons(name = "family", 
+               buttons = c("bcPower", "bcnPower", "yjPower"), 
+               labels = gettextRcmdr(c("Box-Cox", "Box-Cox with negatives", "Yeo-Johnson")),
+               title = gettextRcmdr("Transformation Family"),
+               initialValue = dialog.values$initial.family)
+  onOK <- function() {
+    family <- tclvalue(familyVariable)
+    closeDialog()
+    putDialog ("transformResponse", list(initial.family=family))
+    .activeModel <- ActiveModel()
+    doItAndPrint(paste0("summary(powerTransform(", .activeModel, ', family="', family, '"))'))
+    tkfocus(CommanderWindow())
+  }
+  OKCancelHelp(helpSubject = "powerTransform", reset="transformResponse")
+  tkgrid(familyFrame, sticky = "w")
+  tkgrid(buttonsFrame, sticky = "w")
+  dialogSuffix()
+}
+
+InfluenceIndexPlot <- function () {
+  .activeModel <- ActiveModel()
+  defaults <- list (initial.identify = "auto", initial.id.n="2", 
+                    initial.cook="1", initial.student="1", initial.bonf="1", initial.hat=1)
+  dialog.values <- getDialog ("InfluenceIndexPlot", defaults)
+  initializeDialog(title = gettextRcmdr("Influence Index Plot"))
+  identifyPointsFrame <- tkframe(top)
+  radioButtons(identifyPointsFrame, name = "identify", buttons = c("auto", "mouse"), labels = gettextRcmdr(c("Automatically", 
+                                                                                                             "Interactively with mouse")), title = gettextRcmdr("Identify Points"), 
+               initialValue = dialog.values$initial.identify)    
+  id.n.Var <- tclVar(dialog.values$initial.id.n) 
+  npointsSpinner <- tkspinbox(identifyPointsFrame, from=1, to=10, width=2, textvariable=id.n.Var) 
+  
+  checkBoxes(frame = "varsFrame", boxes = c("cook", "student", "bonf", "hat"), 
+             labels = gettextRcmdr(c("Cook's distances", "Studentized residuals", 
+                                     "Bonferroni p-values", "Hat-values")), 
+             initialValues = c(dialog.values$initial.cook, dialog.values$initial.student,
+                               dialog.values$initial.bonf, dialog.values$initial.hat),
+             title=gettextRcmdr("Case statistics to plot"))
+  
+  onOK <- function() {
+    id.n <- tclvalue(id.n.Var)
+    identify <- tclvalue(identifyVariable)
+    method <- if (identify == "mouse") "identify" else "y"
+    cook <- tclvalue(cookVariable)
+    student <- tclvalue(studentVariable)
+    bonf <- tclvalue(bonfVariable)
+    hat <- tclvalue(hatVariable)
+    closeDialog()
+    if (is.na(suppressWarnings(as.numeric(id.n))) || round(as.numeric(id.n)) != as.numeric(id.n)){
+      errorCondition(recall = InfluencePlot, message = gettextRcmdr("number of points to identify must be an integer"))
+      return()
+    }
+    putDialog ("InfluenceIndexPlot", list(initial.identify=identify, initial.id.n=id.n,
+                                          initial.cook=cook, initial.student=student, 
+                                          initial.bonf=bonf, initial.hat=hat))
+    if (identify == "mouse") {
+      RcmdrTkmessageBox(title = "Identify Points", message = paste(gettextRcmdr("Use left mouse button to identify points,\n"), 
+                                                                   gettextRcmdr(if (MacOSXP()) 
+                                                                     "esc key to exit."
+                                                                     else "right button to exit."), sep = ""), icon = "info", 
+                        type = "ok")
+    }
+    vars <- paste0('"', c("Cook", "Studentized", "Bonf", "hat")[c(cook, student, bonf, hat) == "1"], '"')
+    vars <- paste0("c(", paste(vars, collapse=", "), ")")
+    command <- paste("influenceIndexPlot(", .activeModel, ', id=list(method="', method, '", n=', id.n, 
+                     "), vars=", vars,  ")", sep = "")
+    if (identify == "mouse") command <- suppressMarkdown(command)
+    doItAndPrint(command)
+    activateMenus()
+    tkfocus(CommanderWindow())
+  }
+  OKCancelHelp(helpSubject = "influenceIndexPlot", reset = "InfluenceIndexPlot", apply = "InfluenceIndexPlot")
+  tkgrid(identifyFrame, sticky="w")
+  tkgrid(labelRcmdr(identifyPointsFrame, text=gettextRcmdr("Number of points to identify  ")), npointsSpinner, sticky="w")
+  tkgrid(identifyPointsFrame, sticky="w")
+  tkgrid(varsFrame, sticky = "w")
+  tkgrid(buttonsFrame, sticky = "w")
+  dialogSuffix()
 }

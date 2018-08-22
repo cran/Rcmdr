@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 2017-04-17 by J. Fox
+# last modified 2018-08-05 by J. Fox
 
 # Summaries menu
 
@@ -36,7 +36,7 @@ numericalSummaries <- function(){
                initialValues=c(dialog.values$initial.mean, dialog.values$initial.sd, dialog.values$initial.se.mean, 
                                dialog.values$initial.IQR, dialog.values$initial.cv, dialog.values$initial.counts), 
                labels=gettextRcmdr(c("Mean", "Standard Deviation", "Standard Error of Mean", "Interquartile Range", 
-                                     "Coefficient of Variation", "Binned Frequency Counts")))
+                                     "Coefficient of Variation", "Binned Frequency Counts")), columns=2)
     skFrame <- tkframe(statisticsTab)
     checkBoxes(window = skFrame, frame="skCheckBoxFrame", boxes=c("skewness", "kurtosis"), 
                initialValues=c(dialog.values$initial.skewness, dialog.values$initial.kurtosis), 
@@ -122,11 +122,11 @@ numericalSummaries <- function(){
     }
     OKCancelHelp(helpSubject="numSummary", reset="numericalSummaries", apply ="numericalSummaries")
     tkgrid(getFrame(xBox), sticky="nw")    
-    tkgrid(checkBoxFrame, sticky="w")
-    tkgrid(skCheckBoxFrame, typeButtonsFrame, sticky="nw")
+    tkgrid(checkBoxFrame, sticky="nw")
+    tkgrid(skCheckBoxFrame, typeButtonsFrame, sticky="nw", padx=3)
     tkgrid(skFrame, sticky="w")
-    tkgrid(quantilesCheckBox, quantilesEntry, sticky="w")
-    tkgrid(quantilesFrame)
+    tkgrid(quantilesCheckBox, quantilesEntry, sticky="w", padx="3")
+    tkgrid(quantilesFrame, sticky="w")
     tkgrid(groupsFrame, sticky = "w", padx=6)
     dialogSuffix(use.tabs=TRUE, grid.buttons=TRUE, tabs=c("dataTab", "statisticsTab"), 
                  tab.names=c("Data", "Statistics"))
@@ -552,7 +552,8 @@ NormalityTest <- function () {
                             if (nrows <= 5000) gettextRcmdr("Shapiro-Francia"), 
                             gettextRcmdr("Pearson chi-square")),
                  title = gettextRcmdr("Normality Test"),
-                 initialValue = dialog.values$initial.test)
+                 initialValue = dialog.values$initial.test, 
+                 columns=2)
     binsFrame <- tkframe(optionsFrame)
     binsVariable <- tclVar(dialog.values$initial.bins)
     binsField <- ttkentry(binsFrame, width = "8", textvariable = binsVariable)
@@ -598,3 +599,49 @@ NormalityTest <- function () {
     tkgrid(buttonsFrame, sticky = "w")
     dialogSuffix()
 }
+
+transformVariables <- function () {
+  defaults <- list(initial.variables = NULL, initial.family="bcPower", initial.formula="")
+  dialog.values <- getDialog("transformVariables", defaults)
+  initializeDialog(title = gettextRcmdr("Transform Variables Toward Normality"), use.tabs=TRUE)
+  
+  variablesBox <- variableListBox(dataTab, Numeric(), title = gettextRcmdr("Select variables to transform (one or more)"),
+                                  selectmode = "multiple", initialSelection = varPosn (dialog.values$initial.variables, "numeric"))
+  radioButtons(optionsTab, name = "family", 
+               buttons = c("bcPower", "bcnPower", "yjPower"), 
+               labels = gettextRcmdr(c("Box-Cox", "Box-Cox with negatives", "Yeo-Johnson")),
+               title = gettextRcmdr("Transformation Family"),
+               initialValue = dialog.values$initial.family)
+  onOK <- function() {
+    variables <- getSelection(variablesBox)
+    family <- tclvalue(familyVariable)
+    rhs <- trimws(tclvalue(rhsVariable))
+    closeDialog()
+    putDialog("transformVariables", list(initial.variables=variables, initial.family=family, initial.formula=rhs))
+    if (rhs == "") rhs <- "1"
+    .activeDataSet <- ActiveDataSet()
+    if (length(variables) < 1){
+      errorCondition(recall = transformVariables, message = gettextRcmdr("You must select one or more variables."))
+      return()
+    }
+    vars <- if (length(variables) > 1) 
+      paste0("cbind(", paste(variables, collapse=", "), ")") 
+    else variables
+    command <- paste0("summary(powerTransform(", vars, " ~ ", rhs, ", data=", 
+                      .activeDataSet, ', family="', family, '"))')
+    doItAndPrint(command)
+    tkfocus(CommanderWindow())
+  }
+  OKCancelHelp(helpSubject = "powerTransform", reset = "transformVariables", apply = "transformVariables")
+  tkgrid(getFrame(variablesBox), sticky = "nw")
+  tkgrid(familyFrame, sticky = "w")
+  currentModel <- TRUE
+  currentFields <- list(rhs=dialog.values$initial.formula, lhs="", subset="")
+  tkgrid(tklabel(optionsTab, text=gettextRcmdr("Condition on:"), fg=getRcmdr("title.color")), sticky="w")
+  modelFormula(optionsTab, hasLhs = FALSE, rhsExtras=TRUE, formulaLabel="")
+  tkgrid(getFrame(xBox), sticky = "w")
+  tkgrid(outerOperatorsFrame)
+  tkgrid(formulaFrame, sticky = "w")
+  dialogSuffix(use.tabs=TRUE, grid.buttons=TRUE)
+}
+

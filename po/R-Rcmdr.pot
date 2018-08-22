@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Rcmdr 2.4-2\n"
+"Project-Id-Version: Rcmdr 2.5-0\n"
 "Report-Msgid-Bugs-To: jfox@mcmaster.ca\n"
-"POT-Creation-Date: 2018-02-20 15:30:00\n"
+"POT-Creation-Date: 2018-08-05 18:30:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5018,3 +5018,105 @@ msgstr ""
 
 msgid "Sample from NegativeBinomial Distribution"
 msgstr ""
+
+
+# additional messages in version 2.5-0
+
+  # new predictor effect plots dialog
+
+msgid "Predictor Effect Plots"
+msgstr ""
+
+msgid "Predictor effect plots..."
+msgstr ""
+
+msgid "Plot all predictor effects?"
+msgstr ""
+
+  # added to index plot dialog
+  
+msgid "Mark by groups"
+msgstr ""
+
+msgid "Mark by:"
+msgstr ""
+
+  # new response transformation dialog
+  
+msgid "Response Transformation"
+msgstr ""
+
+msgid "Response transformation..." 
+msgstr ""
+
+msgid "Box-Cox"
+msgstr ""
+
+msgid "Box-Cox with negatives"
+msgstr ""
+
+msgid "Yeo-Johnson"
+msgstr ""
+
+  # new transform toward normality dialog
+  
+msgid "Transform toward normality..."
+msgstr ""
+
+msgid "Transform Variables Toward Normality"
+msgstr ""
+
+msgid "Select variables to transform (one or more)"
+msgstr ""
+
+msgid "Transformation Family"
+msgstr ""
+
+msgid "Condition on:"
+msgstr
+
+  # new symmetry boxplot (symbox) dialog
+  
+msgid "Symmetry boxplot..."
+msgstr ""
+  
+msgid "Symmetry Boxplot"
+msgstr ""
+
+msgid "Start (optional)"
+msgstr ""
+
+msgid "Powers"
+msgstr ""
+
+  # new influence index plot dialog
+  
+msgid "Influence index plot..." 
+msgstr ""
+  
+msgid "Influence Index Plot"
+msgstr ""
+
+msgid "Bonferroni p-values"
+msgstr ""
+
+msgid "Diagnostics case statistics to plot"
+msgstr ""
+
+  # enhancements to Density Plot dialog
+  
+msgid "Method"
+msgstr ""
+
+msgid "adaptive kernel"
+msgstr ""
+  
+msgid "kernel"
+msgstr ""
+
+msgid "From"
+msgstr ""
+
+msgid "To"
+msgstr ""
+
