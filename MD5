@@ -1,10 +1,10 @@
-9dba089a7a20f6551f389e83334a8f0d *DESCRIPTION
+d8c721efbbd56bdc561fd0d98818769b *DESCRIPTION
 7c75e0030bfcb45db6bf3b3f930cf1c9 *NAMESPACE
-bded6fd5c6d3155a4ca798df7d9ff4f1 *NEWS
+2c4060e04b86eec71bde66782ca71b54 *NEWS
 7634ae5993a7ae10717455c6bfe9c301 *R/Rexcel-specific.R
 e9fa8acf183c49a30d5b7751c9ee6b83 *R/cluster.R
-94f7521880c31908702d8050d12312d4 *R/commander.R
-268c8eae646977c83aa7dfbf6946bbd3 *R/data-menu.R
+9714d2d56b17d628e43b2f34e0b84571 *R/commander.R
+00988268d2b60281b83787cdcd18a8cd *R/data-menu.R
 104178ef8689a626728f208bd2bffe49 *R/distributions-menu.R
 1a99d24e45785a0535a4625b4a91738f *R/distributions-plotDistributions-menu.R
 58fa7b5a69c6f9fe5c71c54de3c410c5 *R/distributions-sample.R
@@ -22,8 +22,8 @@ a50be8d0a57d0bc282f66c36153ee177 *R/statistics-proportions-menu.R
 4b22e9e2d93d01f906e4e107df6ca70a *R/statistics-summaries-menu.R
 c531b45e32a9037f14af55ac58e2cee6 *R/statistics-tables-menu.R
 7815b24e07b59d151152bd55862a2e47 *R/statistics-variances-menu.R
-c187ec023e8cc50c4eb34c00e975fcdf *R/utilities.R
-0cc3efe97584c2c32fac8743d88dec50 *build/vignette.rds
+a5a6efcd60b03c6714edac84c3b81867 *R/utilities.R
+a66401738cc9b8a1a12d365bbdd7ce7b *build/vignette.rds
 6086daaa02857bc72d55c09f96d840ba *inst/CHANGES
 4dbae85e4a032596f1ff91900269e210 *inst/CITATION
 31de694855b1d3984d706109f0db3d13 *inst/doc/Commander-ru.pdf
@@ -32,7 +32,7 @@ c187ec023e8cc50c4eb34c00e975fcdf *R/utilities.R
 0cc341c59631464cc914935ae7180b2a *inst/doc/Getting-Started-with-the-Rcmdr-ko.pdf
 0efe444a21cc23216e66893361726134 *inst/doc/Getting-Started-with-the-Rcmdr.R
 a7294ca9c95eba4e8a56b8873a2f063c *inst/doc/Getting-Started-with-the-Rcmdr.Rnw
-ed660e0ea3c9080b8bb2a7d9d7a0b37e *inst/doc/Getting-Started-with-the-Rcmdr.pdf
+ed50b939bffa58693e0138dc3a1ea4bd *inst/doc/Getting-Started-with-the-Rcmdr.pdf
 22a8a26570fc6d836ed86e2f124b668b *inst/etc/Nations.txt
 2a1ecb07b4897fb1f7de5be3704d5d2b *inst/etc/R-logo-old.gif
 0174d0ff84847f9f73741c1e5d121164 *inst/etc/R-logo-old.ico
@@ -43,6 +43,7 @@ c2128aa27494eb3df882dadd7ed576da *inst/etc/Rcmdr-Markdown-Template.Rmd
 3ce4fee044b7cd447276fa41c65125db *inst/etc/Rcmdr-knitr-Template.Rnw
 d267bd8fb2dcfb63cca9f853d0d654b1 *inst/etc/Rcmdr-menus.txt
 5a1b291ae1643c5765a8576953dd76d2 *inst/etc/Rcmdr-model-capabilities.txt
+459dbaaedac47f3ea03da9b97350985b *inst/etc/Thumbs.db
 df9255d1f7ced44df68c65ef7d9e2c42 *inst/etc/apply.gif
 f80f0f625d1ab499497068dc27b6334d *inst/etc/blank.gif
 6c67e830aeccb48a16dbefc9018a156b *inst/etc/cancel.gif
@@ -82,7 +83,7 @@ db432b2abfb9b6145eac3b9b1dbff840 *inst/po/id/LC_MESSAGES/R-Rcmdr.mo
 61b8de83189ae0353f9e16353102a075 *inst/po/pt_BR/LC_MESSAGES/R-Rcmdr.mo
 4a0eac649327f2ba8e530ef2aecec4ad *inst/po/ro/LC_MESSAGES/R-Rcmdr.mo
 622333851b38e2ba87c520742278289d *inst/po/ru/LC_MESSAGES/R-Rcmdr.mo
-2c0b2ad77e433f021f01aad8c9f01847 *inst/po/sl/LC_MESSAGES/R-Rcmdr.mo
+ecd621139700e54f05d0b9dfa54c4874 *inst/po/sl/LC_MESSAGES/R-Rcmdr.mo
 d33d7b4f158fd41138a441e0e1735b72 *inst/po/zh/LC_MESSAGES/R-Rcmdr.mo
 d5fed9141379dbd32eeb6821c675b85d *inst/po/zh_CN/LC_MESSAGES/R-Rcmdr.mo
 1346991ab91252315d77bc7f8c889b56 *man/AuxiliarySoftware.Rd
@@ -93,7 +94,7 @@ d5fed9141379dbd32eeb6821c675b85d *inst/po/zh_CN/LC_MESSAGES/R-Rcmdr.mo
 a835b816b02e43d871d0625ff34b8002 *man/Confint.Rd
 2d9491ff2f4a4bb0aa72f9e3b77f690e *man/Plugins.Rd
 8dbf667a589949a5ca09fca725bd3408 *man/Rcmdr-internal.Rd
-f580c9d3ed5ad4e9fae17e5c38b77822 *man/Rcmdr-package.Rd
+04b70b51a1bc228922eccb5b9eac41c7 *man/Rcmdr-package.Rd
 0ee1648361ab91cd41577fbe529b6007 *man/Rcmdr.Utilities.Rd
 eeb4b506b2fc88a90afc2ea22233fb1e *man/RcmdrEditor.Rd
 f748653782f882fa214526c297ad71e9 *man/RcmdrPager.Rd
@@ -120,12 +121,13 @@ f4f90fbe5f36251e0c19643577865011 *po/R-pl.po
 3da5c8ac9ee56dce1c9472ac37fe73cd *po/R-pt_BR.po
 6a033427f47abb8229112ec3fc615304 *po/R-ro.po
 2d4532a81b2b3bf2a6eb80357c289da5 *po/R-ru.po
-726597be1f3002aea13655aad94c2899 *po/R-sl.po
+8b3ad967657400c86994c78964cd9a0c *po/R-sl.po
 8a08362ba8881d2f8548a7384902e216 *po/R-zh.po
 621e0c20c3181a868cd718c030e4c452 *po/R-zh_CN.po
 a7294ca9c95eba4e8a56b8873a2f063c *vignettes/Getting-Started-with-the-Rcmdr.Rnw
 d221a30925bd1561ee92b1d877af285b *vignettes/Rcmdr-Manual.bib
 c13f9bd98046c7d604c365278a9820ee *vignettes/Rcmdr-menus
+c7e8d5b2223d11f4a25d298aaed42433 *vignettes/Thumbs.db
 94159967dbf5372724a3a9e8ef938f60 *vignettes/fig-1-b.jpg
 d184dbd6627563990a6ed14a4d9a6b9f *vignettes/fig-10-5.jpg
 72c3b800d3e0751b9757fa228a1d4be3 *vignettes/fig-10.jpg
