@@ -1,7 +1,7 @@
 
 # The R Commander and command logger
 
-# last modified 2019-04-30 by John Fox
+# last modified 2019-08-09 by John Fox
 
 # contributions by Milan Bouchet-Valat, Richard Heiberger, Duncan Murdoch, Erich Neuwirth, Brian Ripley
 
@@ -35,8 +35,15 @@ Commander <- function(){
     
     setupGUI(Menus)
     
+    # keep start-up warnings out of Rcmdr log
+    messages.connection <- file(open="w+")
+    sink(messages.connection, type="message")
+    
     library(Rcmdr, quietly=TRUE)
     
+    sink(type="message")
+    close(messages.connection)
+
 }
 
 manageRcmdrEnv <- function(){
@@ -633,7 +640,8 @@ setupGUI <- function(Menus){
         ncols <- dim[2]
         threshold <- getRcmdr("showData.threshold")
         command <- if (nrows <= threshold[1] && ncols <= threshold[2]){
-            paste("showData(as.data.frame(", ActiveDataSet(), "), placement='-20+200', font=getRcmdr('logFont'), maxwidth=",
+            posn <- commanderPosition() + c(as.numeric(tkwinfo("width", CommanderWindow())) + 10, 10)
+            paste("showData(as.data.frame(", ActiveDataSet(), "), title='", ActiveDataSet(), "', placement='+", posn[1], "+", posn[2],"', font=getRcmdr('logFont'), maxwidth=",
                   getRcmdr("log.width"), ", maxheight=", view.height, suppress, ")", sep="")
         }
         else paste("View(as.data.frame(", ActiveDataSet(), "))", sep="")
@@ -690,11 +698,21 @@ setupGUI <- function(Menus){
                         tktag.add(.output, "currentLine", "end - 2 lines linestart", "end - 2 lines lineend")
                         tktag.configure(.output, "currentLine", foreground=getRcmdr("command.text.color"))
                     }
-                    current.line <- paste(current.line, lines[jline],sep="\n")
+                    current.line <- if (nchar(lines[jline]) > 0) paste(current.line, lines[jline],sep="\n")
                     jline <- jline + 1
                     iline <- iline + 1
                 }
-                if (!(is.null(current.line) || is.na(current.line))) doItAndPrint(current.line, log=FALSE, rmd=TRUE)
+                
+                # protect against misprocessed comments
+                    xlines <- strsplit(current.line, "\n")[[1]]
+                    xlines <- trimws(sub("#.*$", "", xlines))
+                    xlines <- xlines[nchar(xlines) > 0]
+                    current.line <- paste(xlines, sep="\n")
+                    if (length(current.line) == 0 || nchar(current.line) == 0) current.line <- NULL
+                
+                if (!(is.null(current.line) || is.na(current.line))) {
+                    doItAndPrint(current.line, log=FALSE, rmd=TRUE)
+                }
                 iline <- iline + 1
                 tkyview.moveto(.output, 1)
                 tkfocus(.log)
@@ -1287,6 +1305,7 @@ doItAndPrint <- function(command, log=TRUE, rmd=log) {
             if (getRcmdr("use.knitr")) enterKnitr(command)
         }
     }
+    
     result <- try(parse(text=paste(command)), silent=TRUE)
     if (class(result)[1] == "try-error"){
         if (rmd) {

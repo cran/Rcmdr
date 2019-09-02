@@ -1,6 +1,6 @@
 # Graphs menu dialogs
 
-# last modified 2018-08-05 by J. Fox
+# last modified 2019-05-15 by J. Fox
 
 #  applied patch to improve window behaviour supplied by Milan Bouchet-Valat 2011-09-22
 
