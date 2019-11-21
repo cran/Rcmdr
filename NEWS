@@ -1,3 +1,17 @@
+Changes in version 2.6-1
+
+  o Restore older version of splitCmd().
+  
+  o For GLMs and GLMMs, provide confidence intervals for exponentiated coefficients for models using log or logit link (suggestion of Tan Chuen Seng).
+  
+  o Make listTwoLevelFactors() work properly for logical and character variables  (treated as factors) with NAs (problem pointed out by Vilmantas Gegzna).
+  
+  o Insure that data set columns are usable in the Rcmdr, e.g., excluding list columns (problem pointed out by Vilmantas Gegzna).
+  
+  o Change instances of class(x) == "y" to inherits(x, "y").
+  
+  o Use apalike rather than apa BiBTeX package in Getting Started vignette (latter has been removed from TeXLive, reported by Brian Ripley).
+
 Changes in version 2.6-0
 
   o Linear and generalized linear mixed models dialogs added.

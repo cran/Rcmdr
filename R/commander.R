@@ -1,7 +1,7 @@
 
 # The R Commander and command logger
 
-# last modified 2019-08-09 by John Fox
+# last modified 2019-11-15 by John Fox
 
 # contributions by Milan Bouchet-Valat, Richard Heiberger, Duncan Murdoch, Erich Neuwirth, Brian Ripley
 
@@ -175,6 +175,10 @@ setupRcmdrOptions <- function(DESCRIPTION){
     putRcmdr("commandStack", as.list(rep(NA, getRcmdr("length.command.stack"))))
     setOption("variable.list.height", 6)
     setOption("variable.list.width", c(20, Inf))
+    setOption("valid.classes", c("factor", "ordered", "character", "logical",
+                                 "POSIXct", "POSIXlt", "Date", "chron", "yearmon", "yearqtr", "zoo", 
+                                 "zooreg", "timeDate", "xts", "its", "ti", "jul", "timeSeries", "fts",
+                                 "Period", "hms", "difftime"))
     
     putRcmdr("open.showData.windows", list())
 }
@@ -691,7 +695,7 @@ setupGUI <- function(Menus){
                 }
                 jline <- iline + 1
                 while (jline <= nlines){
-                    if (class(try(parse(text=current.line),silent=TRUE))!="try-error") break
+                    if (!inherits(try(parse(text=current.line),silent=TRUE), "try-error")) break
                     if (.console.output)cat(paste(getRcmdr("prefixes")[2], lines[jline],"\n", sep=""))
                     else{
                         tkinsert(.output, "end", paste("+ ", lines[jline],"\n", sep=""))
