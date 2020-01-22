@@ -1,6 +1,6 @@
-a97d68778af710f2e0e75052ae5757ed *DESCRIPTION
+350045b26b68594b911e2dc7a4d4785c *DESCRIPTION
 7f6c36df1e8e0b02d6089093a1665352 *NAMESPACE
-311f3fa67d194c659a87faa06d89ceb6 *NEWS
+c2b5ca91b56091cc4a369b8bf248757a *NEWS
 c395e6f56cc113e3b805e5a26cb0550c *R/Rexcel-specific.R
 5e11a87ea406acb686827ff4c77d1db5 *R/cluster.R
 6f49e1e4926ab012062a2881da3adf27 *R/commander.R
@@ -8,7 +8,7 @@ c395e6f56cc113e3b805e5a26cb0550c *R/Rexcel-specific.R
 fde860a2adf2221e14b139ae34e2bac3 *R/distributions-menu.R
 e35f99e369ba8744663ec863fff250dc *R/distributions-plotDistributions-menu.R
 4b1d5d5c87921485ef0df60ab2e273e5 *R/distributions-sample.R
-d69aae45ee4a82046123cfe829661778 *R/file-menu.R
+8235848b33598105955b075b0b3842d8 *R/file-menu.R
 174a9ebd172fb60d95a7143014fc813b *R/globals.R
 271a9fcbab96cea061c2618c133d7ecf *R/graphs-menu.R
 5da963c830d1328d2bba4ee82b6830e4 *R/ismdi.R
@@ -23,13 +23,16 @@ bfa79f2ee40cca23e69e785922ba98ec *R/statistics-summaries-menu.R
 9555fd8aade4e9c39057bac481fa3554 *R/statistics-tables-menu.R
 d32f5dee90b722f54bb233af8ed1860d *R/statistics-variances-menu.R
 3f7591e1f44090e164564d37843e1683 *R/utilities.R
+8708279791a53eaab2e161e2de351ee1 *build/vignette.rds
 6086daaa02857bc72d55c09f96d840ba *inst/CHANGES
 4dbae85e4a032596f1ff91900269e210 *inst/CITATION
-9a0b979f808e00bdea4d23fb9cbc73e2 *inst/doc/Commander-ru.pdf
+31de694855b1d3984d706109f0db3d13 *inst/doc/Commander-ru.pdf
 264c167f2552c545bb7b89344661640e *inst/doc/Empezando-con-Rcmdr-es.pdf
 097e9f9cbdbe3f4bc0a5ab5e7e352576 *inst/doc/Getting-Started-with-the-Rcmdr-ja.pdf
 0cc341c59631464cc914935ae7180b2a *inst/doc/Getting-Started-with-the-Rcmdr-ko.pdf
-f3923a37168b5ccf9321520e296833b5 *inst/doc/Getting-Started-with-the-Rcmdr.pdf
+0efe444a21cc23216e66893361726134 *inst/doc/Getting-Started-with-the-Rcmdr.R
+17b1e53c7db027fc176b9cdb532df194 *inst/doc/Getting-Started-with-the-Rcmdr.Rnw
+da54efe6cf6515c1d52e0b20672db856 *inst/doc/Getting-Started-with-the-Rcmdr.pdf
 22a8a26570fc6d836ed86e2f124b668b *inst/etc/Nations.txt
 2a1ecb07b4897fb1f7de5be3704d5d2b *inst/etc/R-logo-old.gif
 0174d0ff84847f9f73741c1e5d121164 *inst/etc/R-logo-old.ico
@@ -72,6 +75,7 @@ b4515e9c5d329dd6fa936d5d2cfd8950 *inst/po/el/LC_MESSAGES/R-Rcmdr.mo
 acccf6ddaa63f579303aa83689c0cdeb *inst/po/eu/LC_MESSAGES/R-Rcmdr.mo
 7c2903884fc95578e81d21f96b7e6be5 *inst/po/fr/LC_MESSAGES/R-Rcmdr.mo
 34973ee669de7fc3557cde20a636caff *inst/po/gl/LC_MESSAGES/R-Rcmdr.mo
+664bc4b5619a6c86d13f22e93258d652 *inst/po/hu/LC_MESSAGES/R-Rcmdr.mo
 7191df14ff6e7c0830c4f93215019c6c *inst/po/id/LC_MESSAGES/R-Rcmdr.mo
 50259233874dc511034707fa2cc812ca *inst/po/it/LC_MESSAGES/R-Rcmdr.mo
 1c045376bd118d20bedec08a3a21398a *inst/po/ja/LC_MESSAGES/R-Rcmdr.mo
@@ -90,7 +94,7 @@ d5fed9141379dbd32eeb6821c675b85d *inst/po/zh_CN/LC_MESSAGES/R-Rcmdr.mo
 23b8bf96d4bd4b5ce59d104b6410305f *man/Compute.Rd
 2d9491ff2f4a4bb0aa72f9e3b77f690e *man/Plugins.Rd
 8dbf667a589949a5ca09fca725bd3408 *man/Rcmdr-internal.Rd
-936a0cbf460d45317e115ddfc606fc7b *man/Rcmdr-package.Rd
+af3b3f894988f35c859281e69519609a *man/Rcmdr-package.Rd
 3f028c1bc139ebde625259ad531aff45 *man/Rcmdr.Utilities.Rd
 eeb4b506b2fc88a90afc2ea22233fb1e *man/RcmdrEditor.Rd
 f748653782f882fa214526c297ad71e9 *man/RcmdrPager.Rd
@@ -101,7 +105,7 @@ e9d781013c8f72ec02237a86cb73a779 *man/generalizedLinearModel.Rd
 25d1500d9be415386cd0b38ce3365869 *man/hierarchicalCluster.Rd
 c525b7a1edee2c6a6ddfcd73e5728b34 *man/linearModel.Rd
 ca659b1a7e1af827f4f866e924c012c0 *man/saveOptions.Rd
-1ab36fd3e8c7f7a8eb07a275bd21315a *po/R-Rcmdr.pot
+64c6bc3cae5c8cf797657c97682d2b19 *po/R-Rcmdr.pot
 47c8744410f592a7f6a45e0b495de1bb *po/R-ca.po
 6810575f01855cf93bcc1fd52dcd2927 *po/R-de.po
 dff7bedc4a13ee5f4acca6fcb460f823 *po/R-el.po
@@ -109,6 +113,7 @@ dff7bedc4a13ee5f4acca6fcb460f823 *po/R-el.po
 c8a49f48b7b47f9e8064653b345d9f9f *po/R-eu.po
 cd77d211ffa6b43c197b28c972bd8f3b *po/R-fr.po
 5d67ab707d0489956ed2537d01ea7771 *po/R-gl.po
+20007a24ceee72fd7737308240592b01 *po/R-hu.po
 cb9b2ed2a18025d16aef4c39f46d8eb2 *po/R-id.po
 7623b9e9d4ceba0dd2cc8369696f3981 *po/R-it.po
 0bf96c119c250c4203412173cc8e9bf3 *po/R-ja.po
