@@ -1,6 +1,6 @@
 Package: Rcmdr
-Version: 2.6-2
-Date: 2020-01-20
+Version: 2.7-0
+Date: 2020-08-27
 Title: R Commander
 Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaster.ca"),
     person("Milan", "Bouchet-Valat", role = "aut"),
@@ -9,6 +9,7 @@ Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaste
     person("Theophilius", "Boye", role = "ctb"),
     person("Stefano", "Calza", role = "ctb"),
     person("Andy", "Chang", role = "ctb"),
+    person("Vilmantas", "Gegzna", role = "ctb"),
     person("Philippe", "Grosjean", role = "ctb"),
     person("Richard", "Heiberger", role = "ctb"),
     person("Kosar", "Karimi Pour", role = "ctb"),
@@ -28,7 +29,7 @@ Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaste
     person("Kevin", "Wright", role="ctb")
    )
 Depends: R (>= 3.5.0), grDevices, graphics, methods, stats, utils,
-        splines, RcmdrMisc (>= 2.5-0), car (>= 3.0-1), effects (>=
+        splines, RcmdrMisc (>= 2.7-1), car (>= 3.0-8), effects (>=
         4.0-3)
 Imports: tcltk, tcltk2 (>= 1.2-6), abind, relimp (>= 1.0-5), lme4
 Suggests: aplpack, boot, colorspace, e1071, foreign, grid, Hmisc,
@@ -40,10 +41,10 @@ Description:
   A platform-independent basic-statistics GUI (graphical user interface) for R, based on the tcltk package.
 License: GPL (>= 2)
 URL: https://www.r-project.org,
-        http://socserv.socsci.mcmaster.ca/jfox/Misc/Rcmdr/,
-        http://socserv.mcmaster.ca/jfox/Books/RCommander/
+        https://socialsciences.mcmaster.ca/jfox/Misc/Rcmdr/,
+        https://socialsciences.mcmaster.ca/jfox/Books/RCommander/
 NeedsCompilation: no
-Packaged: 2020-01-21 17:41:51 UTC; jfox
+Packaged: 2020-08-27 14:01:05 UTC; johnfox
 Author: John Fox [aut, cre],
   Milan Bouchet-Valat [aut],
   Liviu Andronic [ctb],
@@ -51,6 +52,7 @@ Author: John Fox [aut, cre],
   Theophilius Boye [ctb],
   Stefano Calza [ctb],
   Andy Chang [ctb],
+  Vilmantas Gegzna [ctb],
   Philippe Grosjean [ctb],
   Richard Heiberger [ctb],
   Kosar Karimi Pour [ctb],
@@ -70,4 +72,4 @@ Author: John Fox [aut, cre],
   Kevin Wright [ctb]
 Maintainer: John Fox <jfox@mcmaster.ca>
 Repository: CRAN
-Date/Publication: 2020-01-22 12:50:07 UTC
+Date/Publication: 2020-08-28 06:30:14 UTC

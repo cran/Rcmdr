@@ -1,20 +1,21 @@
-# Matjaž Jeran <matjaz.jeran@amis.net>, 2019.
+# Jaro Lajovic <jaro.lajovic@mf.uni-lj.si>
+# Matjaž Jeran <matjaz.jeran@amis.net>, 2019, 2020.
 msgid ""
 msgstr ""
-"Project-Id-Version: Rcmdr 2.6-0\n"
+"Project-Id-Version: Rcmdr 2.7-1\n"
 "Report-Msgid-Bugs-To: jfox@mcmaster.ca\n"
-"POT-Creation-Date: 2019-01-08 16:30:00\n"
-"PO-Revision-Date: 2019-08-22 20:46+0200\n"
+"POT-Creation-Date: 2020-08-25 10:45:00\n"
+"PO-Revision-Date: 2020-08-26 10:44+0200\n"
 "Last-Translator: Matjaž Jeran <matjaz.jeran@amis.net>\n"
-"Translator: Jaro Lajovic <jaro.lajovic@mf.uni-lj.si>\n"
 "Language-Team: Slovenian <lugos-slo@lugos.si>\n"
 "Language: sl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Translator: Jaro Lajovic <jaro.lajovic@mf.uni-lj.si>\n"
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
 "%100==4 ? 3 : 0);\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.4.1\n"
 
 msgid "KMeans Clustering"
 msgstr "Razvrščanje z voditelji"
@@ -415,8 +416,8 @@ msgid ""
 "{\"SPSS save files\" {\".sav\" \".SAV\"}} {\"SPSS portable files\" {\".por\" "
 "\".POR\"}} {\"All Files\" {\"*\"}}"
 msgstr ""
-"{\"Datoteke SPSS\" {\".sav\" \".SAV\"}} {\"Prenosne datoteke SPSS\" {\".por\" "
-"\".POR\"}} {\"Vse datoteke\" {\"*\"}}"
+"{\"Datoteke SPSS\" {\".sav\" \".SAV\"}} {\"Prenosne datoteke SPSS\" {\".por"
+"\" \".POR\"}} {\"Vse datoteke\" {\"*\"}}"
 
 msgid ""
 "Convert value labels\n"
@@ -437,9 +438,11 @@ msgstr ""
 msgid "Import Minitab Data Set"
 msgstr "Uvoz podatkov v zapisu Minitab"
 
-msgid "{\"Minitab portable files\" {\".mtp\" \".MTP\"}} {\"All Files\" {\"*\"}}"
+msgid ""
+"{\"Minitab portable files\" {\".mtp\" \".MTP\"}} {\"All Files\" {\"*\"}}"
 msgstr ""
-"{\"Prenosne datoteke Minitab\" {\".mtp\" \".MTP\"}} {\"Vse datoteke\" {\"*\"}}"
+"{\"Prenosne datoteke Minitab\" {\".mtp\" \".MTP\"}} {\"Vse datoteke\" {\"*"
+"\"}}"
 
 msgid ""
 "Minitab data set contains elements of unequal length.\n"
@@ -1283,8 +1286,8 @@ msgid ""
 "{\"JPEG Files\" {\".jpg\" \".JPG\" \".jpeg\" \".JPEG\"}} {\"All Files\" {\"*"
 "\"}}"
 msgstr ""
-"{\"Datoteke JPEG\" {\".jpg\" \".JPG\" \".jpeg\" \".JPEG\"}} {\"Vse datoteke\" "
-"\"\" {\"*\"}}"
+"{\"Datoteke JPEG\" {\".jpg\" \".JPG\" \".jpeg\" \".JPEG\"}} {\"Vse datoteke"
+"\" \"\" {\"*\"}}"
 
 msgid "Graph saved to file"
 msgstr "Diagram shranjen v datoteko"
@@ -1992,7 +1995,8 @@ msgid "There is no active model."
 msgstr "Ni aktivnega modela."
 
 msgid "argument must be a square, symmetric, numeric covariance matrix"
-msgstr "argument mora biti kvadratna, simetrična, številska kovariančna matrika"
+msgstr ""
+"argument mora biti kvadratna, simetrična, številska kovariančna matrika"
 
 msgid "there are fewer than 3 items in the scale"
 msgstr "lestvica ima manj kot 3 stopnje"
@@ -2588,8 +2592,8 @@ msgid ""
 "{\"MS Excel file\" {*.xls \".XLS\"}} {\"MS Access database\" {*.mdb \".MDB"
 "\"}} {\"dBase-like file\" {*.dbf \".DBF\"}} {\"All Files\" {\"*\"}}"
 msgstr ""
-"{\"Datoteka MS Excel\" {*.xls \".XLS\"}} {\"Datoteka MS Access\" {*.mdb \".MDB"
-"\"}} {\"Datoteka kot dBase\" {*.dbf \".DBF\"}} {\"Vse datoteke\" {\"*\"}}"
+"{\"Datoteka MS Excel\" {*.xls \".XLS\"}} {\"Datoteka MS Access\" {*.mdb \"."
+"MDB\"}} {\"Datoteka kot dBase\" {*.dbf \".DBF\"}} {\"Vse datoteke\" {\"*\"}}"
 
 msgid "Select one table"
 msgstr "Izberite eno tabelo"
@@ -3743,8 +3747,8 @@ msgstr "Ime za agregirani nabor podatkov:"
 
 #     miscellaneous
 msgid ""
-"{\"R Data Files\" {\".rda\" \".Rda\" \".RDA\" \".RData\"}} {\"All Files\" {\"*"
-"\"}}"
+"{\"R Data Files\" {\".rda\" \".Rda\" \".RDA\" \".RData\"}} {\"All Files"
+"\" {\"*\"}}"
 msgstr ""
 "{\"R-ove datoteke\" {\".rda\" \".Rda\" \".RDA\" \".RData\"}} {\"Vse datoteke"
 "\" {\"*\"}}"
@@ -3831,16 +3835,17 @@ msgstr ""
 "\" \".DAT\" \".csv\" \".CSV\"}}"
 
 msgid ""
-"{\"All Files\" {\"*\"}} {\"SPSS portable files\" {\".por\" \".POR\"}} {\"SPSS "
-"save files\" {\".sav\" \".SAV\"}}"
+"{\"All Files\" {\"*\"}} {\"SPSS portable files\" {\".por\" \".POR\"}} "
+"{\"SPSS save files\" {\".sav\" \".SAV\"}}"
 msgstr ""
 "{\"Vse datoteke\" {\"*\"}} {\"SPSS-ove datoteke za prenos\" {\".por\" \".POR"
 "\"}} {\"Datoteke SPSS save\" {\".sav\" \".SAV\"}}"
 
-msgid "{\"All Files\" {\"*\"}} {\"Minitab portable files\" {\".mtp\" \".MTP\"}}"
+msgid ""
+"{\"All Files\" {\"*\"}} {\"Minitab portable files\" {\".mtp\" \".MTP\"}}"
 msgstr ""
-"{\"Vse datoteke\" {\"*\"}} {\"Minitabove datoteke za prenos\" {\".mtp\" \".MTP"
-"\"}}"
+"{\"Vse datoteke\" {\"*\"}} {\"Minitabove datoteke za prenos\" {\".mtp\" \"."
+"MTP\"}}"
 
 msgid "{\"All Files\" {\"*\"}} {\"STATA datasets\" {\".dta\" \".DTA\"}}"
 msgstr ""
@@ -3853,16 +3858,16 @@ msgid ""
 "\" {\".xls\" \".XLS\"}}"
 msgstr ""
 "{\"Vse datoteke\" {\"*\"}} {\"Podatkovna baza MS Access\" {\".mdb\" \".MDB"
-"\"}} {\"Podatkovna baza MS Access\" {\".accdb\" \".ACCDB\"}} {\"dBase-podobna "
-"datoteka\" {\".dbf\" \".DBF\"}} {\"Datoteka MS Excel 2007\" {\".xlsx\" \".XLSX"
-"\"}} {\"Datoteka MS Excel\" {\".xls\" \".XLS\"}}"
+"\"}} {\"Podatkovna baza MS Access\" {\".accdb\" \".ACCDB\"}} {\"dBase-"
+"podobna datoteka\" {\".dbf\" \".DBF\"}} {\"Datoteka MS Excel 2007\" {\".xlsx"
+"\" \".XLSX\"}} {\"Datoteka MS Excel\" {\".xls\" \".XLS\"}}"
 
 msgid ""
-"{\"All Files\" {\"*\"}} {\"R Data Files\" {\".RData\" \".rda\" \".Rda\" \".RDA"
-"\"}}"
+"{\"All Files\" {\"*\"}} {\"R Data Files\" {\".RData\" \".rda\" \".Rda\" \"."
+"RDA\"}}"
 msgstr ""
-"{\"Vse datoteke\" {\"*\"}} {\"R-ove datoteke s podatki\" {\".RData\" \".rda\" "
-"\".Rda\" \".RDA\"}}"
+"{\"Vse datoteke\" {\"*\"}} {\"R-ove datoteke s podatki\" {\".RData\" \".rda"
+"\" \".Rda\" \".RDA\"}}"
 
 msgid "{\"All Files\" {\"*\"}} {\"PNG Files\" {\".png\" \".PNG\"}}"
 msgstr "{\"Vse datoteke\" {\"*\"}} {\"Datoteke PNG\" {\".png\" \".PNG\"}}"
@@ -3871,8 +3876,8 @@ msgid ""
 "{\"All Files\" {\"*\"}} {\"JPEG Files\" {\".jpg\" \".JPG\" \".jpeg\" \".JPEG"
 "\"}}"
 msgstr ""
-"{\"Vse datoteke\" {\"*\"}} {\"Datoteke JPEG\" {\".jpg\" \".JPG\" \".jpeg\" \"."
-"JPEG\"}}"
+"{\"Vse datoteke\" {\"*\"}} {\"Datoteke JPEG\" {\".jpg\" \".JPG\" \".jpeg\" "
+"\".JPEG\"}}"
 
 msgid "{\"All Files\" {\"*\"}} {\"PDF Files\" {\".pdf\" \".PDF\"}}"
 msgstr "{\"Vse datoteke\" {\"*\"}} {\"Datoteke PDF\" {\".pdf\" \".PDF\"}}"
@@ -3884,7 +3889,8 @@ msgid ""
 "{\"All Files\" {\"*\"}} {\"Encapsulated Postscript Files\" {\".eps\" \".EPS"
 "\"}}"
 msgstr ""
-"{\"Vse datoteke\" {\"*\"}} {\"Datoteke oviti Postscript\" {\".eps\" \".EPS\"}}"
+"{\"Vse datoteke\" {\"*\"}} {\"Datoteke oviti Postscript\" {\".eps\" \".EPS"
+"\"}}"
 
 # messages added to version 1.7-0
 msgid "Reset"
@@ -4043,11 +4049,11 @@ msgid "Datasets in file (pick one)"
 msgstr "Množice podatkov v datoteki (izberite eno)"
 
 msgid ""
-"{\"All Files\" {\"*\"}} {\"SAS xport files\" {\".xpt\" \".XPT\" \".xport\" \"."
-"XPORT\"}}"
+"{\"All Files\" {\"*\"}} {\"SAS xport files\" {\".xpt\" \".XPT\" \".xport\" "
+"\".XPORT\"}}"
 msgstr ""
-"{\"Vse datoteke\" {\"*\"}} {\"datoteke SAS xport\" {\".xpt\" \".XPT\" \".xport"
-"\" \".XPORT\"}}"
+"{\"Vse datoteke\" {\"*\"}} {\"datoteke SAS xport\" {\".xpt\" \".XPT\" \"."
+"xport\" \".XPORT\"}}"
 
 msgid ""
 "Convert variable names\n"
@@ -4066,8 +4072,8 @@ msgid ""
 "{\"All Files\" {\"*\"}} {\"MS Excel 2007 file\" {\".xlsx\" \".XLSX\"}} {\"MS "
 "Excel file\" {\".xls\" \".XLS\"}}"
 msgstr ""
-"{\"Vse datoteke\" {\"*\"}} {\"Datoteka MS Excel 2007\" {\".xlsx\" \".XLSX\"}} "
-"{\"Datoteka MS Excel\" {\".xls\" \".XLS\"}}"
+"{\"Vse datoteke\" {\"*\"}} {\"Datoteka MS Excel 2007\" {\".xlsx\" \".XLSX"
+"\"}} {\"Datoteka MS Excel\" {\".xls\" \".XLS\"}}"
 
 msgid "Interquartile Range"
 msgstr "Interkvartilni razpon"
@@ -4229,8 +4235,8 @@ msgid ""
 "{\"All Files\" {\"*\"}} {\"knitr Files\" {\".Rmd\" \".rmd\" \".Snw\" \".snw"
 "\"}}"
 msgstr ""
-"{\"Vse datoteke\" {\"*\"}} {\"datoteke za knitr\" {\".Rmd\" \".rmd\" \".Snw\" "
-"\".snw\"}}"
+"{\"Vse datoteke\" {\"*\"}} {\"datoteke za knitr\" {\".Rmd\" \".rmd\" \".Snw"
+"\" \".snw\"}}"
 
 msgid ""
 "Delete previously created knitr\n"
@@ -4419,7 +4425,7 @@ msgid ""
 "raw\n"
 "polynomial"
 msgstr ""
-" surovi\n"
+"surovi\n"
 "polinom"
 
 msgid "Model Formula"
@@ -4508,9 +4514,6 @@ msgstr "Imena vrstic v prvem stolpcu preglednice"
 # for selecting weights in LM and GLM dialogs
 msgid "<no variable selected>"
 msgstr "<nobene spremenljivke ni izbrane>"
-
-msgid "Weights"
-msgstr "Uteži"
 
 # new effect-plots dialog
 msgid "Model Effect Plots"
@@ -5234,9 +5237,6 @@ msgstr "Izberi spremenljivke za transformacijo (ena ali več)"
 msgid "Transformation Family"
 msgstr "Družina transformacij"
 
-msgid "Condition on:"
-msgstr "Pogojno na:"
-
 # new symmetry boxplot (symbox) dialog
 msgid "Symmetry boxplot..."
 msgstr "Simetrični okvir z ročaji..."
@@ -5309,3 +5309,270 @@ msgstr "Posplošeni Linearni Mešani Model"
 
 msgid "Generalized linear mixed model..."
 msgstr "Posplošeni Linearni Mešani Model..."
+
+msgid "Convert variable names to lower case"
+msgstr "Predelajte imena spremenljivk v male črke"
+
+# new messages about invalid variable classes
+msgid ""
+"The following variables are not valid for use in the R Commander and will be "
+"omitted:"
+msgstr ""
+"Naslednje spremenljivke niso veljavne za R Commander in bodo umaknjene:"
+
+msgid ""
+"The following variable is not valid for use in the R Commander and will be "
+"omitted:"
+msgstr "Naslednja spremenljivka ni veljavna za R Commander in bo umaknjena:"
+
+msgid "Frequency Counts"
+msgstr "Število izidov"
+
+# For bar graph dialog
+msgid "Show counts or percentages in bars"
+msgstr "Pokaži števila ali deleže števil kot stolpce"
+
+msgid "Neither"
+msgstr "Nič od tega"
+
+msgid "<No response selected>"
+msgstr "<Ni izbranega odziva>"
+
+msgid "Proportion"
+msgstr "Delež"
+
+# modified message
+msgid "Restart the Commander"
+msgstr "Ponovno zaženi Commander"
+
+# modified message
+msgid "Restart the Commander?"
+msgstr "Naj ponovno zaženem Commanderja?"
+
+# for new repeated-measures ANOVA/ANCOVA dialogs
+msgid "One-factor repeated-measures ANOVA/ANCOVA..."
+msgstr ""
+
+msgid "One Repeated Measures Factor ANOVA/ANCOVA"
+msgstr ""
+
+msgid "no responses specified"
+msgstr "ni določenih odzivov"
+
+msgid ""
+"the specified responses are not contiguous\n"
+" missing responses are removed"
+msgstr ""
+"navedeni odzivi niso strnjeni\n"
+" manjkajoči odgovori so odstranjeni"
+
+msgid "<no selection>"
+msgstr "<ni izbire>"
+
+msgid "there are duplicated level names"
+msgstr "obstajajo podvojena imena ravni"
+
+msgid "is not a valid name"
+msgstr "ni veljavno ime"
+
+msgid "the following responses appear more than once:"
+msgstr "naslednji odgovori se pojavljajo več kot enkrat:"
+
+msgid "at least 2 responses must be specified"
+msgstr "določiti morate vsaj dva odziva"
+
+msgid "Within-Subject Factor"
+msgstr ""
+
+#| msgid "Name for factor:"
+msgid "Name for the within-subjects factor:"
+msgstr ""
+
+msgid ""
+"Specify up to 8 levels (responses) and level names for the within-subjects "
+"factor"
+msgstr ""
+
+msgid "Multivariate Test Statistic"
+msgstr "Multivariatna testna statistika"
+
+msgid "Multivariate"
+msgstr "Multivariatna"
+
+msgid "Univariate"
+msgstr "Univariatna"
+
+msgid "Tests to Perform"
+msgstr "Preizkusi za izvajanje"
+
+msgid "Repeated-Measures Means"
+msgstr ""
+
+msgid "Between-Subjects Factors (pick zero or more)"
+msgstr ""
+
+msgid "Plot response means by factors"
+msgstr "Nariši povprečja odzivov po dejavnikih"
+
+msgid "Print means and standard deviations by factors"
+msgstr "Natisni povprečja in standardne odklone po dejavnikih"
+
+#| msgid "X-axis factor: "
+msgid "X-axis factor:"
+msgstr "Dejavnik na osi X:"
+
+#| msgid "Name for factor:"
+msgid "Trace factor:"
+msgstr ""
+
+#| msgid "Response name: "
+msgid "Response name:"
+msgstr "Ime odziva:"
+
+msgid "Two-factor repeated-measures ANOVA/ANCOVA..."
+msgstr ""
+
+msgid "Two Repeated Measures Factors ANOVA/ANCOVA"
+msgstr ""
+
+msgid "the specified responses are not rectangular"
+msgstr ""
+
+msgid "at least 2 rows and 2 columns of responses must be specified"
+msgstr "izbrati morate vsaj 2 vrstici in 2 stolpca odzivov"
+
+msgid "there are duplicated row level names"
+msgstr "obstajajo podvojena imena ravni vrstic"
+
+msgid "there are duplicated column level names"
+msgstr "obstajajo podvojena imena ravni stolpcev"
+
+msgid "Within-Subject Factors"
+msgstr ""
+
+msgid "Name for the within-subjects row factor:"
+msgstr ""
+
+msgid "Name for the within-subjects column factor:"
+msgstr ""
+
+msgid "Select up to 5 levels and level-names for each within-subjects factor"
+msgstr ""
+
+msgid "Reshape data set from long to wide format..."
+msgstr "Preoblikuj zbirko podatkov iz dolgega v široki format..."
+
+msgid "Reshape Data Set from Long to Wide Format"
+msgstr "Preoblikuj zbirko podatkov iz dolgega v široki format"
+
+msgid "Subject ID variable (pick one)"
+msgstr "Spremenljivka identifikacije subjekta (izberite eno)"
+
+msgid "Within-subjects factors (pick one or more)"
+msgstr ""
+
+msgid "Variables that vary by occasion (pick one or more)"
+msgstr ""
+"Spremenljivke, ki se spreminjajo grede na okoliščine (izberite eno ali več)"
+
+msgid "Variables to ignore (pick zero or more)"
+msgstr "Prezrte spremenljivke (izberite nič ali več)"
+
+# msgid "variable"
+# msgstr ""
+msgid "You must select an ID variable."
+msgstr "Izbrati morate spremenljivko za identifikacijo."
+
+msgid "You must select one or more within-subjects factors."
+msgstr ""
+
+msgid "You must select one or more occasion-varying variables."
+msgstr ""
+
+msgid "the following variables appear more than once:"
+msgstr "naslednje spremenljive se pojavljajo več kot enkrat:"
+
+msgid "Save data set aborted"
+msgstr "Shranjevanje nabora podatkov preklicano"
+
+#| msgid "Name for wide data set: "
+msgid "Name for wide data set:"
+msgstr "Ime zbirke podatkov v širokem formatu:"
+
+msgid "Make the wide data set active"
+msgstr "Postavi zbirko podatkov v širokem formatu kot aktivno"
+
+msgid "Reshape data set from wide to long format..."
+msgstr "Preoblikuj zbirko podatkov iz širokega formata v dolgi format..."
+
+msgid "Reshape Data Set from Wide to Long Format"
+msgstr "Preoblikuj zbirko podatkov iz širokega formata v dolgi format"
+
+msgid ""
+"both one and two repeated-measures factors were specified\n"
+"specify either a one-way or two-way design"
+msgstr ""
+
+msgid "the specified responses are not contiguous"
+msgstr "določeni odzivi niso strnjeni"
+
+msgid "the following ignored variables are also responses:"
+msgstr "naslednje prezrte spremenljivke so tudi odzivi:"
+
+msgid "Specify one within-subject factor"
+msgstr ""
+
+msgid "Specify two within-subject factors"
+msgstr ""
+
+msgid "Specify up to 5 levels and level names for each within-subjects factor"
+msgstr ""
+
+#| msgid "Name for long data set: "
+msgid "Name for long data set:"
+msgstr "Ime zbirke podatkov v dolgem formatu:"
+
+#| msgid "Response variable: "
+msgid "Response variable:"
+msgstr "Odzivna spremenljivka:"
+
+#| msgid "Subject ID variable: "
+msgid "Subject ID variable:"
+msgstr "Spremenljivka identifikacija subjekta:"
+
+msgid "Make the long data set active"
+msgstr "Postavi zbirko podatkov v dolgem formatu za aktivno"
+
+# for import Stata and SAS b7dat data set dialogs
+msgid "Convert all character variables to factors"
+msgstr "Prevedi vse besedilne spremenljivke v faktorje"
+
+# for import Stata and SAS b7dat data set dialogs
+msgid "Convert character variables to factors..."
+msgstr "Prevedi besedilne spremenljivke v faktorje..."
+
+# for import Stata and SAS b7dat data set dialogs
+msgid "Convert Character Variables to Factors"
+msgstr "Prevedi besedilne spremenljivke v faktorje"
+
+#| msgid "Variables (pick one or more)"
+msgid "Variable (pick one or more)"
+msgstr "Spremenljivka (izberite eno ali več)"
+
+# additional messages omitted from version 2.7-0
+msgid "Include in Segment Labels"
+msgstr ""
+
+#| msgid "Repeated-Measures Variables (pick two or more)"
+msgid "One Repeated-Measures Factor"
+msgstr ""
+
+#| msgid "Repeated-Measures Variables (pick two or more)"
+msgid "Two Repeated-Measures Factors"
+msgstr ""
+
+#~ msgid "Condition on:"
+#~ msgstr "Pogojno na:"
+
+#~ msgid "Weights"
+#~ msgstr "Uteži"

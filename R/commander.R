@@ -1,9 +1,9 @@
 
 # The R Commander and command logger
 
-# last modified 2019-11-15 by John Fox
+# last modified 2020-08-05 by John Fox
 
-# contributions by Milan Bouchet-Valat, Richard Heiberger, Duncan Murdoch, Erich Neuwirth, Brian Ripley
+# contributions by Milan Bouchet-Valat, Richard Heiberger, Duncan Murdoch, Erich Neuwirth, Brian Ripley, Vilmantas Gegzna
 
 
 Commander <- function(){
@@ -165,7 +165,7 @@ setupRcmdrOptions <- function(DESCRIPTION){
     setOption("suppress.X11.warnings",
               interactive() && .Platform$GUI == "X11") # to address problem in X11 (Linux or Mac OS X)
     setOption("showData.threshold", c(20000, 100))
-    setOption("editDataset.threshold", 10000)
+    setOption("editDataset.threshold", if (getRcmdr("capabilities")$tktable) 10000 else 0)
     setOption("retain.messages", TRUE)
     setOption("crisp.dialogs",  TRUE)
     setOption("length.output.stack", 10)
@@ -179,6 +179,7 @@ setupRcmdrOptions <- function(DESCRIPTION){
                                  "POSIXct", "POSIXlt", "Date", "chron", "yearmon", "yearqtr", "zoo", 
                                  "zooreg", "timeDate", "xts", "its", "ti", "jul", "timeSeries", "fts",
                                  "Period", "hms", "difftime"))
+    setOption("discreteness.threshold", 0)
     
     putRcmdr("open.showData.windows", list())
 }
@@ -653,7 +654,7 @@ setupGUI <- function(Menus){
         if (!is.null(window)){
             open.showData.windows <- getRcmdr("open.showData.windows")
             open.window <- open.showData.windows[[ActiveDataSet()]]
-            if (!is.null(open.window)) tkdestroy(open.window)
+            if (!is.null(open.window) && open.window$ID %in% as.character(tkwinfo("children", "."))) tkdestroy(open.window)
             open.showData.windows[[ActiveDataSet()]] <- window
             putRcmdr("open.showData.windows", open.showData.windows)
         }
@@ -711,7 +712,7 @@ setupGUI <- function(Menus){
                     xlines <- strsplit(current.line, "\n")[[1]]
                     xlines <- trimws(sub("#.*$", "", xlines))
                     xlines <- xlines[nchar(xlines) > 0]
-                    current.line <- paste(xlines, sep="\n")
+                    current.line <- paste(xlines, collapse="\n")
                     if (length(current.line) == 0 || nchar(current.line) == 0) current.line <- NULL
                 
                 if (!(is.null(current.line) || is.na(current.line))) {
@@ -739,7 +740,10 @@ setupGUI <- function(Menus){
     
     # right-click context menus
     contextMenuLog <- function(){
+        # focused <- tkfocus()
+        # on.exit(tkfocus(focused))
         .log <- LogWindow()
+        tkfocus(.log)
         contextMenu <- tkmenu(tkmenu(.log), tearoff=FALSE)
         tkadd(contextMenu, "command", label=gettextRcmdr("Submit"), command=onSubmit)
         tkadd(contextMenu, "separator")
@@ -758,7 +762,10 @@ setupGUI <- function(Menus){
         tkpopup(contextMenu, tkwinfo("pointerx", .log), tkwinfo("pointery", .log))
     }
     contextMenuRmd <- function(){
+        # focused <- tkfocus()
+        # on.exit(tkfocus(focused))
         .rmd <- RmdWindow()
+        tkfocus(.rmd)
         contextMenu <- tkmenu(tkmenu(.rmd), tearoff=FALSE)
         tkadd(contextMenu, "command", label=gettextRcmdr("Generate report"), command=onSubmit)
         tkadd(contextMenu, "command", label=gettextRcmdr("Edit R Markdown document"), command=editMarkdown)
@@ -779,7 +786,10 @@ setupGUI <- function(Menus){
         tkpopup(contextMenu, tkwinfo("pointerx", .rmd), tkwinfo("pointery", .rmd))
     }
     contextMenuRnw <- function(){
+        # focused <- tkfocus()
+        # on.exit(tkfocus(focused))
         .rnw <- RnwWindow()
+        tkfocus(.rnw)
         contextMenu <- tkmenu(tkmenu(.rnw), tearoff=FALSE)
         tkadd(contextMenu, "command", label=gettextRcmdr("Generate PDF report"), command=onSubmit)
         tkadd(contextMenu, "command", label=gettextRcmdr("Edit knitr document"), command=editKnitr)
@@ -800,7 +810,10 @@ setupGUI <- function(Menus){
         tkpopup(contextMenu, tkwinfo("pointerx", .rnw), tkwinfo("pointery", .rnw))
     }
     contextMenuOutput <- function(){
+        # focused <- tkfocus()
+        # on.exit(tkfocus(focused))
         .output <- OutputWindow()
+        tkfocus(.output)
         contextMenu <- tkmenu(tkmenu(.output), tearoff=FALSE)
         tkadd(contextMenu, "command", label=gettextRcmdr("Cut"), command=onCut)
         tkadd(contextMenu, "command", label=gettextRcmdr("Copy"), command=onCopy)
@@ -817,7 +830,10 @@ setupGUI <- function(Menus){
         tkpopup(contextMenu, tkwinfo("pointerx", .output), tkwinfo("pointery", .output))
     }
     contextMenuMessages <- function(){
+        # focused <- tkfocus()
+        # on.exit(tkfocus(focused))
         .messages <- MessagesWindow()
+        tkfocus(.messages)
         contextMenu <- tkmenu(tkmenu(.messages), tearoff=FALSE)
         tkadd(contextMenu, "command", label=gettextRcmdr("Cut"), command=onCut)
         tkadd(contextMenu, "command", label=gettextRcmdr("Copy"), command=onCopy)
@@ -1022,8 +1038,12 @@ setupGUI <- function(Menus){
     tkadd(notebook, logFrame, text=gettextRcmdr("R Script"), padding=6)
     if (getRcmdr("use.markdown")) tkadd(notebook, RmdFrame, text=gettextRcmdr("R Markdown"), padding=6)
     if (getRcmdr("use.knitr")) tkadd(notebook, RnwFrame, text=gettextRcmdr("knitr Document"), padding=6)
-    tkgrid(notebook, sticky="news")
-    if (.log.commands && .console.output) tkgrid(submitButton, sticky="w", pady=c(0, 6))
+    # tkgrid(notebook, sticky="news")
+    if (.log.commands) {
+        tkgrid(notebook, sticky="news")
+    }
+#    if (.log.commands && .console.output) tkgrid(submitButton, sticky="w", pady=c(0, 6))
+    if (.log.commands && .console.output) tkgrid(submitButton, sticky="e", pady=c(0, 6), padx=c(0, 6))
     tkgrid(labelRcmdr(outputFrame, text=gettextRcmdr("Output"), font="RcmdrOutputMessagesFont", foreground=getRcmdr("title.color")),
            if (.log.commands && !.console.output) submitButton, sticky="sw", pady=c(6, 6))
     tkgrid(.output, outputYscroll, sticky="news", columnspan=2)
@@ -1047,7 +1067,9 @@ setupGUI <- function(Menus){
     .commander <- CommanderWindow()
     tkgrid.rowconfigure(.commander, 0, weight=0)
     tkgrid.rowconfigure(.commander, 1, weight=1)
-    tkgrid.rowconfigure(.commander, 2, weight=1)
+#    tkgrid.rowconfigure(.commander, 2, weight=1)
+    w <- if (.log.commands && !.console.output) 1 else 0
+    tkgrid.rowconfigure(.commander, 2, weight=w)
     tkgrid.columnconfigure(.commander, 0, weight=1)
     tkgrid.columnconfigure(.commander, 1, weight=0)
     if (.log.commands){
