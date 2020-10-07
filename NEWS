@@ -1,3 +1,11 @@
+Changes in version 2.7-1
+
+  o Updated Polish translation, thanks to Lukasz Daniel.
+  
+  o Fixed mixed-up .mo files for Spanish and Brazilian-Portuguese translations (problem reported by Jose Henrique Hildebrand Grisi Filho).
+  
+  o Small bug fixes to and improvements to repeated-measures dialogs.
+
 Changes in version 2.7-0
 
   o New dialogs for repeated-measures ANOVA and ANCOVA and plots with one or two repeated-measures factors.
