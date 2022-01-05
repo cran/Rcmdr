@@ -1,6 +1,6 @@
-5f707949909e770069e57e4f2ae4bcdd *DESCRIPTION
+0272dcafff6f4ad49949271b758e456e *DESCRIPTION
 15174620e0939faab34bb7644b9e2dd3 *NAMESPACE
-bd70649e3f01833a430aaf57a259fcb5 *NEWS
+ee084a29655a715e5f5458f3669bc190 *NEWS
 c395e6f56cc113e3b805e5a26cb0550c *R/Rexcel-specific.R
 60f4f5f8759cc8a11ac148bc61c5036c *R/cluster.R
 628c86d877b83475d8138bc793c770ae *R/commander.R
@@ -23,13 +23,17 @@ a79af3a5861e10ee7664aa339ef6e0b3 *R/statistics-nonparametric-menu.R
 cd3f90a43baaaf787ee9247cbf925df6 *R/statistics-tables-menu.R
 d9026a188924320c9de9dae233a3e0ba *R/statistics-variances-menu.R
 359bc63f8dcb3bb43bd9dd5e46222735 *R/utilities.R
+d3bc43d6ff0a87c3ba36c6423b3130f5 *build/partial.rdb
+0dde217b76f50ea0bb9e8fa1110a988d *build/vignette.rds
 0b9eb308a70509ec17dff9c0ee25a191 *inst/CHANGES
-826ba93285eece7288988f888f39a299 *inst/CITATION
+b414bc75557150c3e94720e9049a3f24 *inst/CITATION
 3f9c69a6889acfa6411854c41b0d20d8 *inst/doc/Commander-ru.pdf
 264c167f2552c545bb7b89344661640e *inst/doc/Empezando-con-Rcmdr-es.pdf
 00bc644dfa3fd5da3de057cfef3c99c8 *inst/doc/Getting-Started-with-the-Rcmdr-ja.pdf
 0cc341c59631464cc914935ae7180b2a *inst/doc/Getting-Started-with-the-Rcmdr-ko.pdf
-7e9fcd66372d969a6922b000401a03ea *inst/doc/Getting-Started-with-the-Rcmdr.pdf
+3453ccaed055a2eb074a2dfae467c3e9 *inst/doc/Getting-Started-with-the-Rcmdr.R
+71b765a10615bc3c254e3db0d54b9945 *inst/doc/Getting-Started-with-the-Rcmdr.Rnw
+62a72dc3033b3fb94bc903286bd0136b *inst/doc/Getting-Started-with-the-Rcmdr.pdf
 22a8a26570fc6d836ed86e2f124b668b *inst/etc/Nations.txt
 2a1ecb07b4897fb1f7de5be3704d5d2b *inst/etc/R-logo-old.gif
 0174d0ff84847f9f73741c1e5d121164 *inst/etc/R-logo-old.ico
@@ -91,7 +95,7 @@ c4c484342d4d9900698dca59d218f888 *man/CFA.Rd
 23b8bf96d4bd4b5ce59d104b6410305f *man/Compute.Rd
 114ef65dc2f9243e18992380c1f301ba *man/Plugins.Rd
 8dbf667a589949a5ca09fca725bd3408 *man/Rcmdr-internal.Rd
-e972ebd24d939276364b36c82599bdb8 *man/Rcmdr-package.Rd
+9366ac55ca9ae7d93eadb52170e317fb *man/Rcmdr-package.Rd
 d8357c8169b7c9e22f868cd8b8eca2ca *man/Rcmdr.Utilities.Rd
 9f86c807180e4df4d62f9d43cd556d63 *man/RcmdrEditor.Rd
 f748653782f882fa214526c297ad71e9 *man/RcmdrPager.Rd
