@@ -1,6 +1,6 @@
 Package: Rcmdr
-Version: 2.7-2
-Date: 2021-12-31
+Version: 2.8-0
+Date: 2022-08-12
 Title: R Commander
 Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaster.ca"),
     person("Milan", "Bouchet-Valat", role = "aut"),
@@ -29,9 +29,10 @@ Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaste
     person("Kevin", "Wright", role="ctb")
    )
 Depends: R (>= 3.5.0), grDevices, graphics, methods, stats, utils,
-        splines, RcmdrMisc (>= 2.7-1), car (>= 3.0-8), effects (>=
+        splines, RcmdrMisc (>= 2.7-1), car (>= 3.1-0), effects (>=
         4.0-3)
-Imports: tcltk, tcltk2 (>= 1.2-6), abind, relimp (>= 1.0-5), lme4
+Imports: tcltk, tcltk2 (>= 1.2-6), abind, relimp (>= 1.0-5), lme4,
+        tools
 Suggests: aplpack, boot, colorspace, e1071, foreign, grid, Hmisc,
         knitr, lattice, leaps, lmtest, markdown, MASS, mgcv, multcomp
         (>= 0.991-2), nlme, nnet, nortest, readxl, rgl (>= 0.96.0),
@@ -44,7 +45,7 @@ URL: https://www.r-project.org,
         https://socialsciences.mcmaster.ca/jfox/Misc/Rcmdr/,
         https://socialsciences.mcmaster.ca/jfox/Books/RCommander/
 NeedsCompilation: no
-Packaged: 2022-01-05 20:21:53 UTC; johnfox
+Packaged: 2022-08-14 23:17:16 UTC; johnfox
 Author: John Fox [aut, cre],
   Milan Bouchet-Valat [aut],
   Liviu Andronic [ctb],
@@ -72,4 +73,4 @@ Author: John Fox [aut, cre],
   Kevin Wright [ctb]
 Maintainer: John Fox <jfox@mcmaster.ca>
 Repository: CRAN
-Date/Publication: 2022-01-06 00:30:02 UTC
+Date/Publication: 2022-08-15 19:00:02 UTC
