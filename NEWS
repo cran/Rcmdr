@@ -1,3 +1,29 @@
+Changes in version 2.9-0
+
+  o Vignette "Empezando-con-Rcmdr-es" added to the project. This vignette is the Spanish version of "Getting-Started-with-the-Rcmdr".
+
+  o Addition to translation (R-Rcmdr.pot) file.
+  
+  o Add Command() utility; now used in a few dialogs.
+  
+  o Prevent the following dialog functions from opening two copies of the dialog after aborting an Apply: appendHclustGroup, Compute(), distributionSamples(), generalizedLinearMixedModel, generalizedLinearModel(), kmeansClustering(), linearMixedModel(), linearModel(), linearRegressionModel(), multinomialLogitModel(), multiWayAnova(), oneWayAnova(), proportionalOddsModel, RecodeDialog(), 
+ 
+  o R Commander script tab now tolerates blank lines in muiltiline commands (contribution of Yoshinobu Kanda).
+  
+  o Added coefficient of variation to tables of statistics.
+  
+  o New Command() and Q() functions for constructing command character strings.
+  
+  o Small changes.
+  
+Changes in version 2.8-1
+
+  o Addition to translation (R-Rcmdr.pot) file.
+  
+  o Corrected omision of Manuel Munoz Marquez as new package coauthor.
+  
+  o Now require rgl version 0.110.2 to fix problem with earlier version.
+
 Changes in version 2.8-0
 
   o Small improvements to 3D scatterplot and recode dialogs.

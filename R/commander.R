@@ -1,7 +1,7 @@
 
 # The R Commander and command logger
 
-# last modified 2022-07-13 by John Fox
+# last modified 2023-08-07 by John Fox
 
 # contributions by Milan Bouchet-Valat, Richard Heiberger, Duncan Murdoch, Erich Neuwirth, Brian Ripley, Vilmantas Gegzna
 
@@ -168,6 +168,7 @@ setupRcmdrOptions <- function(DESCRIPTION){
     putRcmdr("dialog.values", list())
     putRcmdr("dialog.values.noreset", list())
     putRcmdr("savedTable", NULL)
+    putRcmdr("onApplyCalled", FALSE)
     log.height <- as.character(setOption("log.height", if (!getRcmdr("log.commands")) 0 else 10))
     log.width <- as.character(setOption("log.width", 80))
     output.height <- as.character(setOption("output.height",
@@ -744,8 +745,9 @@ setupGUI <- function(Menus){
             iline <- 1
             nlines <- length(lines)
             while (iline <= nlines){
-                while (nchar(lines[iline])==0) iline <- iline + 1
-                if (iline > nlines) break
+                # while (nchar(lines[iline])==0) iline <- iline + 1
+                # if (iline > nlines) break
+                while (nchar(lines[iline])==0) iline <- iline + 1 
                 current.line <- lines[iline]
                 if (.console.output) cat(paste("\n", getRcmdr("prefixes")[1], current.line,"\n", sep=""))
                 else{
@@ -755,6 +757,7 @@ setupGUI <- function(Menus){
                 }
                 jline <- iline + 1
                 while (jline <= nlines){
+                    if (nchar(lines[jline])==0) lines[jline] <- " " 
                     if (!inherits(try(parse(text=current.line),silent=TRUE), "try-error")) break
                     if (.console.output)cat(paste(getRcmdr("prefixes")[2], lines[jline],"\n", sep=""))
                     else{
