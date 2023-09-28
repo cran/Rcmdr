@@ -1,6 +1,6 @@
 Package: Rcmdr
-Version: 2.9-0
-Date: 2023-08-23
+Version: 2.9-1
+Date: 2023-09-25
 Title: R Commander
 Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaster.ca"),
     person("Milan", "Bouchet-Valat", role = "aut"),
@@ -31,7 +31,7 @@ Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaste
     person("Kevin", "Wright", role="ctb")
    )
 Depends: R (>= 3.5.0), grDevices, graphics, methods, stats, utils,
-        splines, RcmdrMisc (>= 2.7-1), car (>= 3.1-0), effects (>=
+        splines, RcmdrMisc (>= 2.9-1), car (>= 3.1-0), effects (>=
         4.0-3)
 Imports: tcltk, tcltk2 (>= 1.2-6), abind, relimp (>= 1.0-5), lme4,
         tools
@@ -48,7 +48,7 @@ URL: https://r-forge.r-project.org/projects/rcmdr/,
         https://socialsciences.mcmaster.ca/jfox/Misc/Rcmdr/,
         https://socialsciences.mcmaster.ca/jfox/Books/RCommander/
 NeedsCompilation: no
-Packaged: 2023-08-23 21:07:54 UTC; johnfox
+Packaged: 2023-09-25 15:59:45 UTC; johnfox
 Author: John Fox [aut, cre],
   Milan Bouchet-Valat [aut],
   Manuel Munoz Marquez [aut],
@@ -78,4 +78,4 @@ Author: John Fox [aut, cre],
   Kevin Wright [ctb]
 Maintainer: John Fox <jfox@mcmaster.ca>
 Repository: CRAN
-Date/Publication: 2023-08-24 07:50:12 UTC
+Date/Publication: 2023-09-28 16:00:02 UTC
