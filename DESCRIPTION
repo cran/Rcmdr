@@ -1,6 +1,6 @@
 Package: Rcmdr
-Version: 2.9-1
-Date: 2023-09-25
+Version: 2.9-2
+Date: 2024-02-07
 Title: R Commander
 Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaster.ca"),
     person("Milan", "Bouchet-Valat", role = "aut"),
@@ -48,7 +48,7 @@ URL: https://r-forge.r-project.org/projects/rcmdr/,
         https://socialsciences.mcmaster.ca/jfox/Misc/Rcmdr/,
         https://socialsciences.mcmaster.ca/jfox/Books/RCommander/
 NeedsCompilation: no
-Packaged: 2023-09-25 15:59:45 UTC; johnfox
+Packaged: 2024-02-07 15:57:44 UTC; johnfox
 Author: John Fox [aut, cre],
   Milan Bouchet-Valat [aut],
   Manuel Munoz Marquez [aut],
@@ -78,4 +78,4 @@ Author: John Fox [aut, cre],
   Kevin Wright [ctb]
 Maintainer: John Fox <jfox@mcmaster.ca>
 Repository: CRAN
-Date/Publication: 2023-09-28 16:00:02 UTC
+Date/Publication: 2024-02-08 08:30:06 UTC
