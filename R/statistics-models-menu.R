@@ -1,6 +1,6 @@
 # Statistics Menu dialogs
 
-# last modified 2023-08-07 by J. Fox
+# last modified 2022-06-15 by J. Fox
 
     # Models menu
 
@@ -85,10 +85,6 @@ linearRegressionModel <- function () {
     if (is.element(modelValue, listLinearModels())) {
       if ("no" == tclvalue(checkReplace(modelValue, type = gettextRcmdr("Model")))) {
         UpdateModelNumber(-1)
-          if (getRcmdr("onApplyCalled")){
-              putRcmdr("onApplyCalled", FALSE)
-              return()
-          }
         linearRegressionModel()
         return()
       }
@@ -162,13 +158,12 @@ linearModel <- function(){
     if (trim.blanks(subset) == gettextRcmdr("<all valid cases>") || trim.blanks(subset) == ""){
       subset <- ""
     }
-    # else{
-    #   subset <- paste(", subset=", subset, sep="")
-    # }
+    else{
+      subset <- paste(", subset=", subset, sep="")
+    }
     weight.var <- getSelection(weightComboBox)
     weights <- if (weight.var == gettextRcmdr("<no variable selected>")) ""
-#    else paste(", weights=", weight.var, sep="")
-    else weight.var
+    else paste(", weights=", weight.var, sep="")
     check.empty <- gsub(" ", "", tclvalue(lhsVariable))
     if ("" == check.empty) {
       errorCondition(recall=linearModel, message=gettextRcmdr("Left-hand side of model empty."), model=TRUE)
@@ -182,10 +177,6 @@ linearModel <- function(){
     if (is.element(modelValue, listLinearModels())) {
       if ("no" == tclvalue(checkReplace(modelValue, type=gettextRcmdr("Model")))){
         UpdateModelNumber(-1)
-          if (getRcmdr("onApplyCalled")){
-              putRcmdr("onApplyCalled", FALSE)
-              return()
-          }
         linearModel()
         return()
       }
@@ -194,12 +185,10 @@ linearModel <- function(){
     remove.cases <- if (remove == gettextRcmdr("<use all valid cases>") || remove == ""){
       "" 
     } else {
-#      removeRows <- getCases(remove, remove=TRUE)
-#      paste(", subset =", removeRows)
-        getCases(remove, remove=TRUE)
+      removeRows <- getCases(remove, remove=TRUE)
+      paste(", subset =", removeRows)
     }
-#    if (remove.cases != "" && inherits(removeRows, "cases-error")){
-    if (remove.cases != "" && inherits(remove.cases, "cases-error")){
+    if (remove.cases != "" && inherits(removeRows, "cases-error")){
       errorCondition(recall = linearModel,
                      message = removeRows,
                      model=TRUE)
@@ -212,12 +201,9 @@ linearModel <- function(){
       return()
     }
     formula <- paste(tclvalue(lhsVariable), tclvalue(rhsVariable), sep=" ~ ")
-    # command <- paste("lm(", formula,
-    #                  ", data=", ActiveDataSet(), subset, weights, remove.cases, ")", sep="")
-    # doItAndPrint(paste(modelValue, " <- ", command, sep = ""))
-    command <- Command("lm", formula, data=ActiveDataSet(), subset=subset, weights=weights,
-                       subset=remove.cases, to=modelValue)
-    doItAndPrint(command)
+    command <- paste("lm(", formula,
+                     ", data=", ActiveDataSet(), subset, weights, remove.cases, ")", sep="")
+    doItAndPrint(paste(modelValue, " <- ", command, sep = ""))
     doItAndPrint(paste("summary(", modelValue, ")", sep=""))
     activeModel(modelValue)
     if (subset != "" || remove.cases != "") putRcmdr("modelWithSubset", TRUE) else putRcmdr("modelWithSubset", FALSE)
@@ -350,10 +336,6 @@ generalizedLinearModel <- function(){
       if ("no" == tclvalue(checkReplace(modelValue, type=gettextRcmdr("Model")))){
         UpdateModelNumber(-1)
         closeDialog()
-        if (getRcmdr("onApplyCalled")){
-            putRcmdr("onApplyCalled", FALSE)
-            return()
-        }
         generalizedLinearModel()
         return()
       }
@@ -519,10 +501,6 @@ ordinalRegressionModel <- function(){
     if (is.element(modelValue, listProportionalOddsModels())) {
       if ("no" == tclvalue(checkReplace(modelValue, type=gettextRcmdr("Model")))){
         UpdateModelNumber(-1)
-          if (getRcmdr("onApplyCalled")){
-              putRcmdr("onApplyCalled", FALSE)
-              return()
-          }
         proportionalOddsModel()
         return()
       }
@@ -643,10 +621,6 @@ multinomialLogitModel <- function(){
     if (is.element(modelValue, listMultinomialLogitModels())) {
       if ("no" == tclvalue(checkReplace(modelValue, type=gettextRcmdr("Model")))){
         UpdateModelNumber(-1)
-          if (getRcmdr("onApplyCalled")){
-              putRcmdr("onApplyCalled", FALSE)
-              return()
-          }
         multinomialLogitModel()
         return()
       }
@@ -797,10 +771,6 @@ linearMixedModel <- function(){
     if (is.element(modelValue, listLMMs())) {
       if ("no" == tclvalue(checkReplace(modelValue, type=gettextRcmdr("Model")))){
         UpdateModelNumber(-1)
-          if (getRcmdr("onApplyCalled")){
-              putRcmdr("onApplyCalled", FALSE)
-              return()
-          }
         linearMixedModel()
         return()
       }
@@ -963,10 +933,6 @@ generalizedLinearMixedModel <- function(){
     if (is.element(modelValue, listGLMMs())) {
       if ("no" == tclvalue(checkReplace(modelValue, type=gettextRcmdr("Model")))){
         UpdateModelNumber(-1)
-          if (getRcmdr("onApplyCalled")){
-              putRcmdr("onApplyCalled", FALSE)
-              return()
-          }
         closeDialog()
         generalizedLinearMixedModel()
         return()

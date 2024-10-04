@@ -1,5 +1,6 @@
 \name{Rcmdr-internal}
 \alias{Rcmdr-internal}
+\alias{.Tcl}
 \alias{tcl}
 \alias{tclRequire}
 \alias{tclServiceMode}
@@ -60,7 +61,6 @@
 \alias{ttklabelframe}
 \alias{ttkcheckbutton}
 \alias{showData}
-\alias{.Tcl}
 
 \title{
 \pkg{tcltk} Functions Re-exported by the \pkg{Rcmdr} Package.

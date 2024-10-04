@@ -24,6 +24,7 @@
 
 <<echo = FALSE, results = hide>>=
 Sys.setenv(LANGUAGE='es')
+Sys.setLanguage("es")
 file.copy(from = 'Rcmdr-menus', to = 'Rcmdr-menus-es', overwrite = TRUE)
 Sweave('Rcmdr-menus-es')
 @ 

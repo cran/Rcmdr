@@ -1,4 +1,4 @@
-# last modified 2023-03-25 by J. Fox
+# last modified 2022-06-13 by J. Fox
 
 globalVariables(c('top', 'statisticFrame', 'statisticVariable', 'buttonsFrame',
                   '.activeModel', 'varVariable', 'rhsVariable', 'varFrame', 'formulaFrame',
@@ -51,7 +51,7 @@ globalVariables(c('top', 'statisticFrame', 'statisticVariable', 'buttonsFrame',
                   'styleButtonsVariable', 'styleButtonsFrame', 'se.meanVariable',
                   'AIC', 'BIC', 'GFI', 'AGFI', 'RMSEA', 'NFI', 'NNFI', 'CFI', 'RNI', 'IFI', 'SRMR', 'AICc', 'CAIC',
                   'fitIndicesFrame.1', 'fitIndicesFrame.2', 'sandwichTypeVariable', 'sandwichTypeFrame',
-                  'cur3d', 'rgl.bringtotop', '.Contrasts', 'appnapVariable', 'appnapFrame',
+                  'rgl.cur', 'rgl.bringtotop', '.Contrasts', 'appnapVariable', 'appnapFrame',
                   'formatButtonsVariable', 'formatButtonsFrame', 'latexVariable', 'pandocVariable', 'selectSoftwareFrame',
                   'legendVariable', 'legendFrame', 'legendPositionVariable', 'legendPositionFrame',
                   'valuesOrQuantilesVariable', 'valuesOrQuantilesFrame',
@@ -59,4 +59,4 @@ globalVariables(c('top', 'statisticFrame', 'statisticVariable', 'buttonsFrame',
                   'countsVariable', 'allPredictorEffectsFrame', 'allPredictorEffectsVariable', 'familyFrame', 'familyVariable',
                   'bonfVariable', 'cookVariable', 'hatVariable', 'studentVariable', 'varsFrame', 'estimTypeFrame', 'estimTypeVariable',
                   '.responseLabel', 'testStatisticVariable', 'designTab', 'testStatisticFrame', 'oneFactorTab', 'twoFactorsTab',
-                  'modelCaseDeletionVariable', 'CVVariable', 'removeRows'))
+                  'modelCaseDeletionVariable'))

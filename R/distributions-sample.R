@@ -66,10 +66,6 @@ distributionSamples <- function(nameVar) {
     }
     if (is.element(dsnameValue, listDataSets())) {
       if ("no" == tclvalue(checkReplace(dsnameValue, gettextRcmdr("Data set")))){
-          if (getRcmdr("onApplyCalled")){
-              putRcmdr("onApplyCalled", FALSE)
-              return()
-          }
         nameVarF()
         return()
       }
