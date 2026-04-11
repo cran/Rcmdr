@@ -14,14 +14,14 @@
 \setlength{\textwidth}{6.5in}
 \setlength{\textheight}{9in}
 
+%\VignetteEncoding{UTF-8}
 %\VignetteIndexEntry{Getting Started with the R Commander}
 
 \begin{document}
 \SweaveOpts{concordance=TRUE}
 
-\title{Getting Started With the R Commander\thanks{Parts of this manual are adapted
-and updated from Fox (2005). Please address correspondence to
-\texttt{jfox@mcmaster.ca}. }}
+\title{Getting Started With the R Commander\thanks{Parts of this manual are adapted and updated from Fox (2005).
+Please address correspondence to current mantainer Manuel Munoz-Marquez \texttt{manuel.munoz@uca.es}. }}
 \author{John Fox}
 \date{Version 2.8-0 (last modified: 2024-09-30)}
 \maketitle
@@ -1459,7 +1459,7 @@ command must be submitted simultaneously for execution. For serious \textbf{R}
 programming, it is preferable to use the script editors provided by the
 \textbf{Windows} and \textbf{macOS} versions of \textbf{R}, or --- even
 better --- a programming editor or interactive development environment, such
-as \textbf{RStudio} <\href{https://www.rstudio.com/}{www.rstudio.com}>.\footnote{
+as \textbf{RStudio} <\href{https://posit.co/}{posit.co/}>.\footnote{
 The \textbf{R Commander} will run under \textbf{RStudio}, in which
 case by default \textbf{R Commander} output and messages are directed to the
 \textbf{R} console within \textbf{RStudio}.}

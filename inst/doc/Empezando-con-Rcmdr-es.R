@@ -1,7 +1,7 @@
 ### R code from vignette source 'Empezando-con-Rcmdr-es.Rnw'
 
 ###################################################
-### code chunk number 1: Empezando-con-Rcmdr-es.Rnw:25-29
+### code chunk number 1: Empezando-con-Rcmdr-es.Rnw:26-30
 ###################################################
 Sys.setenv(LANGUAGE='es')
 Sys.setLanguage("es")

@@ -1,9 +1,10 @@
-# last modified 2023-08-07 by J. Fox
+# by John Fox until 2024-11-20 
 
 # utility functions
 
 # listing objects etc.
 
+#' @export
 listDataSets <- function(envir=.GlobalEnv, ...) {
     Vars <- ls(envir = envir, all.names = TRUE) # + PhG
     if (length(Vars) == 0) return(Vars) # + PhG
@@ -11,6 +12,7 @@ listDataSets <- function(envir=.GlobalEnv, ...) {
     names(which(sapply(Vars, function(.x) is.data.frame(get(.x, envir=envir)))))
 }
 
+#' @export
 listLinearModels <- function(envir=.GlobalEnv, ...) {
     objects <- ls(envir=envir, ...)
     if (length(objects) == 0) NULL
@@ -18,6 +20,7 @@ listLinearModels <- function(envir=.GlobalEnv, ...) {
         function(.x) "lm" == (class(get(.x, envir=envir))[1]))]
 }
 
+#' @export
 listAOVModels <- function(envir=.GlobalEnv, ...) {
     objects <- ls(envir=envir, ...)
     if (length(objects) == 0) NULL
@@ -25,6 +28,7 @@ listAOVModels <- function(envir=.GlobalEnv, ...) {
         function(.x) "aov" == (class(get(.x, envir=envir))[1]))]
 }
 
+#' @export
 listGeneralizedLinearModels <- function(envir=.GlobalEnv, ...) {
     objects <- ls(envir=envir, ...)
     if (length(objects) == 0) NULL
@@ -32,6 +36,7 @@ listGeneralizedLinearModels <- function(envir=.GlobalEnv, ...) {
         function(.x) "glm" == (class(get(.x, envir=envir))[1]))]
 }
 
+#' @export
 listMultinomialLogitModels <- function(envir=.GlobalEnv, ...) {
     objects <- ls(envir=envir, ...)
     if (length(objects) == 0) NULL
@@ -39,6 +44,7 @@ listMultinomialLogitModels <- function(envir=.GlobalEnv, ...) {
         function(.x) "multinom" == (class(get(.x, envir=envir))[1]))]
 }
 
+#' @export
 listProportionalOddsModels <- function(envir=.GlobalEnv, ...) {
     objects <- ls(envir=envir, ...)
     if (length(objects) == 0) NULL
@@ -60,6 +66,7 @@ listGLMMs <- function(envir=.GlobalEnv, ...) {
                       function(.x) "glmerMod" == (class(get(.x, envir=envir))[1]))]
 }
 
+#' @export
 listAllModels <- function(envir=.GlobalEnv, ...) {
     objects <- ls(envir=envir, ...)
     if (length(objects) == 0) NULL
@@ -67,6 +74,7 @@ listAllModels <- function(envir=.GlobalEnv, ...) {
         function(.x) (class(get(.x, envir=envir))[1])) %in% getRcmdr("modelClasses")]
 }
 
+#' @export
 activeDataSet <- function(dsname, flushModel=TRUE, flushDialogMemory=TRUE){
     .activeDataSet <- ActiveDataSet()
     if (missing(dsname)) {
@@ -130,7 +138,7 @@ activeDataSet <- function(dsname, flushModel=TRUE, flushDialogMemory=TRUE){
     dsname
 }
 
-
+#' @export
 activeModel <- function(model){
     if (missing(model)) {
         .activeModel <- ActiveModel()
@@ -147,6 +155,22 @@ activeModel <- function(model){
     model
 }
 
+#' @title Get Variable Names of a Data Set
+#' @rdname Rcmdr.Utilities
+#' 
+#' @description
+#' \code{listVariables} retrieves the variable names from the specified \code{dataSet} 
+#' or from the active data set.
+#' 
+#' If called without arguments, the function returns the names of the 
+#' variables in the active data set. 
+#' 
+#' If the \code{dataSet} argument is provided, the function returns the 
+#' variable names associated with that specific data set.
+#' 
+#' @return A character vector containing the names of the variables.
+#' 
+#' @export
 listVariables <- function(dataSet=ActiveDataSet()) {
     if(missing(dataSet)) {
         Variables()
@@ -157,6 +181,7 @@ listVariables <- function(dataSet=ActiveDataSet()) {
     }
 }
 
+#' @export
 listFactors <- function(dataSet=ActiveDataSet()) {
   if(missing(dataSet)) {
     Factors()
@@ -170,6 +195,7 @@ listFactors <- function(dataSet=ActiveDataSet()) {
   }
 }
 
+#' @export
 listTwoLevelFactors <- function(dataSet=ActiveDataSet()){
   if(missing(dataSet)) {
     TwoLevelFactors()
@@ -184,6 +210,7 @@ listTwoLevelFactors <- function(dataSet=ActiveDataSet()){
   }
 }
 
+#' @export
 listNumeric <- function(dataSet=ActiveDataSet()) {
     if(missing(dataSet)) {
         Numeric()
@@ -195,6 +222,37 @@ listNumeric <- function(dataSet=ActiveDataSet()) {
     }
 }
 
+
+
+
+#' @title Get Positive Variable Names of a Data Set
+#' @rdname Rcmdr.Utilities
+#'
+#' @description
+#' \code{listPositiveVariables} is a specialized version of 
+#' \code{\link{listVariables}} that works only with variables 
+#' containing only positive values.
+#' 
+#' @details 
+#' This function filters the variables in the specified or active 
+#' data set, returning only those that meet the positivity criterion.
+#' 
+#' @export
+listNumericPositive <- function(dataSet=ActiveDataSet()) {
+    if(missing(dataSet)) {
+        NumericPositive()
+    }
+    else {
+        variables <- listVariables(dataSet)
+        variables[sapply(variables, function(.x) {
+            .x <- eval(parse(text=.x), envir=get(dataSet, envir=.GlobalEnv))
+            is.numeric(.x) && all(.x >= 0, na.rm = TRUE)
+           }
+        )]
+    }
+}
+
+#' @export
 listCharacter <- function(dataSet=ActiveDataSet()) {
   if(missing(dataSet)) {
     Character()
@@ -206,14 +264,17 @@ listCharacter <- function(dataSet=ActiveDataSet()) {
   }
 }
 
+#' @export
 trim.blanks <- function(text){
     gsub("^\ *", "", gsub("\ *$", "", text))
 }
 
+#' @export
 is.valid.name <- function(x){
     length(x) == 1 && is.character(x) && x == make.names(x)
 }
 
+#' @export
 is.valid.number <- function(string){
     warn <- options(warn=-1)
     on.exit(warn)
@@ -222,11 +283,13 @@ is.valid.number <- function(string){
 }
 
 # statistical
-
+#' @export
 Coef <- function(object, ...) UseMethod("Coef")
 
+#' @export
 Coef.default <- function(object, ...) coef(object, ...)
 
+#' @export
 Coef.multinom <- function (object, ...) {
     # the following adapted from nnet:
     cf <- function (object, ...)
@@ -255,14 +318,27 @@ Coef.multinom <- function (object, ...) {
     b
 }
 
+#' @export
 Coef.merMod <- function(object, ...) fixef(object, ...)
 
 
-# Pager
-
-# this is slightly modified from tkpager to use the Rcmdr monospaced font
-#   and a white background
-
+#' @name RcmdrPager
+#'
+#' @title Pager for Text Files
+#'
+#' @keywords misc
+#' 
+#' @details
+#' This is a slightly modified version of the tkpager, changed to use the Rcmdr monospaced font and a white background.
+#'
+#' @param file character vector of file(s) to be displayed.
+#' @param header for the beginning of each file.
+#' @param title for window.
+#' @param delete.file delete file(s) on close.
+#'
+#' @seealso \code{\link[tcltk]{tkpager}}.
+#'
+#' @export
 RcmdrPager <- function (file, header, title, delete.file)
 {
     title <- paste(title, header)
@@ -320,6 +396,7 @@ browseEnglishManual <- function() {
         "/Getting-Started-with-the-Rcmdr.pdf", sep=""))
 }
 
+#' @export
 manualTranslationP <- function(){
     gettextRcmdr("Getting-Started-with-the-Rcmdr") != "Getting-Started-with-the-Rcmdr"
 }
@@ -338,6 +415,7 @@ browseRcmdrHexSticker <- function(){
 
 # the following function is slightly modified, with permission, from Thomas Lumley,
 #   "Programmer's Niche: Macros in R," R-News, Sept. 2001, Vol. 1, No. 3, pp.11-13.
+#' @export
 defmacro <- function(..., expr){
     expr <- substitute(expr)
     len <- length(expr)
@@ -375,6 +453,7 @@ defmacro <- function(..., expr){
     ff
 }
 
+#' @export
 OKCancelHelp <- defmacro(window=top, helpSubject=NULL,  model=FALSE, reset=NULL, apply=NULL, helpPackage=NULL,
     expr={
         memory <- getRcmdr("retain.selections")
@@ -557,6 +636,7 @@ OKCancelHelp <- defmacro(window=top, helpSubject=NULL,  model=FALSE, reset=NULL,
         tkgrid.configure(rightButtonsBox, sticky="e")
     })
 
+#' @export
 subOKCancelHelp <- defmacro(window=subdialog, helpSubject=NULL,
     expr={
 
@@ -606,6 +686,7 @@ subOKCancelHelp <- defmacro(window=subdialog, helpSubject=NULL,
         tkgrid.configure(subRightButtonsBox, sticky="e")
     })
 
+#' @export
 checkActiveDataSet <- function(){
     if (activeDataSet() == FALSE) {
         tkfocus(CommanderWindow())
@@ -614,6 +695,7 @@ checkActiveDataSet <- function(){
     else TRUE
 }
 
+#' @export
 checkActiveModel <- function(){
     if (activeModel() == FALSE) {
         tkfocus(CommanderWindow())
@@ -622,6 +704,7 @@ checkActiveModel <- function(){
     else TRUE
 }
 
+#' @export
 checkFactors <- function(n=1){
     if (length(Factors()) < n){
         if (n > 1)
@@ -635,6 +718,7 @@ checkFactors <- function(n=1){
     else TRUE
 }
 
+#' @export
 checkTwoLevelFactors <- function(n=1){
     if (length(TwoLevelFactors()) < n){
         if (n > 1)
@@ -648,6 +732,7 @@ checkTwoLevelFactors <- function(n=1){
     else TRUE
 }
 
+#' @export
 checkNumeric <- function(n=1){
     if (length(Numeric()) < n){
         if (n > 1)
@@ -661,6 +746,20 @@ checkNumeric <- function(n=1){
     else TRUE
 }
 
+checkNumericPositive <- function(n=1){
+    if (length(NumericPositive()) < n){
+        if (n > 1)
+            Message(message=sprintf(gettextRcmdr("There fewer than %d numeric non-negative variables in the active data set."), n),
+                type="error")
+        else Message(message=gettextRcmdr("There are no numeric non-negative variables in the active data set."),
+            type="error")
+        tkfocus(CommanderWindow())
+        FALSE
+    }
+    else TRUE
+}
+
+#' @export
 checkVariables <- function(n=1){
     if (length(Variables()) < n){
         if (n > 1)
@@ -674,12 +773,14 @@ checkVariables <- function(n=1){
     else TRUE
 }
 
+#' @export
 commanderPosition <- function (){
     ID <- CommanderWindow()$ID
     as.numeric(c(tclvalue(.Tcl(paste("winfo rootx", ID))),
         tclvalue(.Tcl(paste("winfo rooty", ID)))))
 }
 
+#' @export
 initializeDialog <- defmacro(window=top, title="", offset=10, preventCrisp,
     use.tabs=FALSE, notebook=notebook, tabs=c("dataTab", "optionsTab"),
     suppress.window.resize.buttons=TRUE,
@@ -703,6 +804,7 @@ initializeDialog <- defmacro(window=top, title="", offset=10, preventCrisp,
     }
 )
 
+#' @export
 closeDialog <- defmacro(window=top, release=TRUE,
     expr={
         if (release && GrabFocus()) tkgrab.release(window)
@@ -710,6 +812,7 @@ closeDialog <- defmacro(window=top, release=TRUE,
     }
 )
 
+#' @export
 dialogSuffix <- defmacro(window=top, onOK=onOK, onCancel=onCancel, rows, columns, focus=top,
     bindReturn=TRUE, preventGrabFocus=FALSE, preventDoubleClick=FALSE,
     preventCrisp,
@@ -740,6 +843,7 @@ dialogSuffix <- defmacro(window=top, onOK=onOK, onCancel=onCancel, rows, columns
     }
 )
 
+#' @export
 variableListBox <- function(parentWindow, variableList=Variables(), bg="white",
     selectmode="single", export="FALSE", initialSelection=NULL, listHeight=getRcmdr("variable.list.height"), title){
     if (selectmode == "multiple") selectmode <- getRcmdr("multiple.select.mode")
@@ -810,18 +914,23 @@ variableListBox <- function(parentWindow, variableList=Variables(), bg="white",
     result
 }
 
+#' @export
 getSelection <- function(object) UseMethod("getSelection")
 
+#' @export
 getSelection.listbox <- function(object){
     object$varlist[as.numeric(tkcurselection(object$listbox)) + 1]
 }
 
+#' @export
 getFrame <- function(object) UseMethod("getFrame")
 
+#' @export
 getFrame.listbox <- function(object){
     object$frame
 }
 
+#' @export
 variableComboBox <- function(parentWindow, variableList=Variables(),
                              export="FALSE", state="readonly",
                              initialSelection=gettextRcmdr(nullSelection),
@@ -886,15 +995,41 @@ variableComboBox <- function(parentWindow, variableList=Variables(),
   result
 }
 
+#' @export
 getSelection.combobox <- function(object){
   tclvalue(object$combovar)
 }
 
+#' @export
 getFrame.combobox <- function(object){
   object$frame
 }
 
-# This function modified based on code by Liviu Andronic (13 Dec 09) and on code by Milan Bouchet-Valat (29 Jun 12):
+## This function modified based on code by Liviu Andronic (13 Dec 09) and on code by Milan Bouchet-Valat (29 Jun 12)
+#' @title Create a Set of Radio Buttons
+#' @rdname Rcmdr.Utilities
+#' 
+#' @description 
+#' \code{radioButtons} creates a group of radio buttons within a Tk dialog, 
+#' allowing the user to select a single option from a predefined list.
+#'
+#' This function generates a set of related radio buttons. It supports "dialog memory," meaning it can retain and restore the user's previous selections across different invocations of the same dialog.
+#'
+#' @param name A character string providing the base name for the widget.
+#' @param buttons A character vector of names for the individual radio buttons in the set.
+#' @param values A character vector of values associated with each radio button. 
+#' For \code{putDialog}, this should be a list of current selections to be stored in the dialog's memory.
+#' @param initialValue The value of the radio button that should be selected by default.
+#' @param labels A character vector of strings to be used as labels for the radio buttons.
+#' @param title A character string for the title of the radio button group.
+#' @param title.color The color of the title text; defaults to \code{"blue"}.
+#' @param right.buttons Logical; if \code{TRUE}, the buttons are placed to the right of their labels. Defaults to \code{FALSE}.
+#' @param command A character string that evaluates to an R command, or a function to be executed when a button is selected.
+#' @param columns An integer (1, 2, 3, or 4) specifying the number of columns used to arrange the buttons. Buttons are filled by rows; defaults to 1.
+#  @param expr An expression constituting the body of the macro; typically a compound expression.
+#' @return This function does not return a value. Instead, it creates a Tcl variable (named as \code{nameVariable}) that stores the user's selection.
+#' 
+#' @export
 radioButtons <- defmacro(window=top, name, buttons, values=NULL, initialValue=..values[1], labels,
     title="", title.color=getRcmdr("title.color"), right.buttons=FALSE,  command=function(){}, columns=1,
     expr={
@@ -954,7 +1089,7 @@ radioButtons <- defmacro(window=top, name, buttons, values=NULL, initialValue=..
     }
 )
 
-
+#' @export
 checkBoxes <- defmacro(window=top, frame, boxes, initialValues=NULL, labels, title=NULL, ttk=FALSE, columns=1,
     expr={
         ..initialValues <- if (is.null(initialValues)) rep("1", length(boxes)) else initialValues
@@ -1004,11 +1139,13 @@ checkBoxes <- defmacro(window=top, frame, boxes, initialValues=NULL, labels, tit
     }
 )
 
+#' @export
 checkReplace <- function(name, type=gettextRcmdr("Variable")){
     RcmdrTkmessageBox(message=sprintf(gettextRcmdr("%s %s already exists.\nOverwrite %s?"),
         type, name, tolower(type)), icon="warning", type="yesno", default="no")
 }
 
+#' @export
 errorCondition <- defmacro(window=top, recall=NULL, message, model=FALSE,
    expr={
      putRcmdr("cancelDialogReopen", TRUE)
@@ -1022,6 +1159,7 @@ errorCondition <- defmacro(window=top, recall=NULL, message, model=FALSE,
      else tkfocus(CommanderWindow())
    })
 
+#' @export
 subsetBox <- defmacro(window=top, subset.expression=NULL, model=FALSE,
     expr={
         subsetVariable <- if (!is.null(subset.expression)) tclVar(gettextRcmdr(subset.expression))
@@ -1041,7 +1179,7 @@ subsetBox <- defmacro(window=top, subset.expression=NULL, model=FALSE,
         tkgrid.columnconfigure(subsetFrame, 0, weight=1)
     })
 
-
+#' @export
 groupsBox <- defmacro(recall=NULL, label=gettextRcmdr("Plot by:"), initialLabel=gettextRcmdr("Plot by groups"),
                       errorText=gettextRcmdr("There are no factors in the active data set."),
                       variables=Factors(), plotLinesByGroup=FALSE, positionLegend=FALSE, plotLinesByGroupsText=gettextRcmdr("Plot lines by group"),
@@ -1109,7 +1247,7 @@ groupsBox <- defmacro(recall=NULL, label=gettextRcmdr("Plot by:"), initialLabel=
                           tkgrid.columnconfigure(groupsFrame, 0, weight=1)
                       })
 
-
+#' @export
 groupsLabel <- defmacro(frame=top, groupsBox=groupsBox, columnspan=1, initialText=NULL, ratio=FALSE,
     expr={
         initial.label <- if (exists("dialog.values")) dialog.values$initial.label else NULL
@@ -1143,6 +1281,7 @@ groupsLabel <- defmacro(frame=top, groupsBox=groupsBox, columnspan=1, initialTex
         tkbind(groupsBox$listbox, "<ButtonRelease-1>", onSelect)
     })
 
+#' @export
 modelFormula <- defmacro(frame=top, hasLhs=TRUE, rhsExtras=NULL, formulaLabel=gettextRcmdr("Model Formula"), showBar=FALSE,
                          expr={
   .rhsExtras <- if (is.null(rhsExtras)) hasLhs else rhsExtras
@@ -1466,6 +1605,7 @@ modelFormula <- defmacro(frame=top, hasLhs=TRUE, rhsExtras=NULL, formulaLabel=ge
   tkgrid.configure(rhsXscroll, sticky="ew")
 })
 
+#' @export
 exists.method <- function(generic, object, default=TRUE, strict=FALSE){
     classes <- class(object)
     if (default) classes <- c(classes, "default")
@@ -1474,6 +1614,7 @@ exists.method <- function(generic, object, default=TRUE, strict=FALSE){
             as.character(methods(generic)))
 }
 
+#' @export
 checkMethod <- defmacro(generic, object, message=NULL, default=FALSE, strict=FALSE, reportError=TRUE,
     expr={
         msg <- if (is.null(message)) sprintf(gettextRcmdr("No appropriate %s method exists\nfor a model of this class."), generic)
@@ -1484,6 +1625,7 @@ checkMethod <- defmacro(generic, object, message=NULL, default=FALSE, strict=FAL
     }
 )
 
+#' @export
 checkClass <- defmacro(object, class, message=NULL,
     expr={
         msg <- if (is.null(message)) sprintf(gettextRcmdr('The model is not of class "%s".'), class)
@@ -1509,14 +1651,16 @@ isS4object <- function(object) {
 
 RcmdrEnv <- function() .RcmdrEnv
 
+#' @export
 putRcmdr <- function(x, value) assign(x, value, envir=RcmdrEnv())
 
+#' @export
 getRcmdr <- function(x, mode="any", fail=TRUE){
     if ((!fail) && (!exists(x, mode=mode, envir=RcmdrEnv(), inherits=FALSE))) return(NULL)
     get(x, envir=RcmdrEnv(), mode=mode, inherits=FALSE)
 }
 
-
+#' @export
 RcmdrTclSet <- function(name, value){
     name <- ls(unclass(getRcmdr(name))$env)
     tcl("set", name, value)
@@ -1524,26 +1668,69 @@ RcmdrTclSet <- function(name, value){
 
 # functions to store or retrieve Rcmdr state information
 
+
+#' @title Get or Store Variable Names of Active Data Set
+#' @name Rcmdr.Utilities
+#' 
+#' @description
+#' \code{Variables} retrieves the variable names from the active data set 
+#' or stores a new set of names.
+#' 
+#' If called without arguments, the function returns the names of the 
+#' variables in the active data set. 
+#' 
+#' If the \code{names} argument is provided, the function stores these 
+#' as the current variable names for the active session.
+#'
+#' @param names An optional character vector of variable names to be stored. 
+#' If omitted, the function defaults to retrieval mode.
+#' 
+#' @return If \code{names} is missing, returns a character vector of 
+#' variable names. If \code{names} is provided, the function is used for 
+#' its side effect of storing the names (typically returns \code{NULL} 
+#' invisibly).
+#' 
+#' @export
 Variables <- function(names){
     if (missing(names)) getRcmdr("variables")
     else putRcmdr("variables", names)
 }
 
+#' @export
 Numeric <- function(names){
     if (missing(names)) getRcmdr("numeric")
     else putRcmdr("numeric", names)
 }
 
+#' @title Get or Store Positive Variable Names
+#' @name Rcmdr.Utilities
+#' 
+#' @description
+#' \code{NumericPositive} retrieves or stores the names of variables 
+#' containing only positive values in the active data set.
+#' 
+#' This function is a specialized version of \code{\link{Variables}} 
+#' designed specifically to work with positive-valued variables.
+#' 
+#' @export
+NumericPositive <- function(names){
+    if (missing(names)) getRcmdr("numericPositive")
+    else putRcmdr("numericPositive", names)
+}
+
+#' @export
 Character <- function(names){
   if (missing(names)) getRcmdr("character")
   else putRcmdr("character", names)
 }
 
+#' @export
 Factors <- function(names){
     if (missing(names)) getRcmdr("factors")
     else putRcmdr("factors", names)
 }
 
+#' @export
 TwoLevelFactors <- function(names){
     if (missing(names)) getRcmdr("twoLevelFactors")
     else putRcmdr("twoLevelFactors", names)
@@ -1553,6 +1740,7 @@ TwoLevelFactors <- function(names){
 #  and subsequently by John Fox (23 July 07)
 #  and Milan Bouchet-Valat (27 March 14)
 
+#' @export
 ActiveDataSet <- function(name){
     if (missing(name)) {
         temp <- getRcmdr(".activeDataSet")
@@ -1565,6 +1753,7 @@ ActiveDataSet <- function(name){
                 putRcmdr(".activeDataSet", NULL)
                 Variables(NULL)
                 Numeric(NULL)
+                NumericPositive(NULL)
                 Factors(NULL)
                 TwoLevelFactors(NULL)
                 Character(NULL)
@@ -1586,6 +1775,7 @@ ActiveDataSet <- function(name){
       if(!is.null(name)) {
         Variables(listVariables(name))
         Numeric(listNumeric(name))
+        NumericPositive(listNumericPositive(name))
         Factors(listFactors(name))
         TwoLevelFactors(listTwoLevelFactors(name))
         DiscreteNumeric(listDiscreteNumeric(name))
@@ -1612,6 +1802,7 @@ ActiveDataSet <- function(name){
         else {
             Variables(NULL)
             Numeric(NULL)
+            NumericPositive(NULL)
             Factors(NULL)
             TwoLevelFactors(NULL)
             DiscreteNumeric(NULL)
@@ -1629,6 +1820,7 @@ ActiveDataSet <- function(name){
     }
 }
 
+#' @export
 ActiveModel <- function(name){
     if (missing(name)) {
         temp <- getRcmdr(".activeModel")
@@ -1649,11 +1841,13 @@ ActiveModel <- function(name){
     else putRcmdr(".activeModel", name)
 }
 
+#' @export
 GrabFocus <- function(value){
     if (missing(value)) getRcmdr("grab.focus")
     else putRcmdr("grab.focus", value)
 }
 
+#' @export
 UpdateModelNumber <- function(increment=1){
     modelNumber <- getRcmdr("modelNumber")
     modelNumber <- modelNumber + increment
@@ -1661,55 +1855,97 @@ UpdateModelNumber <- function(increment=1){
     putRcmdr("modelNumber", modelNumber)
 }
 
+#' @export
 CommanderWindow <- function() getRcmdr("commanderWindow")
 
+#' @export
 LogWindow <- function() getRcmdr("logWindow")
 
+#' @export
 RmdWindow <- function() getRcmdr("RmdWindow")
 
+#' @export
 RnwWindow <- function() getRcmdr("RnwWindow")
 
+#' @export
 OutputWindow <- function() getRcmdr("outputWindow")
 
+#' @export
 MessagesWindow <- function() getRcmdr("messagesWindow")
 
 # some predicates for the menu system
 
+#' @export
 activeDataSetP <- function() !is.null(ActiveDataSet())
 
+#' @export
 dataSetsP <- function(n=1){
     datasets <- listDataSets()
     (!is.null(datasets)) && length(datasets) >= n
 }
 
+#' @export
 numericP <- function(n=1) activeDataSetP() && length(listNumeric()) >= n
 
+#' @title Check for Positive Numeric Variables in the Active Data Set
+#' @rdname Rcmdr.Utilities
+#'
+#' @description
+#' \code{numericPositiveP} is a specialized version of 
+#' \code{\link{numericP}} that checks if a variable is both numeric 
+#' and contains strictly positive values.
+#'
+#' @details 
+#' While \code{numericP} only verifies the data type, \code{numericPositiveP} 
+#' validates the actual content of the variable. It returns \code{TRUE} 
+#' only if the variable meets both criteria: being numeric and having 
+#' values strictly greater than zero.
+#'
+#' @return Returns \code{TRUE} if the condition is met, and \code{FALSE} otherwise.
+#'
+#' @export
+numericPositiveP <- function(n=1) activeDataSetP() && length(listNumericPositive()) >= n
+
+#' @export
 factorsP <- function(n=1) activeDataSetP() && length(listFactors()) >= n
 
+#' @export
 characterP <- function(n=1) activeDataSetP() && length(listCharacter()) >= n
 
+#' @export
 twoLevelFactorsP <- function(n=1) activeDataSetP() && length(listTwoLevelFactors()) >= n
 
+#' @export
 modelsP <- function(n=1) activeDataSetP() && length(listAllModels()) >= n
 
+#' @export
 activeModelP <- function() !is.null(ActiveModel())
 
+#' @export
 lmP <- function() activeModelP() && any(class(get(ActiveModel()))[1] == c('lm', 'aov'))
 
+#' @export
 glmP <- function() activeModelP() && class(get(ActiveModel()))[1] == 'glm'
 
+#' @export
 logLikP <- function() activeModelP() && exists.method("logLik", get(ActiveModel()))
 
+#' @export
 anovaP <- function() activeModelP() && exists.method("anova", get(ActiveModel()))
 
+#' @export
 EffectP <- function() activeModelP() && exists.method("Effect", get(ActiveModel()), default=FALSE)
 
+#' @export
 polrP <- function() activeModelP() && class(get(ActiveModel()))[1] == 'polr'
 
+#' @export
 multinomP <- function() activeModelP() && class(get(ActiveModel()))[1] == 'multinom'
 
+#' @export
 hclustSolutionsP <- function() length(listHclustSolutions()) > 0
 
+#' @export
 MacOSXP <- function(release) {
     sys <- Sys.info()
     OSX <- !is.null(sys) && length(grep("[Dd]arwin", sys["sysname"]) > 0)
@@ -1717,10 +1953,13 @@ MacOSXP <- function(release) {
     else (OSX && release <= sys["release"])
 }
 
+#' @export
 packageAvailable <- function(name) 0 != length(find.package(name, quiet=TRUE))
 
+#' @export
 rglLoaded <- function() 0 != length(grep("^rgl", loadedNamespaces()))
 
+#' @export
 activateMenus <- function(){
     if (getRcmdr("suppress.menus")) return()
     for (item in getRcmdr("Menus")){
@@ -1730,7 +1969,7 @@ activateMenus <- function(){
 }
 
 # for internationalization
-
+#' @export
 gettextRcmdr <- function(...) gettext(..., domain="R-Rcmdr")
 
 gettextMenus <- function(...){
@@ -1764,6 +2003,7 @@ English <- function() {
 
 # cross-platform message box with custom icons
 
+#' @export
 RcmdrTkmessageBox <- function(message, icon=c("info", "question", "warning",
     "error"), type=c("okcancel", "yesno", "ok"), default, title) {
   icon <- match.arg(icon)
@@ -1900,16 +2140,53 @@ insertRows <- function(object1, object2, where=NULL, ...){
     if (!(TRUE == all.equal(colnames(object1), colnames(object2))))
         stop(gettextRcmdr("objects have different column names"))
     n <- nrow(object1)
-    if (is.null(where) || where >= n) rbind(object1, object2)
-    else if (where < 1) rbind(object2, object1)
-    else rbind(object1[1:floor(where),], object2,
-        object1[(floor(where) + 1):n,])
+    if (is.null(where) || where >= n) object <- rbind(object1, object2)
+    else if (where < 1) object <- rbind(object2, object1)
+    else object <- rbind(object1[1:floor(where),], object2, object1[(floor(where) + 1):n,])
+    
+    ## Restore original types of columns because rbind convert character columns into factor ones
+    if (isa(object, "data.frame")) {
+       types <- sapply(object1, typeof)
+       for(i in 1:ncol(object)) {
+          if (typeof(object[, i]) != types[[i]]) {
+	     object[, i] <- as(object[, i], types[[i]])
+          }
+      }
+   }
+   object
 }
 
 # functions for handling Rcmdr plug-in packages
 
 # the following function based on a suggestion by Brian Ripley
 
+#' @name Plugins
+#'
+#' @title R Commander Plug-in Packages
+#'
+#' @keywords misc
+#' 
+#' @details
+#' Plug-ins are R packages that extend the R Command interface.
+#'
+#' An R Commander plug-in is an ordinary R package that (1) provides extensions to the R Commander menus is a file named \code{menus.txt} located in the package's \code{etc} directory; (2) provides call-back functions required by these menus; and (3) in an \code{RcmdrModels:} field in the package's \code{DESCRIPTION} file, augments the list of model objects recognized by the R Commander.
+#' The menus provided by a plug-in package are merged with the standard Commander menus.
+#' It is also possible to remove menus and menu items from the standard Commander menu file or from the files of plug-ins installed before the current one.
+#'
+#' Plug-in packages given in the R Commander \code{plugins} option (see \code{\link{Commander}}) are automatically loaded when the Commander starts up.
+#' Plug-in packages may also be loaded via the Commander \emph{Tools -> Load Rcmdr plug-in(s)} menu; a restart of the Commander is required to install the new menus. Finally, loading a plug-in package when the \pkg{Rcmdr} is not loaded will load the \pkg{Rcmdr} and activate the plug-in.
+#'
+#' An illustrative R Commander plug-in package, \pkg{RcmdrPlugin.TeachingDemos}, is available on CRAN.
+#'
+#' A variety of utility functions is available to support R Commander plug-in packages; see \code{\link{Rcmdr.Utilities}}.
+#'
+#' For more details, see Fox, \emph{Writing R Commander Plug-in Packages} at \url{https://www.john-fox.ca/RCommander/plug-ins.html}.
+#'
+#' @seealso \code{\link{Commander}}, \code{\link{Rcmdr.Utilities}}.
+#'
+#' @param loaded if \code{TRUE}, plug-in packages that are loaded are included in the vector of names returned.
+#'
+#' @export
 listPlugins <- function(loaded=FALSE){
     plugins <- unlist(lapply(.libPaths(),
         function(x) Sys.glob(file.path(x, "*/etc/menus.txt"))))
@@ -1961,6 +2238,12 @@ is.model <- function(object) {
     any(class(object) %in% getRcmdr("modelClasses"))
 }
 
+#' @export buttonRcmdr
+#' @export labelRcmdr
+#' @export ttkentry
+#' @export ttkframe
+#' @export ttkradiobutton
+#' @export ttkscrollbar
 # the following lines, adding support for ttk widgets, adapted from code by Brian Ripley
 if (!(as.character(tcl("info", "tclversion")) >= "8.5" && getRversion() >= "2.7.0")){
     buttonRcmdr <- tkbutton
@@ -2025,10 +2308,12 @@ if (!(as.character(tcl("info", "tclversion")) >= "8.5" && getRversion() >= "2.7.
 }
 
 # Label looking like that of a TtkLabelFrame
+#' @export
 titleLabel <- function(...) labelRcmdr(..., font="RcmdrTitleFont", fg=getRcmdr("title.color"))
 
 # the following function alters the default behaviour of tclvalue() by trimming leading and trailing blanks
 
+#' @export
 tclvalue <- function(x) trim.blanks(tcltk::tclvalue(x))
 
 # the following function splits a character string at blanks and commas according to width
@@ -2082,6 +2367,7 @@ splitCmd <- function(cmd, width=getOption("width") - 4, at="[ ,]"){
 
 # the following function sorts names containing numerals "more naturally" than does sort()
 
+#' @export
 sortVarNames <- function(x){
     sort.helper <- function(x){
         prefix <- strsplit(x, "[0-9]+")
@@ -2100,7 +2386,7 @@ sortVarNames <- function(x){
 }
 
 # to load packages
-
+#' @export
 Library <- function(package, pos=length(search()), rmd=TRUE){
     dependencies <- tools::package_dependencies(package, db=getRcmdr("installed.packages"), which="Depends")
     loaded <- search()
@@ -2140,6 +2426,7 @@ startHelp <- function(){
 
 # dialog memory support
 
+#' @export
 putDialog <- function (dialog, values=NULL, resettable=TRUE){
     if (resettable){
         dialog.values <- getRcmdr("dialog.values")
@@ -2153,6 +2440,7 @@ putDialog <- function (dialog, values=NULL, resettable=TRUE){
     }
 }
 
+#' @export
 getDialog <- function(dialog, defaults=NULL){
     values <- getRcmdr("dialog.values.noreset")[[dialog]]
     if (getRcmdr("retain.selections") && !is.null(values)) return(values)
@@ -2161,14 +2449,35 @@ getDialog <- function(dialog, defaults=NULL){
     else return (values)
 }
 
+#' @title Get Variable Positions in the Active Data Set
+#' @name Rcmdr.Utilities
+#' 
+#' @description 
+#' \code{varPosn} returns the indices of specific variables within the active 
+#' data set, filtered by type and sorted alphabetically.
+#' 
+#' \code{varPosn} supports "dialog-box memory" (i.e., retaining selections 
+#' across successive invocations of a dialog).
+#' 
+#' @param type A character string specifying the type of object to check. 
+#' Used to filter the variable list for \code{varPosn}.
+#' @param variables A character vector containing one or more variable names.
+#' @param vars A character vector of variable names. If provided, the 
+#' \code{type} argument is ignored.
+#' 
+#' @return A numeric vector representing the 0-indexed positions of the 
+#' requested variables after filtering the data set by \code{type} and 
+#' sorting alphabetically.
+#' @export
 varPosn <- function(variables,
-    type=c("all", "factor", "numeric", "nonfactor", "twoLevelFactor"), vars=NULL){
+    type=c("all", "factor", "numeric", "numericpositive", "nonfactor", "twoLevelFactor"), vars=NULL){
     if (is.null(variables)) return(NULL)
     type <- match.arg(type)
     if (is.null(vars)) vars <- switch(type,
         all = Variables(),
         factor = Factors(),
         numeric = Numeric(),
+        numericpositive = NumericPositive(),
         nonfactor = setdiff(Variables(), Factors()),
         twoLevelFactor = TwoLevelFactors()
     )
@@ -2176,6 +2485,7 @@ varPosn <- function(variables,
     else apply(outer(variables, vars, "=="), 1, which) - 1
 }
 
+#' @export
 flushDialogMemory <- function(what){
     if (missing(what)) putRcmdr("dialog.values", list())
     else{
@@ -2191,24 +2501,27 @@ flushDialogMemory <- function(what){
 }
 
 # for assignments to the global environment
-
+#' @export
 gassign <- function(x, value){
     if (!(is.valid.name(x))) stop("argument x not a valid R name")
     G <- .GlobalEnv
     assign(x, value, envir=G)
 }
 
-
+#' @export
 tkfocus <- function(...) tcl("focus", ...)
 
+#' @export
 tkspinbox <- function(parent, ...) tkwidget(parent, "spinbox", ...)
 
 # the following two functions adapted from Milan Bouchet-Valat
 
+#' @export
 WindowsP <- function() {
     .Platform$OS.type == "windows"
 }
 
+#' @export
 X11P <- function(){
     .Platform$GUI == "X11"
 }
@@ -2236,11 +2549,13 @@ trimTrailingNewLines <- function(string){
   paste0(string, "\n")
 }
 
+#' @export
 suppressMarkdown <- function(command){
     attr(command, "suppressRmd") <- TRUE
     command
 }
 
+#' @export
 beginRmdBlock <- function(){
     .rmd <- RmdWindow()
     last2 <- tclvalue(tkget(.rmd, "end -2 chars", "end"))
@@ -2260,6 +2575,7 @@ beginRmdBlock <- function(){
     }
 }
 
+#' @export
 endRmdBlock <- function(){
     .rmd <- RmdWindow()
     rmd <- tclvalue(tkget(.rmd, "1.0", "end"))
@@ -2289,6 +2605,7 @@ endRmdBlock <- function(){
     }
 }
 
+#' @export
 removeNullRmdBlocks <- function(){
     .rmd <- RmdWindow()
     rmd <- tclvalue(tkget(.rmd, "1.0", "end"))
@@ -2310,6 +2627,7 @@ removeNullRmdBlocks <- function(){
     }
 }
 
+#' @export
 removeStrayRmdBlocks <- function(){
     .rmd <- RmdWindow()
     rmd <- tclvalue(tkget(.rmd, "1.0", "end"))
@@ -2411,7 +2729,7 @@ findCommandName <- function(command){
   }
 }
 
-
+#' @export
 enterMarkdown <- function(command){
     if (!getRcmdr("use.markdown")) return()
     .rmd <- RmdWindow()
@@ -2441,6 +2759,7 @@ trimHangingEndRmdBlock <- function(string){
     string
 }
 
+#' @export
 removeLastRmdBlock <- function(){
     .rmd <- RmdWindow()
     rmd <- tclvalue(tkget(.rmd, "1.0", "end"))
@@ -2528,6 +2847,7 @@ cutstring <- function(x, start=1, end=nchar(x)){
     paste0(one, two)
 }
 
+#' @export
 MarkdownP <- function(){
     getRcmdr("log.commands") && getRcmdr("use.markdown")
 }
@@ -2641,6 +2961,7 @@ compileRmd <- function() {
 
 # the following functions to support knitr
 
+#' @export
 beginRnwBlock <- function(){
     .rnw <- RnwWindow()
     last2 <- tclvalue(tkget(.rnw, "end -2 chars", "end"))
@@ -2658,6 +2979,7 @@ beginRnwBlock <- function(){
     }
 }
 
+#' @export
 endRnwBlock <- function(){
     .rnw <- RnwWindow()
     rnw <- tclvalue(tkget(.rnw, "1.0", "end"))
@@ -2679,6 +3001,7 @@ endRnwBlock <- function(){
     }
 }
 
+#' @export
 removeNullRnwBlocks <- function(){
     .rnw <- RnwWindow()
     rnw <- tclvalue(tkget(.rnw, "1.0", "end"))
@@ -2704,6 +3027,7 @@ removeNullRnwBlocks <- function(){
     }
 }
 
+#' @export
 removeStrayRnwBlocks <- function(){
     .rnw <- RnwWindow()
     rnw <- tclvalue(tkget(.rnw, "1.0", "end"))
@@ -2755,6 +3079,7 @@ removeStrayRnwBlocks <- function(){
     }
 }
 
+#' @export
 enterKnitr <- function(command){
     .rnw <- RnwWindow()
     if (!getRcmdr("use.knitr")) return()
@@ -2784,6 +3109,7 @@ trimHangingEndRnwBlock <- function(string){
     string
 }
 
+#' @export
 removeLastRnwBlock <- function(){
     .rnw <- RnwWindow()
     rnw <- tclvalue(tkget(.rnw, "1.0", "end"))
@@ -2842,7 +3168,7 @@ compileRnw <- function(){
     browseURL(.pdf.file.location)
 }
 
-
+#' @export
 knitrP <- function(){
     getRcmdr("log.commands") && getRcmdr("use.knitr")
 }
@@ -3157,10 +3483,12 @@ rgb2col <- local({
 
 # the following function is for plug-ins that test for SciViews (which is no longer supported)
 
+#' @export
 is.SciViews <- function() FALSE
 
 # the following two functions from Milan Bouchet-Valat
 
+#' @export
 setBusyCursor <- function() {
     .commander <- CommanderWindow()
     .menu <- tkcget(.commander, menu=NULL)
@@ -3175,6 +3503,7 @@ setBusyCursor <- function() {
     tkconfigure(.messages, cursor="watch")
 }
 
+#' @export
 setIdleCursor <- function() {
     .commander <- CommanderWindow()
     .menu <- tkcget(.commander, menu=NULL)
@@ -3189,24 +3518,79 @@ setIdleCursor <- function() {
     tkconfigure(.messages, cursor="xterm")
 }
 
-# Rcmdr data editor
-
+## Rcmdr data editor
+#' @name editDataset
+#' 
+#' @aliases editDataset editDataset.data.frame editDataset.character editDataset.NULL
+#'
+#' @keywords manip
+#'
+#' @title R Commander Dataset Editor
+#'
+#' @author John Fox
+#' 
+#' @details
+#' Allows the user to enter a new dataset, modify data values in an existing dataset, add rows or columns to the dataset, or delete rows or columns.
+#'
+#' \code{editDataset} is a straightforward spreadsheet-like data editor, suitable for editing data frames that are not too large (say smaller than about 10,000 values).
+#' It is defined as a generic function with a \code{data.frame} method to allow for objects with unique properties that inherit from the \code{data.frame} class.
+#' The \code{character} and \code{NULL} methods permit editing an initially empty data set.
+#'
+#' \itemize{
+#'    \item Use the mouse and the arrow keys to navigate the cells of the data table, including the row and column names.
+#'    \item Columns consisting only of numbers will produce numeric variables in the data frame constructed by \code{editDataset}; columns with any non-numeric values will produce factors or (if they contain only the values \code{TRUE} and \code{FALSE}) logical variables.
+#'    \item When entering values with embedded blanks, it is permissible but not necessary to enclose the values in quotes (e.g, \code{"some PS"} or \code{'less than HS'}).
+#'    \item Clicking in a cell and typing a new value replaces the previous value.
+#'    \item Row and column names can be modified in the same manner.
+#'    \item Double-clicking in a cell deletes the previous value and replaces it with \code{NA}.
+#'    \item Enlarge the data set by pressing the \emph{Add row} or \emph{Add column} button at the top of the data editor; the new row or column will initially be filled with \code{NA}s and will have an auto-generated row or column name.
+#'    Pressing the \emph{Enter} or \emph{Return} key will also add a row; pressing the \emph{Tab} key will also add a column.
+#'    \item Right-clicking (or \emph{Control}-clicking, or under Mac OS X \emph{Command}-clicking) brings up a context menu, permitting several operations on cells, rows, and columns, including deleting the current row or column.
+#'    \item Similarly, several actions are available via the \emph{Edit} menu.
+#'    \item The key-combinations  \emph{Control-x}, and \emph{Control-v}, may also be used respectively to cut, copy, and paste cell values. (Under Mac OS X, \emph{Command-x}, \emph{Command-c}, and \emph{Command-v} also work.)
+#'    \item Pressing the \emph{OK} button or selecting \emph{Exit and save} from the \emph{File} menu exits the data edtior and saves the edited data set to the global environment.
+#'    Pressing the \emph{Cancel} button or selecting \emph{Cancel} from the \emph{File} menu exits the editor discarding the edited data set.
+#' }
+#'
+#' @param data an R data frame to edit; this argument is optional, and if absent an empty data frame is created, into which the user can enter data.
+#' @param dsname the quoted name of the data set, into which the edited data frame will be placed in the global environment.
+#' If absent and an \emph{existing} data frame is edited, the modified version will replace the original version; if absent and a \emph{new} data set is created, it will be given the name \code{"Dataset"}.
+#' @param \dots not used by the \code{data.frame} method.
+#'
+#' @return
+#' This function does not return a useful value, but has the side effect of modifying or creating a data set in the global environment.
+#'
+#' @note
+#' \code{editDataset} is limited to editing data frames that are composed only of numeric, factor, and logical columns.
+#'
+#' @seealso \code{\link{edit.data.frame}}, for the standard R data editor.
+#'
+#' @examples
+#' if (interactive()) editDataset()
+#'
+#' @export
 editDataset <- function(data, dsname, ...){
   UseMethod("editDataset")
 }
 
+#' @rdname editDataset
+#' @export 
 editDataset.character <- function(data, dsname, ...){
   if (missing(dsname)) dsname <- "Dataset"
   data <- data.frame(V1="NA")
   editDataset(data, dsname, ...)
 }
 
+#' @rdname editDataset
+#' @export 
 editDataset.NULL <- function(data, dsname, ...){
   if (missing(dsname)) dsname <- "Dataset"
   data <- data.frame(V1="NA")
   editDataset(data, dsname, ...)
 }
 
+#' @rdname editDataset
+#' @export 
 editDataset.data.frame <- function(data, dsname, ...){
     putRcmdr("dataset.modified", FALSE)
     # if (missing(data)){
@@ -3771,8 +4155,10 @@ editDataset.data.frame <- function(data, dsname, ...){
 
 # some Mac OS X related functions
 
+#' @export
 RappP <- function() .Platform$GUI == "AQUA"
 
+#' @export
 mavericksP <- function(){
   info <- Sys.info()
   info["sysname"] == "Darwin" && info["release"] >= "13.0.0"
@@ -3860,6 +4246,7 @@ browsePDF <- function(file) {
 
 # function to insure that "levels" of character variables are returned
 
+#' @export
 levels.character <- function(x) sort(unique(x))
 
 # the following macro is used to apply Rcmdr options with specified defaults
@@ -3872,7 +4259,7 @@ setOption <- defmacro(option, default, global=TRUE, expr= {
 })
 
 # the following function determines capabilities for Models menu items
-
+#' @export
 modelCapability <- function(capability){
   modelCapabilities <- getRcmdr("modelCapabilities")
   model <- ActiveModel()
@@ -3909,24 +4296,34 @@ removeRedundantExtension <- function(file){
 
 # functions to support mixed models
 
+#' @export
 anova.lmerMod <- function(object, ...) NextMethod()
 
+#' @export
 Anova.lmerMod <- function(mod, ...) NextMethod()
 
+#' @export
 linearHypothesis.lmerMod <- function(model, ...) NextMethod()
 
+#' @export
 coef.lmerMod <- function(object, ...) fixef(object, ...)
 
+#' @export
 anova.glmerMod <- function(object, ...) NextMethod()
 
+#' @export
 Anova.glmerMod <- function(mod, ...) NextMethod()
 
+#' @export
 linearHypothesis.glmerMod <- function(model, ...) NextMethod()
 
+#' @export
 coef.glmerMod <- function(object, ...) fixef(object, ...)
 
+#' @export
 plot.lmerMod <- function(x, ...) NextMethod()
 
+#' @export
 plot.glmerMod <- function(x, ...) NextMethod()
 
 validColumns <- function(dataset){
@@ -3950,7 +4347,7 @@ validColumns <- function(dataset){
 }
 
 # add support for discrete numeric variables
-
+#' @export
 listDiscreteNumeric <- function(dataSet=ActiveDataSet()) {
   if(missing(dataSet)) {
     DiscreteNumeric()
@@ -3969,11 +4366,13 @@ listDiscreteNumeric <- function(dataSet=ActiveDataSet()) {
   }
 }
 
+#' @export
 DiscreteNumeric <- function(names){
   if (missing(names)) getRcmdr("discrete.numeric")
   else putRcmdr("discrete.numeric", names)
 }
 
+#' @export
 discreteNumericP <- function(n=1) activeDataSetP() && length(listDiscreteNumeric()) >= n
 
 dichotomousResponseLabel <- defmacro(frame=top, responseBox=xBox, columnspan=1, initialText=NULL,
@@ -4017,7 +4416,7 @@ convertStrings2Factors <- function(){
 }
 
 # functions for predictors and coefficients
-
+#' @export
 Predictors <- function(type=c("all", "numeric", "factor")){
   if (is.null(ActiveModel())) return(NULL)
   type <- match.arg(type)
@@ -4028,17 +4427,20 @@ Predictors <- function(type=c("all", "numeric", "factor")){
 }
 
 
+#' @export
 PredictorsP <- function(n=1, type=c("all", "numeric", "factor")){
   type <- match.arg(type)
   length(Predictors(type=type)) >= n
 }
 
+#' @export
 Coefficients <- function(includeIntercept=FALSE){
   if (is.null(ActiveModel())) return(NULL)
   coefs <- names(coef(get(activeModel(), envir=.GlobalEnv)))
   coefs[coefs != "(Intercept)"]
 }
 
+#' @export
 CoefficientsP <- function(n=1, includeIntercept=FALSE){
   length(Coefficients(includeIntercept)) >= n
 }
@@ -4057,33 +4459,18 @@ getUserName <- function(){
     if (name == "unknown") name <- "Your Name"
     return(name)
   } else {
-    name <- try(system("finger $(whoami)", intern=TRUE, ignore.stderr=TRUE),
-                silent=TRUE)
-    if (!inherits(name, "try-error")){
-      name <- name[grepl("^Login:", name)]
-      return(sub("^.*Name: ", "", name))
-    } else {
-      name <- Sys.info()["user"]
-      if (name == "unknown") name <- "Your Name"
-      return(name)
-    }
+        name <- Sys.info()["user"]
+        if (length(name) == 0 || is.na(name) || name == "unknown") name <- "Your Name"
+        return(name)
   }
 }
 
 # to assist implementation of case deletion/retention
-
+#' @export
 getCases <- function(cases, remove=TRUE){
-  rows <- Rows <- paste("c(", gsub(" +", ", ", cases), ")", sep="")
-  cases.rows <- try(eval(parse(text=Rows)), silent=TRUE)
-  if (inherits(cases.rows, "try-error")){
-    rows <- Rows <- paste("c('", gsub(" +", "', '", cases), "')", sep="")
-    cases.rows <- try(eval(parse(text=Rows)), silent=TRUE)
-    if (inherits(cases.rows, "try-error")){
-      error <- cases.rows
-      class(error) <- c(class(error), "cases-error")
-      return(error)
-    }
-  }
+  cases.rows <- scan(text=cases, what="", quiet=TRUE)
+  rows <- Rows <- paste0("c(", paste(paste0("'", cases.rows, "'"), 
+                                     collapse=", "), ")")
   if (remove) {
     Rows <- if (is.numeric(cases.rows)) paste("-", Rows, sep="")
     else paste("!(rownames(", ActiveDataSet(), ") %in% ", Rows, ")", sep="")
@@ -4108,6 +4495,7 @@ getCases <- function(cases, remove=TRUE){
   Rows
 }
 
+#' @export
 insertRmdSection <- function(text){
   if (!(getRcmdr("use.markdown") && getRcmdr("command.sections"))) return()
 #  if (getRcmdr("translate.rmd.headers")) text <- gettextRcmdr(text)

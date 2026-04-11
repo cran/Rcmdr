@@ -1,6 +1,7 @@
 # Statistics Menu dialogs
 
 # last modified 2022-06-27 by J. Fox
+# last modified 2025-04-25 by M. Munoz-Marquez
 
 # Tables menu
 
@@ -107,6 +108,86 @@ twoWayTable <- function(){
     tkgrid(subsetFrame, sticky="w")
     dialogSuffix(use.tabs=TRUE, grid.buttons=TRUE, tab.names=c("Data", "Statistics"))
 }
+
+twoWayTableFromCounts <- function() {
+    Library("abind")
+    defaults <- list(initial.row = NULL, initial.column = NULL, initial.count = NULL, initial.percents = "none", initial.chisq = 1, initial.chisqComp = 0, initial.expected = 0, initial.fisher = 0)
+    dialog.values <- getDialog("twoWayTableFromCounts", defaults)
+    initializeDialog(title = gettextRcmdr("Two-way Table from counts"), use.tabs=TRUE)
+    variablesFrame <- tkframe(dataTab)
+    .factors <- Factors()
+    .counts <- NumericPositive()
+    rowBox <- variableListBox(variablesFrame, .factors, title = gettextRcmdr("Row variable"), initialSelection = varPosn (dialog.values$initial.row, "factor"))
+    columnBox <- variableListBox(variablesFrame, .factors, title = gettextRcmdr("Column variable"), initialSelection = varPosn (dialog.values$initial.column, "factor"))
+    countBox <- variableListBox(variablesFrame, .counts, title = gettextRcmdr("Count variable"), initialSelection = varPosn (dialog.values$initial.count, "numericpositive"))
+    onOK <- function() {
+        ## Read dialog values
+        chisq <- tclvalue(chisqTestVariable)
+        chisqComp <- tclvalue(chisqComponentsVariable)
+        column <- getSelection(columnBox)
+        count <- getSelection(countBox)
+        expected <- tclvalue(expFreqVariable)
+        fisher <- tclvalue(fisherTestVariable)
+        percents <- as.character(tclvalue(percentsVariable))
+        row <- getSelection(rowBox)
+
+        ## Test selection consistency
+        if (length(row) == 0 || length(column) == 0 || length(count) == 0) {
+            errorCondition(recall = twoWayTableFromCounts, message = gettextRcmdr("You must select row, column, and count variables"))
+            return()
+        }
+        if (row == column) {
+            errorCondition(recall = twoWayTableFromCounts, message = gettextRcmdr("Row, and column variables must be differents"))
+            return()
+        }
+
+        ## Store dialog values
+        putDialog ("twoWayTableFromCounts", list (initial.row = row, initial.column = column, initial.count = count, initial.percents = percents, initial.chisq = chisq, initial.chisqComp = chisqComp, initial.expected = expected, initial.fisher = fisher))
+        closeDialog()
+
+        ## Prepare command
+        command <- paste0("local({\n  .Table <- xtabs(", count, "~", row, "+", column, ", data=", ActiveDataSet(), ')\n  cat("\\nFrequency table:\\n")\n  print(addmargins(.Table))\n')
+        ## Prepare internal command
+        command.2 <- paste0("local({\n  .Table <- xtabs(", count, "~", row, "+", column, ", data=", ActiveDataSet(), ")\n  putRcmdr('.Test', chisq.test(.Table, correct=FALSE))\n})\n")
+        if (percents == "row") 
+            command <- paste0(command, '  cat("\\nRow percentages:\\n")\n  print(rowPercents(.Table))\n')
+        else if (percents == "column") 
+            command <- paste0(command, '  cat("\\nColumn percentages:\\n")\n  print(colPercents(.Table))\n')
+        else if (percents == "total")
+            command <- paste0(command, '  cat("\\nTotal percentages:\\n")\n  print(totPercents(.Table))\n')
+        if (chisq == 1 || expected == 1 || chisqComp == 1) {
+            justDoIt(command.2)
+            command <- paste0(command, "  .Test <- chisq.test(.Table, correct=FALSE)\n")
+            warnText <- NULL
+            .expected <- getRcmdr(".Test")$expected
+            warnText <- NULL
+            if (0 < (nlt1 <- sum(.expected < 1))) warnText <- paste(nlt1, gettextRcmdr("expected frequencies are less than 1"), sep="")
+            if (0 < (nlt5 <- sum(.expected < 5))) warnText <- paste(warnText, "\n", nlt5, gettextRcmdr(" expected frequencies are less than 5"), sep="")
+            if (!is.null(warnText)) Message(message=warnText, type="warning")
+        }
+        if (chisq == 1)
+            command <- paste0(command, "  print(.Test)\n")
+        if (expected == 1)
+            command <- paste0(command, '  cat("', ifelse(chisq == 1, '', '\\n'), 'Expected counts:\\n")\n  print(.Test$expected)\n')
+        if (chisqComp == 1) 
+            command <- paste0(command, '  cat("\\nChi-square components:\\n")\n  print(round(.Test$residuals^2, 2))\n')
+        if (fisher == 1) command <- paste0(command, "  print(fisher.test(.Table))\n")
+        command <- paste0(command, "})\n")
+        insertRmdSection(paste0(gettextRmdHeader("Two-way Table from counts"), ": (", row, ", ", column, ") x ", count))
+        doItAndPrint(command)
+        tkfocus(CommanderWindow())
+    }
+    OKCancelHelp(helpSubject = "twoWayTableFromCounts", reset = "twoWayTableFromCounts", apply = "twoWayTableFromCounts")
+    radioButtons(optionsTab, name = "percents", buttons = c("rowPercents", "columnPercents", "totalPercents", "nonePercents"), values = c("row", "column", "total", "none"),  labels = gettextRcmdr(c("Row percentages", "Column percentages", "Percentages of total", "No percentages")), title = gettextRcmdr("Compute Percentages"), columns = 2, initialValue = dialog.values$initial.percents)
+    checkBoxes(optionsTab, frame="testsFrame", boxes=c("chisqTest", "chisqComponents", "expFreq", "fisherTest"), initialValues=c(dialog.values$initial.chisq, dialog.values$initial.chisqComp, dialog.values$initial.expected, dialog.values$initial.fisher), labels=gettextRcmdr(c("Chi-square test of independence", "Components of chi-square statistic", "Print expected frequencies", "Fisher's exact test")), columns=2)
+    tkgrid(getFrame(rowBox), labelRcmdr(variablesFrame, text = "    "), getFrame(columnBox), labelRcmdr(variablesFrame, text = "    "), getFrame(countBox), sticky = "nw")
+    tkgrid(variablesFrame, sticky = "w")
+    tkgrid(percentsFrame, sticky = "w")
+    tkgrid(labelRcmdr(optionsTab, text=gettextRcmdr("Hypothesis Tests"), fg=getRcmdr("title.color"), font="RcmdrTitleFont"), sticky="w")
+    tkgrid(testsFrame, sticky="nw")
+    dialogSuffix(use.tabs = TRUE, grid.buttons = TRUE, tab.names = c("Data", "Statistics"))
+}
+
 
 multiWayTable <- function (){
 	Library("abind")

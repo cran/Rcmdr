@@ -1,0 +1,10 @@
+\documentclass{article}
+
+\usepackage{pdfpages}
+
+%\VignetteEncoding{UTF-8}
+%\VignetteIndexEntry{R Commander 사용하기}
+
+\begin{document}
+\includepdf[pages=-]{Getting-Started-with-the-Rcmdr-ko.asis.pdf}
+\end{document}

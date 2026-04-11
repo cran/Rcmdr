@@ -1,10 +1,11 @@
 Package: Rcmdr
-Version: 2.9-5
-Date: 2024-10-23
+Version: 2.12.2
+Date: 2026-04-12
 Title: R Commander
-Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaster.ca"),
+Encoding: UTF-8
+Authors@R: c(person("John", "Fox", role = "aut"),
     person("Milan", "Bouchet-Valat", role = "aut"),
-    person("Manuel", "Munoz Marquez", role = "aut"),
+    person("Manuel", "Munoz-Marquez", role = c("aut", "cre"), email = "manuel.munoz@uca.es"),
     person("Liviu", "Andronic", role = "ctb"),
     person("Michael", "Ash", role = "ctb"),
     person("Theophilius", "Boye", role = "ctb"),
@@ -31,7 +32,7 @@ Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaste
     person("Kevin", "Wright", role="ctb")
    )
 Depends: R (>= 3.5.0), grDevices, graphics, methods, stats, utils,
-        splines, RcmdrMisc (>= 2.9-1), car (>= 3.1-0), effects (>=
+        splines, RcmdrMisc (>= 2.10.1), car (>= 3.1-0), effects (>=
         4.0-3)
 Imports: tcltk, tcltk2 (>= 1.2-6), abind, relimp (>= 1.0-5), lme4,
         tools
@@ -45,11 +46,12 @@ Description:
 License: GPL (>= 2)
 URL: https://github.com/RCmdr-Project/rcmdr, https://www.r-project.org,
         https://www.john-fox.ca/RCommander/index.html
+RoxygenNote: 7.3.3
 NeedsCompilation: no
-Packaged: 2024-10-24 00:46:34 UTC; johnfox
-Author: John Fox [aut, cre],
+Packaged: 2026-04-10 19:57:13 UTC; mmarquez
+Author: John Fox [aut],
   Milan Bouchet-Valat [aut],
-  Manuel Munoz Marquez [aut],
+  Manuel Munoz-Marquez [aut, cre],
   Liviu Andronic [ctb],
   Michael Ash [ctb],
   Theophilius Boye [ctb],
@@ -74,6 +76,6 @@ Author: John Fox [aut, cre],
   Miroslav Ristic [ctb],
   Peter Wolf [ctb],
   Kevin Wright [ctb]
-Maintainer: John Fox <jfox@mcmaster.ca>
+Maintainer: Manuel Munoz-Marquez <manuel.munoz@uca.es>
 Repository: CRAN
-Date/Publication: 2024-10-24 17:10:13 UTC
+Date/Publication: 2026-04-11 06:21:29 UTC
