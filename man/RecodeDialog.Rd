@@ -14,7 +14,7 @@ Recode numeric variables and factors into factors.
 
 The recode dialog is normally used to recode numeric variables and factors into factors, for example by combining values of numeric variables or levels of factors.
 It may also be used to produce new numeric variables.
-The Rcmdr recode dialog is based on the \code{\link[car:recode]{Recode}} function in the \code{car} package.
+The Rcmdr recode dialog is based on the \code{\link[car:recode]{Recode}} function in the \pkg{car} package.
 
 The name of each new variable must be a valid R object name (consisting only of upper and lower-case letters, numerals, and periods, and not starting with a numeral).
 

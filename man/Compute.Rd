@@ -3,9 +3,6 @@
 \name{Compute}
 \alias{Compute}
 \title{Rcmdr Compute Dialog}
-\usage{
-Compute()
-}
 \description{
 Rcmdr Compute Dialog
 }
