@@ -1,6 +1,6 @@
 Package: Rcmdr
-Version: 2.13.0
-Date: 2026-06-19
+Version: 2.14.1
+Date: 2026-09-17
 Title: R Commander
 Encoding: UTF-8
 Authors@R: c(person("John", "Fox", role = "aut"),
@@ -44,12 +44,14 @@ ByteCompile: yes
 Description: 
   A platform-independent basic-statistics GUI (graphical user interface) for R, based on the tcltk package.
 License: GPL (>= 2)
-URL: https://github.com/RCmdr-Project/rcmdr, https://www.r-project.org,
+URL: https://www.r-commander.com,
+        https://github.com/RCmdr-Project/rcmdr,
+        https://www.r-project.org,
         https://www.john-fox.ca/RCommander/index.html
 Config/roxygen2/version: 8.0.0
 RoxygenNote: 7.3.3
 NeedsCompilation: no
-Packaged: 2026-06-19 12:08:33 UTC; mmarquez
+Packaged: 2026-09-16 18:08:44 UTC; mmarquez
 Author: John Fox [aut],
   Milan Bouchet-Valat [aut],
   Manuel Munoz-Marquez [aut, cre],
@@ -79,4 +81,4 @@ Author: John Fox [aut],
   Kevin Wright [ctb]
 Maintainer: Manuel Munoz-Marquez <manuel.munoz@uca.es>
 Repository: CRAN
-Date/Publication: 2026-06-19 16:10:07 UTC
+Date/Publication: 2026-09-16 23:50:25 UTC
